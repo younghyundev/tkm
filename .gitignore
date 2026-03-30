@@ -1,0 +1,9 @@
+# OMC state/sessions (local, not project code)
+.omc/state/
+.omc/sessions/
+
+# Claude Code local settings
+.claude/
+
+# Tokenmon OMC state (nested)
+tokenmon/.omc/

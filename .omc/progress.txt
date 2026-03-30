@@ -1,0 +1,26 @@
+# Tokénmon - Ralph Progress Log
+
+## Session: 2026-03-30
+
+### Iteration 1
+
+**Status**: Complete - Architect APPROVED
+
+**Stories**:
+- US-001: 프로젝트 스캐폴드 및 데이터 파일 - IN PROGRESS
+- US-002: 오디오 시스템 - PENDING
+- US-003: SessionStart/PermissionRequest/PostToolUseFailure 훅 - PENDING
+- US-004: XP 시스템 및 Stop 훅 - PENDING
+- US-005: SubagentStart/SubagentStop 훅 - PENDING
+- US-006: 스프라이트 시스템 - PENDING
+- US-007: statusLine 스크립트 - PENDING
+- US-008: install.sh / uninstall.sh - PENDING
+- US-009: tokenmon.sh CLI - PENDING
+
+**Key Decisions**:
+- Plugin root: ~/.claude/hooks/tokenmon/
+- Audio: WSL2 → PowerShell MediaPlayer (WAV/MP3)
+- XP source: JSONL transcript parsing at Stop hook
+- Sprite source: PokeAPI Gen4 D/P sprites
+- Korean names only (multilingual = backlog)
+- OMC-independent (own statusLine command)

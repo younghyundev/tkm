@@ -1,0 +1,28 @@
+{
+  "pokemon": {
+    "모부기": {"id": 387, "name": "모부기", "types": ["풀"], "stage": 0, "line": ["모부기", "수풀부기", "토대부기"], "evolves_at": 18, "unlock": "starter", "exp_group": "medium_slow"},
+    "수풀부기": {"id": 388, "name": "수풀부기", "types": ["풀"], "stage": 1, "line": ["모부기", "수풀부기", "토대부기"], "evolves_at": 32, "unlock": "evolution", "exp_group": "medium_slow"},
+    "토대부기": {"id": 389, "name": "토대부기", "types": ["풀", "땅"], "stage": 2, "line": ["모부기", "수풀부기", "토대부기"], "evolves_at": null, "unlock": "evolution", "exp_group": "medium_slow"},
+    "불꽃숭이": {"id": 390, "name": "불꽃숭이", "types": ["불꽃"], "stage": 0, "line": ["불꽃숭이", "파이숭이", "초염몽"], "evolves_at": 14, "unlock": "achievement:first_evolution", "exp_group": "slow"},
+    "파이숭이": {"id": 391, "name": "파이숭이", "types": ["불꽃", "격투"], "stage": 1, "line": ["불꽃숭이", "파이숭이", "초염몽"], "evolves_at": 36, "unlock": "evolution", "exp_group": "slow"},
+    "초염몽": {"id": 392, "name": "초염몽", "types": ["불꽃", "격투"], "stage": 2, "line": ["불꽃숭이", "파이숭이", "초염몽"], "evolves_at": null, "unlock": "evolution", "exp_group": "slow"},
+    "팽도리": {"id": 393, "name": "팽도리", "types": ["물"], "stage": 0, "line": ["팽도리", "팽태자", "엠페르트"], "evolves_at": 16, "unlock": "achievement:first_session", "exp_group": "medium_slow"},
+    "팽태자": {"id": 394, "name": "팽태자", "types": ["물"], "stage": 1, "line": ["팽도리", "팽태자", "엠페르트"], "evolves_at": 36, "unlock": "evolution", "exp_group": "medium_slow"},
+    "엠페르트": {"id": 395, "name": "엠페르트", "types": ["물", "강철"], "stage": 2, "line": ["팽도리", "팽태자", "엠페르트"], "evolves_at": null, "unlock": "evolution", "exp_group": "medium_slow"},
+    "새박이": {"id": 396, "name": "새박이", "types": ["노말", "비행"], "stage": 0, "line": ["새박이", "찌르버드", "찌르호크"], "evolves_at": 14, "unlock": "achievement:first_error", "exp_group": "medium_slow"},
+    "찌르버드": {"id": 397, "name": "찌르버드", "types": ["노말", "비행"], "stage": 1, "line": ["새박이", "찌르버드", "찌르호크"], "evolves_at": 34, "unlock": "evolution", "exp_group": "medium_slow"},
+    "찌르호크": {"id": 398, "name": "찌르호크", "types": ["노말", "비행"], "stage": 2, "line": ["새박이", "찌르버드", "찌르호크"], "evolves_at": null, "unlock": "evolution", "exp_group": "medium_slow"},
+    "꼬지모": {"id": 403, "name": "꼬지모", "types": ["전기"], "stage": 0, "line": ["꼬지모", "럭시오", "럭시레이"], "evolves_at": 15, "unlock": "achievement:hundred_k_tokens", "exp_group": "medium_slow"},
+    "럭시오": {"id": 404, "name": "럭시오", "types": ["전기"], "stage": 1, "line": ["꼬지모", "럭시오", "럭시레이"], "evolves_at": 30, "unlock": "evolution", "exp_group": "medium_slow"},
+    "럭시레이": {"id": 405, "name": "럭시레이", "types": ["전기"], "stage": 2, "line": ["꼬지모", "럭시오", "럭시레이"], "evolves_at": null, "unlock": "evolution", "exp_group": "medium_slow"},
+    "리오르": {"id": 447, "name": "리오르", "types": ["격투"], "stage": 0, "line": ["리오르", "루카리오"], "evolves_at": null, "evolves_condition": "friendship", "unlock": "achievement:five_hundred_k_tokens", "exp_group": "medium_slow"},
+    "루카리오": {"id": 448, "name": "루카리오", "types": ["격투", "강철"], "stage": 1, "line": ["리오르", "루카리오"], "evolves_at": null, "unlock": "evolution", "exp_group": "medium_slow"}
+  },
+  "starters": ["모부기", "불꽃숭이", "팽도리"],
+  "type_colors": {
+    "풀": "\u001b[32m", "불꽃": "\u001b[31m", "물": "\u001b[34m",
+    "전기": "\u001b[33m", "격투": "\u001b[91m", "강철": "\u001b[37m",
+    "땅": "\u001b[33m", "노말": "\u001b[97m", "비행": "\u001b[96m",
+    "reset": "\u001b[0m"
+  }
+}
