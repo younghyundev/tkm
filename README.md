@@ -22,19 +22,15 @@ From within a Claude Code session:
 /plugin marketplace add ThunderConch/tokenmon
 /plugin install tokenmon@tokenmon
 /reload-plugins
+/tokenmon:setup
 ```
 
-Or from the terminal:
+The setup command will:
+1. Install dependencies (npm install)
+2. Guide you to choose a starter Pokemon (모부기, 불꽃숭이, or 팽도리)
+3. Initialize your trainer data
 
-```bash
-claude plugin marketplace add ThunderConch/tokenmon
-claude plugin install tokenmon@tokenmon
-```
-
-After installation, start a new Claude Code session. Tokenmon will automatically:
-1. Prompt you to choose a starter Pokemon (모부기, 불꽃숭이, or 팽도리)
-2. Display your Pokemon in the status line
-3. Start tracking token usage as XP
+After setup, your Pokemon will appear in the status line and start gaining XP.
 
 ### Standalone
 
