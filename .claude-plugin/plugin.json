@@ -6,5 +6,9 @@
     "name": "Sangwon Lee"
   },
   "repository": "https://github.com/ThunderConch/tokenmon",
-  "keywords": ["pokemon", "gamification", "xp", "level"]
+  "keywords": ["pokemon", "gamification", "xp", "level"],
+  "statusLine": {
+    "type": "command",
+    "command": "\"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx\" \"${CLAUDE_PLUGIN_ROOT}/src/status-line.ts\""
+  }
 }
