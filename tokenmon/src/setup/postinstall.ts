@@ -1,13 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync } from 'fs';
 import { join } from 'path';
-import { homedir } from 'os';
-
-// Inline paths to avoid import chain issues during npm install
-const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude');
-const DATA_DIR = join(CLAUDE_DIR, 'tokenmon');
-const STATE_PATH = join(DATA_DIR, 'state.json');
-const CONFIG_PATH = join(DATA_DIR, 'config.json');
-const SESSION_PATH = join(DATA_DIR, 'session.json');
+import { DATA_DIR, STATE_PATH, CONFIG_PATH, SESSION_PATH, CLAUDE_DIR } from '../core/paths.js';
 
 const DEFAULT_STATE = JSON.stringify({
   pokemon: {},
@@ -98,11 +91,7 @@ function main(): void {
   mkdirSync(DATA_DIR, { recursive: true });
 
   // Legacy bash data path
-  const legacyDir = join(
-    process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude'),
-    'hooks',
-    'tokenmon',
-  );
+  const legacyDir = join(CLAUDE_DIR, 'hooks', 'tokenmon');
 
   // Migrate or create data files
   migrateFile(join(legacyDir, 'state.json'), STATE_PATH, DEFAULT_STATE);

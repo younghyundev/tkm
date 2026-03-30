@@ -23,5 +23,11 @@
     "@types/node": "^22.0.0",
     "@types/pngjs": "^6.0.5",
     "typescript": "^5.5.0"
-  }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ThunderConch/tokenmon.git"
+  },
+  "homepage": "https://github.com/ThunderConch/tokenmon"
 }

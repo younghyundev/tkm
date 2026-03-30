@@ -1,9 +1,9 @@
 import { homedir } from 'os';
 import { join } from 'path';
 
-const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude');
+export const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude');
 
-export const DATA_DIR = join(CLAUDE_DIR, 'tokenmon');
+export const DATA_DIR = process.env.CLAUDE_PLUGIN_DATA ?? join(CLAUDE_DIR, 'tokenmon');
 export const STATE_PATH = join(DATA_DIR, 'state.json');
 export const CONFIG_PATH = join(DATA_DIR, 'config.json');
 export const SESSION_PATH = join(DATA_DIR, 'session.json');

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "tokenmon",
+  "owner": {
+    "name": "Sangwon Lee"
+  },
+  "plugins": [
+    {
+      "name": "tokenmon",
+      "source": "./",
+      "description": "Gen 4 Pokemon XP gamification for Claude Code -- catch, train, and evolve Sinnoh Pokemon as you code",
+      "version": "1.0.0",
+      "category": "productivity",
+      "tags": ["gamification", "pokemon", "xp", "level-up"],
+      "keywords": ["pokemon", "gamification", "xp", "level", "sinnoh", "gen4"]
+    }
+  ]
+}

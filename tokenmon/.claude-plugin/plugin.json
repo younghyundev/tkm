@@ -1,6 +1,6 @@
 {
   "name": "tokenmon",
-  "description": "Gen 4 포켓몬 기반 Claude Code 경험치 플러그인",
+  "description": "Gen 4 Pokemon XP gamification for Claude Code | Gen 4 포켓몬 기반 Claude Code 경험치 플러그인",
   "version": "1.0.0",
   "author": {
     "name": "Sangwon Lee"
