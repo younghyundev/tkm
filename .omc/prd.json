@@ -1,90 +1,110 @@
 {
-  "project": "Tokénmon M0 Bugfix",
-  "description": "M0 버그수정/안정화: 토큰 델타 추적, cache 제외, tokens_per_xp=100, 종별 경험치 그룹, /tokenmon 수정, --reset",
-  "spec": "/home/minsiwon00/claude/.omc/plans/m0-tokenmon-bugfix.md",
+  "project": "Tokénmon M1 TypeScript Conversion",
+  "description": "M0 bash 코드를 TypeScript Claude Code 플러그인으로 전환. tsx 직접 실행, jq/python3 의존성 제거.",
+  "spec": "/home/minsiwon00/claude/.omc/plans/m1-tokenmon-typescript.md",
   "stories": [
     {
-      "id": "M0-000",
-      "title": "Cross-cutting: mktemp 패턴 적용",
+      "id": "M1-001",
+      "title": "Step 1: T-101 프로젝트 스캐폴드",
       "passes": true,
       "acceptanceCriteria": [
-        "hook-stop.sh에 /tmp/tokenmon_state_tmp.json 문자열이 없음",
-        "hook-session-start.sh에 /tmp/tokenmon_state_tmp.json 문자열이 없음",
-        "hook-permission.sh에 /tmp/tokenmon_state_tmp.json 문자열이 없음",
-        "tokenmon.sh에 /tmp/tokenmon_state_tmp.json 문자열이 없음",
-        "모든 jq 쓰기가 _TMP=$(mktemp) 패턴 사용"
+        "tokenmon/package.json 존재 with type=module, tsx dependency, engines.node>=22",
+        "tokenmon/tsconfig.json 존재 with strict=true, moduleResolution=node16",
+        "tokenmon/.claude-plugin/plugin.json 존재 with name=tokenmon",
+        "tokenmon/hooks/hooks.json에 6개 훅 등록 (SessionStart, Stop, PermissionRequest, PostToolUseFailure, SubagentStart, SubagentStop)",
+        "tokenmon/skills/tokenmon/SKILL.md 존재",
+        "npm install 성공 (node_modules 생성)",
+        "npx tsc --noEmit 타입체크 통과 (빈 src/ 상태에서도)"
       ]
     },
     {
-      "id": "M0-001",
-      "title": "T-002: cache 토큰 제외",
+      "id": "M1-002",
+      "title": "Step 2: T-102 JSONL 파서 + XP 엔진",
       "passes": true,
       "acceptanceCriteria": [
-        "hook-stop.sh Python 파서에 cache_creation_input_tokens 참조 없음",
-        "hook-stop.sh Python 파서에 cache_read_input_tokens 참조 없음",
-        "hook-stop.sh jq fallback에 cache_creation_input_tokens 참조 없음",
-        "hook-stop.sh jq fallback에 cache_read_input_tokens 참조 없음",
-        "input_tokens + output_tokens만 합산하는 로직 존재"
+        "src/core/xp.ts: levelToXp(16, 'medium_slow') === 2535",
+        "src/core/xp.ts: levelToXp(14, 'slow') === 3430",
+        "src/core/xp.ts: xpToLevel(2535, 'medium_slow') === 16",
+        "src/core/paths.ts: DATA_DIR = CLAUDE_CONFIG_DIR ?? ~/.claude + /tokenmon/",
+        "src/core/state.ts: atomic write (tmp + rename) 구현",
+        "src/core/state.ts: last_session_tokens 10개 pruning (값 내림차순 상위 10개)",
+        "src/core/config.ts: readConfig/writeConfig with 모든 M0 필드",
+        "src/hooks/stop.ts: JSONL에서 input_tokens + output_tokens만 합산 (cache 미포함)",
+        "src/hooks/stop.ts: 델타 기반 XP (중복 카운팅 없음)",
+        "src/hooks/stop.ts: XP 분배 = xpTotal / partySize",
+        "jq/python3 의존성 없음 (모든 JSON 처리 Node.js 내장)",
+        "npx tsc --noEmit 타입체크 통과"
       ]
     },
     {
-      "id": "M0-002",
-      "title": "T-001: 토큰 델타 추적",
+      "id": "M1-003",
+      "title": "Step 6: T-106 진화 + 업적 시스템",
       "passes": true,
       "acceptanceCriteria": [
-        "hook-stop.sh에서 state.json의 last_session_tokens[session_id]를 읽는 코드 존재",
-        "DELTA_TOKENS = TOTAL_TOKENS - PREV_SESSION_TOKENS 계산 존재",
-        "DELTA_TOKENS <= 0일 때 early exit",
-        "XP_TOTAL 계산이 DELTA_TOKENS 기반",
-        "Stop 후 last_session_tokens[session_id]에 TOTAL_TOKENS 기록",
-        "last_session_tokens 10개 초과 시 정리 로직 존재",
-        "total_tokens_consumed가 DELTA_TOKENS 기반으로 업데이트",
-        "install.sh state.json 초기화에 last_session_tokens:{} 포함"
+        "src/core/evolution.ts: checkEvolution()이 evolves_at 레벨 도달 시 다음 종 반환",
+        "src/core/evolution.ts: 진화 시 state pokemon 종 변경 + config party 업데이트 + evolution_count 증가",
+        "src/core/achievements.ts: checkAchievements()가 session_count/total_tokens/evolution_count/error_count/permission_count 트리거 처리",
+        "src/core/achievements.ts: 보상 포켓몬 해금 시 unlocked 배열 + pokemon 딕셔너리에 추가",
+        "src/core/achievements.ts: 업적 중복 해금 방지 (already achieved 체크)",
+        "npx tsc --noEmit 타입체크 통과"
       ]
     },
     {
-      "id": "M0-003",
-      "title": "T-003: tokens_per_xp=100 + 마이그레이션",
+      "id": "M1-004",
+      "title": "Step 5: T-105 statusLine + CLI",
       "passes": true,
       "acceptanceCriteria": [
-        "tokenmon/config.json의 tokens_per_xp 값이 100",
-        "install.sh init_data_files()에서 기존 config.json의 tokens_per_xp=10 감지 시 100으로 업데이트"
+        "src/status-line.ts: 파티 포켓몬별 스프라이트 + 이름 + Lv + XP바 출력",
+        "src/status-line.ts: exp_group 반영 XP바 계산",
+        "src/status-line.ts: agent 배치 표시",
+        "src/cli/tokenmon.ts: status, starter, party add/remove/list, unlock list, achievements, config set, help 명령 구현",
+        "src/cli/tokenmon.ts: shebang #!/usr/bin/env -S npx tsx",
+        "src/cli/tokenmon.ts: ANSI 색상 출력",
+        "npx tsc --noEmit 타입체크 통과"
       ]
     },
     {
-      "id": "M0-004",
-      "title": "T-004: 종별 경험치 그룹",
+      "id": "M1-005",
+      "title": "Step 3: T-103 오디오 시스템",
       "passes": true,
       "acceptanceCriteria": [
-        "pokemon.json의 모든 17마리에 exp_group 필드 존재",
-        "모부기 라인 exp_group이 medium_slow",
-        "불꽃숭이 라인 exp_group이 slow",
-        "hook-stop.sh level_to_xp()가 group 파라미터를 받고 6종 공식 분기",
-        "hook-stop.sh xp_to_level()가 group 파라미터를 받고 6종 공식 분기",
-        "hook-stop.sh 파티 루프에서 EXP_GROUP을 pokemon.json에서 읽어 함수에 전달",
-        "status-line.sh의 레벨/XP 계산에도 exp_group 반영"
+        "src/audio/play-cry.ts: WSL2 감지 (/proc/version) + PowerShell spawn",
+        "src/audio/play-cry.ts: macOS afplay / Linux aplay/ffplay/mpv/cvlc fallback",
+        "src/audio/play-cry.ts: 비동기 실행 (spawn detached, 훅 블로킹 없음)",
+        "src/audio/play-cry.ts: 파티 2마리 이상 시 랜덤 선택",
+        "src/audio/play-cry.ts: peon-ping 연동 옵션",
+        "python3 의존성 없음",
+        "npx tsc --noEmit 타입체크 통과"
       ]
     },
     {
-      "id": "M0-005",
-      "title": "T-005: /tokenmon CLI 수정",
+      "id": "M1-006",
+      "title": "Step 4: T-104 스프라이트 변환",
       "passes": true,
       "acceptanceCriteria": [
-        "hook-tokenmon-cmd.sh가 prompt 필드를 올바르게 파싱",
-        "settings.json의 UserPromptSubmit에서 불필요한 matcher 제거",
-        "tokenmon 명령이 아닌 프롬프트는 exit 0으로 통과",
-        "tokenmon 명령은 decision:block + reason으로 결과 반환"
+        "src/sprites/convert.ts: PNG → 하프블록(▀▄) + ANSI 256색 변환",
+        "src/sprites/convert.ts: RGBA 투명도 처리",
+        "src/sprites/convert.ts: pngjs 또는 순수 TS로 PNG 파싱",
+        "package.json에 pngjs dependency 추가 (사용 시)",
+        "Pillow/Python 의존성 완전 제거",
+        "npx tsc --noEmit 타입체크 통과"
       ]
     },
     {
-      "id": "M0-006",
-      "title": "T-006: install.sh --reset",
+      "id": "M1-007",
+      "title": "Step 7: T-107 나머지 훅 + 설치/마이그레이션",
       "passes": true,
       "acceptanceCriteria": [
-        "install.sh --reset 실행 시 state.json이 초기값으로 리셋 (last_session_tokens:{} 포함)",
-        "install.sh --reset 실행 시 config.json 보존",
-        "리셋 전 확인 프롬프트 출력",
-        "--reset 없이 install.sh 실행 시 기존 동작 유지"
+        "src/hooks/session-start.ts: 세션 카운트 증가 + 업적 체크 + cry 재생",
+        "src/hooks/permission.ts: permission_count 증가 + 업적 체크",
+        "src/hooks/tool-fail.ts: error_count 증가 + 업적 체크",
+        "src/hooks/subagent-start.ts: 에이전트 배치 (flock 대체 방식)",
+        "src/hooks/subagent-stop.ts: 에이전트 해제",
+        "src/setup/postinstall.ts: DATA_DIR 생성 + 기존 bash 데이터 마이그레이션",
+        "src/setup/postinstall.ts: ~/.claude/hooks/tokenmon/ → DATA_DIR 복사 (state/config/session)",
+        "src/setup/postinstall.ts: 마이그레이션 전 자동 백업",
+        "bash/jq/python3 의존성 완전 제거",
+        "npx tsc --noEmit 타입체크 통과"
       ]
     }
   ]

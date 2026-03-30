@@ -1,0 +1,27 @@
+{
+  "name": "tokenmon",
+  "version": "1.0.0",
+  "description": "Gen 4 포켓몬 기반 Claude Code 경험치 플러그인",
+  "type": "module",
+  "bin": {
+    "tokenmon": "./src/cli/tokenmon.ts"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "postinstall": "./node_modules/.bin/tsx src/setup/postinstall.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "pngjs": "^7.0.0",
+    "tsx": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pngjs": "^6.0.5",
+    "typescript": "^5.5.0"
+  }
+}
