@@ -7,6 +7,7 @@
   },
   "repository": "https://github.com/ThunderConch/tokenmon",
   "keywords": ["pokemon", "gamification", "xp", "level"],
+  "skills": "./skills/",
   "statusLine": {
     "type": "command",
     "command": "\"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx\" \"${CLAUDE_PLUGIN_ROOT}/src/status-line.ts\""
