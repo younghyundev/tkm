@@ -1,6 +1,8 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "tokenmon",
+  "metadata": {
+    "description": "Gen 4 Pokemon XP gamification plugin for Claude Code"
+  },
   "owner": {
     "name": "Sangwon Lee"
   },
