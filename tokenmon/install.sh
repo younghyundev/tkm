@@ -171,6 +171,16 @@ EOF
     fi
 }
 
+# ── install /tokenmon command skill ───────────────────────────────────────────
+install_command() {
+    step "/tokenmon 슬래시 명령어 설치..."
+
+    local CMD_DIR="$CLAUDE_DIR/commands"
+    mkdir -p "$CMD_DIR"
+    cp "$SOURCE_DIR/commands/tokenmon.md" "$CMD_DIR/tokenmon.md"
+    success "/tokenmon 명령어 설치 완료"
+}
+
 # ── CLI symlink ────────────────────────────────────────────────────────────────
 install_cli() {
     step "CLI 심링크 설치..."
@@ -197,7 +207,7 @@ patch_settings() {
 
     HOOK_BASE="$INSTALL_DIR/scripts"
 
-    # Build hooks JSON
+    # Build hooks JSON (no UserPromptSubmit — /tokenmon is a command skill)
     HOOKS_JSON=$(jq -n \
         --arg session_start  "$HOOK_BASE/hook-session-start.sh" \
         --arg session_stop   "$HOOK_BASE/hook-stop.sh" \
@@ -205,7 +215,6 @@ patch_settings() {
         --arg tool_fail      "$HOOK_BASE/hook-tool-fail.sh" \
         --arg sub_start      "$HOOK_BASE/hook-subagent-start.sh" \
         --arg sub_stop       "$HOOK_BASE/hook-subagent-stop.sh" \
-        --arg cmd_hook       "$HOOK_BASE/hook-tokenmon-cmd.sh" \
         '{
             "hooks": {
                 "SessionStart": [{"hooks": [{"type": "command", "command": $session_start}]}],
@@ -213,17 +222,20 @@ patch_settings() {
                 "PermissionRequest": [{"hooks": [{"type": "command", "command": $perm}]}],
                 "PostToolUseFailure": [{"hooks": [{"type": "command", "command": $tool_fail}]}],
                 "SubagentStart": [{"hooks": [{"type": "command", "command": $sub_start}]}],
-                "SubagentStop": [{"hooks": [{"type": "command", "command": $sub_stop}]}],
-                "UserPromptSubmit": [{"hooks": [{"type": "command", "command": $cmd_hook}]}]
+                "SubagentStop": [{"hooks": [{"type": "command", "command": $sub_stop}]}]
             }
         }')
 
-    # Merge into existing settings
+    # Merge into existing settings (also remove old UserPromptSubmit tokenmon hook if present)
     MERGED=$(jq -s '
         .[0] as $existing |
         .[1].hooks as $new_hooks |
         $existing |
-        .hooks = (($existing.hooks // {}) * $new_hooks)
+        .hooks = (($existing.hooks // {}) * $new_hooks) |
+        if .hooks.UserPromptSubmit then
+            .hooks.UserPromptSubmit = [.hooks.UserPromptSubmit[] | select(.hooks[0].command | test("tokenmon") | not)]
+        else . end |
+        if .hooks.UserPromptSubmit == [] then del(.hooks.UserPromptSubmit) else . end
     ' "$SETTINGS_FILE" <(echo "$HOOKS_JSON"))
 
     # Handle statusLine: wrapper if existing, standalone if not
@@ -465,6 +477,7 @@ main() {
     copy_files
     init_data_files
     install_cli
+    install_command
     patch_settings
 
     download_sprites || warn "스프라이트 다운로드 실패 (선택 사항)"
