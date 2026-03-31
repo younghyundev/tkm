@@ -65,3 +65,14 @@ Bash 도구로 다음 명령을 실행하세요:
 
 설치 결과를 사용자에게 보여주세요. status 출력에 포켓몬이 보이면 설정 완료입니다.
 Claude Code를 재시작하면 status bar에 tokenmon이 표시됩니다.
+
+## 제거 안내
+
+설정 완료 후, 다음 안내를 사용자에게 반드시 전달하세요:
+
+> **주의**: 나중에 tokenmon을 제거할 때는 `/plugin uninstall` **전에** 반드시 다음을 먼저 실행하세요:
+> ```
+> tokenmon uninstall
+> ```
+> 이 명령이 statusLine 설정과 데이터 파일을 정리합니다.
+> 이 단계를 건너뛰면 status bar에 에러가 남을 수 있습니다.
