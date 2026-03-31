@@ -4,7 +4,7 @@ import { CONFIG_PATH } from './paths.js';
 import type { Config } from './types.js';
 
 const DEFAULT_CONFIG: Config = {
-  tokens_per_xp: 100,
+  tokens_per_xp: 10000,
   party: [],
   starter_chosen: false,
   volume: 0.5,

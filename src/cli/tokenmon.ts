@@ -233,7 +233,7 @@ function cmdConfigSet(key: string, value: string): void {
     error('사용법: tokenmon config set <키> <값>');
     console.log('');
     info('설정 가능한 키:');
-    console.log('  tokens_per_xp    - 토큰당 XP 비율 (기본: 100)');
+    console.log('  tokens_per_xp    - 토큰당 XP 비율 (기본: 10000)');
     console.log('  volume           - 소리 볼륨 0.0-1.0 (기본: 0.5)');
     console.log('  sprite_enabled   - 스프라이트 사용 true/false');
     console.log('  cry_enabled      - 울음소리 사용 true/false');

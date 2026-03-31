@@ -17,7 +17,7 @@ const DEFAULT_STATE = JSON.stringify({
 }, null, 2);
 
 const DEFAULT_CONFIG = JSON.stringify({
-  tokens_per_xp: 100,
+  tokens_per_xp: 10000,
   party: [],
   starter_chosen: false,
   volume: 0.5,
@@ -98,14 +98,15 @@ function main(): void {
   migrateFile(join(legacyDir, 'config.json'), CONFIG_PATH, DEFAULT_CONFIG);
   migrateFile(join(legacyDir, 'session.json'), SESSION_PATH, DEFAULT_SESSION);
 
-  // Migrate tokens_per_xp from old default (10) to new default (100)
+  // Migrate tokens_per_xp from old defaults to new default (10000)
   if (existsSync(CONFIG_PATH)) {
     try {
       const config = JSON.parse(readFileSync(CONFIG_PATH, 'utf-8'));
-      if (config.tokens_per_xp === 10) {
-        config.tokens_per_xp = 100;
+      if (config.tokens_per_xp === 10 || config.tokens_per_xp === 100) {
+        const oldValue = config.tokens_per_xp;
+        config.tokens_per_xp = 10000;
         writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8');
-        console.log('  ℹ tokens_per_xp 10 → 100 으로 업데이트');
+        console.log(`  ℹ tokens_per_xp ${oldValue} → 10000 으로 업데이트`);
       }
     } catch {
       // Ignore
