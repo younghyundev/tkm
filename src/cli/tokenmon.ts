@@ -80,6 +80,23 @@ function cmdStatus(): void {
   console.log(`  에러 수: ${state.error_count}`);
   console.log(`  권한 승인: ${state.permission_count}`);
   console.log(`  진화 횟수: ${state.evolution_count}`);
+  console.log(`  인카운터: ${state.encounter_count ?? 0}회`);
+  console.log(`  전투: ${state.battle_count ?? 0}회 (${state.battle_wins ?? 0}승 ${state.battle_losses ?? 0}패)`);
+  console.log(`  포획: ${state.catch_count ?? 0}종`);
+
+  // Pokedex completion
+  const pokemonDB = getPokemonDB();
+  const totalPokemon = Object.keys(pokemonDB.pokemon).length;
+  const caught = Object.values(state.pokedex ?? {}).filter((e: any) => e.caught).length;
+  console.log(`  도감: ${caught}/${totalPokemon} (${Math.round(caught / totalPokemon * 100)}%)`);
+
+  // Items
+  const retryTokens = state.items?.retry_token ?? 0;
+  if (retryTokens > 0) console.log(`  재도전권: ${retryTokens}개`);
+
+  // Region
+  const config2 = readConfig();
+  console.log(`  현재 지역: ${config2.current_region ?? '쌍둥이잎 마을'}`);
 }
 
 function cmdStarter(): void {
