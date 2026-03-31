@@ -4,24 +4,26 @@ import { existsSync } from 'fs';
 
 export const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude');
 
-// Data directory resolution: local scope > user scope
-// Local scope: {cwd}/.tokenmon/ (project-level data)
-// User scope: ~/.claude/tokenmon/ (global data)
+// Detect plugin scope from CLAUDE_PLUGIN_ROOT
+// User scope: PLUGIN_ROOT is under ~/.claude/plugins/cache/
+// Local scope: PLUGIN_ROOT is the project directory itself (has .claude-plugin/)
+function isUserScope(): boolean {
+  const root = process.env.CLAUDE_PLUGIN_ROOT ?? '';
+  return root.includes('.claude/plugins/cache') || root.includes('.claude/plugins/marketplaces');
+}
+
+// Data directory resolution by scope:
+// User scope  → ~/.claude/tokenmon/
+// Local scope → {project}/.tokenmon/ (next to .claude-plugin/)
 function resolveDataDir(): string {
-  // If CLAUDE_PLUGIN_DATA is explicitly set and points to a tokenmon path, use it
-  const envData = process.env.CLAUDE_PLUGIN_DATA;
-  if (envData && envData.includes('tokenmon')) {
-    return envData;
+  if (isUserScope()) {
+    return join(CLAUDE_DIR, 'tokenmon');
   }
 
-  // Check for local scope first (project-level .tokenmon/)
-  const localDir = join(process.cwd(), '.tokenmon');
-  if (existsSync(localDir)) {
-    return localDir;
-  }
-
-  // Fall back to user scope
-  return join(CLAUDE_DIR, 'tokenmon');
+  // Local scope: use .tokenmon/ relative to plugin root (project dir)
+  // Always return the local path — postinstall/setup will create it
+  const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT ?? join(import.meta.dirname, '..', '..');
+  return join(pluginRoot, '.tokenmon');
 }
 
 export const DATA_DIR = resolveDataDir();
