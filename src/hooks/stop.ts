@@ -1,4 +1,4 @@
-import { readFileSync, existsSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 import { readState, writeState, pruneSessionTokens } from '../core/state.js';
@@ -9,6 +9,34 @@ import { checkEvolution, applyEvolution } from '../core/evolution.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import type { HookInput, HookOutput, ExpGroup } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
+import { STATE_PATH } from '../core/paths.js';
+
+/**
+ * Simple file-based lock using exclusive creation.
+ * Returns true if lock acquired, false if already locked.
+ */
+function acquireLock(lockPath: string, timeoutMs: number = 5000): boolean {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    try {
+      writeFileSync(lockPath, String(process.pid), { flag: 'wx' });
+      return true;
+    } catch {
+      const wait = 10;
+      const end = Date.now() + wait;
+      while (Date.now() < end) { /* busy wait */ }
+    }
+  }
+  return false;
+}
+
+function releaseLock(lockPath: string): void {
+  try {
+    unlinkSync(lockPath);
+  } catch {
+    // Ignore
+  }
+}
 
 function readStdin(): string {
   try {
@@ -65,8 +93,9 @@ async function main(): Promise<void> {
   const sessionId = input.session_id ?? '';
 
   const output: HookOutput = { continue: true };
+  const lockPath = STATE_PATH + '.lock';
 
-  const state = readState();
+  // Pre-lock: read config for early exit check
   const config = readConfig();
 
   if (config.party.length === 0 || !sessionId) {
@@ -75,91 +104,105 @@ async function main(): Promise<void> {
     return;
   }
 
-  // Find and parse JSONL
+  // Pre-lock: parse JSONL (read-only, no race condition)
   const jsonlFile = findJsonlFile(sessionId);
   let totalTokens = 0;
   if (jsonlFile) {
     totalTokens = parseJsonl(jsonlFile);
   }
 
-  // Delta tracking
-  const prevSessionTokens = state.last_session_tokens[sessionId] ?? 0;
-  const deltaTokens = totalTokens - prevSessionTokens;
-
-  if (deltaTokens <= 0) {
+  // Acquire lock before reading/writing state
+  if (!acquireLock(lockPath)) {
+    // Timeout — proceed without state mutation rather than blocking hook
     playCry();
     console.log(JSON.stringify(output));
     return;
   }
 
-  // Calculate XP
-  const tokensPerXp = Math.max(1, config.tokens_per_xp);
-  const xpBonus = Math.max(config.xp_bonus_multiplier, state.xp_bonus_multiplier);
-  const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus));
-  const partySize = config.party.length;
-  const xpPerPokemon = Math.max(1, Math.floor(xpTotal / Math.max(1, partySize)));
+  try {
+    const state = readState();
 
-  const pokemonDB = getPokemonDB();
-  const messages: string[] = [];
+    // Delta tracking
+    const prevSessionTokens = state.last_session_tokens[sessionId] ?? 0;
+    const deltaTokens = totalTokens - prevSessionTokens;
 
-  for (const pokemonName of config.party) {
-    if (!pokemonName) continue;
-
-    // Ensure pokemon entry exists
-    const pData = pokemonDB.pokemon[pokemonName];
-    if (!state.pokemon[pokemonName]) {
-      state.pokemon[pokemonName] = {
-        id: pData?.id ?? 0,
-        xp: 0,
-        level: 1,
-      };
+    if (deltaTokens <= 0) {
+      playCry();
+      console.log(JSON.stringify(output));
+      return;
     }
 
-    const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
-    const currentXp = state.pokemon[pokemonName].xp;
-    const currentLevel = state.pokemon[pokemonName].level;
-    const newXp = currentXp + xpPerPokemon;
-    const newLevel = xpToLevel(newXp, expGroup);
+    // Calculate XP
+    const tokensPerXp = Math.max(1, config.tokens_per_xp);
+    const xpBonus = Math.max(config.xp_bonus_multiplier, state.xp_bonus_multiplier);
+    const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus));
+    const partySize = config.party.length;
+    const xpPerPokemon = Math.max(1, Math.floor(xpTotal / Math.max(1, partySize)));
 
-    // Update state
-    state.pokemon[pokemonName].xp = newXp;
-    state.pokemon[pokemonName].level = newLevel;
+    const pokemonDB = getPokemonDB();
+    const messages: string[] = [];
 
-    // Level-up notification
-    if (newLevel > currentLevel) {
-      messages.push(`⬆️ ${pokemonName} Lv.${currentLevel} → Lv.${newLevel}! (XP: +${xpPerPokemon})`);
-    }
+    for (const pokemonName of config.party) {
+      if (!pokemonName) continue;
 
-    // Check evolution
-    const evolution = checkEvolution(pokemonName, currentLevel, newLevel);
-    if (evolution) {
-      applyEvolution(state, config, evolution, newXp);
-      messages.push(`✨ ${pokemonName}이(가) ${evolution.newPokemon}(으)로 진화했습니다!`);
+      // Ensure pokemon entry exists
+      const pData = pokemonDB.pokemon[pokemonName];
+      if (!state.pokemon[pokemonName]) {
+        state.pokemon[pokemonName] = {
+          id: pData?.id ?? 0,
+          xp: 0,
+          level: 1,
+        };
+      }
 
-      // Check first_evolution achievement immediately
-      const achEvents = checkAchievements(state, config);
-      for (const achEvent of achEvents) {
-        messages.push(formatAchievementMessage(achEvent));
+      const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
+      const currentXp = state.pokemon[pokemonName].xp;
+      const currentLevel = state.pokemon[pokemonName].level;
+      const newXp = currentXp + xpPerPokemon;
+      const newLevel = xpToLevel(newXp, expGroup);
+
+      // Update state
+      state.pokemon[pokemonName].xp = newXp;
+      state.pokemon[pokemonName].level = newLevel;
+
+      // Level-up notification
+      if (newLevel > currentLevel) {
+        messages.push(`⬆️ ${pokemonName} Lv.${currentLevel} → Lv.${newLevel}! (XP: +${xpPerPokemon})`);
+      }
+
+      // Check evolution
+      const evolution = checkEvolution(pokemonName, currentLevel, newLevel);
+      if (evolution) {
+        applyEvolution(state, config, evolution, newXp);
+        messages.push(`✨ ${pokemonName}이(가) ${evolution.newPokemon}(으)로 진화했습니다!`);
+
+        // Check first_evolution achievement immediately
+        const achEvents = checkAchievements(state, config);
+        for (const achEvent of achEvents) {
+          messages.push(formatAchievementMessage(achEvent));
+        }
       }
     }
-  }
 
-  // Update session tokens tracking & total
-  state.last_session_tokens[sessionId] = totalTokens;
-  state.last_session_tokens = pruneSessionTokens(state.last_session_tokens);
-  state.total_tokens_consumed += deltaTokens;
+    // Update session tokens tracking & total
+    state.last_session_tokens[sessionId] = totalTokens;
+    state.last_session_tokens = pruneSessionTokens(state.last_session_tokens);
+    state.total_tokens_consumed += deltaTokens;
 
-  // Check token-based achievements
-  const achEvents = checkAchievements(state, config);
-  for (const achEvent of achEvents) {
-    messages.push(formatAchievementMessage(achEvent));
-  }
+    // Check token-based achievements
+    const achEvents = checkAchievements(state, config);
+    for (const achEvent of achEvents) {
+      messages.push(formatAchievementMessage(achEvent));
+    }
 
-  writeState(state);
-  writeConfig(config);
+    writeState(state);
+    writeConfig(config);
 
-  if (messages.length > 0) {
-    output.system_message = messages.join('\n');
+    if (messages.length > 0) {
+      output.system_message = messages.join('\n');
+    }
+  } finally {
+    releaseLock(lockPath);
   }
 
   playCry();
