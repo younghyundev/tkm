@@ -1,5 +1,5 @@
 ---
-description: Tokenmon 초기 설정 (의존성 설치 + 스타터 포켓몬 선택)
+description: Tokenmon 초기 설정 (의존성 설치 + StatusLine 통합 + 스타터 포켓몬 선택)
 ---
 Tokenmon 플러그인 초기 설정을 진행합니다. 아래 단계를 순서대로 실행하세요.
 
@@ -13,36 +13,55 @@ cd "${CLAUDE_PLUGIN_ROOT}" && npm install
 
 성공하면 Step 2로 진행하세요. 실패하면 에러를 사용자에게 보여주세요.
 
-## Step 2: 스타터 포켓몬 선택
+## Step 2: StatusLine 통합
 
-사용자에게 스타터 포켓몬을 선택하게 하세요. AskUserQuestion 도구를 사용하여 다음 3가지 중 하나를 고르게 합니다:
+다른 플러그인이 이미 StatusLine을 사용 중일 수 있으므로, 공존 처리를 자동으로 수행합니다.
 
-1. 모부기 (풀 타입) -- Turtwig
-2. 불꽃숭이 (불꽃 타입) -- Chimchar
-3. 팽도리 (물 타입) -- Piplup
-
-## Step 3: 초기화 실행
-
-사용자가 선택하면 Bash 도구로 다음 명령을 실행하세요:
+Bash 도구로 다음 명령을 실행하세요:
 
 ```
-"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" choose-starter <선택한_포켓몬_이름>
+"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/setup/setup-statusline.ts"
 ```
 
-포켓몬 이름은 한글로 전달하세요 (모부기, 불꽃숭이, 팽도리 중 하나).
+- 기존 statusLine이 없으면: tokenmon을 직접 등록합니다.
+- 기존 statusLine이 있으면: 두 출력을 합치는 래퍼 스크립트를 `~/.claude/tokenmon/status-wrapper.mjs`에 생성하고, settings.json을 업데이트합니다.
+- 이미 설정된 경우: 건너뜁니다.
 
-만약 choose-starter 서브커맨드가 없으면, 대신 postinstall을 실행하세요:
+에러가 발생하면 사용자에게 보여주세요.
 
-```
-"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/setup/postinstall.ts"
-```
+## Step 3: 스타터 포켓몬 선택
 
-그 후 상태를 확인하세요:
+스타터를 이미 선택했는지 확인하세요:
 
 ```
 "${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" status
 ```
 
-## Step 4: 완료 확인
+출력에 파티에 포켓몬이 있으면 Step 4로 이동하세요.
+
+파티가 비어있으면 AskUserQuestion 도구를 사용하여 다음 3가지 중 하나를 고르게 합니다:
+
+1. 모부기 (풀 타입) -- Turtwig
+2. 불꽃숭이 (불꽃 타입) -- Chimchar
+3. 팽도리 (물 타입) -- Piplup
+
+## Step 4: 스타터 초기화
+
+사용자가 선택하면 Bash 도구로 다음 명령을 실행하세요:
+
+```
+"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" starter <선택한_포켓몬_이름>
+```
+
+포켓몬 이름은 한글로 전달하세요 (모부기, 불꽃숭이, 팽도리 중 하나).
+
+## Step 5: 완료 확인
+
+최종 상태를 확인하세요:
+
+```
+"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" status
+```
 
 설치 결과를 사용자에게 보여주세요. status 출력에 포켓몬이 보이면 설정 완료입니다.
+Claude Code를 재시작하면 status bar에 tokenmon이 표시됩니다.
