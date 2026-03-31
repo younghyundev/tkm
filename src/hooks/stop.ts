@@ -8,6 +8,7 @@ import { levelToXp, xpToLevel } from '../core/xp.js';
 import { checkEvolution, applyEvolution } from '../core/evolution.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import type { HookInput, HookOutput, ExpGroup } from '../core/types.js';
+import { playCry } from '../audio/play-cry.js';
 
 function readStdin(): string {
   try {
@@ -69,6 +70,7 @@ async function main(): Promise<void> {
   const config = readConfig();
 
   if (config.party.length === 0 || !sessionId) {
+    playCry();
     console.log(JSON.stringify(output));
     return;
   }
@@ -85,6 +87,7 @@ async function main(): Promise<void> {
   const deltaTokens = totalTokens - prevSessionTokens;
 
   if (deltaTokens <= 0) {
+    playCry();
     console.log(JSON.stringify(output));
     return;
   }
@@ -159,6 +162,7 @@ async function main(): Promise<void> {
     output.system_message = messages.join('\n');
   }
 
+  playCry();
   console.log(JSON.stringify(output));
 }
 

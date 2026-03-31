@@ -4,6 +4,7 @@ import { SESSION_PATH } from '../core/paths.js';
 import { readSession, writeSession } from '../core/state.js';
 import { readConfig } from '../core/config.js';
 import type { HookInput, HookOutput } from '../core/types.js';
+import { playCry } from '../audio/play-cry.js';
 
 function readStdin(): string {
   try {
@@ -80,6 +81,7 @@ function main(): void {
     if (chosen) {
       session.agent_assignments.push({ agent_id: agentId, pokemon: chosen });
       writeSession(session);
+      playCry(chosen);
     }
   } finally {
     releaseLock(lockPath);

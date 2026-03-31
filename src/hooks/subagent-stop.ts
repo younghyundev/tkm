@@ -3,6 +3,7 @@ import { dirname } from 'path';
 import { SESSION_PATH } from '../core/paths.js';
 import { readSession, writeSession } from '../core/state.js';
 import type { HookInput, HookOutput } from '../core/types.js';
+import { playCry } from '../audio/play-cry.js';
 
 function readStdin(): string {
   try {
@@ -55,8 +56,12 @@ function main(): void {
 
   try {
     const session = readSession();
+    const removed = session.agent_assignments.find(a => a.agent_id === agentId);
     session.agent_assignments = session.agent_assignments.filter(a => a.agent_id !== agentId);
     writeSession(session);
+    if (removed) {
+      playCry(removed.pokemon);
+    }
   } finally {
     releaseLock(lockPath);
   }

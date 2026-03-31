@@ -5,6 +5,7 @@ import { readState, writeState } from '../core/state.js';
 import { readConfig, writeConfig } from '../core/config.js';
 import { getPokemonDB, getAchievementsDB } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
+import { playCry } from '../audio/play-cry.js';
 import type { ExpGroup } from '../core/types.js';
 
 // ANSI color helpers
@@ -129,6 +130,7 @@ function cmdStarter(): void {
     writeState(state);
 
     success(`✓ ${chosen}을(를) 선택했습니다! 모험을 시작하세요!`);
+    playCry(chosen);
   });
 }
 
