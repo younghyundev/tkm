@@ -11,7 +11,7 @@
       "name": "tokenmon",
       "source": "./",
       "description": "Gen 4 Pokemon XP gamification for Claude Code -- catch, train, and evolve Sinnoh Pokemon as you code",
-      "version": "1.2.0-rc.3",
+      "version": "1.2.0-rc.4",
       "category": "productivity",
       "tags": ["gamification", "pokemon", "xp", "level-up"],
       "keywords": ["pokemon", "gamification", "xp", "level", "sinnoh", "gen4"]
