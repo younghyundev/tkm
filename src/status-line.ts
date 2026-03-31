@@ -103,8 +103,9 @@ function main(): void {
     pokemonParts.push({ spriteLines, infoLine });
   }
 
-  // Sprite rows: group pokemon into chunks that fit ~80 chars (each sprite ~20 chars)
-  const SPRITES_PER_ROW = 3;
+  // Sprite rows: group pokemon by terminal width (each sprite ~21 chars incl. space)
+  const termWidth = process.stdout.columns || 80;
+  const SPRITES_PER_ROW = Math.max(1, Math.floor(termWidth / 21));
   for (let gi = 0; gi < pokemonParts.length; gi += SPRITES_PER_ROW) {
     const group = pokemonParts.slice(gi, gi + SPRITES_PER_ROW);
     const maxRows = Math.max(...group.map(p => p.spriteLines.length), 0);
@@ -117,8 +118,8 @@ function main(): void {
     }
   }
 
-  // Info lines: wrap at ~80 chars
-  const MAX_WIDTH = 80;
+  // Info lines: wrap at terminal width
+  const MAX_WIDTH = termWidth;
   const allParts = [...pokemonParts.map(p => p.infoLine), footer];
   let currentLine = '';
   for (const part of allParts) {
