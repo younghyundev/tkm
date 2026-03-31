@@ -9,7 +9,7 @@ export const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.cla
 // Local scope: PLUGIN_ROOT is the project directory itself (has .claude-plugin/)
 function isUserScope(): boolean {
   const root = process.env.CLAUDE_PLUGIN_ROOT ?? '';
-  return root.includes('.claude/plugins/cache') || root.includes('.claude/plugins/marketplaces');
+  return root.includes('.claude/plugins/');
 }
 
 // Data directory resolution by scope:
