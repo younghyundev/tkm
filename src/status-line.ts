@@ -74,6 +74,10 @@ function main(): void {
     parts.push(`${sprite} ${pokemonName} Lv.${level} [${bar}] ${pct}%${agentLabel}`);
   }
 
+  // Append current region
+  const regionName = config.current_region ?? '쌍둥이잎 마을';
+  parts.push(`📍${regionName}`);
+
   console.log(parts.join(' | '));
 }
 
