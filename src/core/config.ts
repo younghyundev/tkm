@@ -19,6 +19,8 @@ const DEFAULT_CONFIG: Config = {
   auto_retry_enabled: true,
   auto_retry_threshold: 0.60,
   default_dispatch: null,
+  sprite_mode: 'all',
+  info_mode: 'ace_full',
 };
 
 export function readConfig(): Config {

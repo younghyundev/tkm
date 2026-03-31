@@ -25,6 +25,33 @@ function xpBar(currentXp: number, level: number, group: ExpGroup, blocks: number
   return { bar: '█'.repeat(filled) + '░'.repeat(empty), pct };
 }
 
+function getEmoji(types: string[]): string {
+  return TYPE_EMOJI[types?.[0]] ?? '⭐';
+}
+
+function loadSprite(pokemonId: number): string[] {
+  const brailleFile = join(SPRITES_BRAILLE_DIR, `${pokemonId}.txt`);
+  const terminalFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
+  const file = existsSync(brailleFile) ? brailleFile : existsSync(terminalFile) ? terminalFile : null;
+  if (!file) return [];
+  return readFileSync(file, 'utf-8').split('\n').filter(l => l.trim().length > 0);
+}
+
+function wrapPrint(parts: string[], maxWidth: number): void {
+  let currentLine = '';
+  for (const part of parts) {
+    const test = currentLine ? currentLine + ' | ' + part : part;
+    const visibleLen = test.replace(/\x1b\[[^m]*m/g, '').length;
+    if (currentLine && visibleLen > maxWidth) {
+      console.log(currentLine);
+      currentLine = part;
+    } else {
+      currentLine = test;
+    }
+  }
+  if (currentLine) console.log(currentLine);
+}
+
 function main(): void {
   const config = readConfig();
 
@@ -41,98 +68,100 @@ function main(): void {
   const state = readState();
   const session = readSession();
   const pokemonDB = getPokemonDB();
+  const termWidth = process.stdout.columns || 80;
+  const spriteMode = config.sprite_mode ?? 'all';
+  const infoMode = config.info_mode ?? 'ace_full';
 
-  // Region + items footer
+  // Footer
   const regionName = config.current_region ?? '쌍둥이잎 마을';
   const retryTokens = state.items?.retry_token ?? 0;
   const itemInfo = retryTokens > 0 ? ` 🎫 ${retryTokens}` : '';
   const footer = `📍${regionName}${itemInfo}`;
 
-  // Sprite OFF: single line with emoji
-  if (!config.sprite_enabled) {
-    const parts: string[] = [];
-    for (const pokemonName of config.party) {
-      if (!pokemonName) continue;
-      const pData = pokemonDB.pokemon[pokemonName];
-      const level = state.pokemon[pokemonName]?.level ?? 1;
-      const currentXp = state.pokemon[pokemonName]?.xp ?? 0;
-      const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
-      const { bar, pct } = xpBar(currentXp, level, expGroup);
-      const emoji = TYPE_EMOJI[pData?.types?.[0]] ?? '⭐';
-      parts.push(`${emoji} ${pokemonName} Lv.${level} [${bar}] ${pct}%`);
-    }
-    parts.push(footer);
-    console.log(parts.join(' | '));
-    return;
-  }
-
-  // Sprite ON: multi-line braille
-  const pokemonParts: Array<{ spriteLines: string[]; infoLine: string }> = [];
+  // Build per-pokemon data
+  const pokeData: Array<{
+    name: string; level: number; xp: number; expGroup: ExpGroup;
+    pokemonId: number; types: string[]; agentLabel: string;
+  }> = [];
 
   for (const pokemonName of config.party) {
     if (!pokemonName) continue;
-
-    const level = state.pokemon[pokemonName]?.level ?? 1;
-    const currentXp = state.pokemon[pokemonName]?.xp ?? 0;
     const pData = pokemonDB.pokemon[pokemonName];
-    const pokemonId = pData?.id ?? 0;
-    const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
-
-    let spriteLines: string[] = [];
-    const brailleFile = join(SPRITES_BRAILLE_DIR, `${pokemonId}.txt`);
-    const terminalFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
-    const file = existsSync(brailleFile) ? brailleFile : existsSync(terminalFile) ? terminalFile : null;
-    if (file) {
-      const content = readFileSync(file, 'utf-8');
-      spriteLines = content.split('\n').filter(l => l.trim().length > 0);
-    }
-
-    const { bar, pct } = xpBar(currentXp, level, expGroup);
-
-    let agentLabel = '';
     const assignment = session.agent_assignments.find(a => a.pokemon === pokemonName);
-    if (assignment) {
-      agentLabel = ` @${assignment.agent_id.slice(0, 6)}`;
-    }
-
-    // First pokemon (ace): XP bar included. Others: name + level only.
-    const isAce = pokemonParts.length === 0;
-    const infoLine = isAce
-      ? `${pokemonName} Lv.${level} [${bar}] ${pct}%${agentLabel}`
-      : `${pokemonName} Lv.${level}${agentLabel}`;
-    pokemonParts.push({ spriteLines, infoLine });
+    pokeData.push({
+      name: pokemonName,
+      level: state.pokemon[pokemonName]?.level ?? 1,
+      xp: state.pokemon[pokemonName]?.xp ?? 0,
+      expGroup: pData?.exp_group ?? 'medium_fast',
+      pokemonId: pData?.id ?? 0,
+      types: pData?.types ?? [],
+      agentLabel: assignment ? ` @${assignment.agent_id.slice(0, 6)}` : '',
+    });
   }
 
-  // Sprite rows: group pokemon by terminal width (each sprite ~21 chars incl. space)
-  const termWidth = process.stdout.columns || 80;
-  const SPRITES_PER_ROW = Math.max(1, Math.floor(termWidth / 21));
-  for (let gi = 0; gi < pokemonParts.length; gi += SPRITES_PER_ROW) {
-    const group = pokemonParts.slice(gi, gi + SPRITES_PER_ROW);
-    const maxRows = Math.max(...group.map(p => p.spriteLines.length), 0);
-    for (let row = 0; row < maxRows; row++) {
-      const rowParts: string[] = [];
-      for (const p of group) {
-        rowParts.push(p.spriteLines[row] ?? '                    ');
+  // === Sprite rendering ===
+  // sprite_mode: 'all' | 'ace_only' | 'emoji_all' | 'emoji_ace'
+  const showSprites = spriteMode === 'all' || spriteMode === 'ace_only';
+
+  if (showSprites) {
+    const spriteEntries: string[][] = [];
+    for (let i = 0; i < pokeData.length; i++) {
+      const p = pokeData[i];
+      if (spriteMode === 'all' || i === 0) {
+        spriteEntries.push(loadSprite(p.pokemonId));
       }
-      console.log(rowParts.join(' '));
+    }
+
+    const spritesPerRow = Math.max(1, Math.floor(termWidth / 21));
+    for (let gi = 0; gi < spriteEntries.length; gi += spritesPerRow) {
+      const group = spriteEntries.slice(gi, gi + spritesPerRow);
+      const maxRows = Math.max(...group.map(s => s.length), 0);
+      for (let row = 0; row < maxRows; row++) {
+        console.log(group.map(s => s[row] ?? '                    ').join(' '));
+      }
     }
   }
 
-  // Info lines: wrap at terminal width
-  const MAX_WIDTH = termWidth;
-  const allParts = [...pokemonParts.map(p => p.infoLine), footer];
-  let currentLine = '';
-  for (const part of allParts) {
-    const test = currentLine ? currentLine + ' | ' + part : part;
-    const visibleLen = test.replace(/\x1b\[[^m]*m/g, '').length;
-    if (currentLine && visibleLen > MAX_WIDTH) {
-      console.log(currentLine);
-      currentLine = part;
-    } else {
-      currentLine = test;
+  // === Info line rendering ===
+  // info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level'
+  const infoParts: string[] = [];
+
+  for (let i = 0; i < pokeData.length; i++) {
+    const p = pokeData[i];
+    const isAce = i === 0;
+    const { bar, pct } = xpBar(p.xp, p.level, p.expGroup);
+    const emoji = getEmoji(p.types);
+
+    // Sprite prefix for non-sprite modes
+    const prefix = (!showSprites)
+      ? (spriteMode === 'emoji_all' || (spriteMode === 'emoji_ace' && isAce)) ? `${emoji} ` : ''
+      : '';
+
+    let info: string;
+    switch (infoMode) {
+      case 'all_full':
+        info = `${prefix}${p.name} Lv.${p.level} [${bar}] ${pct}%${p.agentLabel}`;
+        break;
+      case 'name_level':
+        info = `${prefix}${p.name} Lv.${p.level}${p.agentLabel}`;
+        break;
+      case 'ace_level':
+        info = isAce
+          ? `${prefix}${p.name} Lv.${p.level}${p.agentLabel}`
+          : `${prefix}${p.name}${p.agentLabel}`;
+        break;
+      case 'ace_full':
+      default:
+        info = isAce
+          ? `${prefix}${p.name} Lv.${p.level} [${bar}] ${pct}%${p.agentLabel}`
+          : `${prefix}${p.name} Lv.${p.level}${p.agentLabel}`;
+        break;
     }
+    infoParts.push(info);
   }
-  if (currentLine) console.log(currentLine);
+
+  infoParts.push(footer);
+  wrapPrint(infoParts, termWidth);
 }
 
 main();
