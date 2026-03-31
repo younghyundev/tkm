@@ -77,7 +77,7 @@ function main(): void {
   // Append current region + items
   const regionName = config.current_region ?? '쌍둥이잎 마을';
   const retryTokens = state.items?.retry_token ?? 0;
-  const itemInfo = retryTokens > 0 ? ` 🎫${retryTokens}` : '';
+  const itemInfo = retryTokens > 0 ? ` 🎫 ${retryTokens}` : '';
   parts.push(`📍${regionName}${itemInfo}`);
 
   console.log(parts.join(' | '));
