@@ -1,6 +1,6 @@
 {
   "name": "tokenmon",
-  "version": "1.2.0-rc.1",
+  "version": "1.2.0-rc.2",
   "description": "Gen 4 포켓몬 기반 Claude Code 경험치 플러그인",
   "type": "module",
   "bin": {
