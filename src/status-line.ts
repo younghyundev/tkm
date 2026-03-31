@@ -35,7 +35,7 @@ function main(): void {
   const session = readSession();
   const pokemonDB = getPokemonDB();
 
-  const parts: string[] = [];
+  const pokemonParts: Array<{ spriteLines: string[]; infoLine: string }> = [];
 
   for (const pokemonName of config.party) {
     if (!pokemonName) continue;
@@ -46,20 +46,12 @@ function main(): void {
     const pokemonId = pData?.id ?? 0;
     const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
 
-    // Sprite: use middle line of terminal sprite (most recognizable silhouette)
-    let sprite = '';
+    // Sprite: load terminal sprite lines
+    let spriteLines: string[] = [];
     const spriteFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
     if (config.sprite_enabled && existsSync(spriteFile)) {
       const content = readFileSync(spriteFile, 'utf-8');
-      const lines = content.split('\n').filter(l => l.trim().length > 0);
-      if (lines.length >= 3) {
-        sprite = lines[Math.floor(lines.length / 2)];
-      } else if (lines.length > 0) {
-        sprite = lines[0];
-      }
-    }
-    if (!sprite) {
-      sprite = `[${pokemonName}]`;
+      spriteLines = content.split('\n').filter(l => l.trim().length > 0);
     }
 
     const { bar, pct } = xpBar(currentXp, level, expGroup);
@@ -71,16 +63,32 @@ function main(): void {
       agentLabel = ` @${assignment.agent_id.slice(0, 6)}`;
     }
 
-    parts.push(`${sprite} ${pokemonName} Lv.${level} [${bar}] ${pct}%${agentLabel}`);
+    const infoLine = `${pokemonName} Lv.${level} [${bar}] ${pct}%${agentLabel}`;
+    pokemonParts.push({ spriteLines, infoLine });
   }
 
-  // Append current region + items
+  // Region + items
   const regionName = config.current_region ?? '쌍둥이잎 마을';
   const retryTokens = state.items?.retry_token ?? 0;
   const itemInfo = retryTokens > 0 ? ` 🎫 ${retryTokens}` : '';
-  parts.push(`📍${regionName}${itemInfo}`);
+  const footer = `📍${regionName}${itemInfo}`;
 
-  console.log(parts.join(' | '));
+  // Multi-line output: sprite rows + info line
+  // Line 1-3: sprite (top 3 lines side by side for each pokemon)
+  // Line 4: pokemon info + region
+  const maxSpriteRows = 3;
+  for (let row = 0; row < maxSpriteRows; row++) {
+    const rowParts: string[] = [];
+    for (const p of pokemonParts) {
+      rowParts.push(p.spriteLines[row] ?? '                    ');
+    }
+    console.log(rowParts.join(' '));
+  }
+
+  // Info line
+  const infoParts = pokemonParts.map(p => p.infoLine);
+  infoParts.push(footer);
+  console.log(infoParts.join(' | '));
 }
 
 main();
