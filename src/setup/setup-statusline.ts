@@ -5,7 +5,7 @@ import { CLAUDE_DIR, DATA_DIR, PLUGIN_ROOT } from '../core/paths.js';
 const SETTINGS_PATH = join(CLAUDE_DIR, 'settings.json');
 const WRAPPER_PATH = join(DATA_DIR, 'status-wrapper.mjs');
 
-const TOKENMON_CMD = `"${PLUGIN_ROOT}/node_modules/.bin/tsx" "${PLUGIN_ROOT}/src/status-line.ts"`;
+const TOKENMON_CMD = `CLAUDE_PLUGIN_DATA="${DATA_DIR}" CLAUDE_PLUGIN_ROOT="${PLUGIN_ROOT}" "${PLUGIN_ROOT}/node_modules/.bin/tsx" "${PLUGIN_ROOT}/src/status-line.ts"`;
 
 function readSettings(): Record<string, unknown> {
   try {
