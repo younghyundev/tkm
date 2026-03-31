@@ -103,14 +103,18 @@ function main(): void {
     pokemonParts.push({ spriteLines, infoLine });
   }
 
-  // Sprite rows
-  const maxRows = Math.max(...pokemonParts.map(p => p.spriteLines.length), 0);
-  for (let row = 0; row < maxRows; row++) {
-    const rowParts: string[] = [];
-    for (const p of pokemonParts) {
-      rowParts.push(p.spriteLines[row] ?? '                    ');
+  // Sprite rows: group pokemon into chunks that fit ~80 chars (each sprite ~20 chars)
+  const SPRITES_PER_ROW = 3;
+  for (let gi = 0; gi < pokemonParts.length; gi += SPRITES_PER_ROW) {
+    const group = pokemonParts.slice(gi, gi + SPRITES_PER_ROW);
+    const maxRows = Math.max(...group.map(p => p.spriteLines.length), 0);
+    for (let row = 0; row < maxRows; row++) {
+      const rowParts: string[] = [];
+      for (const p of group) {
+        rowParts.push(p.spriteLines[row] ?? '                    ');
+      }
+      console.log(rowParts.join(' '));
     }
-    console.log(rowParts.join(' '));
   }
 
   // Info lines: wrap at ~80 chars
