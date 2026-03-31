@@ -44,7 +44,7 @@ export function xpToLevel(xp: number, group: ExpGroup = 'medium_fast'): number {
   if (xp <= 0) return 1;
 
   let lo = 1;
-  let hi = 200;
+  let hi = 10000;
   while (lo < hi) {
     const mid = Math.floor((lo + hi + 1) / 2);
     if (levelToXp(mid, group) <= xp) {
