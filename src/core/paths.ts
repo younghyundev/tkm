@@ -1,9 +1,30 @@
 import { homedir } from 'os';
 import { join } from 'path';
+import { existsSync } from 'fs';
 
 export const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude');
 
-export const DATA_DIR = process.env.CLAUDE_PLUGIN_DATA ?? join(CLAUDE_DIR, 'tokenmon');
+// Data directory resolution: local scope > user scope
+// Local scope: {cwd}/.tokenmon/ (project-level data)
+// User scope: ~/.claude/tokenmon/ (global data)
+function resolveDataDir(): string {
+  // If CLAUDE_PLUGIN_DATA is explicitly set and points to a tokenmon path, use it
+  const envData = process.env.CLAUDE_PLUGIN_DATA;
+  if (envData && envData.includes('tokenmon')) {
+    return envData;
+  }
+
+  // Check for local scope first (project-level .tokenmon/)
+  const localDir = join(process.cwd(), '.tokenmon');
+  if (existsSync(localDir)) {
+    return localDir;
+  }
+
+  // Fall back to user scope
+  return join(CLAUDE_DIR, 'tokenmon');
+}
+
+export const DATA_DIR = resolveDataDir();
 export const STATE_PATH = join(DATA_DIR, 'state.json');
 export const CONFIG_PATH = join(DATA_DIR, 'config.json');
 export const SESSION_PATH = join(DATA_DIR, 'session.json');
