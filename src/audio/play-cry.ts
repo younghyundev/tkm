@@ -59,11 +59,12 @@ function playSound(filePath: string, volume: number): void {
     return;
   }
 
-  // Linux fallback chain
+  // Linux fallback chain (aplay omitted — WAV-only, no OGG support)
+  const vol = Math.floor(volume * 100);
   const players = [
-    { cmd: 'aplay', args: ['-q', filePath] },
-    { cmd: 'ffplay', args: ['-nodisp', '-autoexit', '-volume', String(Math.floor(volume * 100)), filePath] },
-    { cmd: 'mpv', args: ['--no-video', `--volume=${Math.floor(volume * 100)}`, filePath] },
+    { cmd: 'paplay', args: [`--volume=${Math.floor(volume * 65536)}`, filePath] },
+    { cmd: 'ffplay', args: ['-nodisp', '-autoexit', '-volume', String(vol), filePath] },
+    { cmd: 'mpv', args: ['--no-video', `--volume=${vol}`, filePath] },
     { cmd: 'cvlc', args: ['--intf', 'dummy', '--play-and-exit', filePath] },
   ];
 
