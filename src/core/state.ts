@@ -15,6 +15,14 @@ const DEFAULT_STATE: State = {
   last_session_id: null,
   xp_bonus_multiplier: 1.0,
   last_session_tokens: {},
+  pokedex: {},
+  encounter_count: 0,
+  catch_count: 0,
+  battle_count: 0,
+  battle_wins: 0,
+  battle_losses: 0,
+  items: {},
+  cheat_log: [],
 };
 
 const DEFAULT_SESSION: Session = {
@@ -31,14 +39,23 @@ export function readState(): State {
   const raw = readFileSync(STATE_PATH, 'utf-8');
   const parsed = JSON.parse(raw) as Partial<State>;
   // Merge with defaults to fill missing fields
-  return {
+  const result: State = {
     ...DEFAULT_STATE,
     ...parsed,
     pokemon: parsed.pokemon ?? {},
     unlocked: parsed.unlocked ?? [],
     achievements: parsed.achievements ?? {},
     last_session_tokens: parsed.last_session_tokens ?? {},
+    pokedex: parsed.pokedex ?? {},
+    items: parsed.items ?? {},
   };
+
+  // Migrate per-pokemon fields (friendship)
+  for (const entry of Object.values(result.pokemon)) {
+    if (entry.friendship === undefined) (entry as any).friendship = 0;
+  }
+
+  return result;
 }
 
 export function writeState(state: State): void {

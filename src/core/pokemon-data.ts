@@ -1,9 +1,10 @@
 import { readFileSync } from 'fs';
-import { POKEMON_JSON_PATH, ACHIEVEMENTS_JSON_PATH } from './paths.js';
-import type { PokemonDB, AchievementsDB } from './types.js';
+import { POKEMON_JSON_PATH, ACHIEVEMENTS_JSON_PATH, REGIONS_JSON_PATH } from './paths.js';
+import type { PokemonDB, AchievementsDB, RegionsDB } from './types.js';
 
 let _pokemonDB: PokemonDB | null = null;
 let _achievementsDB: AchievementsDB | null = null;
+let _regionsDB: RegionsDB | null = null;
 
 export function getPokemonDB(): PokemonDB {
   if (!_pokemonDB) {
@@ -17,4 +18,11 @@ export function getAchievementsDB(): AchievementsDB {
     _achievementsDB = JSON.parse(readFileSync(ACHIEVEMENTS_JSON_PATH, 'utf-8')) as AchievementsDB;
   }
   return _achievementsDB;
+}
+
+export function getRegionsDB(): RegionsDB {
+  if (!_regionsDB) {
+    _regionsDB = JSON.parse(readFileSync(REGIONS_JSON_PATH, 'utf-8')) as RegionsDB;
+  }
+  return _regionsDB;
 }

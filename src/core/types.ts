@@ -2,6 +2,15 @@
 
 export type ExpGroup = 'medium_fast' | 'medium_slow' | 'slow' | 'fast' | 'erratic' | 'fluctuating';
 
+export type Rarity = 'common' | 'uncommon' | 'rare' | 'legendary' | 'mythical';
+
+export interface BaseStats {
+  hp: number;
+  attack: number;
+  defense: number;
+  speed: number;
+}
+
 export interface PokemonData {
   id: number;
   name: string;
@@ -12,18 +21,54 @@ export interface PokemonData {
   evolves_condition?: string;
   unlock: string;
   exp_group: ExpGroup;
+  rarity: Rarity;
+  region: string;
+  base_stats: BaseStats;
+  catch_rate: number;
+}
+
+export interface TypeMatchup {
+  strong: string[];
+  weak: string[];
+  immune: string[];
+}
+
+export interface RarityWeights {
+  common: number;
+  uncommon: number;
+  rare: number;
+  legendary: number;
+  mythical: number;
 }
 
 export interface PokemonDB {
   pokemon: Record<string, PokemonData>;
   starters: string[];
   type_colors: Record<string, string>;
+  type_chart: Record<string, TypeMatchup>;
+  rarity_weights: RarityWeights;
+}
+
+export interface PokedexEntry {
+  seen: boolean;
+  caught: boolean;
+  first_seen: string | null;
 }
 
 export interface PokemonState {
   id: number;
   xp: number;
   level: number;
+  friendship: number;
+}
+
+export interface EvolutionContext {
+  oldLevel: number;
+  newLevel: number;
+  friendship: number;
+  currentRegion: string;
+  unlockedAchievements: string[];
+  items: Record<string, number>;
 }
 
 export interface State {
@@ -38,6 +83,14 @@ export interface State {
   last_session_id: string | null;
   xp_bonus_multiplier: number;
   last_session_tokens: Record<string, number>;
+  pokedex: Record<string, PokedexEntry>;
+  encounter_count: number;
+  catch_count: number;
+  battle_count: number;
+  battle_wins: number;
+  battle_losses: number;
+  items: Record<string, number>;
+  cheat_log: Array<{ timestamp: string; command: string }>;
 }
 
 export interface Config {
@@ -52,6 +105,10 @@ export interface Config {
   max_party_size: number;
   peon_ping_integration: boolean;
   peon_ping_port: number;
+  current_region: string;
+  auto_retry_enabled: boolean;
+  auto_retry_threshold: number;
+  default_dispatch: string | null;
 }
 
 export interface Session {
@@ -64,6 +121,7 @@ export interface Session {
 export interface AgentAssignment {
   agent_id: string;
   pokemon: string;
+  xp_multiplier: number;
 }
 
 export interface Achievement {
@@ -94,6 +152,39 @@ export interface AchievementEvent {
   name: string;
   rewardPokemon?: string;
   rewardMessage?: string;
+}
+
+export interface RegionData {
+  id: number;
+  name: string;
+  description: string;
+  level_range: [number, number];
+  pokemon_pool: string[];
+  unlock_condition: { type: string; value: number } | null;
+}
+
+export interface RegionsDB {
+  regions: Record<string, RegionData>;
+  default_region: string;
+}
+
+export interface EncounterResult {
+  pokemon: string;
+  level: number;
+  rarity: string;
+  region: string;
+  caught: boolean;
+}
+
+export interface BattleResult {
+  attacker: string;
+  defender: string;
+  defenderLevel: number;
+  winRate: number;
+  won: boolean;
+  xpReward: number;
+  caught: boolean;
+  typeMultiplier: number;
 }
 
 export interface HookInput {

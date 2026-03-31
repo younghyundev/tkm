@@ -46,13 +46,18 @@ function main(): void {
     const pokemonId = pData?.id ?? 0;
     const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
 
-    // Sprite: first line of terminal sprite file
+    // Sprite: compact 2-line terminal sprite (bottom half, most recognizable part)
     let sprite = '';
     const spriteFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
-    if (existsSync(spriteFile)) {
+    if (config.sprite_enabled && existsSync(spriteFile)) {
       const content = readFileSync(spriteFile, 'utf-8');
-      const firstLine = content.split('\n')[0];
-      if (firstLine) sprite = firstLine;
+      const lines = content.split('\n').filter(l => l.trim().length > 0);
+      // Use bottom 2 lines for compactness - usually the most detailed part
+      if (lines.length >= 2) {
+        sprite = lines[lines.length - 2];
+      } else if (lines.length === 1) {
+        sprite = lines[0];
+      }
     }
     if (!sprite) {
       sprite = `[${pokemonName}]`;

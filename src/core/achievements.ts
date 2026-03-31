@@ -1,4 +1,6 @@
 import { getPokemonDB, getAchievementsDB } from './pokemon-data.js';
+import { addItem } from './items.js';
+import { markCaught } from './pokedex.js';
 import type { State, Config, AchievementEvent } from './types.js';
 
 /**
@@ -11,7 +13,6 @@ export function checkAchievements(state: State, config: Config): AchievementEven
   const events: AchievementEvent[] = [];
 
   for (const ach of db.achievements) {
-    // Skip if already achieved
     if (state.achievements[ach.id]) continue;
 
     let triggered = false;
@@ -31,11 +32,19 @@ export function checkAchievements(state: State, config: Config): AchievementEven
       case 'permission_count':
         triggered = state.permission_count >= ach.trigger_value;
         break;
+      case 'battle_wins':
+        triggered = (state.battle_wins ?? 0) >= ach.trigger_value;
+        break;
+      case 'battle_count':
+        triggered = (state.battle_count ?? 0) >= ach.trigger_value;
+        break;
+      case 'catch_count':
+        triggered = (state.catch_count ?? 0) >= ach.trigger_value;
+        break;
     }
 
     if (!triggered) continue;
 
-    // Mark achieved
     state.achievements[ach.id] = true;
 
     const event: AchievementEvent = {
@@ -50,8 +59,9 @@ export function checkAchievements(state: State, config: Config): AchievementEven
         state.unlocked.push(rewardName);
         const pData = pokemonDB.pokemon[rewardName];
         if (pData && !state.pokemon[rewardName]) {
-          state.pokemon[rewardName] = { id: pData.id, xp: 0, level: 1 };
+          state.pokemon[rewardName] = { id: pData.id, xp: 0, level: 1, friendship: 0 };
         }
+        markCaught(state, rewardName);
         event.rewardPokemon = rewardName;
       }
     }
@@ -61,8 +71,7 @@ export function checkAchievements(state: State, config: Config): AchievementEven
       event.rewardMessage = ach.reward_message;
     }
 
-    // Apply special effects
-    applyAchievementEffects(ach.id, state, config);
+    applyAchievementEffects(ach.id, ach.reward_message, state, config);
 
     events.push(event);
   }
@@ -70,7 +79,8 @@ export function checkAchievements(state: State, config: Config): AchievementEven
   return events;
 }
 
-function applyAchievementEffects(achievementId: string, state: State, config: Config): void {
+function applyAchievementEffects(achievementId: string, rewardMessage: string | undefined, state: State, config: Config): void {
+  // Named effects
   switch (achievementId) {
     case 'ten_sessions':
       state.xp_bonus_multiplier += 0.2;
@@ -78,6 +88,26 @@ function applyAchievementEffects(achievementId: string, state: State, config: Co
     case 'permission_master':
       config.max_party_size = Math.min(7, config.max_party_size + 1);
       break;
+    case 'ten_catches':
+      state.xp_bonus_multiplier += 0.1;
+      break;
+    case 'battle_50':
+      state.xp_bonus_multiplier += 0.15;
+      break;
+    case 'evolution_10':
+      state.xp_bonus_multiplier += 0.1;
+      break;
+    case 'max_level':
+      config.max_party_size = Math.min(8, config.max_party_size + 1);
+      break;
+  }
+
+  // Parse retry token rewards from message
+  if (rewardMessage) {
+    const tokenMatch = rewardMessage.match(/재도전권 x(\d+)/);
+    if (tokenMatch) {
+      addItem(state, 'retry_token', parseInt(tokenMatch[1], 10));
+    }
   }
 }
 

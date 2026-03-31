@@ -1,11 +1,25 @@
 {
   "achievements": [
     {"id": "first_session", "name": "첫 만남", "description": "처음으로 Claude Code 세션을 시작했다", "trigger_type": "session_count", "trigger_value": 1, "reward_pokemon": "팽도리", "rarity": 1, "rarity_label": "★☆☆"},
-    {"id": "first_error", "name": "시련의 시작", "description": "처음으로 도구 실행 에러를 경험했다", "trigger_type": "error_count", "trigger_value": 1, "reward_pokemon": "새박이", "rarity": 1, "rarity_label": "★☆☆"},
+    {"id": "first_error", "name": "시련의 시작", "description": "처음으로 도구 실행 에러를 경험했다", "trigger_type": "error_count", "trigger_value": 1, "reward_pokemon": "찌르꼬", "rarity": 1, "rarity_label": "★☆☆"},
     {"id": "first_evolution", "name": "진화의 순간", "description": "포켓몬을 처음으로 진화시켰다", "trigger_type": "evolution_count", "trigger_value": 1, "reward_pokemon": "불꽃숭이", "rarity": 1, "rarity_label": "★☆☆"},
+    {"id": "first_battle_win", "name": "첫 승리", "description": "첫 번째 전투에서 승리했다", "trigger_type": "battle_wins", "trigger_value": 1, "reward_pokemon": null, "reward_message": "재도전권 x3", "rarity": 1, "rarity_label": "★☆☆"},
     {"id": "ten_sessions", "name": "단골 트레이너", "description": "총 10번의 세션을 완료했다", "trigger_type": "session_count", "trigger_value": 10, "reward_pokemon": null, "reward_message": "XP 보너스 +20% 영구 적용", "rarity": 2, "rarity_label": "★★☆"},
-    {"id": "hundred_k_tokens", "name": "토큰 십만 돌파", "description": "누적 10만 토큰 소비 달성", "trigger_type": "total_tokens", "trigger_value": 100000, "reward_pokemon": "꼬지모", "rarity": 2, "rarity_label": "★★☆"},
+    {"id": "ten_catches", "name": "초보 수집가", "description": "포켓몬 10종을 포획했다", "trigger_type": "catch_count", "trigger_value": 10, "reward_pokemon": null, "reward_message": "XP 보너스 +10%", "rarity": 2, "rarity_label": "★★☆"},
+    {"id": "hundred_k_tokens", "name": "토큰 십만 돌파", "description": "누적 10만 토큰 소비 달성", "trigger_type": "total_tokens", "trigger_value": 100000, "reward_pokemon": "꼬링크", "rarity": 2, "rarity_label": "★★☆"},
     {"id": "five_hundred_k_tokens", "name": "토큰 오십만 돌파", "description": "누적 50만 토큰 소비 달성", "trigger_type": "total_tokens", "trigger_value": 500000, "reward_pokemon": "리오르", "rarity": 3, "rarity_label": "★★★"},
-    {"id": "permission_master", "name": "신뢰받는 파트너", "description": "권한 요청을 50회 승인했다", "trigger_type": "permission_count", "trigger_value": 50, "reward_pokemon": null, "reward_message": "파티 슬롯 +1 (최대 7마리)", "rarity": 3, "rarity_label": "★★★"}
+    {"id": "permission_master", "name": "신뢰받는 파트너", "description": "권한 요청을 50회 승인했다", "trigger_type": "permission_count", "trigger_value": 50, "reward_pokemon": null, "reward_message": "파티 슬롯 +1 (최대 7마리)", "rarity": 3, "rarity_label": "★★★"},
+    {"id": "pokedex_25", "name": "도감 연구원", "description": "포켓몬 25종을 포획했다", "trigger_type": "catch_count", "trigger_value": 25, "reward_pokemon": null, "reward_message": "재도전권 x5", "rarity": 2, "rarity_label": "★★☆"},
+    {"id": "pokedex_50", "name": "도감 전문가", "description": "포켓몬 50종을 포획했다", "trigger_type": "catch_count", "trigger_value": 50, "reward_pokemon": null, "reward_message": "전설의 인카운터 개방", "rarity": 3, "rarity_label": "★★★"},
+    {"id": "pokedex_100", "name": "도감 마스터", "description": "포켓몬 100종을 포획했다", "trigger_type": "catch_count", "trigger_value": 100, "reward_pokemon": "아르세우스", "rarity": 3, "rarity_label": "★★★"},
+    {"id": "battle_50", "name": "베테랑 트레이너", "description": "전투 50회를 수행했다", "trigger_type": "battle_count", "trigger_value": 50, "reward_pokemon": null, "reward_message": "XP 보너스 +15%", "rarity": 2, "rarity_label": "★★☆"},
+    {"id": "battle_wins_25", "name": "연승의 달인", "description": "전투 25회 승리를 달성했다", "trigger_type": "battle_wins", "trigger_value": 25, "reward_pokemon": null, "reward_message": "재도전권 x10", "rarity": 2, "rarity_label": "★★☆"},
+    {"id": "one_million_tokens", "name": "토큰 백만장자", "description": "누적 100만 토큰 소비 달성", "trigger_type": "total_tokens", "trigger_value": 1000000, "reward_pokemon": "디아루가", "rarity": 3, "rarity_label": "★★★"},
+    {"id": "two_million_tokens", "name": "토큰 재벌", "description": "누적 200만 토큰 소비 달성", "trigger_type": "total_tokens", "trigger_value": 2000000, "reward_pokemon": "펄기아", "rarity": 3, "rarity_label": "★★★"},
+    {"id": "five_million_tokens", "name": "토큰의 신", "description": "누적 500만 토큰 소비 달성", "trigger_type": "total_tokens", "trigger_value": 5000000, "reward_pokemon": "기라티나", "rarity": 3, "rarity_label": "★★★"},
+    {"id": "fifty_sessions", "name": "일상의 파트너", "description": "총 50번의 세션을 완료했다", "trigger_type": "session_count", "trigger_value": 50, "reward_pokemon": null, "reward_message": "재도전권 x5", "rarity": 2, "rarity_label": "★★☆"},
+    {"id": "hundred_sessions", "name": "영원한 동반자", "description": "총 100번의 세션을 완료했다", "trigger_type": "session_count", "trigger_value": 100, "reward_pokemon": "다크라이", "rarity": 3, "rarity_label": "★★★"},
+    {"id": "evolution_10", "name": "진화의 대가", "description": "진화 10회를 달성했다", "trigger_type": "evolution_count", "trigger_value": 10, "reward_pokemon": null, "reward_message": "XP 보너스 +10%", "rarity": 2, "rarity_label": "★★☆"},
+    {"id": "error_50", "name": "불굴의 의지", "description": "에러 50회를 경험했다", "trigger_type": "error_count", "trigger_value": 50, "reward_pokemon": null, "reward_message": "재도전권 x10", "rarity": 2, "rarity_label": "★★☆"}
   ]
 }

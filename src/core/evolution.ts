@@ -1,34 +1,103 @@
 import { getPokemonDB } from './pokemon-data.js';
-import type { State, Config, EvolutionResult } from './types.js';
+import type { State, Config, EvolutionResult, EvolutionContext } from './types.js';
+
+const FRIENDSHIP_THRESHOLD = 220;
 
 /**
- * Check if a pokemon should evolve at the given new level.
- * Only triggers when crossing the evolves_at threshold (old < threshold <= new).
+ * Check if a pokemon should evolve given the current context.
+ * Supports: level, friendship, trade (achievement proxy), item, region.
  */
 export function checkEvolution(
   pokemonName: string,
-  oldLevel: number,
-  newLevel: number,
+  context: EvolutionContext,
 ): EvolutionResult | null {
   const db = getPokemonDB();
   const data = db.pokemon[pokemonName];
-  if (!data || data.evolves_at == null) return null;
+  if (!data) return null;
 
-  if (newLevel >= data.evolves_at && oldLevel < data.evolves_at) {
-    const nextStage = data.stage + 1;
-    if (nextStage < data.line.length) {
-      const nextPokemon = data.line[nextStage];
-      const nextData = db.pokemon[nextPokemon];
-      return {
-        oldPokemon: pokemonName,
-        newPokemon: nextPokemon,
-        newId: nextData?.id ?? 0,
-        level: newLevel,
-      };
-    }
+  // Find next pokemon in line
+  const nextStage = data.stage + 1;
+  if (nextStage >= data.line.length) return null;
+  const nextPokemon = data.line[nextStage];
+  const nextData = db.pokemon[nextPokemon];
+  if (!nextData) return null;
+
+  const condition = data.evolves_condition;
+
+  // Special condition evolutions
+  if (condition) {
+    const triggered = checkCondition(condition, context);
+    if (!triggered) return null;
+
+    return {
+      oldPokemon: pokemonName,
+      newPokemon: nextPokemon,
+      newId: nextData.id,
+      level: context.newLevel,
+    };
+  }
+
+  // Level-based evolution (default)
+  if (data.evolves_at == null) return null;
+  if (context.newLevel >= data.evolves_at && context.oldLevel < data.evolves_at) {
+    return {
+      oldPokemon: pokemonName,
+      newPokemon: nextPokemon,
+      newId: nextData.id,
+      level: context.newLevel,
+    };
   }
 
   return null;
+}
+
+function checkCondition(condition: string, context: EvolutionContext): boolean {
+  // String-based conditions from PokeAPI crawler
+  if (condition === 'friendship') {
+    return context.friendship >= FRIENDSHIP_THRESHOLD;
+  }
+  if (condition === 'trade') {
+    // Trade evolution via achievement proxy
+    return context.unlockedAchievements.includes('ten_sessions');
+  }
+  if (condition.startsWith('item:')) {
+    const itemName = condition.slice(5);
+    return (context.items[itemName] ?? 0) > 0;
+  }
+  if (condition.startsWith('trade_item:')) {
+    // Trade with held item - treat as achievement proxy
+    return context.unlockedAchievements.includes('ten_sessions');
+  }
+  if (condition.startsWith('held_item:')) {
+    const itemName = condition.slice(10);
+    return (context.items[itemName] ?? 0) > 0;
+  }
+  if (condition.startsWith('location:')) {
+    const location = condition.slice(9);
+    return context.currentRegion === location;
+  }
+  if (condition.startsWith('move:') || condition.startsWith('move_type:')) {
+    // Move-based evolution: trigger on level up (simplified)
+    return context.newLevel > context.oldLevel;
+  }
+  if (condition === 'special') {
+    // Generic special: trigger on level up as fallback
+    return context.newLevel > context.oldLevel;
+  }
+  return false;
+}
+
+// Friendship constants
+export const FRIENDSHIP_PER_SESSION = 2;
+export const FRIENDSHIP_PER_LEVELUP = 5;
+export const FRIENDSHIP_PER_BATTLE_WIN = 1;
+
+/**
+ * Add friendship to a pokemon in state.
+ */
+export function addFriendship(state: State, pokemonName: string, amount: number): void {
+  if (!state.pokemon[pokemonName]) return;
+  state.pokemon[pokemonName].friendship = (state.pokemon[pokemonName].friendship ?? 0) + amount;
 }
 
 /**
@@ -40,11 +109,14 @@ export function applyEvolution(
   evolution: EvolutionResult,
   currentXp: number,
 ): void {
+  const friendship = state.pokemon[evolution.oldPokemon]?.friendship ?? 0;
+
   // Add evolved pokemon to state
   state.pokemon[evolution.newPokemon] = {
     id: evolution.newId,
     xp: currentXp,
     level: evolution.level,
+    friendship,
   };
 
   // Add to unlocked if not already there

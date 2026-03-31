@@ -68,18 +68,23 @@ function main(): void {
     const session = readSession();
     const config = readConfig();
 
-    // Find first unassigned party pokemon
+    // Select dispatch pokemon: prefer default_dispatch, then first unassigned
     const assignedPokemon = new Set(session.agent_assignments.map(a => a.pokemon));
     let chosen: string | null = null;
-    for (const p of config.party) {
-      if (!assignedPokemon.has(p)) {
-        chosen = p;
-        break;
+
+    if (config.default_dispatch && config.party.includes(config.default_dispatch) && !assignedPokemon.has(config.default_dispatch)) {
+      chosen = config.default_dispatch;
+    } else {
+      for (const p of config.party) {
+        if (!assignedPokemon.has(p)) {
+          chosen = p;
+          break;
+        }
       }
     }
 
     if (chosen) {
-      session.agent_assignments.push({ agent_id: agentId, pokemon: chosen });
+      session.agent_assignments.push({ agent_id: agentId, pokemon: chosen, xp_multiplier: 1.5 });
       writeSession(session);
       playCry(chosen);
     }

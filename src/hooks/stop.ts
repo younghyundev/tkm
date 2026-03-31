@@ -5,10 +5,13 @@ import { readState, writeState, pruneSessionTokens } from '../core/state.js';
 import { readConfig, writeConfig } from '../core/config.js';
 import { getPokemonDB } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
-import { checkEvolution, applyEvolution } from '../core/evolution.js';
+import { checkEvolution, applyEvolution, addFriendship, FRIENDSHIP_PER_LEVELUP, FRIENDSHIP_PER_SESSION } from '../core/evolution.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import type { HookInput, HookOutput, ExpGroup } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
+import { playSfx } from '../audio/play-sfx.js';
+import { syncPokedexFromUnlocked } from '../core/pokedex.js';
+import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
 import { STATE_PATH } from '../core/paths.js';
 
 /**
@@ -152,6 +155,7 @@ async function main(): Promise<void> {
           id: pData?.id ?? 0,
           xp: 0,
           level: 1,
+          friendship: 0,
         };
       }
 
@@ -165,16 +169,30 @@ async function main(): Promise<void> {
       state.pokemon[pokemonName].xp = newXp;
       state.pokemon[pokemonName].level = newLevel;
 
-      // Level-up notification
+      // Friendship gain per session
+      addFriendship(state, pokemonName, FRIENDSHIP_PER_SESSION);
+
+      // Level-up notification + friendship
       if (newLevel > currentLevel) {
         messages.push(`⬆️ ${pokemonName} Lv.${currentLevel} → Lv.${newLevel}! (XP: +${xpPerPokemon})`);
+        addFriendship(state, pokemonName, FRIENDSHIP_PER_LEVELUP);
+        playSfx('levelup');
       }
 
-      // Check evolution
-      const evolution = checkEvolution(pokemonName, currentLevel, newLevel);
+      // Check evolution with context
+      const evoContext = {
+        oldLevel: currentLevel,
+        newLevel,
+        friendship: state.pokemon[pokemonName]?.friendship ?? 0,
+        currentRegion: config.current_region,
+        unlockedAchievements: Object.keys(state.achievements).filter(k => state.achievements[k]),
+        items: state.items ?? {},
+      };
+      const evolution = checkEvolution(pokemonName, evoContext);
       if (evolution) {
         applyEvolution(state, config, evolution, newXp);
         messages.push(`✨ ${pokemonName}이(가) ${evolution.newPokemon}(으)로 진화했습니다!`);
+        playSfx('gacha');
 
         // Check first_evolution achievement immediately
         const achEvents = checkAchievements(state, config);
@@ -193,6 +211,22 @@ async function main(): Promise<void> {
     const achEvents = checkAchievements(state, config);
     for (const achEvent of achEvents) {
       messages.push(formatAchievementMessage(achEvent));
+      if (achEvent.rewardPokemon) playSfx('gacha');
+    }
+
+    // Sync pokedex from unlocked pokemon
+    syncPokedexFromUnlocked(state);
+
+    // Random encounter + battle
+    const battleResult = processEncounter(state, config);
+    if (battleResult) {
+      messages.push(formatEncounterMessage(battleResult));
+      if (battleResult.won) {
+        playSfx('victory');
+        if (battleResult.caught) playSfx('gacha');
+      } else {
+        playSfx('defeat');
+      }
     }
 
     writeState(state);

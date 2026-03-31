@@ -59,9 +59,9 @@ describe('checkAchievements', () => {
 
     const ev = events.find(e => e.id === 'first_error');
     assert.ok(ev, 'first_error should trigger');
-    assert.equal(ev!.rewardPokemon, '새박이');
-    assert.ok(state.pokemon['새박이']);
-    assert.equal(state.pokemon['새박이'].id, 396);
+    assert.equal(ev!.rewardPokemon, '찌르꼬');
+    assert.ok(state.pokemon['찌르꼬']);
+    assert.equal(state.pokemon['찌르꼬'].id, 396);
   });
 
   it('first_evolution triggers at evolution_count >= 1', () => {
@@ -83,15 +83,15 @@ describe('checkAchievements', () => {
     assert.equal(state.xp_bonus_multiplier, 1.2);
   });
 
-  it('hundred_k_tokens rewards 꼬지모', () => {
+  it('hundred_k_tokens rewards 꼬링크', () => {
     const state = makeState({ total_tokens_consumed: 100000 });
     const config = makeConfig();
     const events = checkAchievements(state, config);
 
     const ev = events.find(e => e.id === 'hundred_k_tokens');
     assert.ok(ev);
-    assert.equal(ev!.rewardPokemon, '꼬지모');
-    assert.equal(state.pokemon['꼬지모'].id, 403);
+    assert.equal(ev!.rewardPokemon, '꼬링크');
+    assert.equal(state.pokemon['꼬링크'].id, 403);
   });
 
   it('five_hundred_k_tokens rewards 리오르', () => {

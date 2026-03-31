@@ -34,7 +34,7 @@ function wslPath(linuxPath: string): string {
   }
 }
 
-function playSound(filePath: string, volume: number): void {
+export function playSound(filePath: string, volume: number): void {
   if (isWSL2()) {
     const ps = findPowerShell();
     if (ps) {
