@@ -95,12 +95,12 @@ function main(): void {
       agentLabel = ` @${assignment.agent_id.slice(0, 6)}`;
     }
 
-    // First pokemon (ace): full info with XP bar. Others: name + level only.
+    // First pokemon (ace): XP bar included. Others: name + level only.
     const isAce = pokemonParts.length === 0;
     const infoLine = isAce
       ? `${pokemonName} Lv.${level} [${bar}] ${pct}%${agentLabel}`
       : `${pokemonName} Lv.${level}${agentLabel}`;
-    pokemonParts.push({ spriteLines: isAce ? spriteLines : [], infoLine });
+    pokemonParts.push({ spriteLines, infoLine });
   }
 
   // Sprite rows
