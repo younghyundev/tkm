@@ -60,6 +60,18 @@ if (prevOut && tokenmonOut) {
   writeFileSync(WRAPPER_PATH, content, 'utf-8');
 }
 
+function extractWrappedCommand(cmd: string): string | null {
+  // settings.json의 command에서 실제 래퍼 경로를 추출
+  const wrapperPath = cmd.replace(/^node\s+/, '').replace(/\$HOME/g, process.env.HOME ?? '');
+  try {
+    const wrapper = readFileSync(wrapperPath, 'utf-8');
+    const match = wrapper.match(/const prevCmd = "(.*?)";/);
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
+}
+
 function extractCommand(statusLine: unknown): string | null {
   if (!statusLine) return null;
   if (typeof statusLine === 'string') return statusLine;
@@ -80,7 +92,14 @@ function main(): void {
   }
 
   if (existingCmd && existingCmd.includes('status-wrapper.mjs')) {
-    console.log('  ✓ tokenmon 래퍼 이미 설정됨 (건너뜀)');
+    // 래퍼가 이미 설정되어 있어도 최신 버전으로 재생성
+    const wrappedCmd = extractWrappedCommand(existingCmd);
+    if (wrappedCmd) {
+      createWrapper(wrappedCmd);
+      console.log('  ✓ tokenmon 래퍼 최신 버전으로 갱신됨');
+    } else {
+      console.log('  ✓ tokenmon 래퍼 이미 설정됨 (건너뜀)');
+    }
     return;
   }
 
