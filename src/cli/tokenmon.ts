@@ -85,7 +85,6 @@ function cmdStatus(): void {
   console.log(`  포획: ${state.catch_count ?? 0}종`);
 
   // Pokedex completion
-  const pokemonDB = getPokemonDB();
   const totalPokemon = Object.keys(pokemonDB.pokemon).length;
   const caught = Object.values(state.pokedex ?? {}).filter((e: any) => e.caught).length;
   console.log(`  도감: ${caught}/${totalPokemon} (${Math.round(caught / totalPokemon * 100)}%)`);
@@ -95,8 +94,7 @@ function cmdStatus(): void {
   if (retryTokens > 0) console.log(`  재도전권: ${retryTokens}개`);
 
   // Region
-  const config2 = readConfig();
-  console.log(`  현재 지역: ${config2.current_region ?? '쌍둥이잎 마을'}`);
+  console.log(`  현재 지역: ${config.current_region ?? '쌍둥이잎 마을'}`);
 }
 
 function cmdStarter(): void {
