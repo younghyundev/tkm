@@ -39,3 +39,4 @@ export const REGIONS_JSON_PATH = join(PLUGIN_ROOT, 'data', 'regions.json');
 export const CRIES_DIR = join(PLUGIN_ROOT, 'cries');
 export const SPRITES_RAW_DIR = join(PLUGIN_ROOT, 'sprites', 'raw');
 export const SPRITES_TERMINAL_DIR = join(PLUGIN_ROOT, 'sprites', 'terminal');
+export const SPRITES_BRAILLE_DIR = join(PLUGIN_ROOT, 'sprites', 'braille');

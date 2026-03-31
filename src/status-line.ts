@@ -4,7 +4,7 @@ import { readState, readSession } from './core/state.js';
 import { readConfig } from './core/config.js';
 import { getPokemonDB } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
-import { SPRITES_TERMINAL_DIR } from './core/paths.js';
+import { SPRITES_TERMINAL_DIR, SPRITES_BRAILLE_DIR } from './core/paths.js';
 import type { ExpGroup } from './core/types.js';
 
 function xpBar(currentXp: number, level: number, group: ExpGroup, blocks: number = 6): { bar: string; pct: number } {
@@ -46,12 +46,16 @@ function main(): void {
     const pokemonId = pData?.id ?? 0;
     const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
 
-    // Sprite: load terminal sprite lines
+    // Sprite: prefer braille (higher density), fallback to half-block
     let spriteLines: string[] = [];
-    const spriteFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
-    if (config.sprite_enabled && existsSync(spriteFile)) {
-      const content = readFileSync(spriteFile, 'utf-8');
-      spriteLines = content.split('\n').filter(l => l.trim().length > 0);
+    const brailleFile = join(SPRITES_BRAILLE_DIR, `${pokemonId}.txt`);
+    const terminalFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
+    if (config.sprite_enabled) {
+      const file = existsSync(brailleFile) ? brailleFile : existsSync(terminalFile) ? terminalFile : null;
+      if (file) {
+        const content = readFileSync(file, 'utf-8');
+        spriteLines = content.split('\n').filter(l => l.trim().length > 0);
+      }
     }
 
     const { bar, pct } = xpBar(currentXp, level, expGroup);
@@ -73,11 +77,9 @@ function main(): void {
   const itemInfo = retryTokens > 0 ? ` 🎫 ${retryTokens}` : '';
   const footer = `📍${regionName}${itemInfo}`;
 
-  // Multi-line output: sprite rows + info line
-  // Line 1-3: sprite (top 3 lines side by side for each pokemon)
-  // Line 4: pokemon info + region
-  const maxSpriteRows = 3;
-  for (let row = 0; row < maxSpriteRows; row++) {
+  // Multi-line output: all non-empty sprite rows + info line
+  const maxRows = Math.max(...pokemonParts.map(p => p.spriteLines.length), 0);
+  for (let row = 0; row < maxRows; row++) {
     const rowParts: string[] = [];
     for (const p of pokemonParts) {
       rowParts.push(p.spriteLines[row] ?? '                    ');
