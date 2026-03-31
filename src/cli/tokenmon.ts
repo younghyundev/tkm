@@ -425,9 +425,21 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
 function cmdReset(confirm: boolean): void {
   if (!confirm) {
     warn('경고: 모든 데이터가 초기화됩니다! (포켓몬, 업적, 아이템 등)');
-    info('확인하려면: tokenmon reset --confirm');
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    rl.question('정말 초기화하시겠습니까? (y/N): ', (answer: string) => {
+      rl.close();
+      if (answer.toLowerCase() === 'y') {
+        doReset();
+      } else {
+        info('초기화가 취소되었습니다.');
+      }
+    });
     return;
   }
+  doReset();
+}
+
+function doReset(): void {
   const state = readState();
   const cheatLog = state.cheat_log ?? []; // preserve cheat log
   const defaultConfig = getDefaultConfig();
