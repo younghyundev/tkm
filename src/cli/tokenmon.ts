@@ -543,6 +543,8 @@ function cmdHelp(): void {
   console.log('  pokedex --region <지역> 지역별 필터');
   console.log('  pokedex --rarity <희귀> 희귀도별 필터');
   console.log('  config set <키> <값>  설정 변경');
+  console.log('  uninstall           플러그인 데이터 정리 (언인스톨)');
+  console.log('  uninstall --keep-state  state.json 보존하고 정리');
   console.log('  reset               데이터 초기화');
   console.log('  cheat <명령>        치트 명령');
   console.log('  help                이 도움말 보기');
@@ -588,6 +590,12 @@ switch (command) {
     if (args[1] === 'set') cmdConfigSet(args[2], args[3]);
     else error('사용법: tokenmon config set <키> <값>');
     break;
+  case 'uninstall': {
+    const { execSync } = await import('child_process');
+    const uninstallArgs = args.includes('--keep-state') ? ' --keep-state' : '';
+    execSync(`"${process.env.CLAUDE_PLUGIN_ROOT || '.'}/node_modules/.bin/tsx" "${process.env.CLAUDE_PLUGIN_ROOT || '.'}/scripts/uninstall.ts"${uninstallArgs}`, { stdio: 'inherit' });
+    break;
+  }
   case 'reset':
     cmdReset(args.includes('--confirm'));
     break;
