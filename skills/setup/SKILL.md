@@ -55,7 +55,39 @@ Bash 도구로 다음 명령을 실행하세요:
 
 포켓몬 이름은 한글로 전달하세요 (모부기, 불꽃숭이, 팽도리 중 하나).
 
-## Step 5: 완료 확인
+## Step 5: Status Bar 표시 설정
+
+AskUserQuestion 도구로 스프라이트 모드를 선택하게 합니다:
+
+> Status Bar에 포켓몬을 어떻게 표시할까요?
+
+선택지:
+1. 전체 스프라이트 (기본) — 파티 전원의 Braille 스프라이트 표시
+2. 대표만 스프라이트 — 에이스만 스프라이트, 나머지는 생략
+3. 전체 이모지 — 타입 이모지로 간결하게 (1줄)
+4. 대표 이모지만 — 에이스만 이모지, 나머지 생략
+
+선택에 따라 실행:
+```
+"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set sprite_mode <all|ace_only|emoji_all|emoji_ace>
+```
+
+다음으로 정보 표시 모드를 선택하게 합니다:
+
+> 포켓몬 정보를 어떻게 표시할까요?
+
+선택지:
+1. 대표 풀 정보 (기본) — 에이스: 이름/레벨/경험치바, 나머지: 이름/레벨
+2. 전체 이름/레벨만 — 경험치바 없이 간결하게
+3. 전체 풀 정보 — 모든 포켓몬에 경험치바 표시
+4. 대표 이름/레벨, 나머지 이름만 — 가장 간결
+
+선택에 따라 실행:
+```
+"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set info_mode <ace_full|name_level|all_full|ace_level>
+```
+
+## Step 6: 완료 확인
 
 최종 상태를 확인하세요:
 
