@@ -108,10 +108,21 @@ function main(): void {
     console.log(rowParts.join(' '));
   }
 
-  // Info line
-  const infoParts = pokemonParts.map(p => p.infoLine);
-  infoParts.push(footer);
-  console.log(infoParts.join(' | '));
+  // Info lines: wrap at ~80 chars
+  const MAX_WIDTH = 80;
+  const allParts = [...pokemonParts.map(p => p.infoLine), footer];
+  let currentLine = '';
+  for (const part of allParts) {
+    const test = currentLine ? currentLine + ' | ' + part : part;
+    const visibleLen = test.replace(/\x1b\[[^m]*m/g, '').length;
+    if (currentLine && visibleLen > MAX_WIDTH) {
+      console.log(currentLine);
+      currentLine = part;
+    } else {
+      currentLine = test;
+    }
+  }
+  if (currentLine) console.log(currentLine);
 }
 
 main();
