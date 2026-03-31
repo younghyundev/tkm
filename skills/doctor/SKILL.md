@@ -1,15 +1,10 @@
 ---
-description: "Tokenmon 플러그인 설치 후 검증. plugin install 완료 상태에서 npm install, CLI, 데이터, 에셋, Visual QA까지 자동 검증. /tokenmon:set-test-dir 실행 후 사용."
+description: "Tokenmon 설치 상태 진단. 의존성, StatusLine, CLI, 데이터, 에셋, 스프라이트 렌더링을 자동 검증. 문제가 있으면 원인과 해결 방법을 안내. 사용자가 'doctor', '진단', '설치 확인', '안 돼요' 등을 말할 때 사용."
 ---
 
-# Tokenmon Test Install
+# Tokenmon Doctor
 
-플러그인 설치가 완료된 환경에서 tokenmon의 전체 기능을 검증합니다.
-
-## 전제조건
-
-- `/plugin install tokenmon@tokenmon` 완료 상태
-- 클린 테스트를 원하면 소스 레포에서 `/tokenmon:set-test-dir` 먼저 실행
+tokenmon 플러그인의 설치 상태를 진단하고 문제를 찾아줍니다.
 
 ## 테스트 흐름
 
