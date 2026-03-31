@@ -23,13 +23,24 @@ function createWrapper(existingCmd: string): void {
   mkdirSync(DATA_DIR, { recursive: true });
   const content = `#!/usr/bin/env node
 import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 
 const prevCmd = ${JSON.stringify(existingCmd)};
 const tokenmonCmd = ${JSON.stringify(TOKENMON_CMD)};
 
+// Read stdin once and pass it to both commands
+let stdinData = null;
+try {
+  stdinData = readFileSync('/dev/stdin', { encoding: 'utf8' });
+} catch {
+  stdinData = null;
+}
+
 function run(cmd) {
   try {
-    return execSync(cmd, { encoding: 'utf8', timeout: 5000 }).trim();
+    const opts = { encoding: 'utf8', timeout: 5000 };
+    if (stdinData) opts.input = stdinData;
+    return execSync(cmd, opts).trim();
   } catch {
     return '';
   }
