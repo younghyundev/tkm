@@ -30,7 +30,7 @@ const DEFAULT_CONFIG = JSON.stringify({
   max_party_size: 6,
   peon_ping_integration: false,
   peon_ping_port: 19998,
-  current_region: '쌍둥이잎 마을',
+  current_region: '1',
   default_dispatch: null,
   sprite_mode: 'all',
   renderer: 'braille',

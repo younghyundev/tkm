@@ -151,6 +151,25 @@
   "cli.help.ex4": "  tokenmon config set cry_enabled false",
   "cli.unknown_command": "알 수 없는 명령어: {command}",
 
+  "cli.lock_failed": "락 획득 실패. 잠시 후 다시 시도하세요.",
+  "cli.lock_busy": "다른 프로세스가 데이터를 사용 중입니다. 잠시 후 다시 시도하세요.",
+  "cli.config.help_renderer": "  renderer             - 스프라이트 렌더러 (kitty/sixel/iterm2/braille)",
+  "cli.config.allowed_values": "{key}의 허용 값: {values}",
+  "cli.cheat.no_pokemon": "{name} 포켓몬이 없습니다.",
+  "cli.cheat.xp_added": "{name}에게 XP {amount} 추가 (총 {total})",
+  "cli.cheat.level_set": "{name} 레벨을 {level}로 설정",
+  "cli.cheat.unlocked": "{name} 잠금 해제 + 도감 등록 완료",
+  "cli.cheat.achievement_unlocked": "업적 {name} 해금",
+  "cli.cheat.item_added": "{name} x{count} 추가 (총 {total})",
+  "cli.cheat.xp_multiplier_set": "XP 배율을 {value}로 설정",
+
+  "renderer.kitty_desc": "Kitty Graphics Protocol (최고 품질, 원본 PNG)",
+  "renderer.sixel_desc": "Sixel (DEC 호환, 넓은 터미널 지원)",
+  "renderer.iterm2_desc": "iTerm2 Inline Images (macOS iTerm2/WezTerm)",
+  "renderer.braille_desc": "Braille (기존 방식, 모든 터미널 호환)",
+
+  "setup.recommended": " [추천]",
+
   "guide.index.title": "=== 토큰몬 가이드 ===",
   "guide.index.usage": "사용법: tokenmon guide <주제>",
   "guide.index.topics": "주제:",

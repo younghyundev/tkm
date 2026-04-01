@@ -157,7 +157,7 @@ function cmdStarter(): void {
     });
 
     if (lockResult === null) {
-      error('다른 프로세스가 데이터를 사용 중입니다. 잠시 후 다시 시도하세요.');
+      error(t('cli.lock_busy'));
       process.exit(1);
     }
 
@@ -189,7 +189,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         freshConfig.default_dispatch = pokemon!;
         writeConfig(freshConfig);
       });
-      if (dispatchResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
+      if (dispatchResult === null) { error(t('cli.lock_failed')); process.exit(1); }
       success(t('cli.party.dispatch_set', { pokemon }));
       break;
     }
@@ -219,7 +219,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
           writeConfig(freshConfig);
         }
       });
-      if (addResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
+      if (addResult === null) { error(t('cli.lock_failed')); process.exit(1); }
       success(t('cli.party.add_success', { pokemon }));
       break;
     }
@@ -238,7 +238,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         freshConfig.party = freshConfig.party.filter(p => p !== pokemon);
         writeConfig(freshConfig);
       });
-      if (removeResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
+      if (removeResult === null) { error(t('cli.lock_failed')); process.exit(1); }
       success(t('cli.party.remove_success', { pokemon }));
       break;
     }
@@ -305,7 +305,7 @@ function cmdConfigSet(key: string, value: string): void {
     console.log(t('cli.config.key_max_party'));
     console.log(t('cli.config.key_peon_ping'));
     console.log(t('cli.config.key_tips_enabled'));
-    console.log('  renderer             - 스프라이트 렌더러 (kitty/sixel/iterm2/braille)');
+    console.log(t('cli.config.help_renderer'));
 
     process.exit(1);
   }
@@ -328,7 +328,7 @@ function cmdConfigSet(key: string, value: string): void {
   if (key in stringEnumKeys) {
     const allowed = stringEnumKeys[key];
     if (!allowed.includes(value)) {
-      error(`${key}의 허용 값: ${allowed.join(', ')}`);
+      error(t('cli.config.allowed_values', { key, values: allowed.join(', ') }));
       process.exit(1);
     }
   }
@@ -346,7 +346,7 @@ function cmdConfigSet(key: string, value: string): void {
     }
     writeConfig(freshConfig);
   });
-  if (configResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
+  if (configResult === null) { error(t('cli.lock_failed')); process.exit(1); }
   success(t('cli.config.set_success', { key, value }));
 }
 
@@ -449,7 +449,7 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
       writeConfig(freshConfig);
       return { ok: true as const };
     });
-    if (moveResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
+    if (moveResult === null) { error(t('cli.lock_failed')); process.exit(1); }
     if (!moveResult.ok) { error(moveResult.error); process.exit(1); }
     success(t('cli.region.moved', { region: regionName }));
     return;
@@ -525,7 +525,7 @@ function doReset(): void {
     };
     writeState(defaultState);
   });
-  if (resetResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
+  if (resetResult === null) { error(t('cli.lock_failed')); process.exit(1); }
   success(t('cli.reset.done'));
 }
 
@@ -569,19 +569,19 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
     switch (subcmd) {
       case 'xp': {
         const amount = parseInt(arg2!, 10);
-        if (!state.pokemon[arg1!]) { return `${arg1} 포켓몬이 없습니다.`; }
+        if (!state.pokemon[arg1!]) { return t('cli.cheat.no_pokemon', { name: arg1 }); }
         state.pokemon[arg1!].xp += amount;
         logCheat(`xp ${arg1} ${amount}`);
         writeState(state);
-        return `${arg1}에게 XP ${amount} 추가 (총 ${state.pokemon[arg1!].xp})`;
+        return t('cli.cheat.xp_added', { name: arg1, amount, total: state.pokemon[arg1!].xp });
       }
       case 'level': {
         const level = parseInt(arg2!, 10);
-        if (!state.pokemon[arg1!]) { return `${arg1} 포켓몬이 없습니다.`; }
+        if (!state.pokemon[arg1!]) { return t('cli.cheat.no_pokemon', { name: arg1 }); }
         state.pokemon[arg1!].level = level;
         logCheat(`level ${arg1} ${level}`);
         writeState(state);
-        return `${arg1} 레벨을 ${level}로 설정`;
+        return t('cli.cheat.level_set', { name: arg1, level });
       }
       case 'unlock': {
         const pData = pokemonDB.pokemon[arg1!];
@@ -591,13 +591,13 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
         else { state.pokedex[arg1!].seen = true; state.pokedex[arg1!].caught = true; }
         logCheat(`unlock ${arg1}`);
         writeState(state);
-        return `${arg1} 잠금 해제 + 도감 등록 완료`;
+        return t('cli.cheat.unlocked', { name: arg1 });
       }
       case 'achievement': {
         state.achievements[arg1!] = true;
         logCheat(`achievement ${arg1}`);
         writeState(state);
-        return `업적 ${arg1} 해금`;
+        return t('cli.cheat.achievement_unlocked', { name: arg1 });
       }
       case 'item': {
         const count = parseInt(arg2!, 10);
@@ -605,21 +605,21 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
         state.items[arg1!] = (state.items[arg1!] ?? 0) + count;
         logCheat(`item ${arg1} ${count}`);
         writeState(state);
-        return `${arg1} x${count} 추가 (총 ${state.items[arg1!]})`;
+        return t('cli.cheat.item_added', { name: arg1, count, total: state.items[arg1!] });
       }
       case 'multiplier': {
         state.xp_bonus_multiplier = parseFloat(arg1!);
         logCheat(`multiplier ${arg1}`);
         writeState(state);
-        return `XP 배율을 ${arg1}로 설정`;
+        return t('cli.cheat.xp_multiplier_set', { value: arg1 });
       }
       default:
         return null;
     }
   });
 
-  if (cheatResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
-  if (typeof cheatResult === 'string' && cheatResult.includes('없습니다')) {
+  if (cheatResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (typeof cheatResult === 'string' && cheatResult === t('cli.cheat.no_pokemon', { name: arg1 })) {
     error(cheatResult);
   } else if (cheatResult) {
     success(cheatResult);
