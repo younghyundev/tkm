@@ -11,7 +11,7 @@
       "name": "tkm",
       "source": "./",
       "description": "Gen 4 Pokemon XP gamification for Claude Code -- catch, train, and evolve Sinnoh Pokemon as you code",
-      "version": "0.0.1",
+      "version": "0.0.2-rc.0",
       "category": "productivity",
       "tags": ["gamification", "pokemon", "xp", "level-up"],
       "keywords": ["pokemon", "gamification", "xp", "level", "sinnoh", "gen4"]

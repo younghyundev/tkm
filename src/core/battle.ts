@@ -2,6 +2,7 @@ import { getPokemonDB } from './pokemon-data.js';
 import { getRawTypeMultiplier, applyTypeDampening } from './type-chart.js';
 import { markSeen, markCaught } from './pokedex.js';
 import { rollItemDrop, shouldAutoRetry, useItem } from './items.js';
+import { levelToXp } from './xp.js';
 import type { State, Config, BattleResult } from './types.js';
 
 function sigmoid(x: number): number {
@@ -253,7 +254,9 @@ export function resolveBattle(
         state.unlocked.push(wildName);
       }
       if (!state.pokemon[wildName]) {
-        state.pokemon[wildName] = { id: wildData.id, xp: 0, level: wildLevel, friendship: 0 };
+        // XP must match level to prevent xpToLevel() from resetting level
+        const catchXp = levelToXp(wildLevel, wildData.exp_group);
+        state.pokemon[wildName] = { id: wildData.id, xp: catchXp, level: wildLevel, friendship: 0 };
       }
     }
   }
