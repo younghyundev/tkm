@@ -8,7 +8,7 @@
   },
   "plugins": [
     {
-      "name": "tokenmon",
+      "name": "tkm",
       "source": "./",
       "description": "Gen 4 Pokemon XP gamification for Claude Code -- catch, train, and evolve Sinnoh Pokemon as you code",
       "version": "0.0.1",

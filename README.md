@@ -20,7 +20,7 @@ From within a Claude Code session:
 
 ```
 /plugin marketplace add ThunderConch/tokenmon
-/plugin install tokenmon@tokenmon
+/plugin install tokenmon@tkm
 /reload-plugins
 /tkm:setup
 ```
@@ -46,7 +46,7 @@ npx tsx install-standalone.ts
 ### Uninstall
 
 ```
-/plugin uninstall tokenmon@tokenmon
+/plugin uninstall tokenmon@tkm
 ```
 
 ### Requirements

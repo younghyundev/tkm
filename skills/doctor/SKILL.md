@@ -15,7 +15,7 @@ tokenmon 플러그인의 설치 상태를 진단하고 문제를 찾아줍니다
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ 2>/dev/null | head -1)
 if [ -z "$PLUGIN_ROOT" ]; then
-  echo "FAIL: plugin cache not found. Run '/plugin install tokenmon@tokenmon' first."
+  echo "FAIL: plugin cache not found. Run '/plugin install tokenmon@tkm' first."
   exit 1
 fi
 echo "Plugin root: $PLUGIN_ROOT"
