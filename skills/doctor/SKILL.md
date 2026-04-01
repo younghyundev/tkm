@@ -1,16 +1,16 @@
 ---
-description: "Tokenmon 설치 상태 진단. 의존성, StatusLine, CLI, 데이터, 에셋, 스프라이트 렌더링을 자동 검증. 문제가 있으면 원인과 해결 방법을 안내. 사용자가 'doctor', '진단', '설치 확인', '안 돼요' 등을 말할 때 사용."
+description: "Tokenmon install diagnostics. Verify dependencies, StatusLine, CLI, data, assets, sprite rendering. Korean: doctor, 진단, 설치 확인, 안 돼요"
 ---
 
 # Tokenmon Doctor
 
-tokenmon 플러그인의 설치 상태를 진단하고 문제를 찾아줍니다.
+Diagnose the tokenmon plugin installation and find any issues.
 
-## 테스트 흐름
+## Test Flow
 
-아래 단계를 순서대로 Bash 도구로 실행하세요. 각 단계마다 PASS/FAIL을 기록합니다.
+Run each step in order using the Bash tool. Record PASS/FAIL for each step.
 
-### Step 1: 플러그인 캐시 확인
+### Step 1: Plugin Cache
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | head -1)
@@ -32,7 +32,7 @@ echo "---"
 [ -f "$PLUGIN_ROOT/bin/tsx-resolve.sh" ] && echo "PASS: npm install" || echo "FAIL: tsx not found"
 ```
 
-### Step 3: StatusLine 통합
+### Step 3: StatusLine Integration
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
@@ -44,7 +44,7 @@ console.log(d.statusLine ? 'PASS: statusLine configured' : 'FAIL: statusLine mis
 "
 ```
 
-### Step 4: CLI 명령어 검증
+### Step 4: CLI Command Verification
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
@@ -66,7 +66,7 @@ echo "---"
 [ "$PASS" -eq "$TOTAL" ] && echo "PASS: CLI commands ($PASS/$TOTAL)" || echo "FAIL: CLI commands ($PASS/$TOTAL)"
 ```
 
-### Step 5: 데이터 무결성
+### Step 5: Data Integrity
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
@@ -95,7 +95,7 @@ console.log(pass === checks.length ? 'PASS: data integrity' : 'FAIL: data integr
 "
 ```
 
-### Step 6: 에셋 파일
+### Step 6: Asset Files
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
@@ -111,14 +111,13 @@ echo "---"
 [ "$CRIES" -eq "$EXPECTED" ] && [ "$SPRITES" -eq "$EXPECTED" ] && [ "$SFX" -ge 1 ] && echo "PASS: assets" || echo "FAIL: assets"
 ```
 
-### Step 7: 스타터 & 파티 확인 (읽기 전용)
+### Step 7: Starter & Party Check (read-only)
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 TSX="$PLUGIN_ROOT/bin/tsx-resolve.sh"
 CLI="$PLUGIN_ROOT/src/cli/tokenmon.ts"
 
-# config.json 경로: user scope → ~/.claude/tokenmon/config.json
 CONFIG_FILE=~/.claude/tokenmon/config.json
 if [ ! -f "$CONFIG_FILE" ]; then
   echo "FAIL: config not found at $CONFIG_FILE"
@@ -133,7 +132,6 @@ else
   fi
 fi
 echo "---"
-# status 확인 (읽기 전용 — 데이터를 수정하지 않음)
 OUTPUT=$("$TSX" "$CLI" status 2>&1)
 echo "$OUTPUT"
 echo "---"
@@ -142,7 +140,7 @@ echo "$OUTPUT" | grep -qE "Lv\." && echo "PASS: party has pokemon" || echo "FAIL
 
 ### Step 8: Visual QA
 
-각 CLI 출력을 렌더링하고 시각적으로 확인합니다.
+Render and visually verify CLI output.
 
 **8a. Status Line**
 
@@ -151,25 +149,25 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 "$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/status-line.ts" 2>&1
 ```
 
-확인: 스프라이트 ANSI art + 포켓몬 이름 + 레벨 + XP바 표시
+Check: sprite ANSI art + Pokémon name + level + XP bar
 
-**8b. Pokedex 목록**
+**8b. Pokédex List**
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 "$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/cli/tokenmon.ts" pokedex 2>&1 | head -20
 ```
 
-확인: 상태 아이콘(●/◐/○), 타입 컬러, 포켓몬 번호 정렬
+Check: status icons (●/◐/○), type colors, Pokémon number alignment
 
-**8c. Pokedex 상세**
+**8c. Pokédex Detail**
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
-"$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/cli/tokenmon.ts" pokedex 모부기 2>&1
+"$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/cli/tokenmon.ts" pokedex Turtwig 2>&1
 ```
 
-확인: 타입, 스탯, 진화 라인, 희귀도, 포획 상태
+Check: type, stats, evolution line, rarity, catch status
 
 **8d. Region List**
 
@@ -178,9 +176,9 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 "$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/cli/tokenmon.ts" region list 2>&1
 ```
 
-확인: 9개 지역, 잠금/해제(●/○), 현재 위치(← 현재)
+Check: 9 regions, lock/unlock (●/○), current location marker
 
-**8e. 스프라이트 샘플 (5종)**
+**8e. Sprite Samples (5)**
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
@@ -191,30 +189,30 @@ for id in 387 393 448 483 493; do
 done
 ```
 
-확인: ANSI 반블록 아트가 포켓몬 실루엣으로 렌더링, 색상 정상
+Check: ANSI half-block art renders as Pokémon silhouette with correct colors
 
-**Visual Verdict**: `/oh-my-claudecode:visual-verdict` 스킬이 있으면 스크린샷 기반 리뷰 실행. 없으면 위 출력을 사용자에게 보여주고 육안 확인 요청.
+**Visual Verdict**: Run `/oh-my-claudecode:visual-verdict` if available. Otherwise show output to user for visual confirmation.
 
-성공 기준: 깨진 렌더링 없음
+Success criteria: no broken rendering
 
-### Step 9: 결과 보고
+### Step 9: Report
 
-모든 단계의 결과를 집계하여 보고하세요:
+Summarize all results:
 
 ```
-=== Tokenmon Test Install Report ===
-Step 1: 플러그인 캐시       [PASS/FAIL]
+=== Tokenmon Install Report ===
+Step 1: Plugin cache        [PASS/FAIL]
 Step 2: npm install         [PASS/FAIL]
-Step 3: StatusLine 통합     [PASS/FAIL]
-Step 4: CLI 명령어          [PASS/FAIL]
-Step 5: 데이터 무결성       [PASS/FAIL]
-Step 6: 에셋 파일           [PASS/FAIL]
-Step 7: 스타터 선택         [PASS/FAIL]
+Step 3: StatusLine          [PASS/FAIL]
+Step 4: CLI commands        [PASS/FAIL]
+Step 5: Data integrity      [PASS/FAIL]
+Step 6: Assets              [PASS/FAIL]
+Step 7: Starter             [PASS/FAIL]
 Step 8: Visual QA           [PASS/FAIL]
-=================================
+==============================
 Result: X/8 PASS
 ```
 
-## 옵션
+## Options
 
-- `--skip-visual`: Step 8 Visual QA 건너뛰기
+- `--skip-visual`: Skip Step 8 Visual QA

@@ -1,39 +1,39 @@
 ---
-description: "Tokenmon CLI. 상태 확인, 파티, 도감, 지역, 아이템, 업적 등 모든 tokenmon 명령 실행. 'tokenmon', '포켓몬', '파티', '도감' 등을 말할 때 사용."
+description: "Tokenmon CLI. status, party, pokedex, region, items, achievements. Korean: 상태 확인, 파티, 도감, 지역, 아이템, 업적, 포켓몬, tokenmon"
 ---
 
-사용자가 Tokenmon 명령을 실행하려고 합니다.
+Run a Tokenmon CLI command for the user.
 
-## 실행
+## Execute
 
-Bash 도구로 다음을 실행하고 결과를 보여주세요:
+Run with the Bash tool and show the result:
 
 ```
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" $ARGUMENTS
 ```
 
-`$ARGUMENTS`가 비어있으면 `status`를 기본값으로 사용하세요.
-`$ARGUMENTS`가 `--help` 또는 `-h`이면 `help`를 실행하세요.
+If `$ARGUMENTS` is empty, default to `status`.
+If `$ARGUMENTS` is `--help` or `-h`, run `help`.
 
-## 사용 가능한 명령어
+## Available Commands
 
-| 명령 | 설명 |
-|------|------|
-| `status` | 파티와 통계 보기 |
-| `starter` | 스타터 포켓몬 선택 |
-| `party` | 파티 보기 |
-| `party add <이름>` | 파티에 포켓몬 추가 |
-| `party remove <이름>` | 파티에서 제거 |
-| `party dispatch <이름>` | 서브에이전트 디스패치 설정 (1.5x XP) |
-| `unlock list` | 잠금해제된 포켓몬 목록 |
-| `pokedex` | 도감 보기 (--type/--region/--rarity 필터) |
-| `pokedex <이름>` | 포켓몬 상세 정보 |
-| `region` | 현재 지역 보기 |
-| `region list` | 전체 지역 목록 |
-| `region move <지역>` | 지역 이동 |
-| `items` | 아이템 목록 |
-| `achievements` | 업적 목록 |
-| `config set <키> <값>` | 설정 변경 (예: `config set language en`) |
+| Command | Description |
+|---------|-------------|
+| `status` | Show party and stats |
+| `starter` | Choose starter Pokémon |
+| `party` | View current party |
+| `party add <name>` | Add Pokémon to party |
+| `party remove <name>` | Remove Pokémon from party |
+| `party dispatch <name>` | Set subagent dispatch Pokémon (1.5x XP) |
+| `unlock list` | List unlocked Pokémon |
+| `pokedex` | Browse Pokédex (--type/--region/--rarity filters) |
+| `pokedex <name>` | Show Pokémon details |
+| `region` | Show current region |
+| `region list` | List all regions |
+| `region move <region>` | Move to a region |
+| `items` | Show items |
+| `achievements` | Show achievements |
+| `config set <key> <value>` | Change config (e.g. `config set language en`) |
 | `config set language en` | Switch to English mode |
-| `config set language ko` | 한국어 모드로 전환 |
-| `help` | 전체 도움말 |
+| `config set language ko` | Switch to Korean mode (한국어 모드) |
+| `help` | Show full help |

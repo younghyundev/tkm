@@ -1,152 +1,139 @@
 ---
-description: Tokenmon 초기 설정 (의존성 설치 + StatusLine 통합 + 스타터 포켓몬 선택)
+description: "Tokenmon initial setup. Install dependencies, StatusLine integration, starter Pokémon selection. Korean: 초기 설정, 설치, 시작, tokenmon"
 ---
-Tokenmon 플러그인 초기 설정을 진행합니다. 아래 단계를 순서대로 실행하세요.
 
-## Step 0: 환경 검증
+Run Tokenmon plugin initial setup in order.
 
-Bash 도구로 다음 명령을 실행하세요:
+## Step 0: Verify Environment
 
 ```
 echo "CLAUDE_PLUGIN_ROOT=${CLAUDE_PLUGIN_ROOT}" && test -n "${CLAUDE_PLUGIN_ROOT}" && test -f "${CLAUDE_PLUGIN_ROOT}/package.json" && echo "OK" || echo "FAIL"
 ```
 
-- `OK`가 나오면 Step 1로 진행하세요.
-- `FAIL`이 나오면 사용자에게 다음을 안내하세요:
-  > `CLAUDE_PLUGIN_ROOT`가 설정되지 않았거나 경로에 package.json이 없습니다. 이 skill은 Claude Code 플러그인 환경에서만 실행할 수 있습니다.
+- `OK` → proceed to Step 1.
+- `FAIL` → inform the user:
+  > `CLAUDE_PLUGIN_ROOT` is not set or package.json not found. This skill can only run in a Claude Code plugin environment.
 
-## Step 1: 의존성 설치
-
-Bash 도구로 다음 명령을 실행하세요:
+## Step 1: Install Dependencies
 
 ```
 cd "${CLAUDE_PLUGIN_ROOT}" && npm install
 ```
 
-성공하면 Step 2로 진행하세요. 실패하면 에러를 사용자에게 보여주세요.
+On success proceed to Step 2. On failure show the error.
 
-## Step 2: StatusLine 통합
+## Step 2: StatusLine Integration
 
-다른 플러그인이 이미 StatusLine을 사용 중일 수 있으므로, 공존 처리를 자동으로 수행합니다.
-
-Bash 도구로 다음 명령을 실행하세요:
+Handles coexistence with other plugins that may already use StatusLine.
 
 ```
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/setup/setup-statusline.ts"
 ```
 
-- 기존 statusLine이 없으면: tokenmon을 직접 등록합니다.
-- 기존 statusLine이 있으면: 두 출력을 합치는 래퍼 스크립트를 `~/.claude/tokenmon/status-wrapper.mjs`에 생성하고, settings.json을 업데이트합니다.
-- 이미 설정된 경우: 건너뜁니다.
+- No existing statusLine: registers tokenmon directly.
+- Existing statusLine found: creates a wrapper at `~/.claude/tokenmon/status-wrapper.mjs` and updates settings.json.
+- Already configured: skips.
 
-에러가 발생하면 사용자에게 보여주세요.
+Show any errors to the user.
 
-## Step 3: 스타터 포켓몬 선택
-
-스타터를 이미 선택했는지 확인하세요:
+## Step 3: Check for Starter Pokémon
 
 ```
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" status
 ```
 
-출력에 파티에 포켓몬이 있으면 Step 4로 이동하세요.
+If the party already has a Pokémon, skip to Step 4.
 
-파티가 비어있으면 AskUserQuestion 도구를 사용하여 다음 3가지 중 하나를 고르게 합니다:
+Otherwise use AskUserQuestion to let the user choose one of 3 starters:
 
-1. 모부기 (풀 타입) -- Turtwig
-2. 불꽃숭이 (불꽃 타입) -- Chimchar
-3. 팽도리 (물 타입) -- Piplup
+1. Turtwig (Grass) — 모부기
+2. Chimchar (Fire) — 불꽃숭이
+3. Piplup (Water) — 팽도리
 
-## Step 4: 스타터 초기화
-
-사용자가 선택하면 Bash 도구로 다음 명령을 실행하세요:
+## Step 4: Initialize Starter
 
 ```
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" starter <선택한_포켓몬_이름>
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" starter <pokemon_name>
 ```
 
-포켓몬 이름은 한글로 전달하세요 (모부기, 불꽃숭이, 팽도리 중 하나).
+Pass the Pokémon name in the user's chosen language (e.g. `Turtwig` or `모부기`).
 
-## Step 4.5: 렌더러 선택 (Renderer)
+## Step 4.5: Renderer Selection
 
-터미널 환경을 감지하여 사용 가능한 렌더러를 확인합니다:
+Detect available renderers:
 
 ```
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/setup/detect-and-list-renderers.ts"
 ```
 
-출력 예시:
+Example output:
 ```
-1. [추천] Kitty Graphics Protocol (최고 품질, 원본 PNG) (kitty)
-2. Braille (기존 방식, 모든 터미널 호환) (braille)
+1. [Recommended] Kitty Graphics Protocol (best quality, native PNG) (kitty)
+2. Braille (classic, compatible with all terminals) (braille)
 ```
 
-AskUserQuestion 도구로 렌더러를 선택하게 합니다:
+Use AskUserQuestion:
 
-> 포켓몬 스프라이트를 어떤 방식으로 렌더링할까요?
+> How would you like to render Pokémon sprites?
 
-선택에 따라 실행:
+Then run:
 ```
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set renderer <kitty|sixel|iterm2|braille>
 ```
 
-선택한 렌더러가 `braille`이 아니면, 해당 스프라이트를 사전 생성합니다:
+If the selected renderer is not `braille`, pre-generate sprites:
 ```
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/scripts/generate-png-sprites.ts" --renderer <선택값>
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/scripts/generate-png-sprites.ts" --renderer <selected>
 ```
 
-이미 해당 스프라이트가 존재하거나 `braille`을 선택한 경우 생성 단계를 건너뜁니다.
+Skip generation if sprites already exist or `braille` was selected.
 
-## Step 5: Status Bar 표시 설정
+## Step 5: Status Bar Display Settings
 
-AskUserQuestion 도구로 스프라이트 모드를 선택하게 합니다:
+Use AskUserQuestion for sprite mode:
 
-> Status Bar에 포켓몬을 어떻게 표시할까요?
+> How would you like to display Pokémon in the Status Bar?
 
-선택지:
-1. 전체 스프라이트 (기본) — 파티 전원의 Braille 스프라이트 표시
-2. 대표만 스프라이트 — 에이스만 스프라이트, 나머지는 생략
-3. 전체 이모지 — 타입 이모지로 간결하게 (1줄)
-4. 대표 이모지만 — 에이스만 이모지, 나머지 생략
+Options:
+1. All sprites (default) — Braille sprite for every party member
+2. Ace only sprite — sprite for ace only, others omitted
+3. All emoji — compact type emoji (1 line)
+4. Ace emoji only — emoji for ace only
 
-선택에 따라 실행:
 ```
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set sprite_mode <all|ace_only|emoji_all|emoji_ace>
 ```
 
-다음으로 정보 표시 모드를 선택하게 합니다:
+Then use AskUserQuestion for info mode:
 
-> 포켓몬 정보를 어떻게 표시할까요?
+> How would you like to display Pokémon info?
 
-선택지:
-1. 대표 풀 정보 (기본) — 에이스: 이름/레벨/경험치바, 나머지: 이름/레벨
-2. 전체 이름/레벨만 — 경험치바 없이 간결하게
-3. 전체 풀 정보 — 모든 포켓몬에 경험치바 표시
-4. 대표 이름/레벨, 나머지 이름만 — 가장 간결
+Options:
+1. Ace full info (default) — ace: name/level/XP bar, others: name/level
+2. All name/level only — compact, no XP bar
+3. All full info — XP bar for every Pokémon
+4. Ace level, others name only — most compact
 
-선택에 따라 실행:
 ```
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set info_mode <ace_full|name_level|all_full|ace_level>
 ```
 
-## Step 6: 완료 확인
-
-최종 상태를 확인하세요:
+## Step 6: Confirm Setup
 
 ```
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" status
 ```
 
-설치 결과를 사용자에게 보여주세요. status 출력에 포켓몬이 보이면 설정 완료입니다.
-Claude Code를 재시작하면 status bar에 tokenmon이 표시됩니다.
+Show the result to the user. If a Pokémon appears in the party, setup is complete.
+Restart Claude Code to see tokenmon in the status bar.
 
-## 제거 안내
+## Uninstall Notice
 
-설정 완료 후, 다음 안내를 사용자에게 반드시 전달하세요:
+Always inform the user after setup:
 
-> **주의**: 나중에 tokenmon을 제거할 때는 `/plugin uninstall` **전에** 반드시 다음을 먼저 실행하세요:
+> **Note**: Before removing tokenmon later, run this first:
 > ```
 > /tkm:uninstall
 > ```
-> 이 명령이 statusLine 설정과 데이터 파일을 정리합니다.
-> 이 단계를 건너뛰면 status bar에 에러가 남을 수 있습니다.
+> This cleans up statusLine config and data files.
+> Skipping this step may leave errors in the status bar.
