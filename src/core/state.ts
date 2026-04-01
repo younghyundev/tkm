@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from 'fs';
-import { dirname } from 'path';
-import { STATE_PATH, SESSION_PATH } from './paths.js';
-import type { State, Session } from './types.js';
+import { dirname, join } from 'path';
+import { STATE_PATH, SESSION_PATH, I18N_DATA_DIR } from './paths.js';
+import type { State, Session, PokemonState, PokedexEntry } from './types.js';
 
 const DEFAULT_STATE: State = {
   pokemon: {},
@@ -64,7 +64,88 @@ export function readState(): State {
     delete result.items.retry_token;
   }
 
+  // Migrate Korean name keys -> ID keys
+  migrateNameToId(result);
+
   return result;
+}
+
+function migrateNameToId(state: State): State {
+  // Skip if already migrated
+  if (state.state_version && state.state_version >= 2) return state;
+
+  // Build Korean name -> ID map from data/i18n/ko.json
+  const koI18nPath = join(I18N_DATA_DIR, 'ko.json');
+  if (!existsSync(koI18nPath)) {
+    state.state_version = 2;
+    return state;
+  }
+
+  let koData: { pokemon: Record<string, string>; regions: Record<string, { name: string }> };
+  try {
+    koData = JSON.parse(readFileSync(koI18nPath, 'utf-8'));
+  } catch {
+    state.state_version = 2;
+    return state;
+  }
+
+  const nameToId: Record<string, string> = {};
+  for (const [id, name] of Object.entries(koData.pokemon)) {
+    nameToId[name] = id;
+  }
+
+  const regionNameToId: Record<string, string> = {};
+  for (const [id, region] of Object.entries(koData.regions)) {
+    regionNameToId[region.name] = id;
+  }
+
+  // Check if migration is needed (any key in state.pokemon is a Korean name)
+  const pokemonKeys = Object.keys(state.pokemon);
+
+  if (pokemonKeys.length === 0) {
+    state.state_version = 2;
+    return state;
+  }
+
+  const needsMigration = pokemonKeys.some(k => nameToId[k] !== undefined);
+
+  if (!needsMigration) {
+    // Already ID-based
+    state.state_version = 2;
+    return state;
+  }
+
+  // Create backup (best-effort)
+  try {
+    if (existsSync(STATE_PATH)) {
+      const backupPath = STATE_PATH + '.bak';
+      writeFileSync(backupPath, readFileSync(STATE_PATH, 'utf-8'), 'utf-8');
+    }
+  } catch { /* backup is best-effort */ }
+
+  // Migrate state.pokemon keys
+  const newPokemon: Record<string, PokemonState> = {};
+  for (const [key, value] of Object.entries(state.pokemon)) {
+    const id = nameToId[key] ?? key;
+    newPokemon[id] = value;
+  }
+  state.pokemon = newPokemon;
+
+  // Migrate state.unlocked (deduplicate)
+  state.unlocked = [...new Set(
+    state.unlocked.map(name => nameToId[name] ?? name)
+  )];
+
+  // Migrate state.pokedex keys
+  const newPokedex: Record<string, PokedexEntry> = {};
+  for (const [key, value] of Object.entries(state.pokedex)) {
+    const id = nameToId[key] ?? key;
+    newPokedex[id] = value;
+  }
+  state.pokedex = newPokedex;
+
+  state.state_version = 2;
+  return state;
 }
 
 export function writeState(state: State): void {

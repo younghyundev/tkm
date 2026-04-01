@@ -3,6 +3,7 @@ import { readState, writeState, readSession, writeSession } from '../core/state.
 import { readConfig } from '../core/config.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { playCry } from '../audio/play-cry.js';
+import { initLocale } from '../i18n/index.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 
 function readStdin(): string {
@@ -20,6 +21,7 @@ function main(): void {
 
   const state = readState();
   const config = readConfig();
+  initLocale(config.language ?? 'ko');
 
   // Reset session.json for new session
   writeSession({

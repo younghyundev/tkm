@@ -7,46 +7,46 @@ import type { EvolutionContext } from '../src/core/types.js';
 function makeCtx(overrides: Partial<EvolutionContext> = {}): EvolutionContext {
   return {
     oldLevel: 10, newLevel: 11, friendship: 0,
-    currentRegion: '쌍둥이잎 마을',
+    currentRegion: '1',
     unlockedAchievements: [], items: {},
     ...overrides,
   };
 }
 
 describe('checkEvolution', () => {
-  it('모부기 evolves at Lv.18', () => {
-    const result = checkEvolution('모부기', makeCtx({ oldLevel: 17, newLevel: 18 }));
+  it('387 evolves at Lv.18', () => {
+    const result = checkEvolution('387', makeCtx({ oldLevel: 17, newLevel: 18 }));
     assert.notEqual(result, null);
-    assert.equal(result!.oldPokemon, '모부기');
-    assert.equal(result!.newPokemon, '수풀부기');
+    assert.equal(result!.oldPokemon, '387');
+    assert.equal(result!.newPokemon, '388');
     assert.equal(result!.newId, 388);
   });
 
   it('does not evolve below threshold', () => {
-    assert.equal(checkEvolution('모부기', makeCtx({ oldLevel: 15, newLevel: 17 })), null);
+    assert.equal(checkEvolution('387', makeCtx({ oldLevel: 15, newLevel: 17 })), null);
   });
 
   it('does not evolve if already past threshold', () => {
-    assert.equal(checkEvolution('모부기', makeCtx({ oldLevel: 18, newLevel: 20 })), null);
+    assert.equal(checkEvolution('387', makeCtx({ oldLevel: 18, newLevel: 20 })), null);
   });
 
-  it('불꽃숭이 evolves at Lv.14', () => {
-    const result = checkEvolution('불꽃숭이', makeCtx({ oldLevel: 13, newLevel: 14 }));
+  it('390 evolves at Lv.14', () => {
+    const result = checkEvolution('390', makeCtx({ oldLevel: 13, newLevel: 14 }));
     assert.notEqual(result, null);
-    assert.equal(result!.newPokemon, '파이숭이');
+    assert.equal(result!.newPokemon, '391');
   });
 
-  it('토대부기 (final stage) does not evolve', () => {
-    assert.equal(checkEvolution('토대부기', makeCtx({ oldLevel: 50, newLevel: 51 })), null);
+  it('389 (final stage) does not evolve', () => {
+    assert.equal(checkEvolution('389', makeCtx({ oldLevel: 50, newLevel: 51 })), null);
   });
 
-  it('리오르 evolves via friendship at threshold 220', () => {
+  it('447 evolves via friendship at threshold 220', () => {
     // Below threshold
-    assert.equal(checkEvolution('리오르', makeCtx({ friendship: 219 })), null);
+    assert.equal(checkEvolution('447', makeCtx({ friendship: 219 })), null);
     // At threshold
-    const result = checkEvolution('리오르', makeCtx({ friendship: 220 }));
+    const result = checkEvolution('447', makeCtx({ friendship: 220 }));
     assert.notEqual(result, null);
-    assert.equal(result!.newPokemon, '루카리오');
+    assert.equal(result!.newPokemon, '448');
   });
 
   it('unknown pokemon returns null', () => {
@@ -57,64 +57,64 @@ describe('checkEvolution', () => {
 describe('addFriendship', () => {
   it('increments friendship', () => {
     const state = makeState({
-      pokemon: { '리오르': { id: 447, xp: 0, level: 1, friendship: 100, ev: 0 } },
+      pokemon: { '447': { id: 447, xp: 0, level: 1, friendship: 100, ev: 0 } },
     });
-    addFriendship(state, '리오르', 5);
-    assert.equal(state.pokemon['리오르'].friendship, 105);
+    addFriendship(state, '447', 5);
+    assert.equal(state.pokemon['447'].friendship, 105);
   });
 
   it('handles missing friendship field (migration)', () => {
     const state = makeState({
-      pokemon: { '모부기': { id: 387, xp: 0, level: 1, friendship: 0, ev: 0 } },
+      pokemon: { '387': { id: 387, xp: 0, level: 1, friendship: 0, ev: 0 } },
     });
-    addFriendship(state, '모부기', 2);
-    assert.equal(state.pokemon['모부기'].friendship, 2);
+    addFriendship(state, '387', 2);
+    assert.equal(state.pokemon['387'].friendship, 2);
   });
 });
 
 describe('applyEvolution', () => {
   it('updates state and config correctly', () => {
     const state = makeState({
-      pokemon: { '모부기': { id: 387, xp: 5000, level: 18, friendship: 50, ev: 0 } },
-      unlocked: ['모부기'],
+      pokemon: { '387': { id: 387, xp: 5000, level: 18, friendship: 50, ev: 0 } },
+      unlocked: ['387'],
     });
-    const config = makeConfig({ party: ['모부기'] });
+    const config = makeConfig({ party: ['387'] });
 
-    const evolution = checkEvolution('모부기', makeCtx({ oldLevel: 17, newLevel: 18 }))!;
+    const evolution = checkEvolution('387', makeCtx({ oldLevel: 17, newLevel: 18 }))!;
     applyEvolution(state, config, evolution, 5000);
 
-    assert.equal(state.pokemon['수풀부기'].id, 388);
-    assert.equal(state.pokemon['수풀부기'].xp, 5000);
-    assert.equal(state.pokemon['수풀부기'].level, 18);
-    assert.equal(state.pokemon['수풀부기'].friendship, 50); // friendship carried over
-    assert.ok(state.unlocked.includes('수풀부기'));
+    assert.equal(state.pokemon['388'].id, 388);
+    assert.equal(state.pokemon['388'].xp, 5000);
+    assert.equal(state.pokemon['388'].level, 18);
+    assert.equal(state.pokemon['388'].friendship, 50); // friendship carried over
+    assert.ok(state.unlocked.includes('388'));
     assert.equal(state.evolution_count, 1);
-    assert.deepEqual(config.party, ['수풀부기']);
+    assert.deepEqual(config.party, ['388']);
   });
 
   it('evolution preserves EV', () => {
     const state = makeState({
-      pokemon: { '모부기': { id: 387, xp: 5000, level: 18, friendship: 50, ev: 100 } },
-      unlocked: ['모부기'],
+      pokemon: { '387': { id: 387, xp: 5000, level: 18, friendship: 50, ev: 100 } },
+      unlocked: ['387'],
     });
-    const config = makeConfig({ party: ['모부기'] });
+    const config = makeConfig({ party: ['387'] });
 
-    const evolution = checkEvolution('모부기', makeCtx({ oldLevel: 17, newLevel: 18 }))!;
+    const evolution = checkEvolution('387', makeCtx({ oldLevel: 17, newLevel: 18 }))!;
     applyEvolution(state, config, evolution, 5000);
 
-    assert.equal(state.pokemon['수풀부기'].ev, 100, 'EV should carry over on evolution');
+    assert.equal(state.pokemon['388'].ev, 100, 'EV should carry over on evolution');
   });
 
   it('old pokemon remains in state.pokemon', () => {
     const state = makeState({
-      pokemon: { '모부기': { id: 387, xp: 5000, level: 18, friendship: 0, ev: 0 } },
-      unlocked: ['모부기'],
+      pokemon: { '387': { id: 387, xp: 5000, level: 18, friendship: 0, ev: 0 } },
+      unlocked: ['387'],
     });
-    const config = makeConfig({ party: ['모부기'] });
+    const config = makeConfig({ party: ['387'] });
 
-    const evolution = checkEvolution('모부기', makeCtx({ oldLevel: 17, newLevel: 18 }))!;
+    const evolution = checkEvolution('387', makeCtx({ oldLevel: 17, newLevel: 18 }))!;
     applyEvolution(state, config, evolution, 5000);
 
-    assert.ok('모부기' in state.pokemon);
+    assert.ok('387' in state.pokemon);
   });
 });

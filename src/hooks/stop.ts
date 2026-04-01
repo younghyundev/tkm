@@ -7,6 +7,7 @@ import { getPokemonDB } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
 import { checkEvolution, applyEvolution, addFriendship, FRIENDSHIP_PER_LEVELUP, FRIENDSHIP_PER_SESSION } from '../core/evolution.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
+import { t, initLocale } from '../i18n/index.js';
 import type { HookInput, HookOutput, ExpGroup } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
 import { playSfx } from '../audio/play-sfx.js';
@@ -99,6 +100,7 @@ async function main(): Promise<void> {
 
   // Pre-lock: read config for early exit check
   const config = readConfig();
+  initLocale(config.language ?? 'ko');
 
   if (config.party.length === 0 || !sessionId) {
     playCry();
@@ -189,7 +191,7 @@ async function main(): Promise<void> {
 
       // Level-up notification + friendship
       if (newLevel > currentLevel) {
-        messages.push(`⬆️ ${pokemonName} Lv.${currentLevel} → Lv.${newLevel}! (XP: +${xpPerPokemon})`);
+        messages.push(t('hook.levelup', { pokemon: pokemonName, from: currentLevel, to: newLevel, xp: xpPerPokemon }));
         addFriendship(state, pokemonName, FRIENDSHIP_PER_LEVELUP);
         playSfx('levelup');
       }
@@ -206,7 +208,7 @@ async function main(): Promise<void> {
       const evolution = checkEvolution(pokemonName, evoContext);
       if (evolution) {
         applyEvolution(state, config, evolution, newXp);
-        messages.push(`✨ ${pokemonName}이(가) ${evolution.newPokemon}(으)로 진화했습니다!`);
+        messages.push(t('hook.evolution', { pokemon: pokemonName, newPokemon: evolution.newPokemon }));
         playSfx('gacha');
 
         // Check first_evolution achievement immediately
@@ -244,7 +246,7 @@ async function main(): Promise<void> {
         if (battleResult.caught && config.party.length < 6) {
           if (!config.party.includes(battleResult.defender)) {
             config.party.push(battleResult.defender);
-            messages.push(`🎊 ${battleResult.defender}이(가) 파티에 합류했습니다!`);
+            messages.push(t('hook.party_join', { pokemon: battleResult.defender }));
           }
         }
 

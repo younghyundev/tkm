@@ -3,12 +3,13 @@ import * as readline from 'readline';
 import { readFileSync } from 'fs';
 import { readState, writeState } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB } from '../core/pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { getCurrentRegion, getRegionList, moveToRegion } from '../core/regions.js';
 import { renderGuide, renderGuideIndex } from '../core/guide.js';
+import { t, initLocale } from '../i18n/index.js';
 import type { ExpGroup } from '../core/types.js';
 
 // ANSI color helpers
@@ -44,18 +45,18 @@ function cmdStatus(): void {
   const state = readState();
   const pokemonDB = getPokemonDB();
 
-  bold('=== 토큰몬 상태 ===');
+  bold(t('cli.status.title'));
   console.log('');
 
   if (!config.starter_chosen) {
-    warn('스타터 포켓몬을 선택하지 않았습니다.');
-    info('  tokenmon starter  명령으로 스타터를 선택하세요.');
+    warn(t('cli.status.no_starter'));
+    info(t('cli.status.starter_hint'));
     console.log('');
   }
 
-  bold('[ 파티 ]');
+  bold(t('cli.status.party_header'));
   if (config.party.length === 0) {
-    warn('  파티가 비어있습니다.');
+    warn(t('cli.status.party_empty'));
   } else {
     for (const pokemon of config.party) {
       const level = state.pokemon[pokemon]?.level ?? 1;
@@ -66,7 +67,7 @@ function cmdStatus(): void {
       const evolvesAt = pData?.evolves_at;
       const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
       const bar = xpBar(xp, level, expGroup);
-      const evolInfo = evolvesAt != null ? ` (Lv.${evolvesAt}에서 진화)` : '';
+      const evolInfo = evolvesAt != null ? t('cli.status.evolves_at', { level: evolvesAt }) : '';
 
       console.log(`  ${BOLD}${pokemon}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
       console.log(`  Lv.${level} [${GREEN}${bar}${RESET}] XP: ${xp}${evolInfo}`);
@@ -74,27 +75,27 @@ function cmdStatus(): void {
   }
 
   console.log('');
-  bold('[ 통계 ]');
-  console.log(`  세션 수: ${state.session_count}`);
-  console.log(`  총 토큰: ${formatNumber(state.total_tokens_consumed)}`);
-  console.log(`  에러 수: ${state.error_count}`);
-  console.log(`  권한 승인: ${state.permission_count}`);
-  console.log(`  진화 횟수: ${state.evolution_count}`);
-  console.log(`  인카운터: ${state.encounter_count ?? 0}회`);
-  console.log(`  전투: ${state.battle_count ?? 0}회 (${state.battle_wins ?? 0}승 ${state.battle_losses ?? 0}패)`);
-  console.log(`  포획: ${state.catch_count ?? 0}종`);
+  bold(t('cli.status.stats_header'));
+  console.log(t('cli.status.stat_sessions', { count: state.session_count }));
+  console.log(t('cli.status.stat_tokens', { count: formatNumber(state.total_tokens_consumed) }));
+  console.log(t('cli.status.stat_errors', { count: state.error_count }));
+  console.log(t('cli.status.stat_permissions', { count: state.permission_count }));
+  console.log(t('cli.status.stat_evolutions', { count: state.evolution_count }));
+  console.log(t('cli.status.stat_encounters', { count: state.encounter_count ?? 0 }));
+  console.log(t('cli.status.stat_battles', { count: state.battle_count ?? 0, wins: state.battle_wins ?? 0, losses: state.battle_losses ?? 0 }));
+  console.log(t('cli.status.stat_catches', { count: state.catch_count ?? 0 }));
 
   // Pokedex completion
   const totalPokemon = Object.keys(pokemonDB.pokemon).length;
   const caught = Object.values(state.pokedex ?? {}).filter((e: any) => e.caught).length;
-  console.log(`  도감: ${caught}/${totalPokemon} (${Math.round(caught / totalPokemon * 100)}%)`);
+  console.log(t('cli.status.stat_pokedex', { caught, total: totalPokemon, pct: Math.round(caught / totalPokemon * 100) }));
 
   // Items
   const pokeballs = state.items?.pokeball ?? 0;
-  if (pokeballs > 0) console.log(`  🔴 포켓몬볼: ${pokeballs}개`);
+  if (pokeballs > 0) console.log(t('cli.status.stat_pokeballs', { count: pokeballs }));
 
   // Region
-  console.log(`  현재 지역: ${config.current_region ?? '쌍둥이잎 마을'}`);
+  console.log(t('cli.status.stat_region', { region: config.current_region ?? 'Twinleaf Town' }));
 }
 
 function cmdStarter(): void {
@@ -103,12 +104,12 @@ function cmdStarter(): void {
   const pokemonDB = getPokemonDB();
 
   if (config.starter_chosen) {
-    warn('이미 스타터를 선택했습니다.');
-    info(`현재 파티: ${config.party.join(', ')}`);
+    warn(t('cli.starter.already_chosen'));
+    info(t('cli.starter.current_party', { party: config.party.join(', ') }));
     return;
   }
 
-  bold('스타터 포켓몬을 선택하세요:');
+  bold(t('cli.starter.prompt_title'));
   console.log('');
 
   const starters = pokemonDB.starters;
@@ -123,11 +124,11 @@ function cmdStarter(): void {
   console.log('');
   // Read choice from stdin
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  rl.question(`번호를 입력하세요 (1-${starters.length}): `, (answer: string) => {
+  rl.question(t('cli.starter.prompt_input', { count: starters.length }), (answer: string) => {
     rl.close();
     const choice = parseInt(answer, 10);
     if (isNaN(choice) || choice < 1 || choice > starters.length) {
-      error('잘못된 선택입니다.');
+      error(t('cli.starter.invalid_choice'));
       process.exit(1);
     }
 
@@ -148,7 +149,7 @@ function cmdStarter(): void {
     }
     writeState(state);
 
-    success(`✓ ${chosen}을(를) 선택했습니다! 모험을 시작하세요!`);
+    success(t('cli.starter.chosen', { pokemon: chosen }));
     playCry(chosen);
   });
 }
@@ -162,59 +163,59 @@ function cmdParty(subcmd: string, pokemon?: string): void {
     case 'dispatch': {
       if (!pokemon) {
         const current = config.default_dispatch;
-        info(`현재 디스패치: ${current ?? '자동 (미지정)'}`);
-        info('사용법: tokenmon party dispatch <포켓몬이름>');
+        info(t('cli.party.dispatch_current', { current: current ?? t('cli.party.dispatch_auto') }));
+        info(t('cli.party.dispatch_usage'));
         return;
       }
       if (!config.party.includes(pokemon)) {
-        error(`${pokemon}은(는) 파티에 없습니다.`);
+        error(t('cli.party.dispatch_not_in_party', { pokemon }));
         process.exit(1);
       }
       config.default_dispatch = pokemon;
       writeConfig(config);
-      success(`${pokemon}을(를) 디스패치 포켓몬으로 설정했습니다. (서브에이전트 XP 1.5배)`);
+      success(t('cli.party.dispatch_set', { pokemon }));
       break;
     }
     case 'add': {
       if (!pokemon) {
-        error('사용법: tokenmon party add <포켓몬이름>');
+        error(t('cli.party.add_usage'));
         process.exit(1);
       }
       if (!state.unlocked.includes(pokemon)) {
-        error(`${pokemon}은(는) 아직 잠금 해제되지 않았습니다.`);
-        info('  tokenmon unlock list  로 잠금 해제된 포켓몬을 확인하세요.');
+        error(t('cli.party.add_not_unlocked', { pokemon }));
+        info(t('cli.party.add_unlock_hint'));
         process.exit(1);
       }
       if (config.party.length >= config.max_party_size) {
-        error(`파티가 가득 찼습니다 (최대 ${config.max_party_size}마리).`);
+        error(t('cli.party.add_full', { max: config.max_party_size }));
         process.exit(1);
       }
       if (config.party.includes(pokemon)) {
-        warn(`${pokemon}은(는) 이미 파티에 있습니다.`);
+        warn(t('cli.party.add_already_in', { pokemon }));
         return;
       }
       config.party.push(pokemon);
       writeConfig(config);
-      success(`✓ ${pokemon}을(를) 파티에 추가했습니다.`);
+      success(t('cli.party.add_success', { pokemon }));
       break;
     }
     case 'remove': {
       if (!pokemon) {
-        error('사용법: tokenmon party remove <포켓몬이름>');
+        error(t('cli.party.remove_usage'));
         process.exit(1);
       }
       if (config.party.length <= 1) {
-        error('파티에 최소 1마리는 있어야 합니다.');
+        error(t('cli.party.remove_min'));
         process.exit(1);
       }
       config.party = config.party.filter(p => p !== pokemon);
       writeConfig(config);
-      success(`✓ ${pokemon}을(를) 파티에서 제외했습니다.`);
+      success(t('cli.party.remove_success', { pokemon }));
       break;
     }
     default: {
       // list
-      bold('[ 현재 파티 ]');
+      bold(t('cli.party.header'));
       for (const p of config.party) {
         const level = state.pokemon[p]?.level ?? 1;
         const xp = state.pokemon[p]?.xp ?? 0;
@@ -231,9 +232,9 @@ function cmdUnlockList(): void {
   const state = readState();
   const pokemonDB = getPokemonDB();
 
-  bold('[ 잠금 해제된 포켓몬 ]');
+  bold(t('cli.unlock.header'));
   if (state.unlocked.length === 0) {
-    warn('  아직 아무것도 없습니다.');
+    warn(t('cli.unlock.empty'));
     return;
   }
   for (const p of state.unlocked) {
@@ -248,33 +249,33 @@ function cmdAchievements(): void {
   const state = readState();
   const achDB = getAchievementsDB();
 
-  bold('[ 업적 ]');
+  bold(t('cli.achievements.header'));
   console.log('');
 
   for (const ach of achDB.achievements) {
     const achieved = !!state.achievements[ach.id];
     if (achieved) {
-      console.log(`  ${GREEN}✓${RESET} ${BOLD}${ach.name}${RESET} ${ach.rarity_label}`);
+      console.log(`  ${GREEN}✓${RESET} ${BOLD}${getAchievementName(ach.id)}${RESET} ${getAchievementRarityLabel(ach.id)}`);
     } else {
-      console.log(`  ${GRAY}○ ${ach.name} ${ach.rarity_label}${RESET}`);
+      console.log(`  ${GRAY}○ ${getAchievementName(ach.id)} ${getAchievementRarityLabel(ach.id)}${RESET}`);
     }
-    console.log(`    ${GRAY}${ach.description}${RESET}`);
+    console.log(`    ${GRAY}${getAchievementDescription(ach.id)}${RESET}`);
     console.log('');
   }
 }
 
 function cmdConfigSet(key: string, value: string): void {
   if (!key || !value) {
-    error('사용법: tokenmon config set <키> <값>');
+    error(t('cli.config.usage'));
     console.log('');
-    info('설정 가능한 키:');
-    console.log('  tokens_per_xp    - 토큰당 XP 비율 (기본: 10000)');
-    console.log('  volume           - 소리 볼륨 0.0-1.0 (기본: 0.5)');
-    console.log('  sprite_enabled   - 스프라이트 사용 true/false');
-    console.log('  cry_enabled      - 울음소리 사용 true/false');
-    console.log('  max_party_size   - 최대 파티 크기 1-6');
-    console.log('  peon_ping_integration - peon-ping 연동 true/false');
-    console.log('  tips_enabled         - 자동 팁 표시 true/false');
+    info(t('cli.config.keys_header'));
+    console.log(t('cli.config.key_tokens_per_xp'));
+    console.log(t('cli.config.key_volume'));
+    console.log(t('cli.config.key_sprite_enabled'));
+    console.log(t('cli.config.key_cry_enabled'));
+    console.log(t('cli.config.key_max_party'));
+    console.log(t('cli.config.key_peon_ping'));
+    console.log(t('cli.config.key_tips_enabled'));
     process.exit(1);
   }
 
@@ -291,7 +292,7 @@ function cmdConfigSet(key: string, value: string): void {
 (config as any)[key] = parseFloat(value);
   } else if (boolKeys.includes(key)) {
     if (value !== 'true' && value !== 'false') {
-      error('true 또는 false 값을 입력하세요.');
+      error(t('cli.config.bool_error'));
       process.exit(1);
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -302,7 +303,7 @@ function cmdConfigSet(key: string, value: string): void {
   }
 
   writeConfig(config);
-  success(`✓ ${key} = ${value} 로 설정했습니다.`);
+  success(t('cli.config.set_success', { key, value }));
 }
 
 function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string): void {
@@ -314,31 +315,31 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
   if (pokemonName && pokemonName !== '--type' && pokemonName !== '--region' && pokemonName !== '--rarity') {
     const pData = pokemonDB.pokemon[pokemonName];
     if (!pData) {
-      error(`"${pokemonName}" 포켓몬을 찾을 수 없습니다.`);
+      error(t('cli.pokedex.not_found', { name: pokemonName }));
       process.exit(1);
     }
 
     const pdex = state.pokedex?.[pokemonName];
     const statusIcon = pdex?.caught ? `${GREEN}●${RESET}` : pdex?.seen ? `${YELLOW}◐${RESET}` : `${GRAY}○${RESET}`;
-    const statusText = pdex?.caught ? '포획됨' : pdex?.seen ? '목격됨' : '미발견';
+    const statusText = pdex?.caught ? t('cli.pokedex.status_caught') : pdex?.seen ? t('cli.pokedex.status_seen') : t('cli.pokedex.status_unknown');
 
     bold(`=== ${pokemonName} (#${pData.id}) ===`);
     console.log('');
-    console.log(`  상태: ${statusIcon} ${statusText}`);
-    console.log(`  타입: ${pData.types.map((t: string) => `${pokemonDB.type_colors[t] ?? ''}${t}${RESET}`).join(' / ')}`);
-    console.log(`  희귀도: ${pData.rarity}`);
-    console.log(`  지역: ${pData.region}`);
-    console.log(`  경험치 그룹: ${pData.exp_group}`);
-    console.log(`  포획률: ${pData.catch_rate}`);
-    console.log(`  기본 스탯: HP ${pData.base_stats.hp} / ATK ${pData.base_stats.attack} / DEF ${pData.base_stats.defense} / SPD ${pData.base_stats.speed}`);
-    console.log(`  진화 라인: ${pData.line.join(' → ')}`);
-    if (pData.evolves_at) console.log(`  진화 레벨: Lv.${pData.evolves_at}`);
-    if (pData.evolves_condition) console.log(`  진화 조건: ${pData.evolves_condition}`);
-    if (pdex?.first_seen) console.log(`  최초 발견: ${pdex.first_seen}`);
+    console.log(`  ${t('cli.pokedex.detail_status', { icon: statusIcon, status: statusText })}`);
+    console.log(`  ${t('cli.pokedex.detail_type', { types: pData.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join(' / ') })}`);
+    console.log(`  ${t('cli.pokedex.detail_rarity', { rarity: pData.rarity })}`);
+    console.log(`  ${t('cli.pokedex.detail_region', { region: pData.region })}`);
+    console.log(`  ${t('cli.pokedex.detail_exp_group', { group: pData.exp_group })}`);
+    console.log(`  ${t('cli.pokedex.detail_catch_rate', { rate: pData.catch_rate })}`);
+    console.log(`  ${t('cli.pokedex.detail_base_stats', { hp: pData.base_stats.hp, atk: pData.base_stats.attack, def: pData.base_stats.defense, spd: pData.base_stats.speed })}`);
+    console.log(`  ${t('cli.pokedex.detail_line', { line: pData.line.join(' → ') })}`);
+    if (pData.evolves_at) console.log(`  ${t('cli.pokedex.detail_evolves_at', { level: pData.evolves_at })}`);
+    if (pData.evolves_condition) console.log(`  ${t('cli.pokedex.detail_evolves_cond', { cond: pData.evolves_condition })}`);
+    if (pdex?.first_seen) console.log(`  ${t('cli.pokedex.detail_first_seen', { date: pdex.first_seen })}`);
 
     if (state.pokemon[pokemonName]) {
       const ps = state.pokemon[pokemonName];
-      console.log(`  현재 레벨: Lv.${ps.level} (XP: ${formatNumber(ps.xp)})`);
+      console.log(`  ${t('cli.pokedex.detail_current_level', { level: ps.level, xp: formatNumber(ps.xp) })}`);
     }
     return;
   }
@@ -356,18 +357,18 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
   const completion = getCompletion(state);
   const list = getPokedexList(state, Object.keys(filters).length > 0 ? filters : undefined);
 
-  bold('=== 포켓몬 도감 ===');
-  console.log(`  발견: ${completion.seen}/${completion.total} (${completion.seenPct}%)  포획: ${completion.caught}/${completion.total} (${completion.caughtPct}%)`);
+  bold(t('cli.pokedex.list_title'));
+  console.log(t('cli.pokedex.list_summary', { seen: completion.seen, caught: completion.caught, total: completion.total, seenPct: completion.seenPct, caughtPct: completion.caughtPct }));
   console.log('');
 
   const filterDesc = Object.entries(filters).map(([k, v]) => `${k}=${v}`).join(', ');
-  if (filterDesc) info(`  필터: ${filterDesc}`);
+  if (filterDesc) info(t('cli.pokedex.filter', { filter: filterDesc }));
 
   for (const entry of list) {
     const icon = entry.status === 'caught' ? `${GREEN}●${RESET}`
       : entry.status === 'seen' ? `${YELLOW}◐${RESET}`
       : `${GRAY}○${RESET}`;
-    const typeStr = entry.types.map((t: string) => `${pokemonDB.type_colors[t] ?? ''}${t}${RESET}`).join('/');
+    const typeStr = entry.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
     const nameDisplay = entry.status === 'unknown' ? `${GRAY}???${RESET}` : entry.name;
     console.log(`  ${icon} #${String(entry.id).padStart(3, '0')} ${nameDisplay.padEnd(8)} ${typeStr} ${GRAY}${entry.rarity}${RESET}`);
   }
@@ -375,16 +376,16 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
 
 function cmdItems(): void {
   const state = readState();
-  bold('[ 아이템 ]');
+  bold(t('cli.items.header'));
   const items = state.items ?? {};
   if (Object.keys(items).length === 0) {
-    warn('  아이템이 없습니다.');
+    warn(t('cli.items.empty'));
     return;
   }
-  const itemNames: Record<string, string> = { pokeball: '포켓몬볼' };
+  const itemNames: Record<string, string> = { pokeball: t('cli.items.pokeball') };
   for (const [key, count] of Object.entries(items)) {
     if (count > 0) {
-      console.log(`  ${itemNames[key] ?? key}: ${count}개`);
+      console.log(t('cli.items.count', { name: itemNames[key] ?? key, count }));
     }
   }
 }
@@ -401,32 +402,32 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
       process.exit(1);
     }
     writeConfig(config);
-    success(`${regionName}(으)로 이동했습니다!`);
+    success(t('cli.region.moved', { region: regionName }));
     return;
   }
 
   if (subcmd === 'list') {
     const regions = getRegionList(state);
-    bold('=== 지역 목록 ===');
+    bold(t('cli.region.list_title'));
     console.log('');
     for (const { region, unlocked } of regions) {
       const icon = unlocked ? `${GREEN}●${RESET}` : `${GRAY}○${RESET}`;
-      const current = config.current_region === region.name ? ` ${YELLOW}← 현재${RESET}` : '';
+      const current = config.current_region === String(region.id) ? ` ${YELLOW}${t('cli.region.current_marker')}${RESET}` : '';
       const lockInfo = !unlocked && region.unlock_condition
-        ? ` ${GRAY}(${region.unlock_condition.type === 'pokedex_caught' ? '포획' : '발견'} ${region.unlock_condition.value}종 필요)${RESET}`
+        ? ` ${GRAY}(${region.unlock_condition.type === 'pokedex_caught' ? t('cli.region.lock_caught') : t('cli.region.lock_seen')} ${t('cli.region.lock_species_needed', { count: region.unlock_condition.value })})${RESET}`
         : '';
-      console.log(`  ${icon} ${BOLD}${region.name}${RESET} Lv.${region.level_range[0]}-${region.level_range[1]}${current}${lockInfo}`);
-      console.log(`    ${GRAY}${region.description} (${region.pokemon_pool.length}종)${RESET}`);
+      console.log(`  ${icon} ${BOLD}${getRegionName(region.id)}${RESET} Lv.${region.level_range[0]}-${region.level_range[1]}${current}${lockInfo}`);
+      console.log(`    ${GRAY}${getRegionDescription(region.id)} ${t('cli.region.pool_species', { count: region.pokemon_pool.length })}${RESET}`);
     }
     return;
   }
 
   // Default: show current region
   const region = getCurrentRegion(config);
-  bold(`=== 현재 지역: ${region.name} ===`);
-  console.log(`  ${region.description}`);
-  console.log(`  레벨 범위: Lv.${region.level_range[0]} ~ Lv.${region.level_range[1]}`);
-  console.log(`  출현 포켓몬: ${region.pokemon_pool.length}종`);
+  bold(t('cli.region.current_title', { name: getRegionName(region.id) }));
+  console.log(`  ${getRegionDescription(region.id)}`);
+  console.log(t('cli.region.level_range', { min: region.level_range[0], max: region.level_range[1] }));
+  console.log(t('cli.region.pokemon_pool', { count: region.pokemon_pool.length }));
   console.log('');
   const pokemonDB = getPokemonDB();
   for (const name of region.pokemon_pool) {
@@ -434,7 +435,7 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
     if (!pData) continue;
     const pdex = state.pokedex?.[name];
     const icon = pdex?.caught ? `${GREEN}●${RESET}` : pdex?.seen ? `${YELLOW}◐${RESET}` : `${GRAY}○${RESET}`;
-    const typeStr = pData.types.map((t: string) => `${pokemonDB.type_colors[t] ?? ''}${t}${RESET}`).join('/');
+    const typeStr = pData.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
     const nameDisplay = pdex?.seen ? name : `${GRAY}???${RESET}`;
     console.log(`  ${icon} ${nameDisplay} ${typeStr} ${GRAY}${pData.rarity}${RESET}`);
   }
@@ -442,14 +443,14 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
 
 function cmdReset(confirm: boolean): void {
   if (!confirm) {
-    warn('경고: 모든 데이터가 초기화됩니다! (포켓몬, 업적, 아이템 등)');
+    warn(t('cli.reset.warning'));
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-    rl.question('정말 초기화하시겠습니까? (y/N): ', (answer: string) => {
+    rl.question(t('cli.reset.confirm'), (answer: string) => {
       rl.close();
       if (answer.toLowerCase() === 'y') {
         doReset();
       } else {
-        info('초기화가 취소되었습니다.');
+        info(t('cli.reset.cancelled'));
       }
     });
     return;
@@ -473,7 +474,7 @@ function doReset(): void {
     last_battle: null, last_tip: null,
   };
   writeState(defaultState);
-  success('모든 데이터가 초기화되었습니다. (치트 로그는 보존됨)');
+  success(t('cli.reset.done'));
 }
 
 function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
@@ -488,66 +489,66 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
 
   switch (subcmd) {
     case 'xp': {
-      if (!arg1 || !arg2) { error('사용법: tokenmon cheat xp <포켓몬> <양>'); return; }
+      if (!arg1 || !arg2) { error(t('cli.cheat.xp_usage')); return; }
       const amount = parseInt(arg2, 10);
-      if (!state.pokemon[arg1]) { error(`${arg1} 포켓몬이 없습니다.`); return; }
+      if (!state.pokemon[arg1]) { error(t('cli.cheat.xp_no_pokemon', { pokemon: arg1 })); return; }
       state.pokemon[arg1].xp += amount;
       logCheat(`xp ${arg1} ${amount}`);
       writeState(state);
-      success(`${arg1}에게 XP ${amount} 추가 (총 ${state.pokemon[arg1].xp})`);
+      success(t('cli.cheat.xp_success', { pokemon: arg1, amount, total: state.pokemon[arg1].xp }));
       break;
     }
     case 'level': {
-      if (!arg1 || !arg2) { error('사용법: tokenmon cheat level <포켓몬> <레벨>'); return; }
+      if (!arg1 || !arg2) { error(t('cli.cheat.level_usage')); return; }
       const level = parseInt(arg2, 10);
-      if (!state.pokemon[arg1]) { error(`${arg1} 포켓몬이 없습니다.`); return; }
+      if (!state.pokemon[arg1]) { error(t('cli.cheat.xp_no_pokemon', { pokemon: arg1 })); return; }
       state.pokemon[arg1].level = level;
       logCheat(`level ${arg1} ${level}`);
       writeState(state);
-      success(`${arg1} 레벨을 ${level}로 설정`);
+      success(t('cli.cheat.level_success', { pokemon: arg1, level }));
       break;
     }
     case 'unlock': {
-      if (!arg1) { error('사용법: tokenmon cheat unlock <포켓몬>'); return; }
+      if (!arg1) { error(t('cli.cheat.unlock_usage')); return; }
       const pData = pokemonDB.pokemon[arg1];
-      if (!pData) { error(`${arg1} 포켓몬을 찾을 수 없습니다.`); return; }
+      if (!pData) { error(t('cli.cheat.unlock_not_found', { pokemon: arg1 })); return; }
       if (!state.unlocked.includes(arg1)) state.unlocked.push(arg1);
       if (!state.pokemon[arg1]) state.pokemon[arg1] = { id: pData.id, xp: 0, level: 1, friendship: 0, ev: 0 };
       if (!state.pokedex[arg1]) state.pokedex[arg1] = { seen: true, caught: true, first_seen: new Date().toISOString().split('T')[0] };
       else { state.pokedex[arg1].seen = true; state.pokedex[arg1].caught = true; }
       logCheat(`unlock ${arg1}`);
       writeState(state);
-      success(`${arg1} 잠금 해제 + 도감 등록 완료`);
+      success(t('cli.cheat.unlock_success', { pokemon: arg1 }));
       break;
     }
     case 'achievement': {
-      if (!arg1) { error('사용법: tokenmon cheat achievement <id>'); return; }
+      if (!arg1) { error(t('cli.cheat.achievement_usage')); return; }
       state.achievements[arg1] = true;
       logCheat(`achievement ${arg1}`);
       writeState(state);
-      success(`업적 ${arg1} 해금`);
+      success(t('cli.cheat.achievement_success', { id: arg1 }));
       break;
     }
     case 'item': {
-      if (!arg1 || !arg2) { error('사용법: tokenmon cheat item <아이템> <수량>'); return; }
+      if (!arg1 || !arg2) { error(t('cli.cheat.item_usage')); return; }
       const count = parseInt(arg2, 10);
       if (!state.items) state.items = {};
       state.items[arg1] = (state.items[arg1] ?? 0) + count;
       logCheat(`item ${arg1} ${count}`);
       writeState(state);
-      success(`${arg1} x${count} 추가 (총 ${state.items[arg1]})`);
+      success(t('cli.cheat.item_success', { item: arg1, count, total: state.items[arg1] }));
       break;
     }
     case 'multiplier': {
-      if (!arg1) { error('사용법: tokenmon cheat multiplier <값>'); return; }
+      if (!arg1) { error(t('cli.cheat.multiplier_usage')); return; }
       state.xp_bonus_multiplier = parseFloat(arg1);
       logCheat(`multiplier ${arg1}`);
       writeState(state);
-      success(`XP 배율을 ${arg1}로 설정`);
+      success(t('cli.cheat.multiplier_success', { value: arg1 }));
       break;
     }
     default:
-      error('사용법: tokenmon cheat <xp|level|unlock|achievement|item|multiplier> ...');
+      error(t('cli.cheat.unknown'));
   }
 }
 
@@ -560,45 +561,48 @@ function cmdGuide(topic?: string): void {
 }
 
 function cmdHelp(): void {
-  bold('토큰몬 (Tokénmon) - Claude Code 포켓몬 파트너');
+  bold(t('cli.help.title'));
   console.log('');
-  info('사용법: tokenmon <명령> [옵션]');
+  info(t('cli.help.usage'));
   console.log('');
-  bold('명령어:');
-  console.log('  status              현재 파티와 통계 보기');
-  console.log('  starter             스타터 포켓몬 선택');
-  console.log('  party               현재 파티 보기');
-  console.log('  party add <이름>    파티에 포켓몬 추가');
-  console.log('  party remove <이름> 파티에서 포켓몬 제거');
-  console.log('  unlock list         잠금 해제된 포켓몬 목록');
-  console.log('  achievements        업적 목록');
-  console.log('  items               아이템 목록');
-  console.log('  region              현재 지역 보기');
-  console.log('  region list         전체 지역 목록');
-  console.log('  region move <이름>  지역 이동');
-  console.log('  guide [주제]        가이드 보기 (battle/region/achievement/xp/item)');
-  console.log('  pokedex             포켓몬 도감 보기');
-  console.log('  pokedex <이름>      포켓몬 상세 정보');
-  console.log('  pokedex --type <타입>   타입별 필터');
-  console.log('  pokedex --region <지역> 지역별 필터');
-  console.log('  pokedex --rarity <희귀> 희귀도별 필터');
-  console.log('  config set <키> <값>  설정 변경');
-  console.log('  uninstall           플러그인 데이터 정리 (언인스톨)');
-  console.log('  uninstall --keep-state  state.json 보존하고 정리');
-  console.log('  reset               데이터 초기화');
-  console.log('  cheat <명령>        치트 명령');
-  console.log('  help                이 도움말 보기');
+  bold(t('cli.help.commands'));
+  console.log(t('cli.help.cmd_status'));
+  console.log(t('cli.help.cmd_starter'));
+  console.log(t('cli.help.cmd_party'));
+  console.log(t('cli.help.cmd_party_add'));
+  console.log(t('cli.help.cmd_party_remove'));
+  console.log(t('cli.help.cmd_unlock'));
+  console.log(t('cli.help.cmd_achievements'));
+  console.log(t('cli.help.cmd_items'));
+  console.log(t('cli.help.cmd_region'));
+  console.log(t('cli.help.cmd_region_list'));
+  console.log(t('cli.help.cmd_region_move'));
+  console.log(t('cli.help.cmd_guide'));
+  console.log(t('cli.help.cmd_pokedex'));
+  console.log(t('cli.help.cmd_pokedex_name'));
+  console.log(t('cli.help.cmd_pokedex_type'));
+  console.log(t('cli.help.cmd_pokedex_region'));
+  console.log(t('cli.help.cmd_pokedex_rarity'));
+  console.log(t('cli.help.cmd_config'));
+  console.log(t('cli.help.cmd_uninstall'));
+  console.log(t('cli.help.cmd_uninstall_keep'));
+  console.log(t('cli.help.cmd_reset'));
+  console.log(t('cli.help.cmd_cheat'));
+  console.log(t('cli.help.cmd_help'));
   console.log('');
-  bold('예시:');
-  console.log('  tokenmon status');
-  console.log('  tokenmon starter');
-  console.log('  tokenmon party add 팽도리');
-  console.log('  tokenmon config set cry_enabled false');
+  bold(t('cli.help.examples'));
+  console.log(t('cli.help.ex1'));
+  console.log(t('cli.help.ex2'));
+  console.log(t('cli.help.ex3'));
+  console.log(t('cli.help.ex4'));
 }
 
 // Main dispatch
 const args = process.argv.slice(2);
 const command = args[0] ?? 'help';
+
+// Initialize locale from config before any i18n usage
+initLocale(readConfig().language ?? 'ko');
 
 switch (command) {
   case 'status':
@@ -612,7 +616,7 @@ switch (command) {
     break;
   case 'unlock':
     if (args[1] === 'list' || !args[1]) cmdUnlockList();
-    else error('사용법: tokenmon unlock list');
+    else error(t('cli.unlock.usage'));
     break;
   case 'achievements':
     cmdAchievements();
@@ -631,7 +635,7 @@ switch (command) {
     break;
   case 'config':
     if (args[1] === 'set') cmdConfigSet(args[2], args[3]);
-    else error('사용법: tokenmon config set <키> <값>');
+    else error(t('cli.config.usage_set'));
     break;
   case 'uninstall': {
     const { execSync } = await import('child_process');
@@ -651,7 +655,7 @@ switch (command) {
     cmdHelp();
     break;
   default:
-    error(`알 수 없는 명령어: ${command}`);
+    error(t('cli.unknown_command', { command }));
     console.log('');
     cmdHelp();
     process.exit(1);

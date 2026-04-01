@@ -28,7 +28,6 @@ describe('regions', () => {
       for (const [name, r] of Object.entries(regionsDB.regions) as [string, any][]) {
         assert.equal(typeof r.id, 'number', `${name}.id`);
         assert.equal(typeof r.name, 'string', `${name}.name`);
-        assert.equal(typeof r.description, 'string', `${name}.description`);
         assert.ok(Array.isArray(r.level_range) && r.level_range.length === 2, `${name}.level_range`);
         assert.ok(Array.isArray(r.pokemon_pool) && r.pokemon_pool.length >= 10, `${name}.pokemon_pool (${r.pokemon_pool.length})`);
       }
@@ -56,27 +55,27 @@ describe('regions', () => {
 
   describe('getCurrentRegion', () => {
     it('returns configured region', () => {
-      const config = makeConfig({ current_region: '숲' });
+      const config = makeConfig({ current_region: '2' });
       const region = getCurrentRegion(config);
-      assert.equal(region.name, '숲');
+      assert.equal(region.name, '2');
     });
 
     it('falls back to default for invalid region', () => {
       const config = makeConfig({ current_region: '없는지역' });
       const region = getCurrentRegion(config);
-      assert.equal(region.name, '쌍둥이잎 마을');
+      assert.equal(region.name, '1');
     });
   });
 
   describe('isRegionUnlocked', () => {
     it('starter region is always unlocked', () => {
       const state = makeState();
-      assert.ok(isRegionUnlocked('쌍둥이잎 마을', state));
+      assert.ok(isRegionUnlocked('1', state));
     });
 
     it('locked region requires pokedex progress', () => {
       const state = makeState();
-      assert.ok(!isRegionUnlocked('챔피언 로드', state));
+      assert.ok(!isRegionUnlocked('9', state));
     });
 
     it('unlocks when pokedex meets condition', () => {
@@ -87,7 +86,7 @@ describe('regions', () => {
         pokedex[name] = { seen: true, caught: true, first_seen: '2026-01-01' };
       }
       const state = makeState({ pokedex });
-      assert.ok(isRegionUnlocked('챔피언 로드', state));
+      assert.ok(isRegionUnlocked('9', state));
     });
   });
 
@@ -95,15 +94,15 @@ describe('regions', () => {
     it('moves to unlocked region', () => {
       const state = makeState();
       const config = makeConfig();
-      const err = moveToRegion('쌍둥이잎 마을', state, config);
+      const err = moveToRegion('1', state, config);
       assert.equal(err, null);
-      assert.equal(config.current_region, '쌍둥이잎 마을');
+      assert.equal(config.current_region, '1');
     });
 
     it('rejects locked region', () => {
       const state = makeState();
       const config = makeConfig();
-      const err = moveToRegion('챔피언 로드', state, config);
+      const err = moveToRegion('9', state, config);
       assert.ok(err !== null);
     });
 

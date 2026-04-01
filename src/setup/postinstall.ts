@@ -1,6 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync } from 'fs';
 import { join } from 'path';
 import { DATA_DIR, STATE_PATH, CONFIG_PATH, SESSION_PATH, CLAUDE_DIR } from '../core/paths.js';
+import { t, initLocale } from '../i18n/index.js';
+import { readConfig } from '../core/config.js';
 
 const DEFAULT_STATE = JSON.stringify({
   pokemon: {},
@@ -39,7 +41,7 @@ const DEFAULT_SESSION = JSON.stringify({
 
 function migrateFile(srcPath: string, destPath: string, defaultContent: string): void {
   if (existsSync(destPath)) {
-    console.log(`  ✓ ${destPath} 이미 존재 (보존)`);
+    console.log(t('setup.postinstall.already_exists', { path: destPath }));
     return;
   }
 
@@ -48,7 +50,7 @@ function migrateFile(srcPath: string, destPath: string, defaultContent: string):
     const backupPath = srcPath + '.bak';
     if (!existsSync(backupPath)) {
       copyFileSync(srcPath, backupPath);
-      console.log(`  ℹ 백업 생성: ${backupPath}`);
+      console.log(t('setup.postinstall.backup_created', { path: backupPath }));
     }
 
     // Copy source to destination
@@ -57,7 +59,7 @@ function migrateFile(srcPath: string, destPath: string, defaultContent: string):
     try {
       parsed = JSON.parse(content);
     } catch {
-      console.log(`  ⚠ ${srcPath} 파싱 실패 — 기본값 사용`);
+      console.log(t('setup.postinstall.parse_failed', { path: srcPath }));
       writeFileSync(destPath, defaultContent, 'utf-8');
       return;
     }
@@ -75,16 +77,17 @@ function migrateFile(srcPath: string, destPath: string, defaultContent: string):
     }
 
     writeFileSync(destPath, JSON.stringify(merged, null, 2), 'utf-8');
-    console.log(`  ✓ ${srcPath} → ${destPath} 마이그레이션 완료`);
+    console.log(t('setup.postinstall.migration_done', { src: srcPath, dest: destPath }));
   } else {
     writeFileSync(destPath, defaultContent, 'utf-8');
-    console.log(`  ✓ ${destPath} 생성 (기본값)`);
+    console.log(t('setup.postinstall.created_default', { path: destPath }));
   }
 }
 
 function main(): void {
+  initLocale(readConfig().language ?? 'ko');
   console.log('');
-  console.log('  토큰몬 (Tokénmon) 초기 설정...');
+  console.log(t('setup.postinstall.title'));
   console.log('');
 
   // Ensure data directory exists
@@ -106,7 +109,7 @@ function main(): void {
         const oldValue = config.tokens_per_xp;
         config.tokens_per_xp = 10000;
         writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8');
-        console.log(`  ℹ tokens_per_xp ${oldValue} → 10000 으로 업데이트`);
+        console.log(t('setup.postinstall.tokens_per_xp_updated', { old: oldValue }));
       }
     } catch {
       // Ignore
@@ -114,14 +117,14 @@ function main(): void {
   }
 
   console.log('');
-  console.log('  ✓ 토큰몬 초기 설정 완료!');
+  console.log(t('setup.postinstall.done'));
   console.log('');
 
   if (existsSync(legacyDir)) {
-    console.log('  ℹ 기존 bash 데이터가 마이그레이션되었습니다.');
-    console.log(`    이전 데이터: ${legacyDir}`);
-    console.log(`    새 데이터:   ${DATA_DIR}`);
-    console.log('    기존 bash 훅은 수동으로 정리하세요.');
+    console.log(t('setup.postinstall.legacy_notice'));
+    console.log(t('setup.postinstall.legacy_old', { path: legacyDir }));
+    console.log(t('setup.postinstall.legacy_new', { path: DATA_DIR }));
+    console.log(t('setup.postinstall.legacy_cleanup'));
     console.log('');
   }
 }

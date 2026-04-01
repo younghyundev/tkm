@@ -6,13 +6,14 @@ import { getPokemonDB } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
 import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
+import { t, initLocale } from './i18n/index.js';
 import type { ExpGroup } from './core/types.js';
 
 const TYPE_EMOJI: Record<string, string> = {
-  '풀': '🌿', '불꽃': '🔥', '물': '💧', '전기': '⚡', '격투': '🥊',
-  '강철': '⚙️', '땅': '🏔️', '노말': '⭐', '비행': '🕊️', '독': '☠️',
-  '에스퍼': '🔮', '벌레': '🐛', '바위': '🪨', '고스트': '👻',
-  '드래곤': '🐉', '악': '🌑', '얼음': '❄️', '페어리': '✨',
+  'grass': '🌿', 'fire': '🔥', 'water': '💧', 'electric': '⚡', 'fighting': '🥊',
+  'steel': '⚙️', 'ground': '🏔️', 'normal': '⭐', 'flying': '🕊️', 'poison': '☠️',
+  'psychic': '🔮', 'bug': '🐛', 'rock': '🪨', 'ghost': '👻',
+  'dragon': '🐉', 'dark': '🌑', 'ice': '❄️', 'fairy': '✨',
 };
 
 function xpBar(currentXp: number, level: number, group: ExpGroup, blocks: number = 6): { bar: string; pct: number } {
@@ -55,14 +56,15 @@ function wrapPrint(parts: string[], maxWidth: number): void {
 
 function main(): void {
   const config = readConfig();
+  initLocale(config.language ?? 'ko');
 
   if (!config.starter_chosen) {
-    console.log('[스타터를 선택하세요: tokenmon starter]');
+    console.log(t('statusline.no_starter'));
     return;
   }
 
   if (config.party.length === 0) {
-    console.log('[파티가 비어있습니다]');
+    console.log(t('statusline.party_empty'));
     return;
   }
 
@@ -74,7 +76,7 @@ function main(): void {
   const infoMode = config.info_mode ?? 'ace_full';
 
   // Footer
-  const regionName = config.current_region ?? '쌍둥이잎 마을';
+  const regionName = config.current_region ?? 'Twinleaf Town';
   const pokeballs = state.items?.pokeball ?? 0;
   const itemInfo = pokeballs > 0 ? ` 🔴 ${pokeballs}` : '';
   const footer = `📍${regionName}${itemInfo}`;

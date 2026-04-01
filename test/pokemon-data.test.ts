@@ -197,7 +197,7 @@ describe('pokemon-data (M3a)', () => {
 
   describe('starters preserved', () => {
     it('has correct starters array', () => {
-      assert.deepEqual(db.starters, ['모부기', '불꽃숭이', '팽도리']);
+      assert.deepEqual(db.starters, ['387', '390', '393']);
     });
 
     it('starter pokemon exist in pokemon entries', () => {
@@ -208,13 +208,13 @@ describe('pokemon-data (M3a)', () => {
 
     it('original 17 pokemon preserve unlock fields', () => {
       // Spot check a few known unlock values
-      assert.equal(pokemon['모부기']?.unlock, 'starter');
-      assert.equal(pokemon['수풀부기']?.unlock, 'evolution');
-      assert.equal(pokemon['불꽃숭이']?.unlock, 'achievement:first_evolution');
-      assert.equal(pokemon['팽도리']?.unlock, 'achievement:first_session');
-      assert.equal(pokemon['찌르꼬']?.unlock, 'achievement:first_error');
-      assert.equal(pokemon['꼬링크']?.unlock, 'achievement:hundred_k_tokens');
-      assert.equal(pokemon['리오르']?.unlock, 'achievement:five_hundred_k_tokens');
+      assert.equal(pokemon['387']?.unlock, 'starter');
+      assert.equal(pokemon['388']?.unlock, 'evolution');
+      assert.equal(pokemon['390']?.unlock, 'achievement:first_evolution');
+      assert.equal(pokemon['393']?.unlock, 'achievement:first_session');
+      assert.equal(pokemon['396']?.unlock, 'achievement:first_error');
+      assert.equal(pokemon['403']?.unlock, 'achievement:hundred_k_tokens');
+      assert.equal(pokemon['447']?.unlock, 'achievement:five_hundred_k_tokens');
     });
   });
 

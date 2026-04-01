@@ -1,6 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { CLAUDE_DIR, DATA_DIR, PLUGIN_ROOT } from '../core/paths.js';
+import { t, initLocale } from '../i18n/index.js';
+import { readConfig } from '../core/config.js';
 
 const SETTINGS_PATH = join(CLAUDE_DIR, 'settings.json');
 const WRAPPER_PATH = join(DATA_DIR, 'status-wrapper.mjs');
@@ -56,7 +58,7 @@ if (prevOut) console.log(prevOut);
 }
 
 function extractWrappedCommand(cmd: string): string | null {
-  // settings.json의 command에서 실제 래퍼 경로를 추출
+  // Extract the actual wrapped command path from settings.json command
   const wrapperPath = cmd.replace(/^node\s+/, '').replace(/\$HOME/g, process.env.HOME ?? '');
   try {
     const wrapper = readFileSync(wrapperPath, 'utf-8');
@@ -78,43 +80,44 @@ function extractCommand(statusLine: unknown): string | null {
 }
 
 function main(): void {
+  initLocale(readConfig().language ?? 'ko');
   const settings = readSettings();
   const existingCmd = extractCommand(settings.statusLine);
 
   if (existingCmd && existingCmd.includes('status-line.ts')) {
-    console.log('  ✓ tokenmon statusLine 이미 설정됨 (건너뜀)');
+    console.log(t('setup.statusline.already_set'));
     return;
   }
 
   if (existingCmd && existingCmd.includes('status-wrapper.mjs')) {
-    // 래퍼가 이미 설정되어 있어도 최신 버전으로 재생성
+    // Recreate wrapper with latest version even if already set
     const wrappedCmd = extractWrappedCommand(existingCmd);
     if (wrappedCmd) {
       createWrapper(wrappedCmd);
-      console.log('  ✓ tokenmon 래퍼 최신 버전으로 갱신됨');
+      console.log(t('setup.statusline.wrapper_updated'));
     } else {
-      console.log('  ✓ tokenmon 래퍼 이미 설정됨 (건너뜀)');
+      console.log(t('setup.statusline.wrapper_already'));
     }
     return;
   }
 
   if (existingCmd) {
-    console.log(`  ℹ 기존 statusLine 감지: ${existingCmd}`);
+    console.log(t('setup.statusline.existing_detected', { cmd: existingCmd }));
     createWrapper(existingCmd);
     settings.statusLine = {
       type: 'command',
       command: `node $HOME/.claude/tokenmon/status-wrapper.mjs`,
     };
     writeSettings(settings);
-    console.log(`  ✓ 래퍼 생성: ${WRAPPER_PATH}`);
-    console.log('  ✓ 기존 statusLine과 tokenmon을 함께 표시하도록 설정됨');
+    console.log(t('setup.statusline.wrapper_created', { path: WRAPPER_PATH }));
+    console.log(t('setup.statusline.combined'));
   } else {
     settings.statusLine = {
       type: 'command',
       command: TOKENMON_CMD,
     };
     writeSettings(settings);
-    console.log('  ✓ tokenmon statusLine 등록 완료');
+    console.log(t('setup.statusline.registered'));
   }
 }
 

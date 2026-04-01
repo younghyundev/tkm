@@ -1,6 +1,7 @@
-import { getPokemonDB, getAchievementsDB } from './pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName } from './pokemon-data.js';
 import { addItem } from './items.js';
 import { markCaught } from './pokedex.js';
+import { t } from '../i18n/index.js';
 import type { State, Config, AchievementEvent } from './types.js';
 
 /**
@@ -49,7 +50,7 @@ export function checkAchievements(state: State, config: Config): AchievementEven
 
     const event: AchievementEvent = {
       id: ach.id,
-      name: ach.name,
+      name: getAchievementName(ach.id),
     };
 
     // Handle reward pokemon
@@ -66,12 +67,7 @@ export function checkAchievements(state: State, config: Config): AchievementEven
       }
     }
 
-    // Handle special rewards
-    if (ach.reward_message) {
-      event.rewardMessage = ach.reward_message;
-    }
-
-    applyAchievementEffects(ach.id, ach.reward_message, state, config);
+    applyAchievementEffects(ach.id, undefined, state, config);
 
     events.push(event);
   }
@@ -104,7 +100,7 @@ function applyAchievementEffects(achievementId: string, rewardMessage: string | 
 
   // Parse retry token rewards from message
   if (rewardMessage) {
-    const ballMatch = rewardMessage.match(/포켓몬볼 x(\d+)/);
+    const ballMatch = rewardMessage.match(/pokeball x(\d+)/i);
     if (ballMatch) {
       addItem(state, 'pokeball', parseInt(ballMatch[1], 10));
     }
@@ -116,10 +112,10 @@ function applyAchievementEffects(achievementId: string, rewardMessage: string | 
  */
 export function formatAchievementMessage(event: AchievementEvent): string {
   if (event.rewardPokemon) {
-    return `🏆 업적 달성: ${event.name}! ${event.rewardPokemon}을(를) 얻었습니다!`;
+    return t('achievement.unlocked_pokemon', { name: event.name, pokemon: event.rewardPokemon });
   }
   if (event.rewardMessage) {
-    return `🏆 업적 달성: ${event.name}! ${event.rewardMessage}`;
+    return t('achievement.unlocked_message', { name: event.name, message: event.rewardMessage });
   }
-  return `🏆 업적 달성: ${event.name}!`;
+  return t('achievement.unlocked', { name: event.name }) + '!';
 }

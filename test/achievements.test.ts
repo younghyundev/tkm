@@ -2,6 +2,9 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { checkAchievements, formatAchievementMessage } from '../src/core/achievements.js';
 import { makeState, makeConfig } from './helpers.js';
+import { initLocale } from '../src/i18n/index.js';
+
+initLocale('ko');
 
 describe('checkAchievements', () => {
   it('first_session triggers at session_count >= 1', () => {
@@ -11,11 +14,11 @@ describe('checkAchievements', () => {
 
     const ev = events.find(e => e.id === 'first_session');
     assert.ok(ev, 'first_session should trigger');
-    assert.equal(ev!.rewardPokemon, '팽도리');
+    assert.equal(ev!.rewardPokemon, '393');
     assert.ok(state.achievements['first_session']);
-    assert.ok(state.unlocked.includes('팽도리'));
-    assert.ok(state.pokemon['팽도리']);
-    assert.equal(state.pokemon['팽도리'].id, 393);
+    assert.ok(state.unlocked.includes('393'));
+    assert.ok(state.pokemon['393']);
+    assert.equal(state.pokemon['393'].id, 393);
   });
 
   it('first_error triggers at error_count >= 1', () => {
@@ -25,9 +28,9 @@ describe('checkAchievements', () => {
 
     const ev = events.find(e => e.id === 'first_error');
     assert.ok(ev, 'first_error should trigger');
-    assert.equal(ev!.rewardPokemon, '찌르꼬');
-    assert.ok(state.pokemon['찌르꼬']);
-    assert.equal(state.pokemon['찌르꼬'].id, 396);
+    assert.equal(ev!.rewardPokemon, '396');
+    assert.ok(state.pokemon['396']);
+    assert.equal(state.pokemon['396'].id, 396);
   });
 
   it('first_evolution triggers at evolution_count >= 1', () => {
@@ -37,7 +40,7 @@ describe('checkAchievements', () => {
 
     const ev = events.find(e => e.id === 'first_evolution');
     assert.ok(ev, 'first_evolution should trigger');
-    assert.equal(ev!.rewardPokemon, '불꽃숭이');
+    assert.equal(ev!.rewardPokemon, '390');
   });
 
   it('ten_sessions gives +20% XP bonus', () => {
@@ -49,26 +52,26 @@ describe('checkAchievements', () => {
     assert.equal(state.xp_bonus_multiplier, 1.2);
   });
 
-  it('hundred_k_tokens rewards 꼬링크', () => {
+  it('hundred_k_tokens rewards Shinx (403)', () => {
     const state = makeState({ total_tokens_consumed: 100000 });
     const config = makeConfig();
     const events = checkAchievements(state, config);
 
     const ev = events.find(e => e.id === 'hundred_k_tokens');
     assert.ok(ev);
-    assert.equal(ev!.rewardPokemon, '꼬링크');
-    assert.equal(state.pokemon['꼬링크'].id, 403);
+    assert.equal(ev!.rewardPokemon, '403');
+    assert.equal(state.pokemon['403'].id, 403);
   });
 
-  it('five_hundred_k_tokens rewards 리오르', () => {
+  it('five_hundred_k_tokens rewards Riolu (447)', () => {
     const state = makeState({ total_tokens_consumed: 500000 });
     const config = makeConfig();
     const events = checkAchievements(state, config);
 
     const ev = events.find(e => e.id === 'five_hundred_k_tokens');
     assert.ok(ev);
-    assert.equal(ev!.rewardPokemon, '리오르');
-    assert.equal(state.pokemon['리오르'].id, 447);
+    assert.equal(ev!.rewardPokemon, '447');
+    assert.equal(state.pokemon['447'].id, 447);
   });
 
   it('permission_master increases max_party_size', () => {
@@ -118,21 +121,21 @@ describe('checkAchievements', () => {
   it('does not add duplicate to unlocked', () => {
     const state = makeState({
       session_count: 1,
-      unlocked: ['팽도리'],
-      pokemon: { '팽도리': { id: 393, xp: 100, level: 3, friendship: 0, ev: 0 } },
+      unlocked: ['393'],
+      pokemon: { '393': { id: 393, xp: 100, level: 3, friendship: 0, ev: 0 } },
     });
     const config = makeConfig();
     checkAchievements(state, config);
 
-    const count = state.unlocked.filter(u => u === '팽도리').length;
+    const count = state.unlocked.filter(u => u === '393').length;
     assert.equal(count, 1, 'should not duplicate in unlocked');
   });
 });
 
 describe('formatAchievementMessage', () => {
   it('formats reward pokemon message', () => {
-    const msg = formatAchievementMessage({ id: 'test', name: '첫 만남', rewardPokemon: '팽도리' });
-    assert.ok(msg.includes('팽도리'));
+    const msg = formatAchievementMessage({ id: 'test', name: '첫 만남', rewardPokemon: '393' });
+    assert.ok(msg.includes('393'));
     assert.ok(msg.includes('첫 만남'));
   });
 
