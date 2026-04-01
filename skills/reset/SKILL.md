@@ -27,7 +27,7 @@ AskUserQuestion 도구로 사용자에게 확인합니다:
 사용자가 "초기화 진행"을 선택한 경우:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" reset --confirm
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" reset --confirm
 ```
 
 ### Step 2b: state 보존 초기화
@@ -35,8 +35,8 @@ AskUserQuestion 도구로 사용자에게 확인합니다:
 사용자가 "state만 보존"을 선택한 경우 — config만 초기화하고 포켓몬 데이터는 유지:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set starter_chosen false
-"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set current_region 쌍둥이잎\ 마을
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set starter_chosen false
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set current_region 쌍둥이잎\ 마을
 ```
 
 ### Step 3: 스타터 재선택 안내

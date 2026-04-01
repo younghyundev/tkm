@@ -4,29 +4,9 @@ import { existsSync } from 'fs';
 
 export const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude');
 
-// Detect plugin scope from CLAUDE_PLUGIN_ROOT
-// User scope: PLUGIN_ROOT is under ~/.claude/plugins/cache/
-// Local scope: PLUGIN_ROOT is the project directory itself (has .claude-plugin/)
-function isUserScope(): boolean {
-  const root = process.env.CLAUDE_PLUGIN_ROOT ?? '';
-  return root.includes('.claude/plugins/');
-}
-
-// Data directory resolution by scope:
-// User scope  → ~/.claude/tokenmon/
-// Local scope → {project}/.tokenmon/ (next to .claude-plugin/)
-function resolveDataDir(): string {
-  if (isUserScope()) {
-    return join(CLAUDE_DIR, 'tokenmon');
-  }
-
-  // Local scope: use .tokenmon/ relative to plugin root (project dir)
-  // Always return the local path — postinstall/setup will create it
-  const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT ?? join(import.meta.dirname, '..', '..');
-  return join(pluginRoot, '.tokenmon');
-}
-
-export const DATA_DIR = resolveDataDir();
+// Data is always stored in ~/.claude/tokenmon/ regardless of install scope.
+// This prevents data splits between local-scope and user-scope installs.
+export const DATA_DIR = join(CLAUDE_DIR, 'tokenmon');
 export const STATE_PATH = join(DATA_DIR, 'state.json');
 export const CONFIG_PATH = join(DATA_DIR, 'config.json');
 export const SESSION_PATH = join(DATA_DIR, 'session.json');

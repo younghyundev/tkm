@@ -1,10 +1,10 @@
 {
   "hooks": {
-    "SessionStart": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/session-start.ts\""}]}],
-    "Stop": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/stop.ts\""}]}],
-    "PermissionRequest": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/permission.ts\""}]}],
-    "PostToolUseFailure": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/tool-fail.ts\""}]}],
-    "SubagentStart": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/subagent-start.ts\""}]}],
-    "SubagentStop": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/node_modules/.bin/tsx\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/subagent-stop.ts\""}]}]
+    "SessionStart": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/session-start.ts\""}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/stop.ts\""}]}],
+    "PermissionRequest": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/permission.ts\""}]}],
+    "PostToolUseFailure": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/tool-fail.ts\""}]}],
+    "SubagentStart": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/subagent-start.ts\""}]}],
+    "SubagentStop": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/subagent-stop.ts\""}]}]
   }
 }

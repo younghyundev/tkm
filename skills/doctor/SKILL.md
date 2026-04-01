@@ -29,14 +29,14 @@ echo "PASS: plugin cache exists"
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 cd "$PLUGIN_ROOT" && npm install 2>&1 | tail -3
 echo "---"
-[ -f "$PLUGIN_ROOT/node_modules/.bin/tsx" ] && echo "PASS: npm install" || echo "FAIL: tsx not found"
+[ -f "$PLUGIN_ROOT/bin/tsx-resolve.sh" ] && echo "PASS: npm install" || echo "FAIL: tsx not found"
 ```
 
 ### Step 3: StatusLine 통합
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
-"$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/setup/setup-statusline.ts" 2>&1
+"$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/setup/setup-statusline.ts" 2>&1
 echo "---"
 node -e "
 const d = JSON.parse(require('fs').readFileSync(process.env.HOME + '/.claude/settings.json', 'utf-8'));
@@ -48,7 +48,7 @@ console.log(d.statusLine ? 'PASS: statusLine configured' : 'FAIL: statusLine mis
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
-TSX="$PLUGIN_ROOT/node_modules/.bin/tsx"
+TSX="$PLUGIN_ROOT/bin/tsx-resolve.sh"
 CLI="$PLUGIN_ROOT/src/cli/tokenmon.ts"
 PASS=0; TOTAL=0
 
@@ -113,7 +113,7 @@ echo "---"
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
-TSX="$PLUGIN_ROOT/node_modules/.bin/tsx"
+TSX="$PLUGIN_ROOT/bin/tsx-resolve.sh"
 CLI="$PLUGIN_ROOT/src/cli/tokenmon.ts"
 
 # config.json 경로: user scope → ~/.claude/tokenmon/config.json
@@ -146,7 +146,7 @@ echo "$OUTPUT" | grep -qE "Lv\." && echo "PASS: party has pokemon" || echo "FAIL
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
-"$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/status-line.ts" 2>&1
+"$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/status-line.ts" 2>&1
 ```
 
 확인: 스프라이트 ANSI art + 포켓몬 이름 + 레벨 + XP바 표시
@@ -155,7 +155,7 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
-"$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/cli/tokenmon.ts" pokedex 2>&1 | head -20
+"$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/cli/tokenmon.ts" pokedex 2>&1 | head -20
 ```
 
 확인: 상태 아이콘(●/◐/○), 타입 컬러, 포켓몬 번호 정렬
@@ -164,7 +164,7 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
-"$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/cli/tokenmon.ts" pokedex 모부기 2>&1
+"$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/cli/tokenmon.ts" pokedex 모부기 2>&1
 ```
 
 확인: 타입, 스탯, 진화 라인, 희귀도, 포획 상태
@@ -173,7 +173,7 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
-"$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/cli/tokenmon.ts" region list 2>&1
+"$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/cli/tokenmon.ts" region list 2>&1
 ```
 
 확인: 9개 지역, 잠금/해제(●/○), 현재 위치(← 현재)

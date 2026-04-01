@@ -153,7 +153,7 @@ if (!existsSync(SETTINGS_FILE)) {
 const settings = JSON.parse(readFileSync(SETTINGS_FILE, 'utf-8'));
 if (!settings.hooks) settings.hooks = {};
 
-const TSX = `${PLUGIN_ROOT}/node_modules/.bin/tsx`;
+const TSX = `${PLUGIN_ROOT}/bin/tsx-resolve.sh`;
 const hookMap: Record<string, string> = {
   SessionStart: `"${TSX}" "${PLUGIN_ROOT}/src/hooks/session-start.ts"`,
   Stop: `"${TSX}" "${PLUGIN_ROOT}/src/hooks/stop.ts"`,

@@ -5,7 +5,7 @@ import { CLAUDE_DIR, DATA_DIR, PLUGIN_ROOT } from '../core/paths.js';
 const SETTINGS_PATH = join(CLAUDE_DIR, 'settings.json');
 const WRAPPER_PATH = join(DATA_DIR, 'status-wrapper.mjs');
 
-const TOKENMON_CMD = `CLAUDE_PLUGIN_DATA="${DATA_DIR}" CLAUDE_PLUGIN_ROOT="${PLUGIN_ROOT}" "${PLUGIN_ROOT}/node_modules/.bin/tsx" "${PLUGIN_ROOT}/src/status-line.ts"`;
+const TOKENMON_CMD = `CLAUDE_PLUGIN_DATA="${DATA_DIR}" CLAUDE_PLUGIN_ROOT="${PLUGIN_ROOT}" "${PLUGIN_ROOT}/bin/tsx-resolve.sh" "${PLUGIN_ROOT}/src/status-line.ts"`;
 
 function readSettings(): Record<string, unknown> {
   try {
@@ -49,13 +49,8 @@ function run(cmd) {
 const prevOut = run(prevCmd);
 const tokenmonOut = run(tokenmonCmd);
 
-if (prevOut && tokenmonOut) {
-  console.log(\`\${prevOut}  |  \${tokenmonOut}\`);
-} else if (tokenmonOut) {
-  console.log(tokenmonOut);
-} else if (prevOut) {
-  console.log(prevOut);
-}
+if (tokenmonOut) console.log(tokenmonOut);
+if (prevOut) console.log(prevOut);
 `;
   writeFileSync(WRAPPER_PATH, content, 'utf-8');
 }

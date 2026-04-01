@@ -637,7 +637,7 @@ switch (command) {
   case 'uninstall': {
     const { execSync } = await import('child_process');
     const uninstallArgs = args.includes('--keep-state') ? ' --keep-state' : '';
-    execSync(`"${process.env.CLAUDE_PLUGIN_ROOT || '.'}/node_modules/.bin/tsx" "${process.env.CLAUDE_PLUGIN_ROOT || '.'}/scripts/uninstall.ts"${uninstallArgs}`, { stdio: 'inherit' });
+    execSync(`"${process.env.CLAUDE_PLUGIN_ROOT || '.'}/bin/tsx-resolve.sh" "${process.env.CLAUDE_PLUGIN_ROOT || '.'}/scripts/uninstall.ts"${uninstallArgs}`, { stdio: 'inherit' });
     break;
   }
   case 'reset':
