@@ -113,12 +113,19 @@ function main(): void {
       }
     }
 
-    const spritesPerRow = Math.max(1, Math.floor(termWidth / 21));
+    const SPRITE_WIDTH = 20;
+    const emptyLine = ' '.repeat(SPRITE_WIDTH);
+    const spritesPerRow = Math.max(1, Math.floor(termWidth / (SPRITE_WIDTH + 1)));
     for (let gi = 0; gi < spriteEntries.length; gi += spritesPerRow) {
       const group = spriteEntries.slice(gi, gi + spritesPerRow);
       const maxRows = Math.max(...group.map(s => s.length), 0);
       for (let row = 0; row < maxRows; row++) {
-        console.log(group.map(s => s[row] ?? '                    ').join(' '));
+        console.log(group.map(s => {
+          const line = s[row] ?? '';
+          // Pad to SPRITE_WIDTH using visible length (strip ANSI codes)
+          const visibleLen = line.replace(/\x1b\[[^m]*m/g, '').length;
+          return visibleLen < SPRITE_WIDTH ? line + ' '.repeat(SPRITE_WIDTH - visibleLen) : line;
+        }).join(' '));
       }
     }
   }
