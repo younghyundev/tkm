@@ -3,7 +3,7 @@ import { join } from 'path';
 import { homedir } from 'os';
 import { readState, writeState, pruneSessionTokens } from '../core/state.js';
 import { readConfig, writeConfig } from '../core/config.js';
-import { getPokemonDB } from '../core/pokemon-data.js';
+import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
 import { checkEvolution, applyEvolution, addFriendship, FRIENDSHIP_PER_LEVELUP, FRIENDSHIP_PER_SESSION } from '../core/evolution.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
@@ -164,7 +164,7 @@ async function main(): Promise<void> {
 
       // Level-up notification + friendship
       if (newLevel > currentLevel) {
-        messages.push(t('hook.levelup', { pokemon: pokemonName, from: currentLevel, to: newLevel, xp: xpPerPokemon }));
+        messages.push(t('hook.levelup', { pokemon: getPokemonName(pokemonName), from: currentLevel, to: newLevel, xp: xpPerPokemon }));
         addFriendship(state, pokemonName, FRIENDSHIP_PER_LEVELUP);
         playSfx('levelup');
       }
@@ -181,7 +181,7 @@ async function main(): Promise<void> {
       const evolution = checkEvolution(pokemonName, evoContext);
       if (evolution) {
         applyEvolution(state, config, evolution, newXp);
-        messages.push(t('hook.evolution', { pokemon: pokemonName, newPokemon: evolution.newPokemon }));
+        messages.push(t('hook.evolution', { pokemon: getPokemonName(pokemonName), newPokemon: getPokemonName(evolution.newPokemon) }));
         playSfx('gacha');
 
         // Check first_evolution achievement immediately
@@ -219,7 +219,7 @@ async function main(): Promise<void> {
         if (battleResult.caught && config.party.length < 6) {
           if (!config.party.includes(battleResult.defender)) {
             config.party.push(battleResult.defender);
-            messages.push(t('hook.party_join', { pokemon: battleResult.defender }));
+            messages.push(t('hook.party_join', { pokemon: getPokemonName(battleResult.defender) }));
           }
         }
 

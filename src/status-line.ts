@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
 import { readConfig } from './core/config.js';
-import { getPokemonDB } from './core/pokemon-data.js';
+import { getPokemonDB, getPokemonName, getRegionName } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
 import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, SPRITES_KITTY_DIR, SPRITES_SIXEL_DIR, SPRITES_ITERM2_DIR } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
@@ -95,7 +95,7 @@ function main(): void {
   const infoMode = config.info_mode ?? 'ace_full';
 
   // Footer
-  const regionName = config.current_region ?? 'Twinleaf Town';
+  const regionName = getRegionName(config.current_region ?? '1');
   const pokeballs = state.items?.pokeball ?? 0;
   const itemInfo = pokeballs > 0 ? ` 🔴 ${pokeballs}` : '';
   const footer = `📍${regionName}${itemInfo}`;
@@ -182,24 +182,25 @@ function main(): void {
       ? (spriteMode === 'emoji_all' || (spriteMode === 'emoji_ace' && isAce)) ? `${emoji} ` : ''
       : '';
 
+    const displayName = getPokemonName(p.name);
     let info: string;
     switch (infoMode) {
       case 'all_full':
-        info = `${prefix}${p.name} Lv.${p.level} [${bar}] ${pct}%${p.agentLabel}`;
+        info = `${prefix}${displayName} Lv.${p.level} [${bar}] ${pct}%${p.agentLabel}`;
         break;
       case 'name_level':
-        info = `${prefix}${p.name} Lv.${p.level}${p.agentLabel}`;
+        info = `${prefix}${displayName} Lv.${p.level}${p.agentLabel}`;
         break;
       case 'ace_level':
         info = isAce
-          ? `${prefix}${p.name} Lv.${p.level}${p.agentLabel}`
-          : `${prefix}${p.name}${p.agentLabel}`;
+          ? `${prefix}${displayName} Lv.${p.level}${p.agentLabel}`
+          : `${prefix}${displayName}${p.agentLabel}`;
         break;
       case 'ace_full':
       default:
         info = isAce
-          ? `${prefix}${p.name} Lv.${p.level} [${bar}] ${pct}%${p.agentLabel}`
-          : `${prefix}${p.name} Lv.${p.level}${p.agentLabel}`;
+          ? `${prefix}${displayName} Lv.${p.level} [${bar}] ${pct}%${p.agentLabel}`
+          : `${prefix}${displayName} Lv.${p.level}${p.agentLabel}`;
         break;
     }
     infoParts.push(info);

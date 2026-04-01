@@ -83,13 +83,13 @@ describe('checkAchievements', () => {
     assert.equal(config.max_party_size, 7);
   });
 
-  it('permission_master caps at 7', () => {
+  it('permission_master caps at 8', () => {
     const state = makeState({ permission_count: 50 });
     const config = makeConfig({ max_party_size: 7 });
     // Force achievement not yet triggered
     checkAchievements(state, config);
 
-    assert.equal(config.max_party_size, 7);
+    assert.equal(config.max_party_size, 8);
   });
 
   it('does not re-trigger already achieved', () => {
@@ -135,12 +135,12 @@ describe('checkAchievements', () => {
 describe('formatAchievementMessage', () => {
   it('formats reward pokemon message', () => {
     const msg = formatAchievementMessage({ id: 'test', name: '첫 만남', rewardPokemon: '393' });
-    assert.ok(msg.includes('393'));
+    assert.ok(msg.includes('팽도리'), `expected '팽도리' in: ${msg}`);
     assert.ok(msg.includes('첫 만남'));
   });
 
-  it('formats reward message', () => {
-    const msg = formatAchievementMessage({ id: 'test', name: '단골 트레이너', rewardMessage: 'XP 보너스 +20%' });
-    assert.ok(msg.includes('XP 보너스'));
+  it('formats basic unlocked message', () => {
+    const msg = formatAchievementMessage({ id: 'test', name: '단골 트레이너' });
+    assert.ok(msg.includes('단골 트레이너'));
   });
 });

@@ -3,7 +3,7 @@ import * as readline from 'readline';
 import { readFileSync } from 'fs';
 import { readState, writeState } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription } from '../core/pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/pokedex.js';
@@ -70,7 +70,7 @@ function cmdStatus(): void {
       const bar = xpBar(xp, level, expGroup);
       const evolInfo = evolvesAt != null ? t('cli.status.evolves_at', { level: evolvesAt }) : '';
 
-      console.log(`  ${BOLD}${pokemon}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
+      console.log(`  ${BOLD}${getPokemonName(pokemon)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
       console.log(`  Lv.${level} [${GREEN}${bar}${RESET}] XP: ${xp}${evolInfo}`);
     }
   }
@@ -96,7 +96,7 @@ function cmdStatus(): void {
   if (pokeballs > 0) console.log(t('cli.status.stat_pokeballs', { count: pokeballs }));
 
   // Region
-  console.log(t('cli.status.stat_region', { region: config.current_region ?? 'Twinleaf Town' }));
+  console.log(t('cli.status.stat_region', { region: getRegionName(config.current_region ?? '1') }));
 }
 
 function cmdStarter(): void {
@@ -106,7 +106,7 @@ function cmdStarter(): void {
 
   if (config.starter_chosen) {
     warn(t('cli.starter.already_chosen'));
-    info(t('cli.starter.current_party', { party: config.party.join(', ') }));
+    info(t('cli.starter.current_party', { party: config.party.map(getPokemonName).join(', ') }));
     return;
   }
 
@@ -119,7 +119,7 @@ function cmdStarter(): void {
     const pData = pokemonDB.pokemon[s];
     const types = pData?.types?.join('/') ?? '';
     const pokemonId = pData?.id ?? '?';
-    console.log(`  ${i + 1}) ${BOLD}${s}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
+    console.log(`  ${i + 1}) ${BOLD}${getPokemonName(s)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
   }
 
   console.log('');
@@ -161,7 +161,7 @@ function cmdStarter(): void {
       process.exit(1);
     }
 
-    success(t('cli.starter.chosen', { pokemon: chosen }));
+    success(t('cli.starter.chosen', { pokemon: getPokemonName(chosen) }));
     playCry(chosen);
   });
 }
@@ -250,7 +250,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         const xp = state.pokemon[p]?.xp ?? 0;
         const expGroup: ExpGroup = pokemonDB.pokemon[p]?.exp_group ?? 'medium_fast';
         const bar = xpBar(xp, level, expGroup);
-        console.log(`  ${BOLD}${p}${RESET} Lv.${level} [${GREEN}${bar}${RESET}]`);
+        console.log(`  ${BOLD}${getPokemonName(p)}${RESET} Lv.${level} [${GREEN}${bar}${RESET}]`);
       }
       break;
     }
@@ -270,7 +270,7 @@ function cmdUnlockList(): void {
     const level = state.pokemon[p]?.level ?? 1;
     const pokemonId = pokemonDB.pokemon[p]?.id ?? 0;
     const types = pokemonDB.pokemon[p]?.types?.join('/') ?? '';
-    console.log(`  ${BOLD}${p}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET} Lv.${level}`);
+    console.log(`  ${BOLD}${getPokemonName(p)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET} Lv.${level}`);
   }
 }
 

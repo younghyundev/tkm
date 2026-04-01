@@ -1,4 +1,4 @@
-import { getPokemonDB } from './pokemon-data.js';
+import { getPokemonDB, getPokemonName } from './pokemon-data.js';
 import { getRawTypeMultiplier, applyTypeDampening } from './type-chart.js';
 import { markSeen, markCaught } from './pokedex.js';
 import { rollItemDrop, getItemCount, useItem } from './items.js';
@@ -304,13 +304,14 @@ export function resolveBattle(
  * Format battle result as notification message.
  */
 export function formatBattleMessage(result: BattleResult): string {
+  const defenderName = getPokemonName(result.defender);
   if (result.won) {
-    let msg = t('battle.win', { defender: result.defender, level: result.defenderLevel, xp: result.xpReward });
+    let msg = t('battle.win', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
     if (result.caught) {
-      msg += t('battle.win_catch', { defender: result.defender });
+      msg += t('battle.win_catch', { defender: defenderName });
     }
     return msg;
   }
 
-  return t('battle.lose', { defender: result.defender, level: result.defenderLevel, xp: result.xpReward });
+  return t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
 }

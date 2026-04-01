@@ -141,7 +141,7 @@ describe('encounter', () => {
         attacker: '387', defender: '396', defenderLevel: 5,
         winRate: 0.6, won: true, xpReward: 65, caught: true, typeMultiplier: 1.0,
       });
-      assert.ok(msg.includes('396'));
+      assert.ok(msg.includes('찌르꼬'), `expected '찌르꼬' in: ${msg}`);
       assert.ok(msg.includes('승리'));
       assert.ok(msg.includes('포획'));
     });
