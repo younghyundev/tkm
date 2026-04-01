@@ -18,6 +18,7 @@ const DEFAULT_CONFIG: Config = {
   current_region: '쌍둥이잎 마을',
   default_dispatch: null,
   sprite_mode: 'all',
+  renderer: 'braille',
   info_mode: 'ace_full',
   tips_enabled: true,
 };

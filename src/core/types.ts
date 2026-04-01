@@ -2,6 +2,8 @@
 
 export type ExpGroup = 'medium_fast' | 'medium_slow' | 'slow' | 'fast' | 'erratic' | 'fluctuating';
 
+export type SpriteRenderer = 'kitty' | 'sixel' | 'iterm2' | 'braille';
+
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'legendary' | 'mythical';
 
 export interface BaseStats {
@@ -111,6 +113,7 @@ export interface Config {
   current_region: string;
   default_dispatch: string | null;
   sprite_mode: 'all' | 'ace_only' | 'emoji_all' | 'emoji_ace';
+  renderer: SpriteRenderer;
   info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level';
   tips_enabled: boolean;
 }

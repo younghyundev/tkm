@@ -275,6 +275,8 @@ function cmdConfigSet(key: string, value: string): void {
     console.log('  max_party_size   - 최대 파티 크기 1-6');
     console.log('  peon_ping_integration - peon-ping 연동 true/false');
     console.log('  tips_enabled         - 자동 팁 표시 true/false');
+    console.log('  renderer             - 스프라이트 렌더러 (kitty/sixel/iterm2/braille)');
+
     process.exit(1);
   }
 
@@ -282,6 +284,11 @@ function cmdConfigSet(key: string, value: string): void {
   const numericKeys = ['tokens_per_xp', 'max_party_size', 'peon_ping_port'];
   const floatKeys = ['volume', 'xp_bonus_multiplier'];
   const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration', 'tips_enabled'];
+  const stringEnumKeys: Record<string, string[]> = {
+    sprite_mode: ['all', 'ace_only', 'emoji_all', 'emoji_ace'],
+    info_mode:   ['ace_full', 'name_level', 'all_full', 'ace_level'],
+    renderer:    ['kitty', 'sixel', 'iterm2', 'braille'],
+  };
 
   if (numericKeys.includes(key)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -296,6 +303,14 @@ function cmdConfigSet(key: string, value: string): void {
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (config as any)[key] = value === 'true';
+  } else if (key in stringEnumKeys) {
+    const allowed = stringEnumKeys[key];
+    if (!allowed.includes(value)) {
+      error(`${key}의 허용 값: ${allowed.join(', ')}`);
+      process.exit(1);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+(config as any)[key] = value;
   } else {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (config as any)[key] = value;
