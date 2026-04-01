@@ -130,8 +130,19 @@ async function main(): Promise<void> {
     state.last_tip = null;
 
     // Delta tracking
+    const isFirstStop = !(sessionId in state.last_session_tokens);
     const prevSessionTokens = state.last_session_tokens[sessionId] ?? 0;
     const deltaTokens = totalTokens - prevSessionTokens;
+
+    if (isFirstStop) {
+      // First stop in this session: record baseline, no XP yet
+      state.last_session_tokens[sessionId] = totalTokens;
+      state.last_session_tokens = pruneSessionTokens(state.last_session_tokens);
+      writeState(state);
+      playCry();
+      console.log(JSON.stringify(output));
+      return;
+    }
 
     if (deltaTokens <= 0) {
       playCry();
