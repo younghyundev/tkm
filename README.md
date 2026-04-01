@@ -23,7 +23,7 @@ Earn XP from your coding sessions, level up, evolve, and catch 107 Sinnoh-region
 
 <!-- Status bar in action (WSL + Braille renderer) -->
 <p align="center">
-  <img src="image.png" alt="tokenmon status bar (WSL, Braille renderer)">
+  <img src="docs/screenshot.png" alt="tokenmon status bar (WSL, Braille renderer)">
   <br>
   <sub>Status bar with Braille renderer on WSL — Kitty/Sixel/iTerm2 renderers available for higher quality</sub>
 </p>
