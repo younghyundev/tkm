@@ -1,41 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { checkAchievements, formatAchievementMessage } from '../src/core/achievements.js';
-import type { State, Config } from '../src/core/types.js';
-
-function makeState(overrides: Partial<State> = {}): State {
-  return {
-    pokemon: {},
-    unlocked: [],
-    achievements: {},
-    total_tokens_consumed: 0,
-    session_count: 0,
-    error_count: 0,
-    permission_count: 0,
-    evolution_count: 0,
-    last_session_id: null,
-    xp_bonus_multiplier: 1.0,
-    last_session_tokens: {},
-    ...overrides,
-  };
-}
-
-function makeConfig(overrides: Partial<Config> = {}): Config {
-  return {
-    tokens_per_xp: 100,
-    party: [],
-    starter_chosen: true,
-    volume: 0.5,
-    sprite_enabled: true,
-    cry_enabled: true,
-    xp_formula: 'medium_fast',
-    xp_bonus_multiplier: 1.0,
-    max_party_size: 6,
-    peon_ping_integration: false,
-    peon_ping_port: 19998,
-    ...overrides,
-  };
-}
+import { makeState, makeConfig } from './helpers.js';
 
 describe('checkAchievements', () => {
   it('first_session triggers at session_count >= 1', () => {

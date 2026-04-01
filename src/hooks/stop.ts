@@ -25,9 +25,8 @@ function acquireLock(lockPath: string, timeoutMs: number = 5000): boolean {
       writeFileSync(lockPath, String(process.pid), { flag: 'wx' });
       return true;
     } catch {
-      const wait = 10;
-      const end = Date.now() + wait;
-      while (Date.now() < end) { /* busy wait */ }
+      // Non-busy sleep using Atomics.wait (blocks thread without CPU spin)
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50);
     }
   }
   return false;
@@ -154,7 +153,6 @@ async function main(): Promise<void> {
     const tokensPerXp = Math.max(1, config.tokens_per_xp);
     const xpBonus = Math.max(config.xp_bonus_multiplier, state.xp_bonus_multiplier);
     const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus));
-    const partySize = config.party.length;
     // All party members receive the full XP (not divided)
     const xpPerPokemon = Math.max(1, xpTotal);
 

@@ -3,9 +3,11 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import type { State, Config } from '../src/core/types.js';
+import { makeState as _makeState, makeConfig as _makeConfig } from './helpers.js';
 import { rollEncounter, selectWildPokemon, processEncounter } from '../src/core/encounter.js';
 import { formatBattleMessage } from '../src/core/battle.js';
+
+import type { State, Config } from '../src/core/types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '..');
@@ -13,27 +15,18 @@ const regionsDB = JSON.parse(readFileSync(join(PROJECT_ROOT, 'data', 'regions.js
 const pokemonDB = JSON.parse(readFileSync(join(PROJECT_ROOT, 'data', 'pokemon.json'), 'utf-8'));
 
 function makeState(overrides: Partial<State> = {}): State {
-  return {
+  return _makeState({
     pokemon: { '모부기': { id: 387, xp: 5000, level: 15, friendship: 0, ev: 0 } },
-    unlocked: ['모부기'], achievements: {},
-    total_tokens_consumed: 0, session_count: 0, error_count: 0,
-    permission_count: 0, evolution_count: 0, last_session_id: null,
-    xp_bonus_multiplier: 1.0, last_session_tokens: {}, pokedex: {},
-    encounter_count: 0, catch_count: 0, battle_count: 0,
-    battle_wins: 0, battle_losses: 0,
+    unlocked: ['모부기'],
     ...overrides,
-  };
+  });
 }
 
 function makeConfig(overrides: Partial<Config> = {}): Config {
-  return {
-    tokens_per_xp: 10000, party: ['모부기'], starter_chosen: true,
-    volume: 0.5, sprite_enabled: true, cry_enabled: true,
-    xp_formula: 'medium_fast', xp_bonus_multiplier: 1.0,
-    max_party_size: 6, peon_ping_integration: false,
-    peon_ping_port: 19998, current_region: '쌍둥이잎 마을',
+  return _makeConfig({
+    party: ['모부기'],
     ...overrides,
-  };
+  });
 }
 
 describe('encounter', () => {

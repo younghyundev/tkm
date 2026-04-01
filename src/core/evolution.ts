@@ -112,7 +112,8 @@ export function applyEvolution(
   const friendship = state.pokemon[evolution.oldPokemon]?.friendship ?? 0;
   const ev = state.pokemon[evolution.oldPokemon]?.ev ?? 0;
 
-  // Add evolved pokemon to state
+  // Add evolved pokemon to state.
+  // Note: old form is intentionally kept in state.pokemon for collection/pokedex tracking.
   state.pokemon[evolution.newPokemon] = {
     id: evolution.newId,
     xp: currentXp,

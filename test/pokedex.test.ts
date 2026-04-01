@@ -1,25 +1,7 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import type { State } from '../src/core/types.js';
+import { makeState } from './helpers.js';
 import { markSeen, markCaught, getCompletion, syncPokedexFromUnlocked } from '../src/core/pokedex.js';
-
-function makeState(overrides: Partial<State> = {}): State {
-  return {
-    pokemon: {},
-    unlocked: [],
-    achievements: {},
-    total_tokens_consumed: 0,
-    session_count: 0,
-    error_count: 0,
-    permission_count: 0,
-    evolution_count: 0,
-    last_session_id: null,
-    xp_bonus_multiplier: 1.0,
-    last_session_tokens: {},
-    pokedex: {},
-    ...overrides,
-  };
-}
 
 describe('pokedex', () => {
   describe('markSeen', () => {

@@ -10,6 +10,37 @@ function sigmoid(x: number): number {
 }
 
 /**
+ * Core combat score: type × level × stat factors (before EV and clamping).
+ * Shared by calculateWinRate and relativeCombatPower to prevent formula divergence.
+ */
+function baseCombatScore(
+  attackerTypes: string[],
+  defenderTypes: string[],
+  attackerLevel: number,
+  defenderLevel: number,
+  attackerStats: { attack: number; defense: number; speed: number },
+  defenderStats: { attack: number; defense: number; speed: number },
+): { score: number; typeMultiplier: number } {
+  // Type matchup with dampening
+  const rawType = getRawTypeMultiplier(attackerTypes, defenderTypes);
+  const typeMultiplier = applyTypeDampening(rawType);
+
+  // Level difference factor with level-scaled dampening
+  // Low levels: steep curve (Lv.1 vs 5 ≈ 15%)
+  // High levels: flatter curve (Lv.51 vs 55 ≈ 37%)
+  const levelDiff = attackerLevel - defenderLevel;
+  const avgLevel = (attackerLevel + defenderLevel) / 2;
+  const levelFactor = sigmoid(levelDiff / (2 + avgLevel * 0.1));
+
+  // Base stat comparison (offense vs defense, symmetric at equal stats)
+  const statRatio = (attackerStats.attack + attackerStats.speed) /
+    Math.max(1, defenderStats.defense + defenderStats.speed);
+  const statFactor = Math.max(0.5, Math.min(1.5, statRatio));
+
+  return { score: typeMultiplier * levelFactor * statFactor, typeMultiplier };
+}
+
+/**
  * Calculate win probability for attacker vs defender.
  */
 export function calculateWinRate(
@@ -21,28 +52,15 @@ export function calculateWinRate(
   defenderStats: { attack: number; defense: number; speed: number },
   attackerEv: number = 0,
 ): { winRate: number; typeMultiplier: number } {
-  // Step 1: Type matchup with dampening
-  const rawType = getRawTypeMultiplier(attackerTypes, defenderTypes);
-  const typeMultiplier = applyTypeDampening(rawType);
+  const { score, typeMultiplier } = baseCombatScore(
+    attackerTypes, defenderTypes, attackerLevel, defenderLevel, attackerStats, defenderStats,
+  );
 
-  // Step 2: Level difference factor with level-scaled dampening
-  // Low levels: steep curve (Lv.1 vs 5 ≈ 15%)
-  // High levels: flatter curve (Lv.51 vs 55 ≈ 37%)
-  const levelDiff = attackerLevel - defenderLevel;
-  const avgLevel = (attackerLevel + defenderLevel) / 2;
-  const levelFactor = sigmoid(levelDiff / (2 + avgLevel * 0.1));
-
-  // Step 3: Base stat comparison (offense vs defense, symmetric at equal stats)
-  const statRatio = (attackerStats.attack + attackerStats.speed) /
-    Math.max(1, defenderStats.defense + defenderStats.speed);
-  const statFactor = Math.max(0.5, Math.min(1.5, statRatio));
-
-  // Step 4: EV (Effort Value) factor — 1.0x at ev=0, 1.252x at ev=252
+  // EV (Effort Value) factor — 1.0x at ev=0, 1.252x at ev=252
   const evFactor = 1.0 + (attackerEv / 252) * 0.252;
 
-  // Step 5: Final win probability
-  // Equal level + neutral type + equal stats + ev=0 = 50%
-  const rawWinRate = typeMultiplier * levelFactor * statFactor * evFactor;
+  // Final win probability (equal level + neutral type + equal stats + ev=0 = 50%)
+  const rawWinRate = score * evFactor;
   const winRate = Math.max(0.03, Math.min(0.95, rawWinRate));
 
   return { winRate, typeMultiplier };
@@ -50,7 +68,7 @@ export function calculateWinRate(
 
 /**
  * Calculate relative combat power of a party pokemon against a wild pokemon.
- * Uses the same factors as calculateWinRate but returns a raw score for comparison.
+ * Returns raw score (before EV/clamping) for comparison between party members.
  */
 function relativeCombatPower(
   attackerTypes: string[],
@@ -60,15 +78,9 @@ function relativeCombatPower(
   attackerStats: { attack: number; defense: number; speed: number },
   defenderStats: { attack: number; defense: number; speed: number },
 ): number {
-  const rawType = getRawTypeMultiplier(attackerTypes, defenderTypes);
-  const typeMultiplier = applyTypeDampening(rawType);
-  const levelDiff = attackerLevel - defenderLevel;
-  const avgLevel = (attackerLevel + defenderLevel) / 2;
-  const levelFactor = sigmoid(levelDiff / (2 + avgLevel * 0.1));
-  const statRatio = (attackerStats.attack + attackerStats.speed) /
-    Math.max(1, defenderStats.defense + defenderStats.speed);
-  const statFactor = Math.max(0.5, Math.min(1.5, statRatio));
-  return typeMultiplier * levelFactor * statFactor;
+  return baseCombatScore(
+    attackerTypes, defenderTypes, attackerLevel, defenderLevel, attackerStats, defenderStats,
+  ).score;
 }
 
 /**

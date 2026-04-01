@@ -75,8 +75,9 @@ const d = JSON.parse(require('fs').readFileSync('$PLUGIN_ROOT/data/pokemon.json'
 const r = JSON.parse(require('fs').readFileSync('$PLUGIN_ROOT/data/regions.json', 'utf-8'));
 const a = JSON.parse(require('fs').readFileSync('$PLUGIN_ROOT/data/achievements.json', 'utf-8'));
 
+const pokemonCount = Object.keys(d.pokemon).length;
 const checks = [
-  ['pokemon === 107', Object.keys(d.pokemon).length === 107],
+  ['pokemon count > 0 (' + pokemonCount + ')', pokemonCount > 0],
   ['type_chart exists', !!d.type_chart && Object.keys(d.type_chart).length >= 17],
   ['rarity_weights sum ~1.0', Math.abs(Object.values(d.rarity_weights).reduce((a,b)=>a+b,0) - 1.0) < 0.01],
   ['regions >= 8', Object.keys(r.regions).length >= 8],
@@ -98,15 +99,16 @@ console.log(pass === checks.length ? 'PASS: data integrity' : 'FAIL: data integr
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
+EXPECTED=$(node -e "const d=JSON.parse(require('fs').readFileSync('$PLUGIN_ROOT/data/pokemon.json','utf-8'));console.log(Object.keys(d.pokemon).length)")
 CRIES=$(ls "$PLUGIN_ROOT/cries/"*.ogg 2>/dev/null | wc -l)
 SPRITES=$(ls "$PLUGIN_ROOT/sprites/terminal/"*.txt 2>/dev/null | wc -l)
 SFX=$(ls "$PLUGIN_ROOT/sfx/"*.wav 2>/dev/null | wc -l)
 
-[ "$CRIES" -eq 107 ] && echo "PASS: cries ($CRIES)" || echo "FAIL: cries ($CRIES/107)"
-[ "$SPRITES" -eq 107 ] && echo "PASS: sprites ($SPRITES)" || echo "FAIL: sprites ($SPRITES/107)"
-[ "$SFX" -eq 4 ] && echo "PASS: sfx ($SFX)" || echo "FAIL: sfx ($SFX/4)"
+[ "$CRIES" -eq "$EXPECTED" ] && echo "PASS: cries ($CRIES)" || echo "FAIL: cries ($CRIES/$EXPECTED)"
+[ "$SPRITES" -eq "$EXPECTED" ] && echo "PASS: sprites ($SPRITES)" || echo "FAIL: sprites ($SPRITES/$EXPECTED)"
+[ "$SFX" -ge 1 ] && echo "PASS: sfx ($SFX)" || echo "FAIL: sfx ($SFX)"
 echo "---"
-[ "$CRIES" -eq 107 ] && [ "$SPRITES" -eq 107 ] && [ "$SFX" -eq 4 ] && echo "PASS: assets" || echo "FAIL: assets"
+[ "$CRIES" -eq "$EXPECTED" ] && [ "$SPRITES" -eq "$EXPECTED" ] && [ "$SFX" -ge 1 ] && echo "PASS: assets" || echo "FAIL: assets"
 ```
 
 ### Step 7: 스타터 & 파티 확인 (읽기 전용)

@@ -1,34 +1,27 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import type { State, Config } from '../src/core/types.js';
+import { makeState as _makeState, makeConfig as _makeConfig } from './helpers.js';
 import { calculateWinRate, calculateBattleXp, selectBattlePokemon, calculatePartyMultiplier, resolveBattle } from '../src/core/battle.js';
 import { getTypeEffectiveness, getRawTypeMultiplier, applyTypeDampening } from '../src/core/type-chart.js';
 
+import type { State, Config } from '../src/core/types.js';
+
 function makeState(overrides: Partial<State> = {}): State {
-  return {
+  return _makeState({
     pokemon: {
       '모부기': { id: 387, xp: 5000, level: 20, friendship: 0, ev: 0 },
       '불꽃숭이': { id: 390, xp: 3000, level: 15, friendship: 0, ev: 0 },
     },
-    unlocked: ['모부기', '불꽃숭이'], achievements: {},
-    total_tokens_consumed: 0, session_count: 0, error_count: 0,
-    permission_count: 0, evolution_count: 0, last_session_id: null,
-    xp_bonus_multiplier: 1.0, last_session_tokens: {}, pokedex: {},
-    encounter_count: 0, catch_count: 0, battle_count: 0,
-    battle_wins: 0, battle_losses: 0,
+    unlocked: ['모부기', '불꽃숭이'],
     ...overrides,
-  };
+  });
 }
 
 function makeConfig(overrides: Partial<Config> = {}): Config {
-  return {
-    tokens_per_xp: 10000, party: ['모부기', '불꽃숭이'], starter_chosen: true,
-    volume: 0.5, sprite_enabled: true, cry_enabled: true,
-    xp_formula: 'medium_fast', xp_bonus_multiplier: 1.0,
-    max_party_size: 6, peon_ping_integration: false,
-    peon_ping_port: 19998, current_region: '쌍둥이잎 마을',
+  return _makeConfig({
+    party: ['모부기', '불꽃숭이'],
     ...overrides,
-  };
+  });
 }
 
 describe('type-chart', () => {

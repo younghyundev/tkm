@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import type { State, Config } from '../src/core/types.js';
+import { makeState, makeConfig } from './helpers.js';
 import { getCurrentRegion, isRegionUnlocked, moveToRegion, getRegionList } from '../src/core/regions.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -12,27 +12,6 @@ const PROJECT_ROOT = join(__dirname, '..');
 // Load regions.json and pokemon.json directly
 const regionsDB = JSON.parse(readFileSync(join(PROJECT_ROOT, 'data', 'regions.json'), 'utf-8'));
 const pokemonDB = JSON.parse(readFileSync(join(PROJECT_ROOT, 'data', 'pokemon.json'), 'utf-8'));
-
-function makeState(overrides: Partial<State> = {}): State {
-  return {
-    pokemon: {}, unlocked: [], achievements: {},
-    total_tokens_consumed: 0, session_count: 0, error_count: 0,
-    permission_count: 0, evolution_count: 0, last_session_id: null,
-    xp_bonus_multiplier: 1.0, last_session_tokens: {}, pokedex: {},
-    ...overrides,
-  };
-}
-
-function makeConfig(overrides: Partial<Config> = {}): Config {
-  return {
-    tokens_per_xp: 10000, party: [], starter_chosen: true,
-    volume: 0.5, sprite_enabled: true, cry_enabled: true,
-    xp_formula: 'medium_fast', xp_bonus_multiplier: 1.0,
-    max_party_size: 6, peon_ping_integration: false,
-    peon_ping_port: 19998, current_region: '쌍둥이잎 마을',
-    ...overrides,
-  };
-}
 
 describe('regions', () => {
   describe('regions.json data', () => {

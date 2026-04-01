@@ -31,7 +31,7 @@ const tokenmonCmd = ${JSON.stringify(TOKENMON_CMD)};
 // Read stdin once and pass it to both commands
 let stdinData = null;
 try {
-  stdinData = readFileSync('/dev/stdin', { encoding: 'utf8' });
+  stdinData = readFileSync(0, { encoding: 'utf8' });
 } catch {
   stdinData = null;
 }
