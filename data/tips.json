@@ -95,7 +95,7 @@
   {
     "id": "xp_party_share",
     "category": "xp",
-    "template": "⭐ XP는 파티 전원에게 분배됩니다. 파티가 작을수록 개별 XP가 높아요",
+    "template": "⭐ XP는 파티 전원이 동일하게 받습니다. 파티가 클수록 많은 포켓몬을 동시 육성!",
     "dynamic": false
   },
   {

@@ -221,8 +221,8 @@ function renderBattleGuide(): void {
   console.log('');
   console.log(`  ${CYAN}타입 상성${RESET}: 효과적 → 약 1.4배 / 별로 → 약 0.7배`);
   console.log('            (원시 배율에 40% 감쇠 적용)');
-  console.log(`  ${CYAN}레벨 팩터${RESET}: sigmoid(레벨차 / 3)`);
-  console.log('            동레벨 = 50%, Lv차 +10 ≈ 88%, Lv차 -8 ≈ 17%');
+  console.log(`  ${CYAN}레벨 팩터${RESET}: sigmoid(레벨차 / (2 + 평균Lv×0.1))`);
+  console.log('            저레벨에서 급격, 고레벨에서 완만 (Lv.51 vs 55 ≈ 37%)');
   console.log(`  ${CYAN}스탯 팩터${RESET}: (공격+스피드) / (상대 방어+스피드)`);
   console.log('            0.5 ~ 1.5 범위로 클램프');
   console.log(`  ${GRAY}최종 승률은 3% ~ 95% 범위로 제한됩니다${RESET}`);
@@ -246,7 +246,7 @@ function renderBattleGuide(): void {
   console.log('');
 
   console.log(`${BOLD}[ 전투 보상 ]${RESET}`);
-  console.log('  승리 시 XP = (기본 50 + 야생Lv×3 + 희귀도 보너스) × 배율 ÷ 파티수');
+  console.log('  승리 시 XP = (기본 50 + 야생Lv×3 + 희귀도 보너스) × 배율');
   console.log('  패배 시 XP = 0');
   console.log('  승리 시 포획 확률 = 포켓몬별 포획률에 따라 결정');
   console.log(`  ${GRAY}희귀도 보너스: common=0, uncommon=30, rare=80, legendary=200, mythical=500${RESET}`);
@@ -326,7 +326,7 @@ function renderXpGuide(): void {
   console.log(`${BOLD}[ XP 획득 ]${RESET}`);
   console.log('  전투 승리 시 XP 획득 (패배 시 0)');
   console.log('  기본 공식:');
-  console.log(`    ${CYAN}XP = (50 + 야생Lv×3 + 타입불리보너스 + 희귀도보너스) × 배율 ÷ 파티수${RESET}`);
+  console.log(`    ${CYAN}XP = (50 + 야생Lv×3 + 타입불리보너스 + 희귀도보너스) × 배율${RESET}`);
   console.log('');
 
   console.log(`${BOLD}[ XP 배율 ]${RESET}`);
@@ -336,10 +336,10 @@ function renderXpGuide(): void {
   console.log(`  ${GRAY}현재 배율: tokenmon status 에서 확인${RESET}`);
   console.log('');
 
-  console.log(`${BOLD}[ 파티 분배 ]${RESET}`);
-  console.log('  XP는 파티 전원에게 균등 분배됩니다.');
-  console.log('  파티 1마리: XP 100% / 파티 6마리: XP 약 17%');
-  console.log(`  ${YELLOW}팁: 빠른 육성이 목표라면 파티를 작게 유지하세요${RESET}`);
+  console.log(`${BOLD}[ 파티 XP ]${RESET}`);
+  console.log('  XP는 파티 전원이 동일하게 받습니다 (분배가 아닌 전원 동일 수령).');
+  console.log('  파티 6마리여도 각각 전체 XP를 받습니다.');
+  console.log(`  ${YELLOW}팁: 파티가 클수록 더 많은 포켓몬을 동시에 육성할 수 있습니다${RESET}`);
   console.log('');
 
   console.log(`${BOLD}[ 파견 시스템 ]${RESET}`);

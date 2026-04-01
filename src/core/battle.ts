@@ -24,10 +24,12 @@ export function calculateWinRate(
   const rawType = getRawTypeMultiplier(attackerTypes, defenderTypes);
   const typeMultiplier = applyTypeDampening(rawType);
 
-  // Step 2: Level difference factor (steep curve like original Pokémon)
-  // sigmoid(0)=0.5, sigmoid(-2.67)≈0.065, sigmoid(3.33)≈0.97
+  // Step 2: Level difference factor with level-scaled dampening
+  // Low levels: steep curve (Lv.1 vs 5 ≈ 15%)
+  // High levels: flatter curve (Lv.51 vs 55 ≈ 37%)
   const levelDiff = attackerLevel - defenderLevel;
-  const levelFactor = sigmoid(levelDiff / 3);
+  const avgLevel = (attackerLevel + defenderLevel) / 2;
+  const levelFactor = sigmoid(levelDiff / (2 + avgLevel * 0.1));
 
   // Step 3: Base stat comparison (offense vs defense, symmetric at equal stats)
   const statRatio = (attackerStats.attack + attackerStats.speed) /
@@ -58,7 +60,8 @@ function relativeCombatPower(
   const rawType = getRawTypeMultiplier(attackerTypes, defenderTypes);
   const typeMultiplier = applyTypeDampening(rawType);
   const levelDiff = attackerLevel - defenderLevel;
-  const levelFactor = sigmoid(levelDiff / 3);
+  const avgLevel = (attackerLevel + defenderLevel) / 2;
+  const levelFactor = sigmoid(levelDiff / (2 + avgLevel * 0.1));
   const statRatio = (attackerStats.attack + attackerStats.speed) /
     Math.max(1, defenderStats.defense + defenderStats.speed);
   const statFactor = Math.max(0.5, Math.min(1.5, statRatio));
@@ -220,7 +223,8 @@ export function resolveBattle(
   // Calculate XP
   const xpBonus = Math.max(config.xp_bonus_multiplier, state.xp_bonus_multiplier);
   const totalBattleXp = calculateBattleXp(wildLevel, wildData.rarity, typeDisadvantage, xpBonus, won);
-  const xpPerPokemon = Math.max(1, Math.floor(totalBattleXp / Math.max(1, config.party.length)));
+  // All party members receive the full XP (not divided)
+  const xpPerPokemon = Math.max(1, totalBattleXp);
 
   // Update state
   state.battle_count++;

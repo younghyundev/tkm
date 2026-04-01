@@ -155,7 +155,8 @@ async function main(): Promise<void> {
     const xpBonus = Math.max(config.xp_bonus_multiplier, state.xp_bonus_multiplier);
     const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus));
     const partySize = config.party.length;
-    const xpPerPokemon = Math.max(1, Math.floor(xpTotal / Math.max(1, partySize)));
+    // All party members receive the full XP (not divided)
+    const xpPerPokemon = Math.max(1, xpTotal);
 
     const pokemonDB = getPokemonDB();
     const messages: string[] = [];
