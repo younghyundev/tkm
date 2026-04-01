@@ -1,6 +1,6 @@
-# Tokenmon — Detailed Guide (English)
+# Tokémon — Detailed Guide (English)
 
-> Train Gen 4 Pokémon while you code in Claude Code.
+> tokenmon — Train Gen 4 Pokémon while you code in Claude Code.
 
 [← Back to main README](../README.md)
 
@@ -21,7 +21,7 @@
 
 ## How It Works
 
-Tokenmon hooks into 6 Claude Code lifecycle events:
+tokenmon hooks into 6 Claude Code lifecycle events:
 
 | Event | What Happens |
 |-------|-------------|

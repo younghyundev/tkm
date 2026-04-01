@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔴 Tokenmon
+# 🔴 Tokémon
 
 **Train Pokémon while you code.**
 
@@ -35,7 +35,7 @@ Earn XP from your coding sessions, level up, evolve, and catch 107 Sinnoh-region
 /tkm:setup
 ```
 
-Setup guides you through dependency install, starter selection (Turtwig / Chimchar / Piplup), and status bar config.
+The setup wizard guides you through dependency install, starter selection (Turtwig / Chimchar / Piplup), and status bar config.
 
 ## Highlights
 
