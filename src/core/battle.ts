@@ -23,18 +23,21 @@ export function calculateWinRate(
   const rawType = getRawTypeMultiplier(attackerTypes, defenderTypes);
   const typeMultiplier = applyTypeDampening(rawType);
 
-  // Step 2: Level difference factor
+  // Step 2: Level difference factor (steep curve like original Pokémon)
+  // sigmoid(0)=0.5, sigmoid(-1.6)≈0.17, sigmoid(2)≈0.88
   const levelDiff = attackerLevel - defenderLevel;
-  const levelFactor = 0.5 + sigmoid(levelDiff / 10) * 0.5;
+  const levelFactor = sigmoid(levelDiff / 5);
 
   // Step 3: Base stat comparison (offense vs defense, symmetric at equal stats)
   const statRatio = (attackerStats.attack + attackerStats.speed) /
     Math.max(1, defenderStats.defense + defenderStats.speed);
   const statFactor = Math.max(0.5, Math.min(1.5, statRatio));
 
-  // Step 4: Final win probability (base 0.67 so equal pokemon ≈ 50%)
-  const rawWinRate = 0.67 * typeMultiplier * levelFactor * statFactor;
-  const winRate = Math.max(0.10, Math.min(0.95, rawWinRate));
+  // Step 4: Final win probability
+  // Equal level + neutral type + equal stats = 50%
+  // Lv.4 vs Lv.12 ≈ 17%, Lv.20 vs Lv.10 ≈ 88%
+  const rawWinRate = typeMultiplier * levelFactor * statFactor;
+  const winRate = Math.max(0.03, Math.min(0.95, rawWinRate));
 
   return { winRate, typeMultiplier };
 }

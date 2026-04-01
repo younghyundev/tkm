@@ -87,13 +87,13 @@ describe('battle', () => {
       assert.ok(winRate > 0.40 && winRate < 0.75, `Win rate: ${winRate}`);
     });
 
-    it('always in [0.10, 0.95] range', () => {
+    it('always in [0.03, 0.95] range', () => {
       // Extreme advantage
       const { winRate: high } = calculateWinRate(['불꽃', '격투'], ['풀', '강철'], 100, 1, neutralStats, neutralStats);
       assert.ok(high <= 0.95, `High: ${high}`);
       // Extreme disadvantage
       const { winRate: low } = calculateWinRate(['풀'], ['불꽃'], 1, 100, neutralStats, neutralStats);
-      assert.ok(low >= 0.10, `Low: ${low}`);
+      assert.ok(low >= 0.03, `Low: ${low}`);
     });
   });
 
