@@ -172,6 +172,7 @@ async function main(): Promise<void> {
           xp: 0,
           level: 1,
           friendship: 0,
+          ev: 0,
         };
       }
 

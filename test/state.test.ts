@@ -36,7 +36,7 @@ await test('readState returns defaults when file missing', () => {
 await test('writeState + readState roundtrip persists all fields', () => {
   freshDir();
   const state = readState();
-  state.pokemon['모부기'] = { id: 387, xp: 5000, level: 10 };
+  state.pokemon['모부기'] = { id: 387, xp: 5000, level: 10, friendship: 0, ev: 0 };
   state.unlocked.push('모부기');
   state.session_count = 42;
   state.total_tokens_consumed = 100000;

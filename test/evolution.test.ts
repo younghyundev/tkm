@@ -80,7 +80,7 @@ describe('checkEvolution', () => {
 describe('addFriendship', () => {
   it('increments friendship', () => {
     const state = makeState({
-      pokemon: { '리오르': { id: 447, xp: 0, level: 1, friendship: 100 } },
+      pokemon: { '리오르': { id: 447, xp: 0, level: 1, friendship: 100, ev: 0 } },
     });
     addFriendship(state, '리오르', 5);
     assert.equal(state.pokemon['리오르'].friendship, 105);
@@ -88,7 +88,7 @@ describe('addFriendship', () => {
 
   it('handles missing friendship field (migration)', () => {
     const state = makeState({
-      pokemon: { '모부기': { id: 387, xp: 0, level: 1, friendship: 0 } },
+      pokemon: { '모부기': { id: 387, xp: 0, level: 1, friendship: 0, ev: 0 } },
     });
     addFriendship(state, '모부기', 2);
     assert.equal(state.pokemon['모부기'].friendship, 2);
@@ -98,7 +98,7 @@ describe('addFriendship', () => {
 describe('applyEvolution', () => {
   it('updates state and config correctly', () => {
     const state = makeState({
-      pokemon: { '모부기': { id: 387, xp: 5000, level: 18, friendship: 50 } },
+      pokemon: { '모부기': { id: 387, xp: 5000, level: 18, friendship: 50, ev: 0 } },
       unlocked: ['모부기'],
     });
     const config = makeConfig({ party: ['모부기'] });
@@ -115,9 +115,22 @@ describe('applyEvolution', () => {
     assert.deepEqual(config.party, ['수풀부기']);
   });
 
+  it('evolution preserves EV', () => {
+    const state = makeState({
+      pokemon: { '모부기': { id: 387, xp: 5000, level: 18, friendship: 50, ev: 100 } },
+      unlocked: ['모부기'],
+    });
+    const config = makeConfig({ party: ['모부기'] });
+
+    const evolution = checkEvolution('모부기', makeCtx({ oldLevel: 17, newLevel: 18 }))!;
+    applyEvolution(state, config, evolution, 5000);
+
+    assert.equal(state.pokemon['수풀부기'].ev, 100, 'EV should carry over on evolution');
+  });
+
   it('old pokemon remains in state.pokemon', () => {
     const state = makeState({
-      pokemon: { '모부기': { id: 387, xp: 5000, level: 18, friendship: 0 } },
+      pokemon: { '모부기': { id: 387, xp: 5000, level: 18, friendship: 0, ev: 0 } },
       unlocked: ['모부기'],
     });
     const config = makeConfig({ party: ['모부기'] });

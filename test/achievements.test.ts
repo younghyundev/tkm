@@ -153,7 +153,7 @@ describe('checkAchievements', () => {
     const state = makeState({
       session_count: 1,
       unlocked: ['팽도리'],
-      pokemon: { '팽도리': { id: 393, xp: 100, level: 3 } },
+      pokemon: { '팽도리': { id: 393, xp: 100, level: 3, friendship: 0, ev: 0 } },
     });
     const config = makeConfig();
     checkAchievements(state, config);

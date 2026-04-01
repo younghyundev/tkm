@@ -52,9 +52,10 @@ export function readState(): State {
     items: parsed.items ?? {},
   };
 
-  // Migrate per-pokemon fields (friendship)
+  // Migrate per-pokemon fields (friendship, ev)
   for (const entry of Object.values(result.pokemon)) {
     if (entry.friendship === undefined) (entry as any).friendship = 0;
+    if (entry.ev === undefined) (entry as any).ev = 0;
   }
 
   return result;

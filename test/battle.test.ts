@@ -7,8 +7,8 @@ import { getTypeEffectiveness, getRawTypeMultiplier, applyTypeDampening } from '
 function makeState(overrides: Partial<State> = {}): State {
   return {
     pokemon: {
-      '모부기': { id: 387, xp: 5000, level: 20 },
-      '불꽃숭이': { id: 390, xp: 3000, level: 15 },
+      '모부기': { id: 387, xp: 5000, level: 20, friendship: 0, ev: 0 },
+      '불꽃숭이': { id: 390, xp: 3000, level: 15, friendship: 0, ev: 0 },
     },
     unlocked: ['모부기', '불꽃숭이'], achievements: {},
     total_tokens_consumed: 0, session_count: 0, error_count: 0,
@@ -161,12 +161,12 @@ describe('battle', () => {
     it('6 equal members gives multiplier ≈ 1.5', () => {
       const state = makeState({
         pokemon: {
-          'A': { id: 1, xp: 5000, level: 20, friendship: 0 },
-          'B': { id: 2, xp: 5000, level: 20, friendship: 0 },
-          'C': { id: 3, xp: 5000, level: 20, friendship: 0 },
-          'D': { id: 4, xp: 5000, level: 20, friendship: 0 },
-          'E': { id: 5, xp: 5000, level: 20, friendship: 0 },
-          'F': { id: 6, xp: 5000, level: 20, friendship: 0 },
+          'A': { id: 1, xp: 5000, level: 20, friendship: 0, ev: 0 },
+          'B': { id: 2, xp: 5000, level: 20, friendship: 0, ev: 0 },
+          'C': { id: 3, xp: 5000, level: 20, friendship: 0, ev: 0 },
+          'D': { id: 4, xp: 5000, level: 20, friendship: 0, ev: 0 },
+          'E': { id: 5, xp: 5000, level: 20, friendship: 0, ev: 0 },
+          'F': { id: 6, xp: 5000, level: 20, friendship: 0, ev: 0 },
         },
       });
       // Use same pokemon name repeated to simulate equal power
@@ -228,6 +228,76 @@ describe('battle', () => {
       const config = makeConfig();
       resolveBattle(state, config, '찌르꼬', 5);
       assert.ok(state.pokedex['찌르꼬']?.seen);
+    });
+  });
+
+  describe('EV system', () => {
+    const neutralStats = { attack: 80, defense: 80, speed: 80 };
+
+    it('evFactor at ev=0 equals 1.0 (no change)', () => {
+      const withEv0 = calculateWinRate(['노말'], ['노말'], 20, 20, neutralStats, neutralStats, 0);
+      const withoutEv = calculateWinRate(['노말'], ['노말'], 20, 20, neutralStats, neutralStats);
+      assert.equal(withEv0.winRate, withoutEv.winRate);
+    });
+
+    it('evFactor at ev=252 gives 1.252x boost', () => {
+      const base = calculateWinRate(['노말'], ['노말'], 20, 20, neutralStats, neutralStats, 0);
+      const maxEv = calculateWinRate(['노말'], ['노말'], 20, 20, neutralStats, neutralStats, 252);
+      const ratio = maxEv.winRate / base.winRate;
+      assert.ok(Math.abs(ratio - 1.252) < 0.01, `Expected ratio ~1.252 but got ${ratio}`);
+    });
+
+    it('evFactor at ev=126 gives ~1.126x boost', () => {
+      const base = calculateWinRate(['노말'], ['노말'], 20, 20, neutralStats, neutralStats, 0);
+      const midEv = calculateWinRate(['노말'], ['노말'], 20, 20, neutralStats, neutralStats, 126);
+      const ratio = midEv.winRate / base.winRate;
+      assert.ok(Math.abs(ratio - 1.126) < 0.01, `Expected ratio ~1.126 but got ${ratio}`);
+    });
+
+    it('battle win awards EV to all party members', () => {
+      const state = makeState();
+      const config = makeConfig();
+      const prevEv0 = state.pokemon['모부기'].ev;
+      const prevEv1 = state.pokemon['불꽃숭이'].ev;
+      // Run battles until we get a win
+      let won = false;
+      for (let i = 0; i < 50 && !won; i++) {
+        const result = resolveBattle(state, config, '찌르꼬', 1); // low level wild for easy win
+        if (result?.won) won = true;
+      }
+      if (won) {
+        assert.ok(state.pokemon['모부기'].ev > prevEv0, 'Party member 1 should gain EV');
+        assert.ok(state.pokemon['불꽃숭이'].ev > prevEv1, 'Party member 2 should gain EV');
+      }
+    });
+
+    it('battle loss does not award EV', () => {
+      const state = makeState({
+        pokemon: {
+          '모부기': { id: 387, xp: 100, level: 1, friendship: 0, ev: 0 },
+        },
+      });
+      const config = makeConfig({ party: ['모부기'] });
+      // Run battles against high level - likely to lose
+      for (let i = 0; i < 20; i++) {
+        resolveBattle(state, config, '불꽃숭이', 100);
+      }
+      // EV should only increase for wins, check it's bounded
+      assert.ok(state.pokemon['모부기'].ev <= state.battle_wins, 'EV should not exceed win count');
+    });
+
+    it('EV caps at 252', () => {
+      const state = makeState({
+        pokemon: {
+          '모부기': { id: 387, xp: 5000, level: 20, friendship: 0, ev: 252 },
+        },
+      });
+      const config = makeConfig({ party: ['모부기'] });
+      // Force a win against low level
+      for (let i = 0; i < 10; i++) {
+        resolveBattle(state, config, '찌르꼬', 1);
+      }
+      assert.equal(state.pokemon['모부기'].ev, 252, 'EV should not exceed 252');
     });
   });
 });

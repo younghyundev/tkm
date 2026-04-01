@@ -60,6 +60,7 @@ export interface PokemonState {
   xp: number;
   level: number;
   friendship: number;
+  ev: number;
 }
 
 export interface EvolutionContext {

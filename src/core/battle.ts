@@ -19,6 +19,7 @@ export function calculateWinRate(
   defenderLevel: number,
   attackerStats: { attack: number; defense: number; speed: number },
   defenderStats: { attack: number; defense: number; speed: number },
+  attackerEv: number = 0,
 ): { winRate: number; typeMultiplier: number } {
   // Step 1: Type matchup with dampening
   const rawType = getRawTypeMultiplier(attackerTypes, defenderTypes);
@@ -36,10 +37,12 @@ export function calculateWinRate(
     Math.max(1, defenderStats.defense + defenderStats.speed);
   const statFactor = Math.max(0.5, Math.min(1.5, statRatio));
 
-  // Step 4: Final win probability
-  // Equal level + neutral type + equal stats = 50%
-  // Lv.4 vs Lv.12 ≈ 17%, Lv.20 vs Lv.10 ≈ 88%
-  const rawWinRate = typeMultiplier * levelFactor * statFactor;
+  // Step 4: EV (Effort Value) factor — 1.0x at ev=0, 1.252x at ev=252
+  const evFactor = 1.0 + (attackerEv / 252) * 0.252;
+
+  // Step 5: Final win probability
+  // Equal level + neutral type + equal stats + ev=0 = 50%
+  const rawWinRate = typeMultiplier * levelFactor * statFactor * evFactor;
   const winRate = Math.max(0.03, Math.min(0.95, rawWinRate));
 
   return { winRate, typeMultiplier };
@@ -203,6 +206,7 @@ export function resolveBattle(
     wildLevel,
     attackerData.base_stats,
     wildData.base_stats,
+    state.pokemon[attacker]?.ev ?? 0,
   );
 
   // Apply party multiplier and clamp
@@ -234,6 +238,14 @@ export function resolveBattle(
     state.battle_losses++;
   }
 
+  // Award EV to all party pokemon on win (cap 252)
+  if (won) {
+    for (const name of config.party) {
+      if (!state.pokemon[name]) continue;
+      state.pokemon[name].ev = Math.min((state.pokemon[name].ev ?? 0) + 1, 252);
+    }
+  }
+
   // Apply battle XP to all party pokemon
   for (const name of config.party) {
     if (!state.pokemon[name]) continue;
@@ -260,7 +272,7 @@ export function resolveBattle(
       if (!state.pokemon[wildName]) {
         // XP must match level to prevent xpToLevel() from resetting level
         const catchXp = levelToXp(wildLevel, wildData.exp_group);
-        state.pokemon[wildName] = { id: wildData.id, xp: catchXp, level: wildLevel, friendship: 0 };
+        state.pokemon[wildName] = { id: wildData.id, xp: catchXp, level: wildLevel, friendship: 0, ev: 0 };
       }
     }
   }

@@ -142,7 +142,7 @@ function cmdStarter(): void {
     if (!state.pokemon[chosen]) {
       const starterLevel = 5;
       const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
-      state.pokemon[chosen] = { id: pData?.id ?? 0, xp: levelToXp(starterLevel, expGroup), level: starterLevel, friendship: 0 };
+      state.pokemon[chosen] = { id: pData?.id ?? 0, xp: levelToXp(starterLevel, expGroup), level: starterLevel, friendship: 0, ev: 0 };
     }
     if (!state.unlocked.includes(chosen)) {
       state.unlocked.push(chosen);
@@ -513,7 +513,7 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
       const pData = pokemonDB.pokemon[arg1];
       if (!pData) { error(`${arg1} 포켓몬을 찾을 수 없습니다.`); return; }
       if (!state.unlocked.includes(arg1)) state.unlocked.push(arg1);
-      if (!state.pokemon[arg1]) state.pokemon[arg1] = { id: pData.id, xp: 0, level: 1, friendship: 0 };
+      if (!state.pokemon[arg1]) state.pokemon[arg1] = { id: pData.id, xp: 0, level: 1, friendship: 0, ev: 0 };
       if (!state.pokedex[arg1]) state.pokedex[arg1] = { seen: true, caught: true, first_seen: new Date().toISOString().split('T')[0] };
       else { state.pokedex[arg1].seen = true; state.pokedex[arg1].caught = true; }
       logCheat(`unlock ${arg1}`);

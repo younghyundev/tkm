@@ -14,7 +14,7 @@ const pokemonDB = JSON.parse(readFileSync(join(PROJECT_ROOT, 'data', 'pokemon.js
 
 function makeState(overrides: Partial<State> = {}): State {
   return {
-    pokemon: { '모부기': { id: 387, xp: 5000, level: 15 } },
+    pokemon: { '모부기': { id: 387, xp: 5000, level: 15, friendship: 0, ev: 0 } },
     unlocked: ['모부기'], achievements: {},
     total_tokens_consumed: 0, session_count: 0, error_count: 0,
     permission_count: 0, evolution_count: 0, last_session_id: null,

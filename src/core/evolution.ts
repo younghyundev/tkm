@@ -110,6 +110,7 @@ export function applyEvolution(
   currentXp: number,
 ): void {
   const friendship = state.pokemon[evolution.oldPokemon]?.friendship ?? 0;
+  const ev = state.pokemon[evolution.oldPokemon]?.ev ?? 0;
 
   // Add evolved pokemon to state
   state.pokemon[evolution.newPokemon] = {
@@ -117,6 +118,7 @@ export function applyEvolution(
     xp: currentXp,
     level: evolution.level,
     friendship,
+    ev,
   };
 
   // Add to unlocked if not already there

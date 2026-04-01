@@ -59,7 +59,7 @@ export function checkAchievements(state: State, config: Config): AchievementEven
         state.unlocked.push(rewardName);
         const pData = pokemonDB.pokemon[rewardName];
         if (pData && !state.pokemon[rewardName]) {
-          state.pokemon[rewardName] = { id: pData.id, xp: 0, level: 1, friendship: 0 };
+          state.pokemon[rewardName] = { id: pData.id, xp: 0, level: 1, friendship: 0, ev: 0 };
         }
         markCaught(state, rewardName);
         event.rewardPokemon = rewardName;
