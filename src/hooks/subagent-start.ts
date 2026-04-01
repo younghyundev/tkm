@@ -1,8 +1,7 @@
-import { readFileSync, writeFileSync, unlinkSync, mkdirSync } from 'fs';
-import { dirname } from 'path';
-import { SESSION_PATH } from '../core/paths.js';
+import { readFileSync } from 'fs';
 import { readSession, writeSession } from '../core/state.js';
 import { readConfig } from '../core/config.js';
+import { withLock } from '../core/lock.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
 
@@ -15,35 +14,6 @@ function readStdin(): string {
   }
 }
 
-/**
- * Simple file-based lock using exclusive creation.
- * Returns true if lock acquired, false if already locked.
- */
-function acquireLock(lockPath: string, timeoutMs: number = 5000): boolean {
-  const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    try {
-      // O_EXCL: fails if file already exists — atomic on local filesystems
-      writeFileSync(lockPath, String(process.pid), { flag: 'wx' });
-      return true;
-    } catch {
-      // Lock held by another process, wait briefly
-      const wait = 10;
-      const end = Date.now() + wait;
-      while (Date.now() < end) { /* busy wait */ }
-    }
-  }
-  return false;
-}
-
-function releaseLock(lockPath: string): void {
-  try {
-    unlinkSync(lockPath);
-  } catch {
-    // Ignore
-  }
-}
-
 function main(): void {
   const input = JSON.parse(readStdin()) as HookInput;
   const agentId = input.agent_id ?? '';
@@ -53,24 +23,14 @@ function main(): void {
     return;
   }
 
-  const lockPath = SESSION_PATH + '.lock';
+  let chosen: string | null = null;
 
-  // Ensure parent directory exists
-  mkdirSync(dirname(SESSION_PATH), { recursive: true });
-
-  if (!acquireLock(lockPath)) {
-    // Timeout — proceed without assignment rather than blocking hook
-    console.log('{"continue": true}');
-    return;
-  }
-
-  try {
+  const lockResult = withLock(() => {
     const session = readSession();
     const config = readConfig();
 
     // Select dispatch pokemon: prefer default_dispatch, then first unassigned
     const assignedPokemon = new Set(session.agent_assignments.map(a => a.pokemon));
-    let chosen: string | null = null;
 
     if (config.default_dispatch && config.party.includes(config.default_dispatch) && !assignedPokemon.has(config.default_dispatch)) {
       chosen = config.default_dispatch;
@@ -86,10 +46,15 @@ function main(): void {
     if (chosen) {
       session.agent_assignments.push({ agent_id: agentId, pokemon: chosen, xp_multiplier: 1.5 });
       writeSession(session);
-      playCry(chosen);
     }
-  } finally {
-    releaseLock(lockPath);
+  });
+
+  if (lockResult === null) {
+    process.stderr.write(`tokenmon subagent-start: lock acquisition failed, agent ${agentId} untracked\n`);
+  }
+
+  if (chosen) {
+    playCry(chosen);
   }
 
   console.log('{"continue": true}');

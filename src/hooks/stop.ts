@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync } from 'fs';
+import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 import { readState, writeState, pruneSessionTokens } from '../core/state.js';
@@ -12,33 +12,7 @@ import { playCry } from '../audio/play-cry.js';
 import { playSfx } from '../audio/play-sfx.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
-import { STATE_PATH } from '../core/paths.js';
-
-/**
- * Simple file-based lock using exclusive creation.
- * Returns true if lock acquired, false if already locked.
- */
-function acquireLock(lockPath: string, timeoutMs: number = 5000): boolean {
-  const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    try {
-      writeFileSync(lockPath, String(process.pid), { flag: 'wx' });
-      return true;
-    } catch {
-      // Non-busy sleep using Atomics.wait (blocks thread without CPU spin)
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50);
-    }
-  }
-  return false;
-}
-
-function releaseLock(lockPath: string): void {
-  try {
-    unlinkSync(lockPath);
-  } catch {
-    // Ignore
-  }
-}
+import { withLock } from '../core/lock.js';
 
 function readStdin(): string {
   try {
@@ -95,12 +69,11 @@ async function main(): Promise<void> {
   const sessionId = input.session_id ?? '';
 
   const output: HookOutput = { continue: true };
-  const lockPath = STATE_PATH + '.lock';
 
-  // Pre-lock: read config for early exit check
-  const config = readConfig();
+  // Pre-lock: read config for early exit check (benign TOCTOU — worst case: enter lock unnecessarily)
+  const configCheck = readConfig();
 
-  if (config.party.length === 0 || !sessionId) {
+  if (configCheck.party.length === 0 || !sessionId) {
     playCry();
     console.log(JSON.stringify(output));
     return;
@@ -113,15 +86,20 @@ async function main(): Promise<void> {
     totalTokens = parseJsonl(jsonlFile);
   }
 
-  // Acquire lock before reading/writing state
-  if (!acquireLock(lockPath)) {
-    // Timeout — proceed without state mutation rather than blocking hook
-    playCry();
-    console.log(JSON.stringify(output));
-    return;
+  // Pre-lock: load guide module (read-only module load)
+  let getRandomTip: ((state: any, config: any) => { id: string; text: string } | null) | null = null;
+  try {
+    const guideModule = await import('../core/guide.js');
+    getRandomTip = guideModule.getRandomTip;
+  } catch {
+    // Ignore guide errors
   }
 
-  try {
+  // All state mutations under global lock
+  const messages: string[] = [];
+
+  const result = withLock(() => {
+    const config = readConfig();
     const state = readState();
 
     // Clear previous battle/tip result (only show for one turn)
@@ -138,15 +116,11 @@ async function main(): Promise<void> {
       state.last_session_tokens[sessionId] = totalTokens;
       state.last_session_tokens = pruneSessionTokens(state.last_session_tokens);
       writeState(state);
-      playCry();
-      console.log(JSON.stringify(output));
-      return;
+      return 'first_stop';
     }
 
     if (deltaTokens <= 0) {
-      playCry();
-      console.log(JSON.stringify(output));
-      return;
+      return 'no_delta';
     }
 
     // Calculate XP
@@ -157,7 +131,6 @@ async function main(): Promise<void> {
     const xpPerPokemon = Math.max(1, xpTotal);
 
     const pokemonDB = getPokemonDB();
-    const messages: string[] = [];
 
     for (const pokemonName of config.party) {
       if (!pokemonName) continue;
@@ -260,24 +233,32 @@ async function main(): Promise<void> {
     }
 
     // Show tip when no battle occurred
-    if (!state.last_battle && config.tips_enabled) {
-      try {
-        const { getRandomTip } = await import('../core/guide.js');
-        const tip = getRandomTip(state, config);
-        if (tip) state.last_tip = tip;
-      } catch {
-        // Ignore guide errors
-      }
+    if (!state.last_battle && config.tips_enabled && getRandomTip) {
+      const tip = getRandomTip(state, config);
+      if (tip) state.last_tip = tip;
     }
 
     writeState(state);
     writeConfig(config);
 
-    if (messages.length > 0) {
-      output.system_message = messages.join('\n');
-    }
-  } finally {
-    releaseLock(lockPath);
+    return 'done';
+  });
+
+  // Lock failed — skip gracefully (state not mutated)
+  if (result === null) {
+    playCry();
+    console.log(JSON.stringify(output));
+    return;
+  }
+
+  if (result === 'first_stop' || result === 'no_delta') {
+    playCry();
+    console.log(JSON.stringify(output));
+    return;
+  }
+
+  if (messages.length > 0) {
+    output.system_message = messages.join('\n');
   }
 
   playCry();
