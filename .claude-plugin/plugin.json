@@ -1,11 +1,11 @@
 {
-  "name": "tokenmon",
+  "name": "tkm",
   "description": "Gen 4 Pokemon XP gamification for Claude Code | Gen 4 포켓몬 기반 Claude Code 경험치 플러그인",
-  "version": "1.2.0-rc.5",
+  "version": "0.0.1",
   "author": {
     "name": "Sangwon Lee"
   },
-  "repository": "https://github.com/ThunderConch/tokenmon",
+  "repository": "https://github.com/ThunderConch/tkm",
   "keywords": ["pokemon", "gamification", "xp", "level"],
   "skills": "./skills/",
   "statusLine": {
