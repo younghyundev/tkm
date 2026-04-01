@@ -33,5 +33,7 @@ Bash 도구로 다음을 실행하고 결과를 보여주세요:
 | `region move <지역>` | 지역 이동 |
 | `items` | 아이템 목록 |
 | `achievements` | 업적 목록 |
-| `config set <키> <값>` | 설정 변경 |
+| `config set <키> <값>` | 설정 변경 (예: `config set language en`) |
+| `config set language en` | Switch to English mode |
+| `config set language ko` | 한국어 모드로 전환 |
 | `help` | 전체 도움말 |

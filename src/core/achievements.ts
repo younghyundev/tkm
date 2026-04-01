@@ -1,6 +1,6 @@
-import { getPokemonDB, getAchievementsDB } from './pokemon-data.js';
-import { addItem } from './items.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName, getPokemonName } from './pokemon-data.js';
 import { markCaught } from './pokedex.js';
+import { t } from '../i18n/index.js';
 import type { State, Config, AchievementEvent } from './types.js';
 
 /**
@@ -49,7 +49,7 @@ export function checkAchievements(state: State, config: Config): AchievementEven
 
     const event: AchievementEvent = {
       id: ach.id,
-      name: ach.name,
+      name: getAchievementName(ach.id),
     };
 
     // Handle reward pokemon
@@ -66,12 +66,7 @@ export function checkAchievements(state: State, config: Config): AchievementEven
       }
     }
 
-    // Handle special rewards
-    if (ach.reward_message) {
-      event.rewardMessage = ach.reward_message;
-    }
-
-    applyAchievementEffects(ach.id, ach.reward_message, state, config);
+    applyAchievementEffects(ach.id, state, config);
 
     events.push(event);
   }
@@ -79,34 +74,27 @@ export function checkAchievements(state: State, config: Config): AchievementEven
   return events;
 }
 
-function applyAchievementEffects(achievementId: string, rewardMessage: string | undefined, state: State, config: Config): void {
-  // Named effects
-  switch (achievementId) {
-    case 'ten_sessions':
-      state.xp_bonus_multiplier += 0.2;
-      break;
-    case 'permission_master':
-      config.max_party_size = Math.min(7, config.max_party_size + 1);
-      break;
-    case 'ten_catches':
-      state.xp_bonus_multiplier += 0.1;
-      break;
-    case 'battle_50':
-      state.xp_bonus_multiplier += 0.15;
-      break;
-    case 'evolution_10':
-      state.xp_bonus_multiplier += 0.1;
-      break;
-    case 'max_level':
-      config.max_party_size = Math.min(8, config.max_party_size + 1);
-      break;
-  }
+function applyAchievementEffects(achievementId: string, state: State, config: Config): void {
+  const db = getAchievementsDB();
+  const ach = db.achievements.find(a => a.id === achievementId);
 
-  // Parse retry token rewards from message
-  if (rewardMessage) {
-    const ballMatch = rewardMessage.match(/포켓몬볼 x(\d+)/);
-    if (ballMatch) {
-      addItem(state, 'pokeball', parseInt(ballMatch[1], 10));
+  // Process structured reward_effects from achievements.json
+  if (ach?.reward_effects) {
+    for (const effect of ach.reward_effects as Array<{ type: string; item?: string; count?: number; value?: number }>) {
+      switch (effect.type) {
+        case 'add_item':
+          state.items[effect.item as string] = (state.items[effect.item as string] ?? 0) + (effect.count ?? 1);
+          break;
+        case 'xp_bonus':
+          state.xp_bonus_multiplier += (effect.value ?? 0);
+          break;
+        case 'party_slot':
+          config.max_party_size = Math.min(8, config.max_party_size + (effect.count ?? 1));
+          break;
+        case 'unlock_legendary':
+          // Flag-only effect — no direct state change needed
+          break;
+      }
     }
   }
 }
@@ -116,10 +104,7 @@ function applyAchievementEffects(achievementId: string, rewardMessage: string | 
  */
 export function formatAchievementMessage(event: AchievementEvent): string {
   if (event.rewardPokemon) {
-    return `🏆 업적 달성: ${event.name}! ${event.rewardPokemon}을(를) 얻었습니다!`;
+    return t('achievement.unlocked_pokemon', { name: event.name, pokemon: getPokemonName(event.rewardPokemon) });
   }
-  if (event.rewardMessage) {
-    return `🏆 업적 달성: ${event.name}! ${event.rewardMessage}`;
-  }
-  return `🏆 업적 달성: ${event.name}!`;
+  return t('achievement.unlocked', { name: event.name }) + '!';
 }

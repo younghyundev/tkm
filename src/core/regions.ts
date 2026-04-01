@@ -1,5 +1,6 @@
 import { getRegionsDB } from './pokemon-data.js';
 import { getCompletion } from './pokedex.js';
+import { t } from '../i18n/index.js';
 import type { State, Config, RegionData } from './types.js';
 
 /**
@@ -36,12 +37,12 @@ export function isRegionUnlocked(regionName: string, state: State): boolean {
 export function moveToRegion(regionName: string, state: State, config: Config): string | null {
   const db = getRegionsDB();
   if (!db.regions[regionName]) {
-    return `"${regionName}" 지역을 찾을 수 없습니다.`;
+    return t('region.not_found', { name: regionName });
   }
   if (!isRegionUnlocked(regionName, state)) {
     const cond = db.regions[regionName].unlock_condition!;
-    const label = cond.type === 'pokedex_caught' ? '포획' : '발견';
-    return `이 지역은 포켓몬 ${cond.value}종 ${label} 후 해금됩니다.`;
+    const label = cond.type === 'pokedex_caught' ? t('region.locked_caught') : t('region.locked_seen');
+    return t('region.locked', { count: cond.value, label });
   }
   config.current_region = regionName;
   return null;
@@ -56,6 +57,6 @@ export function getRegionList(state: State): Array<{ region: RegionData; unlocke
     .sort((a, b) => a.id - b.id)
     .map(region => ({
       region,
-      unlocked: isRegionUnlocked(region.name, state),
+      unlocked: isRegionUnlocked(String(region.id), state),
     }));
 }

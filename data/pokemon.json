@@ -1,22 +1,22 @@
 {
   "pokemon": {
-    "모부기": {
+    "387": {
       "id": 387,
-      "name": "모부기",
+      "name": "387",
       "types": [
-        "풀"
+        "grass"
       ],
       "stage": 0,
       "line": [
-        "모부기",
-        "수풀부기",
-        "토대부기"
+        "387",
+        "388",
+        "389"
       ],
       "evolves_at": 18,
       "unlock": "starter",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 55,
         "attack": 68,
@@ -25,23 +25,23 @@
       },
       "catch_rate": 45
     },
-    "수풀부기": {
+    "388": {
       "id": 388,
-      "name": "수풀부기",
+      "name": "388",
       "types": [
-        "풀"
+        "grass"
       ],
       "stage": 1,
       "line": [
-        "모부기",
-        "수풀부기",
-        "토대부기"
+        "387",
+        "388",
+        "389"
       ],
       "evolves_at": 32,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 75,
         "attack": 89,
@@ -50,24 +50,24 @@
       },
       "catch_rate": 45
     },
-    "토대부기": {
+    "389": {
       "id": 389,
-      "name": "토대부기",
+      "name": "389",
       "types": [
-        "풀",
-        "땅"
+        "grass",
+        "ground"
       ],
       "stage": 2,
       "line": [
-        "모부기",
-        "수풀부기",
-        "토대부기"
+        "387",
+        "388",
+        "389"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "rare",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 95,
         "attack": 109,
@@ -76,23 +76,23 @@
       },
       "catch_rate": 45
     },
-    "불꽃숭이": {
+    "390": {
       "id": 390,
-      "name": "불꽃숭이",
+      "name": "390",
       "types": [
-        "불꽃"
+        "fire"
       ],
       "stage": 0,
       "line": [
-        "불꽃숭이",
-        "파이숭이",
-        "초염몽"
+        "390",
+        "391",
+        "392"
       ],
       "evolves_at": 14,
       "unlock": "achievement:first_evolution",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "화산",
+      "region": "7",
       "base_stats": {
         "hp": 44,
         "attack": 58,
@@ -101,24 +101,24 @@
       },
       "catch_rate": 45
     },
-    "파이숭이": {
+    "391": {
       "id": 391,
-      "name": "파이숭이",
+      "name": "391",
       "types": [
-        "불꽃",
-        "격투"
+        "fire",
+        "fighting"
       ],
       "stage": 1,
       "line": [
-        "불꽃숭이",
-        "파이숭이",
-        "초염몽"
+        "390",
+        "391",
+        "392"
       ],
       "evolves_at": 36,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "화산",
+      "region": "7",
       "base_stats": {
         "hp": 64,
         "attack": 78,
@@ -127,24 +127,24 @@
       },
       "catch_rate": 45
     },
-    "초염몽": {
+    "392": {
       "id": 392,
-      "name": "초염몽",
+      "name": "392",
       "types": [
-        "불꽃",
-        "격투"
+        "fire",
+        "fighting"
       ],
       "stage": 2,
       "line": [
-        "불꽃숭이",
-        "파이숭이",
-        "초염몽"
+        "390",
+        "391",
+        "392"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "rare",
-      "region": "화산",
+      "region": "7",
       "base_stats": {
         "hp": 76,
         "attack": 104,
@@ -153,23 +153,23 @@
       },
       "catch_rate": 45
     },
-    "팽도리": {
+    "393": {
       "id": 393,
-      "name": "팽도리",
+      "name": "393",
       "types": [
-        "물"
+        "water"
       ],
       "stage": 0,
       "line": [
-        "팽도리",
-        "팽태자",
-        "엠페르트"
+        "393",
+        "394",
+        "395"
       ],
       "evolves_at": 16,
       "unlock": "achievement:first_session",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 53,
         "attack": 51,
@@ -178,23 +178,23 @@
       },
       "catch_rate": 45
     },
-    "팽태자": {
+    "394": {
       "id": 394,
-      "name": "팽태자",
+      "name": "394",
       "types": [
-        "물"
+        "water"
       ],
       "stage": 1,
       "line": [
-        "팽도리",
-        "팽태자",
-        "엠페르트"
+        "393",
+        "394",
+        "395"
       ],
       "evolves_at": 36,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 64,
         "attack": 66,
@@ -203,24 +203,24 @@
       },
       "catch_rate": 45
     },
-    "엠페르트": {
+    "395": {
       "id": 395,
-      "name": "엠페르트",
+      "name": "395",
       "types": [
-        "물",
-        "강철"
+        "water",
+        "steel"
       ],
       "stage": 2,
       "line": [
-        "팽도리",
-        "팽태자",
-        "엠페르트"
+        "393",
+        "394",
+        "395"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "rare",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 84,
         "attack": 86,
@@ -229,24 +229,24 @@
       },
       "catch_rate": 45
     },
-    "찌르꼬": {
+    "396": {
       "id": 396,
-      "name": "찌르꼬",
+      "name": "396",
       "types": [
-        "노말",
-        "비행"
+        "normal",
+        "flying"
       ],
       "stage": 0,
       "line": [
-        "찌르꼬",
-        "찌르버드",
-        "찌르호크"
+        "396",
+        "397",
+        "398"
       ],
       "evolves_at": 14,
       "unlock": "achievement:first_error",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 40,
         "attack": 55,
@@ -255,24 +255,24 @@
       },
       "catch_rate": 255
     },
-    "찌르버드": {
+    "397": {
       "id": 397,
-      "name": "찌르버드",
+      "name": "397",
       "types": [
-        "노말",
-        "비행"
+        "normal",
+        "flying"
       ],
       "stage": 1,
       "line": [
-        "찌르꼬",
-        "찌르버드",
-        "찌르호크"
+        "396",
+        "397",
+        "398"
       ],
       "evolves_at": 34,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 55,
         "attack": 75,
@@ -281,24 +281,24 @@
       },
       "catch_rate": 120
     },
-    "찌르호크": {
+    "398": {
       "id": 398,
-      "name": "찌르호크",
+      "name": "398",
       "types": [
-        "노말",
-        "비행"
+        "normal",
+        "flying"
       ],
       "stage": 2,
       "line": [
-        "찌르꼬",
-        "찌르버드",
-        "찌르호크"
+        "396",
+        "397",
+        "398"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "rare",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 85,
         "attack": 120,
@@ -307,22 +307,22 @@
       },
       "catch_rate": 45
     },
-    "비버니": {
+    "399": {
       "id": 399,
-      "name": "비버니",
+      "name": "399",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 0,
       "line": [
-        "비버니",
-        "비버통"
+        "399",
+        "400"
       ],
       "evolves_at": 15,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 59,
         "attack": 45,
@@ -331,23 +331,23 @@
       },
       "catch_rate": 255
     },
-    "비버통": {
+    "400": {
       "id": 400,
-      "name": "비버통",
+      "name": "400",
       "types": [
-        "노말",
-        "물"
+        "normal",
+        "water"
       ],
       "stage": 1,
       "line": [
-        "비버니",
-        "비버통"
+        "399",
+        "400"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 79,
         "attack": 85,
@@ -356,22 +356,22 @@
       },
       "catch_rate": 127
     },
-    "귀뚤뚜기": {
+    "401": {
       "id": 401,
-      "name": "귀뚤뚜기",
+      "name": "401",
       "types": [
-        "벌레"
+        "bug"
       ],
       "stage": 0,
       "line": [
-        "귀뚤뚜기",
-        "귀뚤톡크"
+        "401",
+        "402"
       ],
       "evolves_at": 10,
       "unlock": "encounter",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 37,
         "attack": 25,
@@ -380,22 +380,22 @@
       },
       "catch_rate": 255
     },
-    "귀뚤톡크": {
+    "402": {
       "id": 402,
-      "name": "귀뚤톡크",
+      "name": "402",
       "types": [
-        "벌레"
+        "bug"
       ],
       "stage": 1,
       "line": [
-        "귀뚤뚜기",
-        "귀뚤톡크"
+        "401",
+        "402"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 77,
         "attack": 85,
@@ -404,23 +404,23 @@
       },
       "catch_rate": 45
     },
-    "꼬링크": {
+    "403": {
       "id": 403,
-      "name": "꼬링크",
+      "name": "403",
       "types": [
-        "전기"
+        "electric"
       ],
       "stage": 0,
       "line": [
-        "꼬링크",
-        "럭시오",
-        "렌트라"
+        "403",
+        "404",
+        "405"
       ],
       "evolves_at": 15,
       "unlock": "achievement:hundred_k_tokens",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "발전소",
+      "region": "5",
       "base_stats": {
         "hp": 45,
         "attack": 65,
@@ -429,23 +429,23 @@
       },
       "catch_rate": 235
     },
-    "럭시오": {
+    "404": {
       "id": 404,
-      "name": "럭시오",
+      "name": "404",
       "types": [
-        "전기"
+        "electric"
       ],
       "stage": 1,
       "line": [
-        "꼬링크",
-        "럭시오",
-        "렌트라"
+        "403",
+        "404",
+        "405"
       ],
       "evolves_at": 30,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "발전소",
+      "region": "5",
       "base_stats": {
         "hp": 60,
         "attack": 85,
@@ -454,23 +454,23 @@
       },
       "catch_rate": 120
     },
-    "렌트라": {
+    "405": {
       "id": 405,
-      "name": "렌트라",
+      "name": "405",
       "types": [
-        "전기"
+        "electric"
       ],
       "stage": 2,
       "line": [
-        "꼬링크",
-        "럭시오",
-        "렌트라"
+        "403",
+        "404",
+        "405"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "rare",
-      "region": "발전소",
+      "region": "5",
       "base_stats": {
         "hp": 80,
         "attack": 120,
@@ -479,23 +479,23 @@
       },
       "catch_rate": 45
     },
-    "꼬몽울": {
+    "406": {
       "id": 406,
-      "name": "꼬몽울",
+      "name": "406",
       "types": [
-        "풀",
-        "독"
+        "grass",
+        "poison"
       ],
       "stage": 0,
       "line": [
-        "꼬몽울",
-        "로즈레이드"
+        "406",
+        "407"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 40,
         "attack": 30,
@@ -505,23 +505,23 @@
       "catch_rate": 255,
       "evolves_condition": "friendship"
     },
-    "로즈레이드": {
+    "407": {
       "id": 407,
-      "name": "로즈레이드",
+      "name": "407",
       "types": [
-        "풀",
-        "독"
+        "grass",
+        "poison"
       ],
       "stage": 2,
       "line": [
-        "꼬몽울",
-        "로즈레이드"
+        "406",
+        "407"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "rare",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 60,
         "attack": 70,
@@ -530,22 +530,22 @@
       },
       "catch_rate": 75
     },
-    "두개도스": {
+    "408": {
       "id": 408,
-      "name": "두개도스",
+      "name": "408",
       "types": [
-        "바위"
+        "rock"
       ],
       "stage": 0,
       "line": [
-        "두개도스",
-        "램펄드"
+        "408",
+        "409"
       ],
       "evolves_at": 30,
       "unlock": "encounter",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 67,
         "attack": 125,
@@ -554,22 +554,22 @@
       },
       "catch_rate": 45
     },
-    "램펄드": {
+    "409": {
       "id": 409,
-      "name": "램펄드",
+      "name": "409",
       "types": [
-        "바위"
+        "rock"
       ],
       "stage": 1,
       "line": [
-        "두개도스",
-        "램펄드"
+        "408",
+        "409"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 97,
         "attack": 165,
@@ -578,23 +578,23 @@
       },
       "catch_rate": 45
     },
-    "방패톱스": {
+    "410": {
       "id": 410,
-      "name": "방패톱스",
+      "name": "410",
       "types": [
-        "바위",
-        "강철"
+        "rock",
+        "steel"
       ],
       "stage": 0,
       "line": [
-        "방패톱스",
-        "바리톱스"
+        "410",
+        "411"
       ],
       "evolves_at": 30,
       "unlock": "encounter",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 30,
         "attack": 42,
@@ -603,23 +603,23 @@
       },
       "catch_rate": 45
     },
-    "바리톱스": {
+    "411": {
       "id": 411,
-      "name": "바리톱스",
+      "name": "411",
       "types": [
-        "바위",
-        "강철"
+        "rock",
+        "steel"
       ],
       "stage": 1,
       "line": [
-        "방패톱스",
-        "바리톱스"
+        "410",
+        "411"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 60,
         "attack": 52,
@@ -628,23 +628,23 @@
       },
       "catch_rate": 45
     },
-    "도롱충이": {
+    "412": {
       "id": 412,
-      "name": "도롱충이",
+      "name": "412",
       "types": [
-        "벌레"
+        "bug"
       ],
       "stage": 0,
       "line": [
-        "도롱충이",
-        "도롱마담",
-        "나메일"
+        "412",
+        "413",
+        "414"
       ],
       "evolves_at": 20,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 40,
         "attack": 29,
@@ -653,24 +653,24 @@
       },
       "catch_rate": 120
     },
-    "도롱마담": {
+    "413": {
       "id": 413,
-      "name": "도롱마담",
+      "name": "413",
       "types": [
-        "벌레",
-        "풀"
+        "bug",
+        "grass"
       ],
       "stage": 1,
       "line": [
-        "도롱충이",
-        "도롱마담",
-        "나메일"
+        "412",
+        "413",
+        "414"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 60,
         "attack": 59,
@@ -679,24 +679,24 @@
       },
       "catch_rate": 45
     },
-    "나메일": {
+    "414": {
       "id": 414,
-      "name": "나메일",
+      "name": "414",
       "types": [
-        "벌레",
-        "비행"
+        "bug",
+        "flying"
       ],
       "stage": 2,
       "line": [
-        "도롱충이",
-        "도롱마담",
-        "나메일"
+        "412",
+        "413",
+        "414"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "rare",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 70,
         "attack": 94,
@@ -705,23 +705,23 @@
       },
       "catch_rate": 45
     },
-    "세꿀버리": {
+    "415": {
       "id": 415,
-      "name": "세꿀버리",
+      "name": "415",
       "types": [
-        "벌레",
-        "비행"
+        "bug",
+        "flying"
       ],
       "stage": 0,
       "line": [
-        "세꿀버리",
-        "비퀸"
+        "415",
+        "416"
       ],
       "evolves_at": 21,
       "unlock": "encounter",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 30,
         "attack": 30,
@@ -730,23 +730,23 @@
       },
       "catch_rate": 120
     },
-    "비퀸": {
+    "416": {
       "id": 416,
-      "name": "비퀸",
+      "name": "416",
       "types": [
-        "벌레",
-        "비행"
+        "bug",
+        "flying"
       ],
       "stage": 1,
       "line": [
-        "세꿀버리",
-        "비퀸"
+        "415",
+        "416"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 70,
         "attack": 80,
@@ -755,21 +755,21 @@
       },
       "catch_rate": 45
     },
-    "파치리스": {
+    "417": {
       "id": 417,
-      "name": "파치리스",
+      "name": "417",
       "types": [
-        "전기"
+        "electric"
       ],
       "stage": 0,
       "line": [
-        "파치리스"
+        "417"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "발전소",
+      "region": "5",
       "base_stats": {
         "hp": 60,
         "attack": 45,
@@ -778,22 +778,22 @@
       },
       "catch_rate": 200
     },
-    "브이젤": {
+    "418": {
       "id": 418,
-      "name": "브이젤",
+      "name": "418",
       "types": [
-        "물"
+        "water"
       ],
       "stage": 0,
       "line": [
-        "브이젤",
-        "플로젤"
+        "418",
+        "419"
       ],
       "evolves_at": 26,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 55,
         "attack": 65,
@@ -802,22 +802,22 @@
       },
       "catch_rate": 190
     },
-    "플로젤": {
+    "419": {
       "id": 419,
-      "name": "플로젤",
+      "name": "419",
       "types": [
-        "물"
+        "water"
       ],
       "stage": 1,
       "line": [
-        "브이젤",
-        "플로젤"
+        "418",
+        "419"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 85,
         "attack": 105,
@@ -826,22 +826,22 @@
       },
       "catch_rate": 75
     },
-    "체리버": {
+    "420": {
       "id": 420,
-      "name": "체리버",
+      "name": "420",
       "types": [
-        "풀"
+        "grass"
       ],
       "stage": 0,
       "line": [
-        "체리버",
-        "체리꼬"
+        "420",
+        "421"
       ],
       "evolves_at": 25,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 45,
         "attack": 35,
@@ -850,22 +850,22 @@
       },
       "catch_rate": 190
     },
-    "체리꼬": {
+    "421": {
       "id": 421,
-      "name": "체리꼬",
+      "name": "421",
       "types": [
-        "풀"
+        "grass"
       ],
       "stage": 1,
       "line": [
-        "체리버",
-        "체리꼬"
+        "420",
+        "421"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 70,
         "attack": 60,
@@ -874,22 +874,22 @@
       },
       "catch_rate": 75
     },
-    "깝질무": {
+    "422": {
       "id": 422,
-      "name": "깝질무",
+      "name": "422",
       "types": [
-        "물"
+        "water"
       ],
       "stage": 0,
       "line": [
-        "깝질무",
-        "트리토돈"
+        "422",
+        "423"
       ],
       "evolves_at": 30,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 76,
         "attack": 48,
@@ -898,23 +898,23 @@
       },
       "catch_rate": 190
     },
-    "트리토돈": {
+    "423": {
       "id": 423,
-      "name": "트리토돈",
+      "name": "423",
       "types": [
-        "물",
-        "땅"
+        "water",
+        "ground"
       ],
       "stage": 1,
       "line": [
-        "깝질무",
-        "트리토돈"
+        "422",
+        "423"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 111,
         "attack": 83,
@@ -923,21 +923,21 @@
       },
       "catch_rate": 75
     },
-    "겟핸보숭": {
+    "424": {
       "id": 424,
-      "name": "겟핸보숭",
+      "name": "424",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 1,
       "line": [
-        "겟핸보숭"
+        "424"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "fast",
       "rarity": "uncommon",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 75,
         "attack": 100,
@@ -946,23 +946,23 @@
       },
       "catch_rate": 45
     },
-    "흔들풍손": {
+    "425": {
       "id": 425,
-      "name": "흔들풍손",
+      "name": "425",
       "types": [
-        "고스트",
-        "비행"
+        "ghost",
+        "flying"
       ],
       "stage": 0,
       "line": [
-        "흔들풍손",
-        "둥실라이드"
+        "425",
+        "426"
       ],
       "evolves_at": 28,
       "unlock": "encounter",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 90,
         "attack": 50,
@@ -971,23 +971,23 @@
       },
       "catch_rate": 125
     },
-    "둥실라이드": {
+    "426": {
       "id": 426,
-      "name": "둥실라이드",
+      "name": "426",
       "types": [
-        "고스트",
-        "비행"
+        "ghost",
+        "flying"
       ],
       "stage": 1,
       "line": [
-        "흔들풍손",
-        "둥실라이드"
+        "425",
+        "426"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 150,
         "attack": 80,
@@ -996,22 +996,22 @@
       },
       "catch_rate": 60
     },
-    "이어롤": {
+    "427": {
       "id": 427,
-      "name": "이어롤",
+      "name": "427",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 0,
       "line": [
-        "이어롤",
-        "이어롭"
+        "427",
+        "428"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 55,
         "attack": 66,
@@ -1021,22 +1021,22 @@
       "catch_rate": 190,
       "evolves_condition": "friendship"
     },
-    "이어롭": {
+    "428": {
       "id": 428,
-      "name": "이어롭",
+      "name": "428",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 1,
       "line": [
-        "이어롤",
-        "이어롭"
+        "427",
+        "428"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 65,
         "attack": 76,
@@ -1045,21 +1045,21 @@
       },
       "catch_rate": 60
     },
-    "무우마직": {
+    "429": {
       "id": 429,
-      "name": "무우마직",
+      "name": "429",
       "types": [
-        "고스트"
+        "ghost"
       ],
       "stage": 1,
       "line": [
-        "무우마직"
+        "429"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "fast",
       "rarity": "uncommon",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 60,
         "attack": 60,
@@ -1068,22 +1068,22 @@
       },
       "catch_rate": 45
     },
-    "돈크로우": {
+    "430": {
       "id": 430,
-      "name": "돈크로우",
+      "name": "430",
       "types": [
-        "악",
-        "비행"
+        "dark",
+        "flying"
       ],
       "stage": 1,
       "line": [
-        "돈크로우"
+        "430"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 100,
         "attack": 125,
@@ -1092,22 +1092,22 @@
       },
       "catch_rate": 30
     },
-    "나옹마": {
+    "431": {
       "id": 431,
-      "name": "나옹마",
+      "name": "431",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 0,
       "line": [
-        "나옹마",
-        "몬냥이"
+        "431",
+        "432"
       ],
       "evolves_at": 38,
       "unlock": "encounter",
       "exp_group": "fast",
       "rarity": "common",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 49,
         "attack": 55,
@@ -1116,22 +1116,22 @@
       },
       "catch_rate": 190
     },
-    "몬냥이": {
+    "432": {
       "id": 432,
-      "name": "몬냥이",
+      "name": "432",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 1,
       "line": [
-        "나옹마",
-        "몬냥이"
+        "431",
+        "432"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "fast",
       "rarity": "uncommon",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 71,
         "attack": 82,
@@ -1140,21 +1140,21 @@
       },
       "catch_rate": 75
     },
-    "랑딸랑": {
+    "433": {
       "id": 433,
-      "name": "랑딸랑",
+      "name": "433",
       "types": [
-        "에스퍼"
+        "psychic"
       ],
       "stage": 0,
       "line": [
-        "랑딸랑"
+        "433"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "fast",
       "rarity": "common",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 45,
         "attack": 30,
@@ -1164,23 +1164,23 @@
       "catch_rate": 120,
       "evolves_condition": "friendship"
     },
-    "스컹뿡": {
+    "434": {
       "id": 434,
-      "name": "스컹뿡",
+      "name": "434",
       "types": [
-        "독",
-        "악"
+        "poison",
+        "dark"
       ],
       "stage": 0,
       "line": [
-        "스컹뿡",
-        "스컹탱크"
+        "434",
+        "435"
       ],
       "evolves_at": 34,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 63,
         "attack": 63,
@@ -1189,23 +1189,23 @@
       },
       "catch_rate": 225
     },
-    "스컹탱크": {
+    "435": {
       "id": 435,
-      "name": "스컹탱크",
+      "name": "435",
       "types": [
-        "독",
-        "악"
+        "poison",
+        "dark"
       ],
       "stage": 1,
       "line": [
-        "스컹뿡",
-        "스컹탱크"
+        "434",
+        "435"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 103,
         "attack": 93,
@@ -1214,23 +1214,23 @@
       },
       "catch_rate": 60
     },
-    "동미러": {
+    "436": {
       "id": 436,
-      "name": "동미러",
+      "name": "436",
       "types": [
-        "강철",
-        "에스퍼"
+        "steel",
+        "psychic"
       ],
       "stage": 0,
       "line": [
-        "동미러",
-        "동탁군"
+        "436",
+        "437"
       ],
       "evolves_at": 33,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 57,
         "attack": 24,
@@ -1239,23 +1239,23 @@
       },
       "catch_rate": 255
     },
-    "동탁군": {
+    "437": {
       "id": 437,
-      "name": "동탁군",
+      "name": "437",
       "types": [
-        "강철",
-        "에스퍼"
+        "steel",
+        "psychic"
       ],
       "stage": 1,
       "line": [
-        "동미러",
-        "동탁군"
+        "436",
+        "437"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 67,
         "attack": 89,
@@ -1264,21 +1264,21 @@
       },
       "catch_rate": 90
     },
-    "꼬지지": {
+    "438": {
       "id": 438,
-      "name": "꼬지지",
+      "name": "438",
       "types": [
-        "바위"
+        "rock"
       ],
       "stage": 0,
       "line": [
-        "꼬지지"
+        "438"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 50,
         "attack": 80,
@@ -1288,22 +1288,22 @@
       "catch_rate": 255,
       "evolves_condition": "move:mimic"
     },
-    "흉내내": {
+    "439": {
       "id": 439,
-      "name": "흉내내",
+      "name": "439",
       "types": [
-        "에스퍼",
-        "페어리"
+        "psychic",
+        "fairy"
       ],
       "stage": 0,
       "line": [
-        "흉내내"
+        "439"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 20,
         "attack": 25,
@@ -1313,21 +1313,21 @@
       "catch_rate": 145,
       "evolves_condition": "move:mimic"
     },
-    "핑복": {
+    "440": {
       "id": 440,
-      "name": "핑복",
+      "name": "440",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 0,
       "line": [
-        "핑복"
+        "440"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "fast",
       "rarity": "common",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 100,
         "attack": 5,
@@ -1337,22 +1337,22 @@
       "catch_rate": 130,
       "evolves_condition": "held_item:oval-stone"
     },
-    "페라페": {
+    "441": {
       "id": 441,
-      "name": "페라페",
+      "name": "441",
       "types": [
-        "노말",
-        "비행"
+        "normal",
+        "flying"
       ],
       "stage": 0,
       "line": [
-        "페라페"
+        "441"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 76,
         "attack": 65,
@@ -1361,22 +1361,22 @@
       },
       "catch_rate": 30
     },
-    "화강돌": {
+    "442": {
       "id": 442,
-      "name": "화강돌",
+      "name": "442",
       "types": [
-        "고스트",
-        "악"
+        "ghost",
+        "dark"
       ],
       "stage": 0,
       "line": [
-        "화강돌"
+        "442"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 50,
         "attack": 92,
@@ -1385,24 +1385,24 @@
       },
       "catch_rate": 100
     },
-    "딥상어동": {
+    "443": {
       "id": 443,
-      "name": "딥상어동",
+      "name": "443",
       "types": [
-        "드래곤",
-        "땅"
+        "dragon",
+        "ground"
       ],
       "stage": 0,
       "line": [
-        "딥상어동",
-        "한바이트",
-        "한카리아스"
+        "443",
+        "444",
+        "445"
       ],
       "evolves_at": 24,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "common",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 58,
         "attack": 70,
@@ -1411,24 +1411,24 @@
       },
       "catch_rate": 45
     },
-    "한바이트": {
+    "444": {
       "id": 444,
-      "name": "한바이트",
+      "name": "444",
       "types": [
-        "드래곤",
-        "땅"
+        "dragon",
+        "ground"
       ],
       "stage": 1,
       "line": [
-        "딥상어동",
-        "한바이트",
-        "한카리아스"
+        "443",
+        "444",
+        "445"
       ],
       "evolves_at": 48,
       "unlock": "evolution",
       "exp_group": "slow",
       "rarity": "uncommon",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 68,
         "attack": 90,
@@ -1437,24 +1437,24 @@
       },
       "catch_rate": 45
     },
-    "한카리아스": {
+    "445": {
       "id": 445,
-      "name": "한카리아스",
+      "name": "445",
       "types": [
-        "드래곤",
-        "땅"
+        "dragon",
+        "ground"
       ],
       "stage": 2,
       "line": [
-        "딥상어동",
-        "한바이트",
-        "한카리아스"
+        "443",
+        "444",
+        "445"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "slow",
       "rarity": "rare",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 108,
         "attack": 130,
@@ -1463,21 +1463,21 @@
       },
       "catch_rate": 45
     },
-    "먹고자": {
+    "446": {
       "id": 446,
-      "name": "먹고자",
+      "name": "446",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 0,
       "line": [
-        "먹고자"
+        "446"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "uncommon",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 135,
         "attack": 85,
@@ -1487,22 +1487,22 @@
       "catch_rate": 50,
       "evolves_condition": "friendship"
     },
-    "리오르": {
+    "447": {
       "id": 447,
-      "name": "리오르",
+      "name": "447",
       "types": [
-        "격투"
+        "fighting"
       ],
       "stage": 0,
       "line": [
-        "리오르",
-        "루카리오"
+        "447",
+        "448"
       ],
       "evolves_at": null,
       "unlock": "achievement:five_hundred_k_tokens",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 40,
         "attack": 70,
@@ -1512,23 +1512,23 @@
       "catch_rate": 75,
       "evolves_condition": "friendship"
     },
-    "루카리오": {
+    "448": {
       "id": 448,
-      "name": "루카리오",
+      "name": "448",
       "types": [
-        "격투",
-        "강철"
+        "fighting",
+        "steel"
       ],
       "stage": 1,
       "line": [
-        "리오르",
-        "루카리오"
+        "447",
+        "448"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 70,
         "attack": 110,
@@ -1537,22 +1537,22 @@
       },
       "catch_rate": 45
     },
-    "히포포타스": {
+    "449": {
       "id": 449,
-      "name": "히포포타스",
+      "name": "449",
       "types": [
-        "땅"
+        "ground"
       ],
       "stage": 0,
       "line": [
-        "히포포타스",
-        "하마돈"
+        "449",
+        "450"
       ],
       "evolves_at": 34,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "common",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 68,
         "attack": 72,
@@ -1561,22 +1561,22 @@
       },
       "catch_rate": 140
     },
-    "하마돈": {
+    "450": {
       "id": 450,
-      "name": "하마돈",
+      "name": "450",
       "types": [
-        "땅"
+        "ground"
       ],
       "stage": 1,
       "line": [
-        "히포포타스",
-        "하마돈"
+        "449",
+        "450"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "slow",
       "rarity": "uncommon",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 108,
         "attack": 112,
@@ -1585,23 +1585,23 @@
       },
       "catch_rate": 60
     },
-    "스콜피": {
+    "451": {
       "id": 451,
-      "name": "스콜피",
+      "name": "451",
       "types": [
-        "독",
-        "벌레"
+        "poison",
+        "bug"
       ],
       "stage": 0,
       "line": [
-        "스콜피",
-        "드래피온"
+        "451",
+        "452"
       ],
       "evolves_at": 40,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 40,
         "attack": 50,
@@ -1610,23 +1610,23 @@
       },
       "catch_rate": 120
     },
-    "드래피온": {
+    "452": {
       "id": 452,
-      "name": "드래피온",
+      "name": "452",
       "types": [
-        "독",
-        "악"
+        "poison",
+        "dark"
       ],
       "stage": 1,
       "line": [
-        "스콜피",
-        "드래피온"
+        "451",
+        "452"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "slow",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 70,
         "attack": 90,
@@ -1635,23 +1635,23 @@
       },
       "catch_rate": 45
     },
-    "삐딱구리": {
+    "453": {
       "id": 453,
-      "name": "삐딱구리",
+      "name": "453",
       "types": [
-        "독",
-        "격투"
+        "poison",
+        "fighting"
       ],
       "stage": 0,
       "line": [
-        "삐딱구리",
-        "독개굴"
+        "453",
+        "454"
       ],
       "evolves_at": 37,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 48,
         "attack": 61,
@@ -1660,23 +1660,23 @@
       },
       "catch_rate": 140
     },
-    "독개굴": {
+    "454": {
       "id": 454,
-      "name": "독개굴",
+      "name": "454",
       "types": [
-        "독",
-        "격투"
+        "poison",
+        "fighting"
       ],
       "stage": 1,
       "line": [
-        "삐딱구리",
-        "독개굴"
+        "453",
+        "454"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 83,
         "attack": 106,
@@ -1685,21 +1685,21 @@
       },
       "catch_rate": 75
     },
-    "무스틈니": {
+    "455": {
       "id": 455,
-      "name": "무스틈니",
+      "name": "455",
       "types": [
-        "풀"
+        "grass"
       ],
       "stage": 0,
       "line": [
-        "무스틈니"
+        "455"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 74,
         "attack": 100,
@@ -1708,22 +1708,22 @@
       },
       "catch_rate": 200
     },
-    "형광어": {
+    "456": {
       "id": 456,
-      "name": "형광어",
+      "name": "456",
       "types": [
-        "물"
+        "water"
       ],
       "stage": 0,
       "line": [
-        "형광어",
-        "네오라이트"
+        "456",
+        "457"
       ],
       "evolves_at": 31,
       "unlock": "encounter",
       "exp_group": "medium_slow",
       "rarity": "common",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 49,
         "attack": 49,
@@ -1732,22 +1732,22 @@
       },
       "catch_rate": 190
     },
-    "네오라이트": {
+    "457": {
       "id": 457,
-      "name": "네오라이트",
+      "name": "457",
       "types": [
-        "물"
+        "water"
       ],
       "stage": 1,
       "line": [
-        "형광어",
-        "네오라이트"
+        "456",
+        "457"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 69,
         "attack": 69,
@@ -1756,22 +1756,22 @@
       },
       "catch_rate": 75
     },
-    "타만타": {
+    "458": {
       "id": 458,
-      "name": "타만타",
+      "name": "458",
       "types": [
-        "물",
-        "비행"
+        "water",
+        "flying"
       ],
       "stage": 0,
       "line": [
-        "타만타"
+        "458"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "common",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 45,
         "attack": 20,
@@ -1781,23 +1781,23 @@
       "catch_rate": 25,
       "evolves_condition": "special"
     },
-    "눈쓰개": {
+    "459": {
       "id": 459,
-      "name": "눈쓰개",
+      "name": "459",
       "types": [
-        "풀",
-        "얼음"
+        "grass",
+        "ice"
       ],
       "stage": 0,
       "line": [
-        "눈쓰개",
-        "눈설왕"
+        "459",
+        "460"
       ],
       "evolves_at": 40,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "common",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 60,
         "attack": 62,
@@ -1806,23 +1806,23 @@
       },
       "catch_rate": 120
     },
-    "눈설왕": {
+    "460": {
       "id": 460,
-      "name": "눈설왕",
+      "name": "460",
       "types": [
-        "풀",
-        "얼음"
+        "grass",
+        "ice"
       ],
       "stage": 1,
       "line": [
-        "눈쓰개",
-        "눈설왕"
+        "459",
+        "460"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "slow",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 90,
         "attack": 92,
@@ -1831,22 +1831,22 @@
       },
       "catch_rate": 60
     },
-    "포푸니라": {
+    "461": {
       "id": 461,
-      "name": "포푸니라",
+      "name": "461",
       "types": [
-        "악",
-        "얼음"
+        "dark",
+        "ice"
       ],
       "stage": 1,
       "line": [
-        "포푸니라"
+        "461"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 70,
         "attack": 120,
@@ -1855,22 +1855,22 @@
       },
       "catch_rate": 45
     },
-    "자포코일": {
+    "462": {
       "id": 462,
-      "name": "자포코일",
+      "name": "462",
       "types": [
-        "전기",
-        "강철"
+        "electric",
+        "steel"
       ],
       "stage": 2,
       "line": [
-        "자포코일"
+        "462"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "rare",
-      "region": "발전소",
+      "region": "5",
       "base_stats": {
         "hp": 70,
         "attack": 70,
@@ -1879,21 +1879,21 @@
       },
       "catch_rate": 30
     },
-    "내룸벨트": {
+    "463": {
       "id": 463,
-      "name": "내룸벨트",
+      "name": "463",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 1,
       "line": [
-        "내룸벨트"
+        "463"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 110,
         "attack": 85,
@@ -1902,22 +1902,22 @@
       },
       "catch_rate": 30
     },
-    "거대코뿌리": {
+    "464": {
       "id": 464,
-      "name": "거대코뿌리",
+      "name": "464",
       "types": [
-        "땅",
-        "바위"
+        "ground",
+        "rock"
       ],
       "stage": 2,
       "line": [
-        "거대코뿌리"
+        "464"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "slow",
       "rarity": "rare",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 115,
         "attack": 140,
@@ -1926,21 +1926,21 @@
       },
       "catch_rate": 30
     },
-    "덩쿠림보": {
+    "465": {
       "id": 465,
-      "name": "덩쿠림보",
+      "name": "465",
       "types": [
-        "풀"
+        "grass"
       ],
       "stage": 1,
       "line": [
-        "덩쿠림보"
+        "465"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 100,
         "attack": 100,
@@ -1949,21 +1949,21 @@
       },
       "catch_rate": 30
     },
-    "에레키블": {
+    "466": {
       "id": 466,
-      "name": "에레키블",
+      "name": "466",
       "types": [
-        "전기"
+        "electric"
       ],
       "stage": 2,
       "line": [
-        "에레키블"
+        "466"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "rare",
-      "region": "발전소",
+      "region": "5",
       "base_stats": {
         "hp": 75,
         "attack": 123,
@@ -1972,21 +1972,21 @@
       },
       "catch_rate": 30
     },
-    "마그마번": {
+    "467": {
       "id": 467,
-      "name": "마그마번",
+      "name": "467",
       "types": [
-        "불꽃"
+        "fire"
       ],
       "stage": 2,
       "line": [
-        "마그마번"
+        "467"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "rare",
-      "region": "화산",
+      "region": "7",
       "base_stats": {
         "hp": 75,
         "attack": 95,
@@ -1995,22 +1995,22 @@
       },
       "catch_rate": 30
     },
-    "토게키스": {
+    "468": {
       "id": 468,
-      "name": "토게키스",
+      "name": "468",
       "types": [
-        "페어리",
-        "비행"
+        "fairy",
+        "flying"
       ],
       "stage": 2,
       "line": [
-        "토게키스"
+        "468"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "fast",
       "rarity": "rare",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 85,
         "attack": 50,
@@ -2019,22 +2019,22 @@
       },
       "catch_rate": 30
     },
-    "메가자리": {
+    "469": {
       "id": 469,
-      "name": "메가자리",
+      "name": "469",
       "types": [
-        "벌레",
-        "비행"
+        "bug",
+        "flying"
       ],
       "stage": 1,
       "line": [
-        "메가자리"
+        "469"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 86,
         "attack": 76,
@@ -2043,22 +2043,22 @@
       },
       "catch_rate": 30
     },
-    "리피아": {
+    "470": {
       "id": 470,
-      "name": "리피아",
+      "name": "470",
       "types": [
-        "풀"
+        "grass"
       ],
       "stage": 6,
       "line": [
-        "리피아",
-        "글레이시아"
+        "470",
+        "471"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "rare",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 65,
         "attack": 110,
@@ -2067,22 +2067,22 @@
       },
       "catch_rate": 45
     },
-    "글레이시아": {
+    "471": {
       "id": 471,
-      "name": "글레이시아",
+      "name": "471",
       "types": [
-        "얼음"
+        "ice"
       ],
       "stage": 7,
       "line": [
-        "리피아",
-        "글레이시아"
+        "470",
+        "471"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "rare",
-      "region": "설산",
+      "region": "6",
       "base_stats": {
         "hp": 65,
         "attack": 60,
@@ -2091,22 +2091,22 @@
       },
       "catch_rate": 45
     },
-    "글라이온": {
+    "472": {
       "id": 472,
-      "name": "글라이온",
+      "name": "472",
       "types": [
-        "땅",
-        "비행"
+        "ground",
+        "flying"
       ],
       "stage": 1,
       "line": [
-        "글라이온"
+        "472"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_slow",
       "rarity": "uncommon",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 75,
         "attack": 95,
@@ -2115,22 +2115,22 @@
       },
       "catch_rate": 30
     },
-    "맘모꾸리": {
+    "473": {
       "id": 473,
-      "name": "맘모꾸리",
+      "name": "473",
       "types": [
-        "얼음",
-        "땅"
+        "ice",
+        "ground"
       ],
       "stage": 2,
       "line": [
-        "맘모꾸리"
+        "473"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "slow",
       "rarity": "rare",
-      "region": "설산",
+      "region": "6",
       "base_stats": {
         "hp": 110,
         "attack": 130,
@@ -2139,21 +2139,21 @@
       },
       "catch_rate": 50
     },
-    "폴리곤Z": {
+    "474": {
       "id": 474,
-      "name": "폴리곤Z",
+      "name": "474",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 2,
       "line": [
-        "폴리곤Z"
+        "474"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "rare",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 85,
         "attack": 80,
@@ -2162,22 +2162,22 @@
       },
       "catch_rate": 30
     },
-    "엘레이드": {
+    "475": {
       "id": 475,
-      "name": "엘레이드",
+      "name": "475",
       "types": [
-        "에스퍼",
-        "격투"
+        "psychic",
+        "fighting"
       ],
       "stage": 3,
       "line": [
-        "엘레이드"
+        "475"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "slow",
       "rarity": "rare",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 68,
         "attack": 125,
@@ -2186,22 +2186,22 @@
       },
       "catch_rate": 45
     },
-    "대코파스": {
+    "476": {
       "id": 476,
-      "name": "대코파스",
+      "name": "476",
       "types": [
-        "바위",
-        "강철"
+        "rock",
+        "steel"
       ],
       "stage": 1,
       "line": [
-        "대코파스"
+        "476"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "광산",
+      "region": "4",
       "base_stats": {
         "hp": 60,
         "attack": 55,
@@ -2210,21 +2210,21 @@
       },
       "catch_rate": 60
     },
-    "야느와르몽": {
+    "477": {
       "id": 477,
-      "name": "야느와르몽",
+      "name": "477",
       "types": [
-        "고스트"
+        "ghost"
       ],
       "stage": 2,
       "line": [
-        "야느와르몽"
+        "477"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "fast",
       "rarity": "rare",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 45,
         "attack": 100,
@@ -2233,22 +2233,22 @@
       },
       "catch_rate": 45
     },
-    "눈여아": {
+    "478": {
       "id": 478,
-      "name": "눈여아",
+      "name": "478",
       "types": [
-        "얼음",
-        "고스트"
+        "ice",
+        "ghost"
       ],
       "stage": 2,
       "line": [
-        "눈여아"
+        "478"
       ],
       "evolves_at": null,
       "unlock": "evolution",
       "exp_group": "medium_fast",
       "rarity": "rare",
-      "region": "설산",
+      "region": "6",
       "base_stats": {
         "hp": 70,
         "attack": 80,
@@ -2257,22 +2257,22 @@
       },
       "catch_rate": 75
     },
-    "로토무": {
+    "479": {
       "id": 479,
-      "name": "로토무",
+      "name": "479",
       "types": [
-        "전기",
-        "고스트"
+        "electric",
+        "ghost"
       ],
       "stage": 0,
       "line": [
-        "로토무"
+        "479"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "medium_fast",
       "rarity": "uncommon",
-      "region": "발전소",
+      "region": "5",
       "base_stats": {
         "hp": 50,
         "attack": 50,
@@ -2281,21 +2281,21 @@
       },
       "catch_rate": 45
     },
-    "유크시": {
+    "480": {
       "id": 480,
-      "name": "유크시",
+      "name": "480",
       "types": [
-        "에스퍼"
+        "psychic"
       ],
       "stage": 0,
       "line": [
-        "유크시"
+        "480"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "legendary",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 75,
         "attack": 75,
@@ -2304,21 +2304,21 @@
       },
       "catch_rate": 3
     },
-    "엠라이트": {
+    "481": {
       "id": 481,
-      "name": "엠라이트",
+      "name": "481",
       "types": [
-        "에스퍼"
+        "psychic"
       ],
       "stage": 0,
       "line": [
-        "엠라이트"
+        "481"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "legendary",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 80,
         "attack": 105,
@@ -2327,21 +2327,21 @@
       },
       "catch_rate": 3
     },
-    "아그놈": {
+    "482": {
       "id": 482,
-      "name": "아그놈",
+      "name": "482",
       "types": [
-        "에스퍼"
+        "psychic"
       ],
       "stage": 0,
       "line": [
-        "아그놈"
+        "482"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "legendary",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 75,
         "attack": 125,
@@ -2350,22 +2350,22 @@
       },
       "catch_rate": 3
     },
-    "디아루가": {
+    "483": {
       "id": 483,
-      "name": "디아루가",
+      "name": "483",
       "types": [
-        "강철",
-        "드래곤"
+        "steel",
+        "dragon"
       ],
       "stage": 0,
       "line": [
-        "디아루가"
+        "483"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "legendary",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 100,
         "attack": 120,
@@ -2374,22 +2374,22 @@
       },
       "catch_rate": 3
     },
-    "펄기아": {
+    "484": {
       "id": 484,
-      "name": "펄기아",
+      "name": "484",
       "types": [
-        "물",
-        "드래곤"
+        "water",
+        "dragon"
       ],
       "stage": 0,
       "line": [
-        "펄기아"
+        "484"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "legendary",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 90,
         "attack": 120,
@@ -2398,22 +2398,22 @@
       },
       "catch_rate": 3
     },
-    "히드런": {
+    "485": {
       "id": 485,
-      "name": "히드런",
+      "name": "485",
       "types": [
-        "불꽃",
-        "강철"
+        "fire",
+        "steel"
       ],
       "stage": 0,
       "line": [
-        "히드런"
+        "485"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "legendary",
-      "region": "화산",
+      "region": "7",
       "base_stats": {
         "hp": 91,
         "attack": 90,
@@ -2422,21 +2422,21 @@
       },
       "catch_rate": 3
     },
-    "레지기가스": {
+    "486": {
       "id": 486,
-      "name": "레지기가스",
+      "name": "486",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 0,
       "line": [
-        "레지기가스"
+        "486"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "legendary",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 110,
         "attack": 160,
@@ -2445,22 +2445,22 @@
       },
       "catch_rate": 3
     },
-    "기라티나": {
+    "487": {
       "id": 487,
-      "name": "기라티나",
+      "name": "487",
       "types": [
-        "고스트",
-        "드래곤"
+        "ghost",
+        "dragon"
       ],
       "stage": 0,
       "line": [
-        "기라티나"
+        "487"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "legendary",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 150,
         "attack": 100,
@@ -2469,21 +2469,21 @@
       },
       "catch_rate": 3
     },
-    "크레세리아": {
+    "488": {
       "id": 488,
-      "name": "크레세리아",
+      "name": "488",
       "types": [
-        "에스퍼"
+        "psychic"
       ],
       "stage": 0,
       "line": [
-        "크레세리아"
+        "488"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "legendary",
-      "region": "유적",
+      "region": "8",
       "base_stats": {
         "hp": 120,
         "attack": 70,
@@ -2492,22 +2492,22 @@
       },
       "catch_rate": 3
     },
-    "피오네": {
+    "489": {
       "id": 489,
-      "name": "피오네",
+      "name": "489",
       "types": [
-        "물"
+        "water"
       ],
       "stage": 0,
       "line": [
-        "피오네",
-        "마나피"
+        "489",
+        "490"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "mythical",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 80,
         "attack": 80,
@@ -2516,22 +2516,22 @@
       },
       "catch_rate": 30
     },
-    "마나피": {
+    "490": {
       "id": 490,
-      "name": "마나피",
+      "name": "490",
       "types": [
-        "물"
+        "water"
       ],
       "stage": 1,
       "line": [
-        "피오네",
-        "마나피"
+        "489",
+        "490"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "mythical",
-      "region": "해변",
+      "region": "3",
       "base_stats": {
         "hp": 100,
         "attack": 100,
@@ -2540,21 +2540,21 @@
       },
       "catch_rate": 3
     },
-    "다크라이": {
+    "491": {
       "id": 491,
-      "name": "다크라이",
+      "name": "491",
       "types": [
-        "악"
+        "dark"
       ],
       "stage": 0,
       "line": [
-        "다크라이"
+        "491"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "mythical",
-      "region": "챔피언 로드",
+      "region": "9",
       "base_stats": {
         "hp": 70,
         "attack": 90,
@@ -2563,21 +2563,21 @@
       },
       "catch_rate": 3
     },
-    "쉐이미": {
+    "492": {
       "id": 492,
-      "name": "쉐이미",
+      "name": "492",
       "types": [
-        "풀"
+        "grass"
       ],
       "stage": 0,
       "line": [
-        "쉐이미"
+        "492"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "medium_slow",
       "rarity": "mythical",
-      "region": "숲",
+      "region": "2",
       "base_stats": {
         "hp": 100,
         "attack": 100,
@@ -2586,21 +2586,21 @@
       },
       "catch_rate": 45
     },
-    "아르세우스": {
+    "493": {
       "id": 493,
-      "name": "아르세우스",
+      "name": "493",
       "types": [
-        "노말"
+        "normal"
       ],
       "stage": 0,
       "line": [
-        "아르세우스"
+        "493"
       ],
       "evolves_at": null,
       "unlock": "encounter",
       "exp_group": "slow",
       "rarity": "mythical",
-      "region": "쌍둥이잎 마을",
+      "region": "1",
       "base_stats": {
         "hp": 120,
         "attack": 120,
@@ -2611,279 +2611,279 @@
     }
   },
   "starters": [
-    "모부기",
-    "불꽃숭이",
-    "팽도리"
+    "387",
+    "390",
+    "393"
   ],
   "type_colors": {
-    "풀": "\u001b[32m",
-    "불꽃": "\u001b[31m",
-    "물": "\u001b[34m",
-    "전기": "\u001b[33m",
-    "격투": "\u001b[91m",
-    "강철": "\u001b[37m",
-    "땅": "\u001b[33m",
-    "노말": "\u001b[97m",
-    "비행": "\u001b[96m",
-    "독": "\u001b[35m",
-    "에스퍼": "\u001b[95m",
-    "벌레": "\u001b[92m",
-    "바위": "\u001b[33m",
-    "고스트": "\u001b[35m",
-    "드래곤": "\u001b[94m",
-    "악": "\u001b[90m",
-    "얼음": "\u001b[96m",
+    "grass": "\u001b[32m",
+    "fire": "\u001b[31m",
+    "water": "\u001b[34m",
+    "electric": "\u001b[33m",
+    "fighting": "\u001b[91m",
+    "steel": "\u001b[37m",
+    "ground": "\u001b[33m",
+    "normal": "\u001b[97m",
+    "flying": "\u001b[96m",
+    "poison": "\u001b[35m",
+    "psychic": "\u001b[95m",
+    "bug": "\u001b[92m",
+    "rock": "\u001b[33m",
+    "ghost": "\u001b[35m",
+    "dragon": "\u001b[94m",
+    "dark": "\u001b[90m",
+    "ice": "\u001b[96m",
     "reset": "\u001b[0m",
-    "페어리": "\u001b[95m"
+    "fairy": "\u001b[95m"
   },
   "type_chart": {
-    "노말": {
+    "normal": {
       "strong": [],
       "weak": [
-        "바위",
-        "강철"
+        "rock",
+        "steel"
       ],
       "immune": [
-        "고스트"
+        "ghost"
       ]
     },
-    "불꽃": {
+    "fire": {
       "strong": [
-        "풀",
-        "얼음",
-        "벌레",
-        "강철"
+        "grass",
+        "ice",
+        "bug",
+        "steel"
       ],
       "weak": [
-        "불꽃",
-        "물",
-        "바위",
-        "드래곤"
+        "fire",
+        "water",
+        "rock",
+        "dragon"
       ],
       "immune": []
     },
-    "물": {
+    "water": {
       "strong": [
-        "불꽃",
-        "땅",
-        "바위"
+        "fire",
+        "ground",
+        "rock"
       ],
       "weak": [
-        "물",
-        "풀",
-        "드래곤"
+        "water",
+        "grass",
+        "dragon"
       ],
       "immune": []
     },
-    "전기": {
+    "electric": {
       "strong": [
-        "물",
-        "비행"
+        "water",
+        "flying"
       ],
       "weak": [
-        "전기",
-        "풀",
-        "드래곤"
+        "electric",
+        "grass",
+        "dragon"
       ],
       "immune": [
-        "땅"
+        "ground"
       ]
     },
-    "풀": {
+    "grass": {
       "strong": [
-        "물",
-        "땅",
-        "바위"
+        "water",
+        "ground",
+        "rock"
       ],
       "weak": [
-        "불꽃",
-        "풀",
-        "독",
-        "비행",
-        "벌레",
-        "드래곤",
-        "강철"
+        "fire",
+        "grass",
+        "poison",
+        "flying",
+        "bug",
+        "dragon",
+        "steel"
       ],
       "immune": []
     },
-    "얼음": {
+    "ice": {
       "strong": [
-        "풀",
-        "땅",
-        "비행",
-        "드래곤"
+        "grass",
+        "ground",
+        "flying",
+        "dragon"
       ],
       "weak": [
-        "불꽃",
-        "물",
-        "얼음",
-        "강철"
+        "fire",
+        "water",
+        "ice",
+        "steel"
       ],
       "immune": []
     },
-    "격투": {
+    "fighting": {
       "strong": [
-        "노말",
-        "바위",
-        "강철",
-        "얼음",
-        "악"
+        "normal",
+        "rock",
+        "steel",
+        "ice",
+        "dark"
       ],
       "weak": [
-        "독",
-        "비행",
-        "에스퍼",
-        "벌레"
+        "poison",
+        "flying",
+        "psychic",
+        "bug"
       ],
       "immune": [
-        "고스트"
+        "ghost"
       ]
     },
-    "독": {
+    "poison": {
       "strong": [
-        "풀",
-        "페어리"
+        "grass",
+        "fairy"
       ],
       "weak": [
-        "독",
-        "땅",
-        "바위",
-        "고스트"
+        "poison",
+        "ground",
+        "rock",
+        "ghost"
       ],
       "immune": [
-        "강철"
+        "steel"
       ]
     },
-    "땅": {
+    "ground": {
       "strong": [
-        "불꽃",
-        "전기",
-        "독",
-        "바위",
-        "강철"
+        "fire",
+        "electric",
+        "poison",
+        "rock",
+        "steel"
       ],
       "weak": [
-        "풀",
-        "벌레"
+        "grass",
+        "bug"
       ],
       "immune": [
-        "비행"
+        "flying"
       ]
     },
-    "비행": {
+    "flying": {
       "strong": [
-        "풀",
-        "격투",
-        "벌레"
+        "grass",
+        "fighting",
+        "bug"
       ],
       "weak": [
-        "바위",
-        "강철",
-        "전기"
+        "rock",
+        "steel",
+        "electric"
       ],
       "immune": []
     },
-    "에스퍼": {
+    "psychic": {
       "strong": [
-        "격투",
-        "독"
+        "fighting",
+        "poison"
       ],
       "weak": [
-        "강철",
-        "에스퍼"
+        "steel",
+        "psychic"
       ],
       "immune": [
-        "악"
+        "dark"
       ]
     },
-    "벌레": {
+    "bug": {
       "strong": [
-        "풀",
-        "에스퍼",
-        "악"
+        "grass",
+        "psychic",
+        "dark"
       ],
       "weak": [
-        "불꽃",
-        "격투",
-        "독",
-        "비행",
-        "고스트",
-        "강철"
+        "fire",
+        "fighting",
+        "poison",
+        "flying",
+        "ghost",
+        "steel"
       ],
       "immune": []
     },
-    "바위": {
+    "rock": {
       "strong": [
-        "불꽃",
-        "얼음",
-        "비행",
-        "벌레"
+        "fire",
+        "ice",
+        "flying",
+        "bug"
       ],
       "weak": [
-        "격투",
-        "땅",
-        "강철"
+        "fighting",
+        "ground",
+        "steel"
       ],
       "immune": []
     },
-    "고스트": {
+    "ghost": {
       "strong": [
-        "고스트",
-        "에스퍼"
+        "ghost",
+        "psychic"
       ],
       "weak": [
-        "악",
-        "강철"
+        "dark",
+        "steel"
       ],
       "immune": [
-        "노말"
+        "normal"
       ]
     },
-    "드래곤": {
+    "dragon": {
       "strong": [
-        "드래곤"
+        "dragon"
       ],
       "weak": [
-        "강철"
+        "steel"
       ],
       "immune": []
     },
-    "악": {
+    "dark": {
       "strong": [
-        "에스퍼",
-        "고스트"
+        "psychic",
+        "ghost"
       ],
       "weak": [
-        "격투",
-        "악",
-        "강철"
+        "fighting",
+        "dark",
+        "steel"
       ],
       "immune": []
     },
-    "강철": {
+    "steel": {
       "strong": [
-        "바위",
-        "얼음",
-        "페어리"
+        "rock",
+        "ice",
+        "fairy"
       ],
       "weak": [
-        "불꽃",
-        "물",
-        "전기",
-        "강철"
+        "fire",
+        "water",
+        "electric",
+        "steel"
       ],
       "immune": []
     },
-    "페어리": {
+    "fairy": {
       "strong": [
-        "격투",
-        "드래곤",
-        "악"
+        "fighting",
+        "dragon",
+        "dark"
       ],
       "weak": [
-        "독",
-        "강철",
-        "불꽃"
+        "poison",
+        "steel",
+        "fire"
       ],
       "immune": []
     }

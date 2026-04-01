@@ -3,6 +3,7 @@ import { readState, writeState } from '../core/state.js';
 import { readConfig } from '../core/config.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { playCry } from '../audio/play-cry.js';
+import { initLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
 import type { HookOutput } from '../core/types.js';
 
@@ -23,6 +24,7 @@ function main(): void {
   const result = withLock(() => {
     const state = readState();
     const config = readConfig();
+    initLocale(config.language ?? 'ko');
 
     // Increment error_count
     state.error_count += 1;

@@ -1,8 +1,9 @@
-import { getPokemonDB } from './pokemon-data.js';
+import { getPokemonDB, getPokemonName } from './pokemon-data.js';
 import { getRawTypeMultiplier, applyTypeDampening } from './type-chart.js';
 import { markSeen, markCaught } from './pokedex.js';
 import { rollItemDrop, getItemCount, useItem } from './items.js';
 import { levelToXp } from './xp.js';
+import { t } from '../i18n/index.js';
 import type { State, Config, BattleResult } from './types.js';
 
 function sigmoid(x: number): number {
@@ -303,17 +304,14 @@ export function resolveBattle(
  * Format battle result as notification message.
  */
 export function formatBattleMessage(result: BattleResult): string {
-  const rarityIcons: Record<string, string> = {
-    common: '', uncommon: '★', rare: '★★', legendary: '★★★', mythical: '★★★★',
-  };
-
+  const defenderName = getPokemonName(result.defender);
   if (result.won) {
-    let msg = `⚔️ vs 야생 ${result.defender} (Lv.${result.defenderLevel}) → 승리! (XP +${result.xpReward})`;
+    let msg = t('battle.win', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
     if (result.caught) {
-      msg += `\n🎉 ${result.defender}을(를) 포획했습니다! (tokenmon party add ${result.defender})`;
+      msg += t('battle.win_catch', { defender: defenderName });
     }
     return msg;
   }
 
-  return `⚔️ vs 야생 ${result.defender} (Lv.${result.defenderLevel}) → 패배... (XP +${result.xpReward})`;
+  return t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
 }

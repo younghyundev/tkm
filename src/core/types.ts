@@ -75,6 +75,7 @@ export interface EvolutionContext {
 }
 
 export interface State {
+  state_version?: number;
   pokemon: Record<string, PokemonState>;
   unlocked: string[];
   achievements: Record<string, boolean>;
@@ -116,6 +117,7 @@ export interface Config {
   renderer: SpriteRenderer;
   info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level';
   tips_enabled: boolean;
+  language: 'ko' | 'en';
 }
 
 export interface Session {
@@ -133,14 +135,11 @@ export interface AgentAssignment {
 
 export interface Achievement {
   id: string;
-  name: string;
-  description: string;
   trigger_type: string;
   trigger_value: number;
   reward_pokemon: string | null;
-  reward_message?: string;
+  reward_effects?: Array<{type: string; [key: string]: unknown}>;
   rarity: number;
-  rarity_label: string;
 }
 
 export interface AchievementsDB {
@@ -163,8 +162,6 @@ export interface AchievementEvent {
 
 export interface RegionData {
   id: number;
-  name: string;
-  description: string;
   level_range: [number, number];
   pokemon_pool: string[];
   unlock_condition: { type: string; value: number } | null;

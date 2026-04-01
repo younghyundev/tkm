@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { makeState as _makeState, makeConfig as _makeConfig } from './helpers.js';
 import { rollEncounter, selectWildPokemon, processEncounter } from '../src/core/encounter.js';
 import { formatBattleMessage } from '../src/core/battle.js';
+import { initLocale } from '../src/i18n/index.js';
 
 import type { State, Config } from '../src/core/types.js';
 
@@ -16,18 +17,20 @@ const pokemonDB = JSON.parse(readFileSync(join(PROJECT_ROOT, 'data', 'pokemon.js
 
 function makeState(overrides: Partial<State> = {}): State {
   return _makeState({
-    pokemon: { '모부기': { id: 387, xp: 5000, level: 15, friendship: 0, ev: 0 } },
-    unlocked: ['모부기'],
+    pokemon: { '387': { id: 387, xp: 5000, level: 15, friendship: 0, ev: 0 } },
+    unlocked: ['387'],
     ...overrides,
   });
 }
 
 function makeConfig(overrides: Partial<Config> = {}): Config {
   return _makeConfig({
-    party: ['모부기'],
+    party: ['387'],
     ...overrides,
   });
 }
+
+initLocale('ko');
 
 describe('encounter', () => {
   describe('rollEncounter', () => {
@@ -52,18 +55,18 @@ describe('encounter', () => {
 
   describe('selectWildPokemon', () => {
     it('returns pokemon from current region pool', () => {
-      const config = makeConfig({ current_region: '숲' });
-      const region = regionsDB.regions['숲'];
+      const config = makeConfig({ current_region: '2' });
+      const region = regionsDB.regions['2'];
       for (let i = 0; i < 50; i++) {
         const wild = selectWildPokemon(config);
         assert.ok(wild !== null);
-        assert.ok(region.pokemon_pool.includes(wild!.name), `${wild!.name} not in 숲 pool`);
+        assert.ok(region.pokemon_pool.includes(wild!.name), `${wild!.name} not in region 2 pool`);
       }
     });
 
     it('level is within region level_range', () => {
-      const config = makeConfig({ current_region: '숲' });
-      const region = regionsDB.regions['숲'];
+      const config = makeConfig({ current_region: '2' });
+      const region = regionsDB.regions['2'];
       for (let i = 0; i < 50; i++) {
         const wild = selectWildPokemon(config);
         assert.ok(wild !== null);
@@ -73,7 +76,7 @@ describe('encounter', () => {
     });
 
     it('respects rarity weights (common should appear most)', () => {
-      const config = makeConfig({ current_region: '쌍둥이잎 마을' });
+      const config = makeConfig({ current_region: '1' });
       const counts: Record<string, number> = {};
       for (let i = 0; i < 500; i++) {
         const wild = selectWildPokemon(config);
@@ -135,17 +138,17 @@ describe('encounter', () => {
   describe('formatBattleMessage', () => {
     it('formats victory message', () => {
       const msg = formatBattleMessage({
-        attacker: '모부기', defender: '찌르꼬', defenderLevel: 5,
+        attacker: '387', defender: '396', defenderLevel: 5,
         winRate: 0.6, won: true, xpReward: 65, caught: true, typeMultiplier: 1.0,
       });
-      assert.ok(msg.includes('찌르꼬'));
+      assert.ok(msg.includes('찌르꼬'), `expected '찌르꼬' in: ${msg}`);
       assert.ok(msg.includes('승리'));
       assert.ok(msg.includes('포획'));
     });
 
     it('formats defeat message', () => {
       const msg = formatBattleMessage({
-        attacker: '모부기', defender: '찌르꼬', defenderLevel: 5,
+        attacker: '387', defender: '396', defenderLevel: 5,
         winRate: 0.3, won: false, xpReward: 16, caught: false, typeMultiplier: 1.0,
       });
       assert.ok(msg.includes('패배'));

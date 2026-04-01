@@ -1,4 +1,5 @@
 import type { SpriteRenderer } from './types.js';
+import { t } from '../i18n/index.js';
 
 export interface DetectionResult {
   supported: SpriteRenderer[];
@@ -46,10 +47,10 @@ export function formatDetectionChoices(result: DetectionResult): Array<{
   recommended: boolean;
 }> {
   const labels: Record<SpriteRenderer, string> = {
-    kitty:   'Kitty Graphics Protocol (최고 품질, 원본 PNG)',
-    sixel:   'Sixel (DEC 호환, 넓은 터미널 지원)',
-    iterm2:  'iTerm2 Inline Images (macOS iTerm2/WezTerm)',
-    braille: 'Braille (기존 방식, 모든 터미널 호환)',
+    kitty:   t('renderer.kitty_desc'),
+    sixel:   t('renderer.sixel_desc'),
+    iterm2:  t('renderer.iterm2_desc'),
+    braille: t('renderer.braille_desc'),
   };
 
   return result.supported.map(r => ({
