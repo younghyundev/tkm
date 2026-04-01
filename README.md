@@ -13,17 +13,20 @@ Earn XP from your coding sessions, level up, evolve, and catch 107 Sinnoh-region
 
 **[English Guide](docs/README.en.md)** · **[한국어 가이드](docs/README.ko.md)**
 
+<img src="sprites/raw/387.png" width="80" alt="Turtwig">&nbsp;&nbsp;
+<img src="sprites/raw/390.png" width="80" alt="Chimchar">&nbsp;&nbsp;
+<img src="sprites/raw/393.png" width="80" alt="Piplup">
+
 </div>
 
 ---
 
-```
-  ⣀⣤⣴⣶⣶⣦⣤⣀
- ⣴⣿⣿⣿⣿⣿⣿⣿⣿⣦    Piplup  Lv.24  [██████████░░░░░░] 1240/2000 XP
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿   Water
- ⠻⣿⣿⣿⣿⣿⣿⣿⣿⠟    Session: 8,450 tokens → +84 XP
-  ⠈⠛⠿⣿⣿⠿⠛⠁
-```
+<!-- Status bar in action (WSL + Braille renderer) -->
+<p align="center">
+  <img src="image.png" alt="tokenmon status bar (WSL, Braille renderer)">
+  <br>
+  <sub>Status bar with Braille renderer on WSL — Kitty/Sixel/iTerm2 renderers available for higher quality</sub>
+</p>
 
 ## Quick Start
 
