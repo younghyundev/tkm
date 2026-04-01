@@ -8,6 +8,7 @@ import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { getCurrentRegion, getRegionList, moveToRegion } from '../core/regions.js';
+import { renderGuide, renderGuideIndex } from '../core/guide.js';
 import type { ExpGroup } from '../core/types.js';
 
 // ANSI color helpers
@@ -274,13 +275,14 @@ function cmdConfigSet(key: string, value: string): void {
     console.log('  cry_enabled      - 울음소리 사용 true/false');
     console.log('  max_party_size   - 최대 파티 크기 1-6');
     console.log('  peon_ping_integration - peon-ping 연동 true/false');
+    console.log('  tips_enabled         - 자동 팁 표시 true/false');
     process.exit(1);
   }
 
   const config = readConfig();
   const numericKeys = ['tokens_per_xp', 'max_party_size', 'peon_ping_port'];
   const floatKeys = ['volume', 'xp_bonus_multiplier'];
-  const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration'];
+  const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration', 'tips_enabled'];
 
   if (numericKeys.includes(key)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -469,6 +471,7 @@ function doReset(): void {
     xp_bonus_multiplier: 1.0, last_session_tokens: {}, pokedex: {},
     encounter_count: 0, catch_count: 0, battle_count: 0,
     battle_wins: 0, battle_losses: 0, items: {}, cheat_log: cheatLog,
+    last_battle: null, last_tip: null,
   };
   writeState(defaultState);
   success('모든 데이터가 초기화되었습니다. (치트 로그는 보존됨)');
@@ -549,6 +552,14 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
   }
 }
 
+function cmdGuide(topic?: string): void {
+  if (!topic) {
+    renderGuideIndex();
+  } else {
+    renderGuide(topic);
+  }
+}
+
 function cmdHelp(): void {
   bold('토큰몬 (Tokénmon) - Claude Code 포켓몬 파트너');
   console.log('');
@@ -566,6 +577,7 @@ function cmdHelp(): void {
   console.log('  region              현재 지역 보기');
   console.log('  region list         전체 지역 목록');
   console.log('  region move <이름>  지역 이동');
+  console.log('  guide [주제]        가이드 보기 (battle/region/achievement/xp/item)');
   console.log('  pokedex             포켓몬 도감 보기');
   console.log('  pokedex <이름>      포켓몬 상세 정보');
   console.log('  pokedex --type <타입>   타입별 필터');
@@ -611,6 +623,9 @@ switch (command) {
     break;
   case 'region':
     cmdRegion(args[1], args.slice(2).join(' ') || undefined);
+    break;
+  case 'guide':
+    cmdGuide(args[1]);
     break;
   case 'pokedex':
     cmdPokedex(args[1], args[2], args[3]);

@@ -21,6 +21,7 @@ const DEFAULT_CONFIG: Config = {
   default_dispatch: null,
   sprite_mode: 'all',
   info_mode: 'ace_full',
+  tips_enabled: true,
 };
 
 export function readConfig(): Config {

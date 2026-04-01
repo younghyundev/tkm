@@ -92,6 +92,7 @@ export interface State {
   items: Record<string, number>;
   cheat_log: Array<{ timestamp: string; command: string }>;
   last_battle: BattleResult | null;
+  last_tip: { id: string; text: string } | null;
 }
 
 export interface Config {
@@ -112,6 +113,7 @@ export interface Config {
   default_dispatch: string | null;
   sprite_mode: 'all' | 'ace_only' | 'emoji_all' | 'emoji_ace';
   info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level';
+  tips_enabled: boolean;
 }
 
 export interface Session {

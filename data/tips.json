@@ -1,0 +1,157 @@
+[
+  {
+    "id": "battle_type_advantage",
+    "category": "battle",
+    "template": "💡 타입 상성으로 승률이 크게 변합니다! 약점을 노려보세요",
+    "dynamic": false
+  },
+  {
+    "id": "battle_level_matters",
+    "category": "battle",
+    "template": "💡 레벨 차이가 클수록 승률이 급변합니다 (Lv.4 vs Lv.12 = ~17%)",
+    "dynamic": false
+  },
+  {
+    "id": "battle_best_pokemon",
+    "category": "battle",
+    "template": "💡 전투 시 타입 상성이 가장 좋은 파티원이 자동 선택됩니다",
+    "dynamic": false
+  },
+  {
+    "id": "battle_xp_loss",
+    "category": "battle",
+    "template": "💡 전투에서 지면 XP를 얻지 못합니다 — 레벨이 높은 포켓몬을 파티에!",
+    "dynamic": false
+  },
+  {
+    "id": "battle_rare_bonus",
+    "category": "battle",
+    "template": "💡 희귀한 야생 포켓몬일수록 승리 시 XP 보너스가 큽니다",
+    "dynamic": false
+  },
+  {
+    "id": "region_next_unlock",
+    "category": "region",
+    "template": "🗺️ 다음 지역 해금까지 {remaining}마리 더 발견하세요!",
+    "dynamic": true,
+    "resolver": "nextRegionUnlock"
+  },
+  {
+    "id": "region_current_level",
+    "category": "region",
+    "template": "🗺️ 현재 지역 레벨 범위: Lv.{minLv}~{maxLv}. 파티 레벨을 맞춰보세요",
+    "dynamic": true,
+    "resolver": "currentRegionLevel"
+  },
+  {
+    "id": "region_higher_xp",
+    "category": "region",
+    "template": "🗺️ 높은 레벨 지역일수록 야생 포켓몬 레벨이 높아 XP가 더 많습니다",
+    "dynamic": false
+  },
+  {
+    "id": "region_champion_road",
+    "category": "region",
+    "template": "🗺️ 챔피언 로드는 50종 포획 시 해금! 전설 포켓몬이 기다립니다",
+    "dynamic": false
+  },
+  {
+    "id": "region_pool_size",
+    "category": "region",
+    "template": "🗺️ 각 지역마다 고유 포켓몬 풀이 있습니다. 도감 완성은 지역 이동이 필수!",
+    "dynamic": false
+  },
+  {
+    "id": "achievement_nearest",
+    "category": "achievement",
+    "template": "🏆 다음 업적: {achName} — {achDesc} ({progress}/{target})",
+    "dynamic": true,
+    "resolver": "nearestAchievement"
+  },
+  {
+    "id": "achievement_rewards",
+    "category": "achievement",
+    "template": "🏆 업적 보상에는 포켓몬 해금, XP 보너스, 파티 슬롯 확장이 있습니다",
+    "dynamic": false
+  },
+  {
+    "id": "achievement_session_count",
+    "category": "achievement",
+    "template": "🏆 세션 수 업적: 10회, 50회, 100회마다 특별 보상이 있습니다",
+    "dynamic": false
+  },
+  {
+    "id": "achievement_token_milestones",
+    "category": "achievement",
+    "template": "🏆 토큰 소비 업적: 10만, 50만, 100만, 200만, 500만에서 포켓몬 해금!",
+    "dynamic": false
+  },
+  {
+    "id": "achievement_pokedex_master",
+    "category": "achievement",
+    "template": "🏆 도감 마스터 (100종 포획) 달성 시 아르세우스가 해금됩니다!",
+    "dynamic": false
+  },
+  {
+    "id": "xp_party_share",
+    "category": "xp",
+    "template": "⭐ XP는 파티 전원에게 분배됩니다. 파티가 작을수록 개별 XP가 높아요",
+    "dynamic": false
+  },
+  {
+    "id": "xp_dispatch_bonus",
+    "category": "xp",
+    "template": "⭐ 파견 포켓몬은 서브에이전트에서 1.5배 XP를 받습니다!",
+    "dynamic": false
+  },
+  {
+    "id": "xp_achievement_bonus",
+    "category": "xp",
+    "template": "⭐ 업적 달성으로 영구 XP 보너스를 얻을 수 있습니다 (최대 +55%)",
+    "dynamic": false
+  },
+  {
+    "id": "xp_weakest_member",
+    "category": "xp",
+    "template": "⭐ 파티에서 가장 약한 {pokemon} (Lv.{level})을 파견하면 빠르게 성장합니다",
+    "dynamic": true,
+    "resolver": "weakestPartyMember"
+  },
+  {
+    "id": "xp_evolution",
+    "category": "xp",
+    "template": "⭐ 진화 조건이 가까운 포켓몬이 있다면 XP를 집중해보세요",
+    "dynamic": false
+  },
+  {
+    "id": "item_retry_drop",
+    "category": "item",
+    "template": "🎫 재도전권은 전투 승리 시 20%, 패배 시 5% 확률로 드랍됩니다",
+    "dynamic": false
+  },
+  {
+    "id": "item_auto_retry",
+    "category": "item",
+    "template": "🎫 자동 재도전이 켜져 있으면 승률 60% 이상일 때 자동으로 재시도합니다",
+    "dynamic": false
+  },
+  {
+    "id": "item_retry_count",
+    "category": "item",
+    "template": "🎫 현재 재도전권: {count}개. 어려운 전투에 대비하세요!",
+    "dynamic": true,
+    "resolver": "retryTokenCount"
+  },
+  {
+    "id": "item_achievement_tokens",
+    "category": "item",
+    "template": "🎫 업적 보상으로 재도전권을 대량 획득할 수 있습니다 (최대 10개!)",
+    "dynamic": false
+  },
+  {
+    "id": "item_config_threshold",
+    "category": "item",
+    "template": "🎫 자동 재도전 임계값은 config set auto_retry_threshold로 조절 가능합니다",
+    "dynamic": false
+  }
+]

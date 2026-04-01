@@ -24,6 +24,7 @@ const DEFAULT_STATE: State = {
   items: {},
   cheat_log: [],
   last_battle: null,
+  last_tip: null,
 };
 
 const DEFAULT_SESSION: Session = {

@@ -123,10 +123,12 @@ function main(): void {
     }
   }
 
-  // === Battle result line ===
+  // === Battle result / Tip line ===
   if (state.last_battle) {
     const battleMsg = formatBattleMessage(state.last_battle);
     if (battleMsg) console.log(battleMsg);
+  } else if (state.last_tip) {
+    console.log(state.last_tip.text);
   }
 
   // === Info line rendering ===

@@ -125,8 +125,9 @@ async function main(): Promise<void> {
   try {
     const state = readState();
 
-    // Clear previous battle result (only show for one turn)
+    // Clear previous battle/tip result (only show for one turn)
     state.last_battle = null;
+    state.last_tip = null;
 
     // Delta tracking
     const prevSessionTokens = state.last_session_tokens[sessionId] ?? 0;
@@ -245,6 +246,17 @@ async function main(): Promise<void> {
       }
     } catch (err) {
       process.stderr.write(`tokenmon encounter error: ${err}\n`);
+    }
+
+    // Show tip when no battle occurred
+    if (!state.last_battle && config.tips_enabled) {
+      try {
+        const { getRandomTip } = await import('../core/guide.js');
+        const tip = getRandomTip(state, config);
+        if (tip) state.last_tip = tip;
+      } catch {
+        // Ignore guide errors
+      }
     }
 
     writeState(state);
