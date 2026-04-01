@@ -24,9 +24,9 @@ export function calculateWinRate(
   const typeMultiplier = applyTypeDampening(rawType);
 
   // Step 2: Level difference factor (steep curve like original Pokémon)
-  // sigmoid(0)=0.5, sigmoid(-1.6)≈0.17, sigmoid(2)≈0.88
+  // sigmoid(0)=0.5, sigmoid(-2.67)≈0.065, sigmoid(3.33)≈0.97
   const levelDiff = attackerLevel - defenderLevel;
-  const levelFactor = sigmoid(levelDiff / 5);
+  const levelFactor = sigmoid(levelDiff / 3);
 
   // Step 3: Base stat comparison (offense vs defense, symmetric at equal stats)
   const statRatio = (attackerStats.attack + attackerStats.speed) /
