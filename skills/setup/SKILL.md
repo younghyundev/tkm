@@ -104,7 +104,7 @@ Claude Code를 재시작하면 status bar에 tokenmon이 표시됩니다.
 
 > **주의**: 나중에 tokenmon을 제거할 때는 `/plugin uninstall` **전에** 반드시 다음을 먼저 실행하세요:
 > ```
-> tokenmon uninstall
+> /tkm:uninstall
 > ```
 > 이 명령이 statusLine 설정과 데이터 파일을 정리합니다.
 > 이 단계를 건너뛰면 status bar에 에러가 남을 수 있습니다.

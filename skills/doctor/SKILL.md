@@ -109,29 +109,33 @@ echo "---"
 [ "$CRIES" -eq 107 ] && [ "$SPRITES" -eq 107 ] && [ "$SFX" -eq 4 ] && echo "PASS: assets" || echo "FAIL: assets"
 ```
 
-### Step 7: 스타터 선택 + Status 확인
+### Step 7: 스타터 & 파티 확인 (읽기 전용)
 
 ```bash
 PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 TSX="$PLUGIN_ROOT/node_modules/.bin/tsx"
 CLI="$PLUGIN_ROOT/src/cli/tokenmon.ts"
 
-# 스타터가 이미 선택되어 있으면 덮어쓰지 않고 status만 확인
-CONFIG_FILE=~/.claude/tokenmon-config.json
-STARTER_CHOSEN=$(node -e "try{const c=JSON.parse(require('fs').readFileSync('$CONFIG_FILE','utf8'));console.log(c.starter_chosen?'yes':'no')}catch{console.log('no')}")
-
-if [ "$STARTER_CHOSEN" = "yes" ]; then
-  echo "SKIP: starter already chosen (preserving current party)"
+# config.json 경로: user scope → ~/.claude/tokenmon/config.json
+CONFIG_FILE=~/.claude/tokenmon/config.json
+if [ ! -f "$CONFIG_FILE" ]; then
+  echo "FAIL: config not found at $CONFIG_FILE"
+  echo "  → Run 'tokenmon starter' to choose your starter"
 else
-  echo "1" | "$TSX" "$CLI" starter 2>&1
+  STARTER_CHOSEN=$(node -e "try{const c=JSON.parse(require('fs').readFileSync('$CONFIG_FILE','utf8'));console.log(c.starter_chosen?'yes':'no')}catch(e){console.log('error: '+e.message)}")
+  if [ "$STARTER_CHOSEN" = "yes" ]; then
+    echo "PASS: starter chosen"
+  else
+    echo "FAIL: starter not chosen"
+    echo "  → Run 'tokenmon starter' to choose your starter"
+  fi
 fi
 echo "---"
-# status 확인
+# status 확인 (읽기 전용 — 데이터를 수정하지 않음)
 OUTPUT=$("$TSX" "$CLI" status 2>&1)
 echo "$OUTPUT"
 echo "---"
-# 파티에 포켓몬이 있는지 확인 (스타터 종류 무관)
-echo "$OUTPUT" | grep -qE "(모부기|불꽃숭이|팽도리)" && echo "PASS: starter in party" || echo "FAIL: no starter in status"
+echo "$OUTPUT" | grep -qE "Lv\." && echo "PASS: party has pokemon" || echo "FAIL: no pokemon in party (run 'tokenmon starter')"
 ```
 
 ### Step 8: Visual QA
