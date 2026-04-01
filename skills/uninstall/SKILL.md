@@ -22,7 +22,7 @@ Bash 도구로 다음을 실행하세요:
 >
 > 플러그인을 완전히 제거하려면 다음을 실행하세요:
 > ```
-> /plugin uninstall tokenmon@tkm
+> /plugin uninstall tkm@tkm
 > ```
 >
 > 그 후 `/reload-plugins`로 반영하세요.

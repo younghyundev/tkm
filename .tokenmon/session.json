@@ -1,0 +1,11 @@
+{
+  "session_id": "test-123",
+  "agent_assignments": [
+    {
+      "agent_id": "a1",
+      "pokemon": "모부기"
+    }
+  ],
+  "evolution_events": [],
+  "achievement_events": []
+}

@@ -13,9 +13,9 @@ tokenmon 플러그인의 설치 상태를 진단하고 문제를 찾아줍니다
 ### Step 1: 플러그인 캐시 확인
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ 2>/dev/null | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | head -1)
 if [ -z "$PLUGIN_ROOT" ]; then
-  echo "FAIL: plugin cache not found. Run '/plugin install tokenmon@tkm' first."
+  echo "FAIL: plugin cache not found. Run '/plugin install tkm@tkm' first."
   exit 1
 fi
 echo "Plugin root: $PLUGIN_ROOT"
@@ -26,7 +26,7 @@ echo "PASS: plugin cache exists"
 ### Step 2: npm install
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 cd "$PLUGIN_ROOT" && npm install 2>&1 | tail -3
 echo "---"
 [ -f "$PLUGIN_ROOT/node_modules/.bin/tsx" ] && echo "PASS: npm install" || echo "FAIL: tsx not found"
@@ -35,7 +35,7 @@ echo "---"
 ### Step 3: StatusLine 통합
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 "$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/setup/setup-statusline.ts" 2>&1
 echo "---"
 node -e "
@@ -47,7 +47,7 @@ console.log(d.statusLine ? 'PASS: statusLine configured' : 'FAIL: statusLine mis
 ### Step 4: CLI 명령어 검증
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 TSX="$PLUGIN_ROOT/node_modules/.bin/tsx"
 CLI="$PLUGIN_ROOT/src/cli/tokenmon.ts"
 PASS=0; TOTAL=0
@@ -69,7 +69,7 @@ echo "---"
 ### Step 5: 데이터 무결성
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 node -e "
 const d = JSON.parse(require('fs').readFileSync('$PLUGIN_ROOT/data/pokemon.json', 'utf-8'));
 const r = JSON.parse(require('fs').readFileSync('$PLUGIN_ROOT/data/regions.json', 'utf-8'));
@@ -97,7 +97,7 @@ console.log(pass === checks.length ? 'PASS: data integrity' : 'FAIL: data integr
 ### Step 6: 에셋 파일
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 CRIES=$(ls "$PLUGIN_ROOT/cries/"*.ogg 2>/dev/null | wc -l)
 SPRITES=$(ls "$PLUGIN_ROOT/sprites/terminal/"*.txt 2>/dev/null | wc -l)
 SFX=$(ls "$PLUGIN_ROOT/sfx/"*.wav 2>/dev/null | wc -l)
@@ -112,7 +112,7 @@ echo "---"
 ### Step 7: 스타터 선택 + Status 확인
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 TSX="$PLUGIN_ROOT/node_modules/.bin/tsx"
 CLI="$PLUGIN_ROOT/src/cli/tokenmon.ts"
 
@@ -141,7 +141,7 @@ echo "$OUTPUT" | grep -qE "(모부기|불꽃숭이|팽도리)" && echo "PASS: st
 **8a. Status Line**
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 "$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/status-line.ts" 2>&1
 ```
 
@@ -150,7 +150,7 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
 **8b. Pokedex 목록**
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 "$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/cli/tokenmon.ts" pokedex 2>&1 | head -20
 ```
 
@@ -159,7 +159,7 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
 **8c. Pokedex 상세**
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 "$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/cli/tokenmon.ts" pokedex 모부기 2>&1
 ```
 
@@ -168,7 +168,7 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
 **8d. Region List**
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 "$PLUGIN_ROOT/node_modules/.bin/tsx" "$PLUGIN_ROOT/src/cli/tokenmon.ts" region list 2>&1
 ```
 
@@ -177,7 +177,7 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
 **8e. 스프라이트 샘플 (5종)**
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
+PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ | head -1)
 for id in 387 393 448 483 493; do
   echo "=== #$id ==="
   cat "$PLUGIN_ROOT/sprites/terminal/$id.txt"

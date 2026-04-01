@@ -1,0 +1,50 @@
+{
+  "pokemon": {
+    "모부기": {
+      "id": 387,
+      "xp": 5000,
+      "level": 10,
+      "friendship": 0
+    }
+  },
+  "unlocked": [
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기",
+    "모부기"
+  ],
+  "achievements": {},
+  "total_tokens_consumed": 100000,
+  "session_count": 1,
+  "error_count": 0,
+  "permission_count": 0,
+  "evolution_count": 0,
+  "last_session_id": null,
+  "xp_bonus_multiplier": 1,
+  "last_session_tokens": {
+    "abc": 5000
+  },
+  "pokedex": {},
+  "encounter_count": 0,
+  "catch_count": 0,
+  "battle_count": 0,
+  "battle_wins": 0,
+  "battle_losses": 0,
+  "items": {},
+  "cheat_log": [],
+  "last_battle": null
+}
