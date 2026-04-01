@@ -29,6 +29,29 @@ export function rollEncounter(state: State, config: Config): boolean {
 }
 
 /**
+ * Get the minimum wild level for a pokemon based on its evolution stage.
+ * Stage 0 → 1 (no restriction), stage N → evolves_at level of previous stage.
+ */
+function getMinWildLevel(name: string): number {
+  const db = getPokemonDB();
+  const pData = db.pokemon[name];
+  if (!pData || pData.stage === 0) return 1;
+  const prevId = pData.line[pData.stage - 1];
+  const prevData = db.pokemon[prevId];
+  return prevData?.evolves_at ?? 1;
+}
+
+/**
+ * Roll a wild level for a pokemon, respecting evolution minimum level.
+ */
+function rollWildLevel(name: string, regionMin: number, regionMax: number): number {
+  const evoMin = getMinWildLevel(name);
+  const effectiveMin = Math.max(regionMin, evoMin);
+  const effectiveMax = Math.max(regionMax, effectiveMin);
+  return effectiveMin + Math.floor(Math.random() * (effectiveMax - effectiveMin + 1));
+}
+
+/**
  * Select a wild pokemon from the current region's pool, weighted by rarity.
  */
 export function selectWildPokemon(config: Config): { name: string; level: number } | null {
@@ -52,22 +75,19 @@ export function selectWildPokemon(config: Config): { name: string; level: number
   }
 
   // Normalize and select
+  const [minLv, maxLv] = region.level_range;
   const totalWeight = weighted.reduce((sum, w) => sum + w.weight, 0);
   let roll = Math.random() * totalWeight;
   for (const entry of weighted) {
     roll -= entry.weight;
     if (roll <= 0) {
-      // Random level within region range
-      const [minLv, maxLv] = region.level_range;
-      const level = minLv + Math.floor(Math.random() * (maxLv - minLv + 1));
-      return { name: entry.name, level };
+      return { name: entry.name, level: rollWildLevel(entry.name, minLv, maxLv) };
     }
   }
 
   // Fallback
   const fallback = weighted[0];
-  const [minLv, maxLv] = region.level_range;
-  return { name: fallback.name, level: minLv + Math.floor(Math.random() * (maxLv - minLv + 1)) };
+  return { name: fallback.name, level: rollWildLevel(fallback.name, minLv, maxLv) };
 }
 
 /**
