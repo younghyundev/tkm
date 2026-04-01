@@ -127,7 +127,7 @@ function addFriendship(state: State, pokemonName: string, amount: number): void 
 | 보상 | 설명 | 예시 |
 |------|------|------|
 | `reward_pokemon` | 새 포켓몬 해금 | first_session → 팽도리 |
-| `reward_item` | 아이템 지급 | 특정 업적 → retry_token ×5 |
+| `reward_item` | 아이템 지급 | 특정 업적 → pokeball ×5 |
 | `max_party_size` | 파티 크기 증가 | permission_master → max 6 |
 | `xp_bonus` | XP 배율 증가 | ten_sessions → 1.2x |
 

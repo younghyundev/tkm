@@ -109,8 +109,6 @@ export interface Config {
   peon_ping_integration: boolean;
   peon_ping_port: number;
   current_region: string;
-  auto_retry_enabled: boolean;
-  auto_retry_threshold: number;
   default_dispatch: string | null;
   sprite_mode: 'all' | 'ace_only' | 'emoji_all' | 'emoji_ace';
   info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level';

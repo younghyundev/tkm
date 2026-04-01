@@ -109,8 +109,8 @@ function resolveWeakestPartyMember(state: State, config: Config): Record<string,
   return { pokemon: weakest.name, level: String(weakest.level) };
 }
 
-function resolveRetryTokenCount(state: State, _config: Config): Record<string, string> | null {
-  const count = state.items?.retry_token ?? 0;
+function resolvePokeBallCount(state: State, _config: Config): Record<string, string> | null {
+  const count = state.items?.pokeball ?? 0;
   return { count: String(count) };
 }
 
@@ -119,7 +119,7 @@ const RESOLVERS: Record<string, (state: State, config: Config) => Record<string,
   currentRegionLevel: resolveCurrentRegionLevel,
   nearestAchievement: resolveNearestAchievement,
   weakestPartyMember: resolveWeakestPartyMember,
-  retryTokenCount: resolveRetryTokenCount,
+  pokeBallCount: resolvePokeBallCount,
 };
 
 // === Tip Selection ===
@@ -187,7 +187,7 @@ export function renderGuideIndex(): void {
   console.log('  region        지역 시스템 (해금 조건, 레벨 범위, 포켓몬 풀)');
   console.log('  achievement   업적 시스템 (트리거, 보상)');
   console.log('  xp            XP / 레벨링 (계산식, 파티 분배, 파견 보너스)');
-  console.log('  item          아이템 (재도전권, 드랍률, 자동 재도전)');
+  console.log('  item          아이템 (포켓몬볼, 드랍률, 포획)');
 }
 
 export function renderGuide(topic: string): void {
@@ -315,7 +315,7 @@ function renderAchievementGuide(): void {
   console.log(`${BOLD}[ 보상 종류 ]${RESET}`);
   console.log('  포켓몬 해금: 특정 업적 달성 시 새 포켓몬 획득');
   console.log('  XP 보너스: 영구적 XP 배율 증가 (중첩 가능)');
-  console.log('  재도전권: 전투 재시도에 사용');
+  console.log('  포켓몬볼: 야생 포켓몬 포획에 사용');
   console.log('  파티 슬롯: 최대 파티 크기 증가');
 }
 
@@ -362,8 +362,8 @@ function renderItemGuide(): void {
   console.log('  tokenmon items   현재 보유 아이템');
   console.log('');
 
-  console.log(`${BOLD}[ 재도전권 🎫 ]${RESET}`);
-  console.log('  전투에서 사용하는 유일한 소비 아이템입니다.');
+  console.log(`${BOLD}[ 포켓몬볼 🔴 ]${RESET}`);
+  console.log('  야생 포켓몬을 포획하는 데 사용하는 소비 아이템입니다.');
   console.log('');
   console.log('  획득 방법:');
   console.log(`    전투 승리 시 ${GREEN}20%${RESET} 확률로 드랍`);
@@ -371,12 +371,9 @@ function renderItemGuide(): void {
   console.log('    업적 보상 (첫 승리: 3개, 도감 연구원: 5개, 연승의 달인: 10개 등)');
   console.log('');
 
-  console.log(`${BOLD}[ 자동 재도전 ]${RESET}`);
-  console.log('  전투 패배 시 자동으로 재도전권을 사용하여 재시도합니다.');
-  console.log('  조건: 자동 재도전 활성화 + 재도전권 보유 + 승률 ≥ 임계값');
-  console.log('');
-  console.log('  설정:');
-  console.log('    tokenmon config set auto_retry_enabled true/false');
-  console.log(`    tokenmon config set auto_retry_threshold 0.6  ${GRAY}(기본: 60%)${RESET}`);
-  console.log(`  ${YELLOW}팁: 임계값을 낮추면 더 자주 재도전하지만 토큰 소모가 빠릅니다${RESET}`);
+  console.log(`${BOLD}[ 포획 조건 ]${RESET}`);
+  console.log('  배틀 승리 + 미포획 포켓몬 + 포켓몬볼 보유 → 포획 (볼 1개 소비)');
+  console.log('  볼이 없으면 승리해도 포획 불가 (도감 등록 + XP만 획득)');
+  console.log('  이미 포획한 포켓몬과의 전투에서는 볼이 소비되지 않습니다.');
+  console.log(`  ${YELLOW}팁: 새로운 포켓몬을 만나기 전에 포켓몬볼을 충분히 확보하세요${RESET}`);
 }

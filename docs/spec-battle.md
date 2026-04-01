@@ -166,17 +166,18 @@ totalXp = (base + levelBonus + typeBonus + rarityBonus) × xpBonusMultiplier
 if (won) dropChance = 0.20;   // 승리 시 20%
 else     dropChance = 0.05;   // 패배 시 5%
 
-if (Math.random() < dropChance) addItem(state, 'retry_token', 1);
+if (Math.random() < dropChance) addItem(state, 'pokeball', 1);
 ```
 
-## 5. Auto-Retry
+## 5. Pokeball Catch-Gating
 
 ```typescript
-if (!won && shouldAutoRetry(state, config, baseWinRate)) {
-  // 재도전: 동일 상대에게 다시 전투
-  // 조건: auto_retry_enabled && retry_token > 0 && baseWinRate > threshold (0.6)
-  useItem(state, 'retry_token', 1);
-  // 재전투 실행
+// 승리 + 미포획 + 포켓몬볼 보유 → 포획 (볼 1개 소비)
+// 승리 + 미포획 + 볼 미보유 → 포획 불가 (도감 seen + XP만)
+// 승리 + 이미 포획 → 볼 소비 없음
+if (won && !alreadyCaught && getItemCount(state, 'pokeball') > 0) {
+  useItem(state, 'pokeball');
+  markCaught(state, wildName);
 }
 ```
 
@@ -193,7 +194,6 @@ interface BattleResult {
   typeMultiplier: number;
   partyMultiplier: number;
   caught: boolean;
-  retried: boolean;
   itemDrop: string | null;
 }
 ```

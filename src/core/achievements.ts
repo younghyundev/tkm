@@ -104,9 +104,9 @@ function applyAchievementEffects(achievementId: string, rewardMessage: string | 
 
   // Parse retry token rewards from message
   if (rewardMessage) {
-    const tokenMatch = rewardMessage.match(/재도전권 x(\d+)/);
-    if (tokenMatch) {
-      addItem(state, 'retry_token', parseInt(tokenMatch[1], 10));
+    const ballMatch = rewardMessage.match(/포켓몬볼 x(\d+)/);
+    if (ballMatch) {
+      addItem(state, 'pokeball', parseInt(ballMatch[1], 10));
     }
   }
 }

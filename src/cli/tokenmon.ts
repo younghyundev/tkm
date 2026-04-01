@@ -19,7 +19,6 @@ const YELLOW = '\x1b[33m';
 const CYAN = '\x1b[36m';
 const RED = '\x1b[31m';
 const GRAY = '\x1b[90m';
-
 const info = (s: string) => console.log(`${CYAN}${s}${RESET}`);
 const success = (s: string) => console.log(`${GREEN}${s}${RESET}`);
 const warn = (s: string) => console.log(`${YELLOW}${s}${RESET}`);
@@ -91,8 +90,8 @@ function cmdStatus(): void {
   console.log(`  도감: ${caught}/${totalPokemon} (${Math.round(caught / totalPokemon * 100)}%)`);
 
   // Items
-  const retryTokens = state.items?.retry_token ?? 0;
-  if (retryTokens > 0) console.log(`  재도전권: ${retryTokens}개`);
+  const pokeballs = state.items?.pokeball ?? 0;
+  if (pokeballs > 0) console.log(`  🔴 포켓몬볼: ${pokeballs}개`);
 
   // Region
   console.log(`  현재 지역: ${config.current_region ?? '쌍둥이잎 마을'}`);
@@ -382,7 +381,7 @@ function cmdItems(): void {
     warn('  아이템이 없습니다.');
     return;
   }
-  const itemNames: Record<string, string> = { retry_token: '재도전권' };
+  const itemNames: Record<string, string> = { pokeball: '포켓몬볼' };
   for (const [key, count] of Object.entries(items)) {
     if (count > 0) {
       console.log(`  ${itemNames[key] ?? key}: ${count}개`);

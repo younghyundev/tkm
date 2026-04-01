@@ -93,10 +93,6 @@ interface Config {
   // === 지역 ===
   current_region: string;        // 현재 지역
 
-  // === 전투 ===
-  auto_retry_enabled: boolean;   // 자동 재도전
-  auto_retry_threshold: number;  // 재도전 승률 임계값 (0.6)
-
   // === 통합 ===
   peon_ping_integration: boolean;  // peon-ping 연동
   peon_ping_port: number;          // 19998

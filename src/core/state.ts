@@ -58,6 +58,12 @@ export function readState(): State {
     if (entry.ev === undefined) (entry as any).ev = 0;
   }
 
+  // Migrate retry_token -> pokeball
+  if (result.items.retry_token !== undefined) {
+    result.items.pokeball = (result.items.pokeball ?? 0) + (result.items.retry_token ?? 0);
+    delete result.items.retry_token;
+  }
+
   return result;
 }
 

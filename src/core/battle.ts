@@ -1,7 +1,7 @@
 import { getPokemonDB } from './pokemon-data.js';
 import { getRawTypeMultiplier, applyTypeDampening } from './type-chart.js';
 import { markSeen, markCaught } from './pokedex.js';
-import { rollItemDrop, shouldAutoRetry, useItem } from './items.js';
+import { rollItemDrop, getItemCount, useItem } from './items.js';
 import { levelToXp } from './xp.js';
 import type { State, Config, BattleResult } from './types.js';
 
@@ -224,14 +224,8 @@ export function resolveBattle(
   // Apply party multiplier and clamp
   const winRate = Math.max(0.03, Math.min(0.95, baseWinRate * partyMultiplier));
 
-  // Roll (with auto-retry on defeat)
-  let won = Math.random() < winRate;
-  let retryUsed = false;
-  if (!won && shouldAutoRetry(state, config, winRate)) {
-    useItem(state, 'retry_token');
-    won = Math.random() < winRate;
-    retryUsed = true;
-  }
+  // Roll battle outcome
+  const won = Math.random() < winRate;
 
   // Type disadvantage check (for XP bonus)
   const typeDisadvantage = typeMultiplier < 1.0;
@@ -264,30 +258,34 @@ export function resolveBattle(
     state.pokemon[name].xp += xpPerPokemon;
   }
 
-  // Item drop
-  rollItemDrop(state, won);
-
   // Mark pokemon as seen
   markSeen(state, wildName);
 
-  // Catch on first victory
+  // Catch on victory (requires pokeball for uncaught pokemon)
   let caught = false;
   if (won) {
     const alreadyCaught = state.pokedex[wildName]?.caught ?? false;
     if (!alreadyCaught) {
-      caught = true;
-      markCaught(state, wildName);
-      state.catch_count++;
-      if (!state.unlocked.includes(wildName)) {
-        state.unlocked.push(wildName);
+      const hasBall = getItemCount(state, 'pokeball') > 0;
+      if (hasBall) {
+        useItem(state, 'pokeball');
+        caught = true;
+        markCaught(state, wildName);
+        state.catch_count++;
+        if (!state.unlocked.includes(wildName)) {
+          state.unlocked.push(wildName);
+        }
+        if (!state.pokemon[wildName]) {
+          const catchXp = levelToXp(wildLevel, wildData.exp_group);
+          state.pokemon[wildName] = { id: wildData.id, xp: catchXp, level: wildLevel, friendship: 0, ev: 0 };
+        }
       }
-      if (!state.pokemon[wildName]) {
-        // XP must match level to prevent xpToLevel() from resetting level
-        const catchXp = levelToXp(wildLevel, wildData.exp_group);
-        state.pokemon[wildName] = { id: wildData.id, xp: catchXp, level: wildLevel, friendship: 0, ev: 0 };
-      }
+      // No ball: markSeen already called above, XP already awarded. No catch.
     }
   }
+
+  // Item drop (after catch check — dropped balls are for next battle)
+  rollItemDrop(state, won);
 
   return {
     attacker,

@@ -16,8 +16,6 @@ const DEFAULT_CONFIG: Config = {
   peon_ping_integration: false,
   peon_ping_port: 19998,
   current_region: '쌍둥이잎 마을',
-  auto_retry_enabled: true,
-  auto_retry_threshold: 0.60,
   default_dispatch: null,
   sprite_mode: 'all',
   info_mode: 'ace_full',

@@ -75,8 +75,8 @@ function main(): void {
 
   // Footer
   const regionName = config.current_region ?? '쌍둥이잎 마을';
-  const retryTokens = state.items?.retry_token ?? 0;
-  const itemInfo = retryTokens > 0 ? ` 🎫 ${retryTokens}` : '';
+  const pokeballs = state.items?.pokeball ?? 0;
+  const itemInfo = pokeballs > 0 ? ` 🔴 ${pokeballs}` : '';
   const footer = `📍${regionName}${itemInfo}`;
 
   // Build per-pokemon data
