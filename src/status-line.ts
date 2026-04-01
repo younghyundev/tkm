@@ -5,6 +5,7 @@ import { readConfig } from './core/config.js';
 import { getPokemonDB } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
 import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR } from './core/paths.js';
+import { formatBattleMessage } from './core/battle.js';
 import type { ExpGroup } from './core/types.js';
 
 const TYPE_EMOJI: Record<string, string> = {
@@ -120,6 +121,12 @@ function main(): void {
         console.log(group.map(s => s[row] ?? '                    ').join(' '));
       }
     }
+  }
+
+  // === Battle result line ===
+  if (state.last_battle) {
+    const battleMsg = formatBattleMessage(state.last_battle);
+    if (battleMsg) console.log(battleMsg);
   }
 
   // === Info line rendering ===

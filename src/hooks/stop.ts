@@ -218,15 +218,30 @@ async function main(): Promise<void> {
     syncPokedexFromUnlocked(state);
 
     // Random encounter + battle
-    const battleResult = processEncounter(state, config);
-    if (battleResult) {
-      messages.push(formatEncounterMessage(battleResult));
-      if (battleResult.won) {
-        playSfx('victory');
-        if (battleResult.caught) playSfx('gacha');
-      } else {
-        playSfx('defeat');
+    try {
+      const battleResult = processEncounter(state, config);
+      if (battleResult) {
+        state.last_battle = battleResult;
+        const battleMsg = formatEncounterMessage(battleResult);
+        if (battleMsg) messages.push(battleMsg);
+
+        // Auto-add caught pokemon to party if < 6
+        if (battleResult.caught && config.party.length < 6) {
+          if (!config.party.includes(battleResult.defender)) {
+            config.party.push(battleResult.defender);
+            messages.push(`🎊 ${battleResult.defender}이(가) 파티에 합류했습니다!`);
+          }
+        }
+
+        if (battleResult.won) {
+          playSfx('victory');
+          if (battleResult.caught) playSfx('gacha');
+        } else {
+          playSfx('defeat');
+        }
       }
+    } catch (err) {
+      process.stderr.write(`tokenmon encounter error: ${err}\n`);
     }
 
     writeState(state);

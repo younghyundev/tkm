@@ -91,6 +91,7 @@ export interface State {
   battle_losses: number;
   items: Record<string, number>;
   cheat_log: Array<{ timestamp: string; command: string }>;
+  last_battle: BattleResult | null;
 }
 
 export interface Config {

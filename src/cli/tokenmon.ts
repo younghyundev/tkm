@@ -139,7 +139,7 @@ function cmdStarter(): void {
     writeConfig(config);
 
     if (!state.pokemon[chosen]) {
-      state.pokemon[chosen] = { id: pData?.id ?? 0, xp: 0, level: 1, friendship: 0 };
+      state.pokemon[chosen] = { id: pData?.id ?? 0, xp: 0, level: 5, friendship: 0 };
     }
     if (!state.unlocked.includes(chosen)) {
       state.unlocked.push(chosen);

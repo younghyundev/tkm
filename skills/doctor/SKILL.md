@@ -116,14 +116,22 @@ PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tokenmon/tokenmon/*/ | head -1)
 TSX="$PLUGIN_ROOT/node_modules/.bin/tsx"
 CLI="$PLUGIN_ROOT/src/cli/tokenmon.ts"
 
-# 모부기 선택 (자동)
-echo "1" | "$TSX" "$CLI" starter 2>&1
+# 스타터가 이미 선택되어 있으면 덮어쓰지 않고 status만 확인
+CONFIG_FILE=~/.claude/tokenmon-config.json
+STARTER_CHOSEN=$(node -e "try{const c=JSON.parse(require('fs').readFileSync('$CONFIG_FILE','utf8'));console.log(c.starter_chosen?'yes':'no')}catch{console.log('no')}")
+
+if [ "$STARTER_CHOSEN" = "yes" ]; then
+  echo "SKIP: starter already chosen (preserving current party)"
+else
+  echo "1" | "$TSX" "$CLI" starter 2>&1
+fi
 echo "---"
 # status 확인
 OUTPUT=$("$TSX" "$CLI" status 2>&1)
 echo "$OUTPUT"
 echo "---"
-echo "$OUTPUT" | grep -q "모부기" && echo "PASS: starter selected" || echo "FAIL: starter not in status"
+# 파티에 포켓몬이 있는지 확인 (스타터 종류 무관)
+echo "$OUTPUT" | grep -qE "(모부기|불꽃숭이|팽도리)" && echo "PASS: starter in party" || echo "FAIL: no starter in status"
 ```
 
 ### Step 8: Visual QA

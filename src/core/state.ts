@@ -23,6 +23,7 @@ const DEFAULT_STATE: State = {
   battle_losses: 0,
   items: {},
   cheat_log: [],
+  last_battle: null,
 };
 
 const DEFAULT_SESSION: Session = {
