@@ -21,3 +21,6 @@ export const CRIES_DIR = join(PLUGIN_ROOT, 'cries');
 export const SPRITES_RAW_DIR = join(PLUGIN_ROOT, 'sprites', 'raw');
 export const SPRITES_TERMINAL_DIR = join(PLUGIN_ROOT, 'sprites', 'terminal');
 export const SPRITES_BRAILLE_DIR = join(PLUGIN_ROOT, 'sprites', 'braille');
+export const SPRITES_KITTY_DIR = join(PLUGIN_ROOT, 'sprites', 'kitty');
+export const SPRITES_SIXEL_DIR = join(PLUGIN_ROOT, 'sprites', 'sixel');
+export const SPRITES_ITERM2_DIR = join(PLUGIN_ROOT, 'sprites', 'iterm2');
