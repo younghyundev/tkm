@@ -67,6 +67,36 @@ Bash 도구로 다음 명령을 실행하세요:
 
 포켓몬 이름은 한글로 전달하세요 (모부기, 불꽃숭이, 팽도리 중 하나).
 
+## Step 4.5: 렌더러 선택 (Renderer)
+
+터미널 환경을 감지하여 사용 가능한 렌더러를 확인합니다:
+
+```
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/setup/detect-and-list-renderers.ts"
+```
+
+출력 예시:
+```
+1. [추천] Kitty Graphics Protocol (최고 품질, 원본 PNG) (kitty)
+2. Braille (기존 방식, 모든 터미널 호환) (braille)
+```
+
+AskUserQuestion 도구로 렌더러를 선택하게 합니다:
+
+> 포켓몬 스프라이트를 어떤 방식으로 렌더링할까요?
+
+선택에 따라 실행:
+```
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set renderer <kitty|sixel|iterm2|braille>
+```
+
+선택한 렌더러가 `braille`이 아니면, 해당 스프라이트를 사전 생성합니다:
+```
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/scripts/generate-png-sprites.ts" --renderer <선택값>
+```
+
+이미 해당 스프라이트가 존재하거나 `braille`을 선택한 경우 생성 단계를 건너뜁니다.
+
 ## Step 5: Status Bar 표시 설정
 
 AskUserQuestion 도구로 스프라이트 모드를 선택하게 합니다:

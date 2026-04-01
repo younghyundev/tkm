@@ -1,7 +1,6 @@
-import { readFileSync, writeFileSync, unlinkSync, mkdirSync } from 'fs';
-import { dirname } from 'path';
-import { SESSION_PATH } from '../core/paths.js';
+import { readFileSync } from 'fs';
 import { readSession, writeSession } from '../core/state.js';
+import { withLock } from '../core/lock.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
 
@@ -14,29 +13,6 @@ function readStdin(): string {
   }
 }
 
-function acquireLock(lockPath: string, timeoutMs: number = 5000): boolean {
-  const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    try {
-      writeFileSync(lockPath, String(process.pid), { flag: 'wx' });
-      return true;
-    } catch {
-      const wait = 10;
-      const end = Date.now() + wait;
-      while (Date.now() < end) { /* busy wait */ }
-    }
-  }
-  return false;
-}
-
-function releaseLock(lockPath: string): void {
-  try {
-    unlinkSync(lockPath);
-  } catch {
-    // Ignore
-  }
-}
-
 function main(): void {
   const input = JSON.parse(readStdin()) as HookInput;
   const agentId = input.agent_id ?? '';
@@ -46,24 +22,24 @@ function main(): void {
     return;
   }
 
-  const lockPath = SESSION_PATH + '.lock';
-  mkdirSync(dirname(SESSION_PATH), { recursive: true });
+  let removedPokemon: string | null = null;
 
-  if (!acquireLock(lockPath)) {
-    console.log('{"continue": true}');
-    return;
-  }
-
-  try {
+  const lockResult = withLock(() => {
     const session = readSession();
     const removed = session.agent_assignments.find(a => a.agent_id === agentId);
     session.agent_assignments = session.agent_assignments.filter(a => a.agent_id !== agentId);
     writeSession(session);
     if (removed) {
-      playCry(removed.pokemon);
+      removedPokemon = removed.pokemon;
     }
-  } finally {
-    releaseLock(lockPath);
+  });
+
+  if (lockResult === null) {
+    process.stderr.write(`tokenmon subagent-stop: lock acquisition failed, agent ${agentId} cleanup skipped\n`);
+  }
+
+  if (removedPokemon) {
+    playCry(removedPokemon);
   }
 
   console.log('{"continue": true}');

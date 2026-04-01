@@ -10,6 +10,7 @@ import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/
 import { getCurrentRegion, getRegionList, moveToRegion } from '../core/regions.js';
 import { renderGuide, renderGuideIndex } from '../core/guide.js';
 import { t, initLocale } from '../i18n/index.js';
+import { withLock } from '../core/lock.js';
 import type { ExpGroup } from '../core/types.js';
 
 // ANSI color helpers
@@ -133,21 +134,32 @@ function cmdStarter(): void {
     }
 
     const chosen = starters[choice - 1];
-    const pData = pokemonDB.pokemon[chosen];
 
-    config.party = [chosen];
-    config.starter_chosen = true;
-    writeConfig(config);
+    // Mutation under lock (re-read fresh state)
+    const lockResult = withLock(() => {
+      const freshConfig = readConfig();
+      const freshState = readState();
+      const pData = pokemonDB.pokemon[chosen];
 
-    if (!state.pokemon[chosen]) {
-      const starterLevel = 5;
-      const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
-      state.pokemon[chosen] = { id: pData?.id ?? 0, xp: levelToXp(starterLevel, expGroup), level: starterLevel, friendship: 0, ev: 0 };
+      freshConfig.party = [chosen];
+      freshConfig.starter_chosen = true;
+      writeConfig(freshConfig);
+
+      if (!freshState.pokemon[chosen]) {
+        const starterLevel = 5;
+        const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
+        freshState.pokemon[chosen] = { id: pData?.id ?? 0, xp: levelToXp(starterLevel, expGroup), level: starterLevel, friendship: 0, ev: 0 };
+      }
+      if (!freshState.unlocked.includes(chosen)) {
+        freshState.unlocked.push(chosen);
+      }
+      writeState(freshState);
+    });
+
+    if (lockResult === null) {
+      error('다른 프로세스가 데이터를 사용 중입니다. 잠시 후 다시 시도하세요.');
+      process.exit(1);
     }
-    if (!state.unlocked.includes(chosen)) {
-      state.unlocked.push(chosen);
-    }
-    writeState(state);
 
     success(t('cli.starter.chosen', { pokemon: chosen }));
     playCry(chosen);
@@ -167,12 +179,17 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         info(t('cli.party.dispatch_usage'));
         return;
       }
+      // Validation before lock
       if (!config.party.includes(pokemon)) {
         error(t('cli.party.dispatch_not_in_party', { pokemon }));
         process.exit(1);
       }
-      config.default_dispatch = pokemon;
-      writeConfig(config);
+      const dispatchResult = withLock(() => {
+        const freshConfig = readConfig();
+        freshConfig.default_dispatch = pokemon!;
+        writeConfig(freshConfig);
+      });
+      if (dispatchResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
       success(t('cli.party.dispatch_set', { pokemon }));
       break;
     }
@@ -181,6 +198,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         error(t('cli.party.add_usage'));
         process.exit(1);
       }
+      // Validation before lock
       if (!state.unlocked.includes(pokemon)) {
         error(t('cli.party.add_not_unlocked', { pokemon }));
         info(t('cli.party.add_unlock_hint'));
@@ -194,8 +212,14 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         warn(t('cli.party.add_already_in', { pokemon }));
         return;
       }
-      config.party.push(pokemon);
-      writeConfig(config);
+      const addResult = withLock(() => {
+        const freshConfig = readConfig();
+        if (!freshConfig.party.includes(pokemon!)) {
+          freshConfig.party.push(pokemon!);
+          writeConfig(freshConfig);
+        }
+      });
+      if (addResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
       success(t('cli.party.add_success', { pokemon }));
       break;
     }
@@ -204,12 +228,17 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         error(t('cli.party.remove_usage'));
         process.exit(1);
       }
+      // Validation before lock
       if (config.party.length <= 1) {
         error(t('cli.party.remove_min'));
         process.exit(1);
       }
-      config.party = config.party.filter(p => p !== pokemon);
-      writeConfig(config);
+      const removeResult = withLock(() => {
+        const freshConfig = readConfig();
+        freshConfig.party = freshConfig.party.filter(p => p !== pokemon);
+        writeConfig(freshConfig);
+      });
+      if (removeResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
       success(t('cli.party.remove_success', { pokemon }));
       break;
     }
@@ -276,6 +305,8 @@ function cmdConfigSet(key: string, value: string): void {
     console.log(t('cli.config.key_max_party'));
     console.log(t('cli.config.key_peon_ping'));
     console.log(t('cli.config.key_tips_enabled'));
+    console.log('  renderer             - 스프라이트 렌더러 (kitty/sixel/iterm2/braille)');
+
     process.exit(1);
   }
 
@@ -283,26 +314,39 @@ function cmdConfigSet(key: string, value: string): void {
   const numericKeys = ['tokens_per_xp', 'max_party_size', 'peon_ping_port'];
   const floatKeys = ['volume', 'xp_bonus_multiplier'];
   const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration', 'tips_enabled'];
+  const stringEnumKeys: Record<string, string[]> = {
+    sprite_mode: ['all', 'ace_only', 'emoji_all', 'emoji_ace'],
+    info_mode:   ['ace_full', 'name_level', 'all_full', 'ace_level'],
+    renderer:    ['kitty', 'sixel', 'iterm2', 'braille'],
+  };
 
-  if (numericKeys.includes(key)) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(config as any)[key] = parseInt(value, 10);
-  } else if (floatKeys.includes(key)) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(config as any)[key] = parseFloat(value);
-  } else if (boolKeys.includes(key)) {
-    if (value !== 'true' && value !== 'false') {
-      error(t('cli.config.bool_error'));
+  // Validation before lock
+  if (boolKeys.includes(key) && value !== 'true' && value !== 'false') {
+    error(t('cli.config.bool_error'));
+    process.exit(1);
+  }
+  if (key in stringEnumKeys) {
+    const allowed = stringEnumKeys[key];
+    if (!allowed.includes(value)) {
+      error(`${key}의 허용 값: ${allowed.join(', ')}`);
       process.exit(1);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(config as any)[key] = value === 'true';
-  } else {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(config as any)[key] = value;
   }
 
-  writeConfig(config);
+  const configResult = withLock(() => {
+    const freshConfig = readConfig();
+    if (numericKeys.includes(key)) {
+      (freshConfig as any)[key] = parseInt(value, 10);
+    } else if (floatKeys.includes(key)) {
+      (freshConfig as any)[key] = parseFloat(value);
+    } else if (boolKeys.includes(key)) {
+      (freshConfig as any)[key] = value === 'true';
+    } else {
+      (freshConfig as any)[key] = value;
+    }
+    writeConfig(freshConfig);
+  });
+  if (configResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
   success(t('cli.config.set_success', { key, value }));
 }
 
@@ -396,12 +440,17 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
   syncPokedexFromUnlocked(state);
 
   if (subcmd === 'move' && regionName) {
-    const err = moveToRegion(regionName, state, config);
-    if (err) {
-      error(err);
-      process.exit(1);
-    }
-    writeConfig(config);
+    const moveResult = withLock(() => {
+      const freshState = readState();
+      const freshConfig = readConfig();
+      syncPokedexFromUnlocked(freshState);
+      const err = moveToRegion(regionName!, freshState, freshConfig);
+      if (err) return { ok: false as const, error: err };
+      writeConfig(freshConfig);
+      return { ok: true as const };
+    });
+    if (moveResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
+    if (!moveResult.ok) { error(moveResult.error); process.exit(1); }
     success(t('cli.region.moved', { region: regionName }));
     return;
   }
@@ -459,96 +508,121 @@ function cmdReset(confirm: boolean): void {
 }
 
 function doReset(): void {
-  const state = readState();
-  const cheatLog = state.cheat_log ?? []; // preserve cheat log
-  const defaultConfig = getDefaultConfig();
-  writeConfig(defaultConfig);
+  const resetResult = withLock(() => {
+    const state = readState();
+    const cheatLog = state.cheat_log ?? []; // preserve cheat log
+    const defaultConfig = getDefaultConfig();
+    writeConfig(defaultConfig);
 
-  const defaultState: any = {
-    pokemon: {}, unlocked: [], achievements: {},
-    total_tokens_consumed: 0, session_count: 0, error_count: 0,
-    permission_count: 0, evolution_count: 0, last_session_id: null,
-    xp_bonus_multiplier: 1.0, last_session_tokens: {}, pokedex: {},
-    encounter_count: 0, catch_count: 0, battle_count: 0,
-    battle_wins: 0, battle_losses: 0, items: {}, cheat_log: cheatLog,
-    last_battle: null, last_tip: null,
-  };
-  writeState(defaultState);
+    const defaultState: any = {
+      pokemon: {}, unlocked: [], achievements: {},
+      total_tokens_consumed: 0, session_count: 0, error_count: 0,
+      permission_count: 0, evolution_count: 0, last_session_id: null,
+      xp_bonus_multiplier: 1.0, last_session_tokens: {}, pokedex: {},
+      encounter_count: 0, catch_count: 0, battle_count: 0,
+      battle_wins: 0, battle_losses: 0, items: {}, cheat_log: cheatLog,
+      last_battle: null, last_tip: null,
+    };
+    writeState(defaultState);
+  });
+  if (resetResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
   success(t('cli.reset.done'));
 }
 
 function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
-  const state = readState();
-  const config = readConfig();
   const pokemonDB = getPokemonDB();
 
-  function logCheat(cmd: string) {
-    if (!state.cheat_log) state.cheat_log = [];
-    state.cheat_log.push({ timestamp: new Date().toISOString(), command: cmd });
-  }
-
+  // Validation before lock (no state reads needed for input validation)
   switch (subcmd) {
-    case 'xp': {
+    case 'xp':
       if (!arg1 || !arg2) { error(t('cli.cheat.xp_usage')); return; }
-      const amount = parseInt(arg2, 10);
-      if (!state.pokemon[arg1]) { error(t('cli.cheat.xp_no_pokemon', { pokemon: arg1 })); return; }
-      state.pokemon[arg1].xp += amount;
-      logCheat(`xp ${arg1} ${amount}`);
-      writeState(state);
-      success(t('cli.cheat.xp_success', { pokemon: arg1, amount, total: state.pokemon[arg1].xp }));
       break;
-    }
-    case 'level': {
+    case 'level':
       if (!arg1 || !arg2) { error(t('cli.cheat.level_usage')); return; }
-      const level = parseInt(arg2, 10);
-      if (!state.pokemon[arg1]) { error(t('cli.cheat.xp_no_pokemon', { pokemon: arg1 })); return; }
-      state.pokemon[arg1].level = level;
-      logCheat(`level ${arg1} ${level}`);
-      writeState(state);
-      success(t('cli.cheat.level_success', { pokemon: arg1, level }));
       break;
-    }
-    case 'unlock': {
+    case 'unlock':
       if (!arg1) { error(t('cli.cheat.unlock_usage')); return; }
-      const pData = pokemonDB.pokemon[arg1];
-      if (!pData) { error(t('cli.cheat.unlock_not_found', { pokemon: arg1 })); return; }
-      if (!state.unlocked.includes(arg1)) state.unlocked.push(arg1);
-      if (!state.pokemon[arg1]) state.pokemon[arg1] = { id: pData.id, xp: 0, level: 1, friendship: 0, ev: 0 };
-      if (!state.pokedex[arg1]) state.pokedex[arg1] = { seen: true, caught: true, first_seen: new Date().toISOString().split('T')[0] };
-      else { state.pokedex[arg1].seen = true; state.pokedex[arg1].caught = true; }
-      logCheat(`unlock ${arg1}`);
-      writeState(state);
-      success(t('cli.cheat.unlock_success', { pokemon: arg1 }));
+      if (!pokemonDB.pokemon[arg1]) { error(t('cli.cheat.unlock_not_found', { pokemon: arg1 })); return; }
       break;
-    }
-    case 'achievement': {
+    case 'achievement':
       if (!arg1) { error(t('cli.cheat.achievement_usage')); return; }
-      state.achievements[arg1] = true;
-      logCheat(`achievement ${arg1}`);
-      writeState(state);
-      success(t('cli.cheat.achievement_success', { id: arg1 }));
       break;
-    }
-    case 'item': {
+    case 'item':
       if (!arg1 || !arg2) { error(t('cli.cheat.item_usage')); return; }
-      const count = parseInt(arg2, 10);
-      if (!state.items) state.items = {};
-      state.items[arg1] = (state.items[arg1] ?? 0) + count;
-      logCheat(`item ${arg1} ${count}`);
-      writeState(state);
-      success(t('cli.cheat.item_success', { item: arg1, count, total: state.items[arg1] }));
       break;
-    }
-    case 'multiplier': {
+    case 'multiplier':
       if (!arg1) { error(t('cli.cheat.multiplier_usage')); return; }
-      state.xp_bonus_multiplier = parseFloat(arg1);
-      logCheat(`multiplier ${arg1}`);
-      writeState(state);
-      success(t('cli.cheat.multiplier_success', { value: arg1 }));
       break;
-    }
     default:
       error(t('cli.cheat.unknown'));
+      return;
+  }
+
+  const cheatResult = withLock(() => {
+    const state = readState();
+
+    function logCheat(cmd: string) {
+      if (!state.cheat_log) state.cheat_log = [];
+      state.cheat_log.push({ timestamp: new Date().toISOString(), command: cmd });
+    }
+
+    switch (subcmd) {
+      case 'xp': {
+        const amount = parseInt(arg2!, 10);
+        if (!state.pokemon[arg1!]) { return `${arg1} 포켓몬이 없습니다.`; }
+        state.pokemon[arg1!].xp += amount;
+        logCheat(`xp ${arg1} ${amount}`);
+        writeState(state);
+        return `${arg1}에게 XP ${amount} 추가 (총 ${state.pokemon[arg1!].xp})`;
+      }
+      case 'level': {
+        const level = parseInt(arg2!, 10);
+        if (!state.pokemon[arg1!]) { return `${arg1} 포켓몬이 없습니다.`; }
+        state.pokemon[arg1!].level = level;
+        logCheat(`level ${arg1} ${level}`);
+        writeState(state);
+        return `${arg1} 레벨을 ${level}로 설정`;
+      }
+      case 'unlock': {
+        const pData = pokemonDB.pokemon[arg1!];
+        if (!state.unlocked.includes(arg1!)) state.unlocked.push(arg1!);
+        if (!state.pokemon[arg1!]) state.pokemon[arg1!] = { id: pData.id, xp: 0, level: 1, friendship: 0, ev: 0 };
+        if (!state.pokedex[arg1!]) state.pokedex[arg1!] = { seen: true, caught: true, first_seen: new Date().toISOString().split('T')[0] };
+        else { state.pokedex[arg1!].seen = true; state.pokedex[arg1!].caught = true; }
+        logCheat(`unlock ${arg1}`);
+        writeState(state);
+        return `${arg1} 잠금 해제 + 도감 등록 완료`;
+      }
+      case 'achievement': {
+        state.achievements[arg1!] = true;
+        logCheat(`achievement ${arg1}`);
+        writeState(state);
+        return `업적 ${arg1} 해금`;
+      }
+      case 'item': {
+        const count = parseInt(arg2!, 10);
+        if (!state.items) state.items = {};
+        state.items[arg1!] = (state.items[arg1!] ?? 0) + count;
+        logCheat(`item ${arg1} ${count}`);
+        writeState(state);
+        return `${arg1} x${count} 추가 (총 ${state.items[arg1!]})`;
+      }
+      case 'multiplier': {
+        state.xp_bonus_multiplier = parseFloat(arg1!);
+        logCheat(`multiplier ${arg1}`);
+        writeState(state);
+        return `XP 배율을 ${arg1}로 설정`;
+      }
+      default:
+        return null;
+    }
+  });
+
+  if (cheatResult === null) { error('락 획득 실패. 잠시 후 다시 시도하세요.'); process.exit(1); }
+  if (typeof cheatResult === 'string' && cheatResult.includes('없습니다')) {
+    error(cheatResult);
+  } else if (cheatResult) {
+    success(cheatResult);
   }
 }
 
