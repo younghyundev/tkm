@@ -236,6 +236,15 @@ function renderBattleGuide(): void {
   console.log(`  ${GRAY}상세 상성표: tokenmon pokedex <이름> 으로 각 포켓몬 타입 확인${RESET}`);
   console.log('');
 
+  console.log(`${BOLD}[ 파티 전투력 보정 ]${RESET}`);
+  console.log('  전투는 1:1이지만, 파티 전체의 전투력이 승률에 보정을 줍니다.');
+  console.log('  각 포켓몬의 상대 전투력(야생 대비)을 계산 → 가장 강한 포켓몬이 전투');
+  console.log('  나머지 멤버는 등비수열 가중치(r≈0.337)로 승률에 보너스 기여');
+  console.log(`  ${CYAN}1마리${RESET}: 보정 없음 (1.0x)`);
+  console.log(`  ${CYAN}6마리 풀파티${RESET}: 최대 1.5x (동일 전투력 시)`);
+  console.log(`  ${GRAY}공식: multiplier = 1 + Σ r^i × (score_i / best_score), r ≈ 0.337${RESET}`);
+  console.log('');
+
   console.log(`${BOLD}[ 전투 보상 ]${RESET}`);
   console.log('  승리 시 XP = (기본 50 + 야생Lv×3 + 희귀도 보너스) × 배율 ÷ 파티수');
   console.log('  패배 시 XP = 0');

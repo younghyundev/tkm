@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import type { State, Config } from '../src/core/types.js';
-import { calculateWinRate, calculateBattleXp, selectBattlePokemon, resolveBattle } from '../src/core/battle.js';
+import { calculateWinRate, calculateBattleXp, selectBattlePokemon, calculatePartyMultiplier, resolveBattle } from '../src/core/battle.js';
 import { getTypeEffectiveness, getRawTypeMultiplier, applyTypeDampening } from '../src/core/type-chart.js';
 
 function makeState(overrides: Partial<State> = {}): State {
@@ -137,6 +137,63 @@ describe('battle', () => {
       // Wild is water - 모부기 (grass) should be picked
       const best = selectBattlePokemon(config, state, ['물']);
       assert.equal(best, '모부기');
+    });
+  });
+
+  describe('calculatePartyMultiplier', () => {
+    it('1 member gives multiplier 1.0', () => {
+      const state = makeState();
+      const config = makeConfig({ party: ['모부기'] });
+      const { multiplier } = calculatePartyMultiplier(config, state, ['노말'], 10,
+        { attack: 50, defense: 50, speed: 50 });
+      assert.equal(multiplier, 1.0);
+    });
+
+    it('2 members gives multiplier > 1.0', () => {
+      const state = makeState();
+      const config = makeConfig({ party: ['모부기', '불꽃숭이'] });
+      const { multiplier } = calculatePartyMultiplier(config, state, ['노말'], 10,
+        { attack: 50, defense: 50, speed: 50 });
+      assert.ok(multiplier > 1.0, `expected > 1.0 but got ${multiplier}`);
+      assert.ok(multiplier <= 1.5, `expected <= 1.5 but got ${multiplier}`);
+    });
+
+    it('6 equal members gives multiplier ≈ 1.5', () => {
+      const state = makeState({
+        pokemon: {
+          'A': { id: 1, xp: 5000, level: 20, friendship: 0 },
+          'B': { id: 2, xp: 5000, level: 20, friendship: 0 },
+          'C': { id: 3, xp: 5000, level: 20, friendship: 0 },
+          'D': { id: 4, xp: 5000, level: 20, friendship: 0 },
+          'E': { id: 5, xp: 5000, level: 20, friendship: 0 },
+          'F': { id: 6, xp: 5000, level: 20, friendship: 0 },
+        },
+      });
+      // Use same pokemon name repeated to simulate equal power
+      // Since all have same level, the scores will be identical
+      const config = makeConfig({ party: ['모부기', '모부기', '모부기', '모부기', '모부기', '모부기'] });
+      const { multiplier } = calculatePartyMultiplier(config, state, ['노말'], 10,
+        { attack: 50, defense: 50, speed: 50 });
+      // r ≈ 0.337: 1 + 0.337 + 0.337² + 0.337³ + 0.337⁴ + 0.337⁵ ≈ 1.497
+      assert.ok(multiplier >= 1.45, `expected ≈ 1.5 but got ${multiplier}`);
+      assert.ok(multiplier <= 1.5, `expected <= 1.5 but got ${multiplier}`);
+    });
+
+    it('multiplier never exceeds 1.5', () => {
+      const state = makeState();
+      const config = makeConfig({ party: ['모부기', '불꽃숭이'] });
+      const { multiplier } = calculatePartyMultiplier(config, state, ['풀'], 5,
+        { attack: 30, defense: 30, speed: 30 });
+      assert.ok(multiplier <= 1.5);
+    });
+
+    it('picks strongest fighter against wild type', () => {
+      const state = makeState();
+      const config = makeConfig({ party: ['모부기', '불꽃숭이'] });
+      // Wild is grass type → 불꽃숭이 (fire) should be best
+      const { bestFighter } = calculatePartyMultiplier(config, state, ['풀'], 10,
+        { attack: 50, defense: 50, speed: 50 });
+      assert.equal(bestFighter, '불꽃숭이');
     });
   });
 

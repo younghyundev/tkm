@@ -43,8 +43,85 @@ export function calculateWinRate(
 }
 
 /**
+ * Calculate relative combat power of a party pokemon against a wild pokemon.
+ * Uses the same factors as calculateWinRate but returns a raw score for comparison.
+ */
+function relativeCombatPower(
+  attackerTypes: string[],
+  defenderTypes: string[],
+  attackerLevel: number,
+  defenderLevel: number,
+  attackerStats: { attack: number; defense: number; speed: number },
+  defenderStats: { attack: number; defense: number; speed: number },
+): number {
+  const rawType = getRawTypeMultiplier(attackerTypes, defenderTypes);
+  const typeMultiplier = applyTypeDampening(rawType);
+  const levelDiff = attackerLevel - defenderLevel;
+  const levelFactor = sigmoid(levelDiff / 3);
+  const statRatio = (attackerStats.attack + attackerStats.speed) /
+    Math.max(1, defenderStats.defense + defenderStats.speed);
+  const statFactor = Math.max(0.5, Math.min(1.5, statRatio));
+  return typeMultiplier * levelFactor * statFactor;
+}
+
+/**
+ * Geometric series ratio for party multiplier.
+ * 6 equal-power members → 1 + r + r² + r³ + r⁴ + r⁵ = 1.5
+ * Solving: r ≈ 0.337
+ */
+const PARTY_GEO_RATIO = 0.337;
+
+/**
+ * Calculate party multiplier based on relative combat power of all party members.
+ * Each member's contribution is weighted by geometric series (r ≈ 0.337).
+ * 1 member = 1.0x, 6 equal members = 1.5x max.
+ */
+export function calculatePartyMultiplier(
+  config: Config,
+  state: State,
+  wildTypes: string[],
+  wildLevel: number,
+  wildStats: { attack: number; defense: number; speed: number },
+): { multiplier: number; bestFighter: string } {
+  const db = getPokemonDB();
+
+  // Calculate relative combat power for each party member
+  const scores: Array<{ name: string; score: number }> = [];
+  for (const name of config.party) {
+    const pData = db.pokemon[name];
+    if (!pData) continue;
+    const level = state.pokemon[name]?.level ?? 1;
+    const score = relativeCombatPower(
+      pData.types, wildTypes, level, wildLevel, pData.base_stats, wildStats,
+    );
+    scores.push({ name, score });
+  }
+
+  if (scores.length === 0) return { multiplier: 1.0, bestFighter: config.party[0] };
+
+  // Sort by relative combat power (descending)
+  scores.sort((a, b) => b.score - a.score);
+
+  const bestScore = scores[0].score;
+  if (bestScore <= 0) return { multiplier: 1.0, bestFighter: scores[0].name };
+
+  // Geometric series: first member = 1.0, rest = r^i × (score_i / bestScore)
+  let multiplier = 1.0;
+  for (let i = 1; i < scores.length; i++) {
+    const weight = Math.pow(PARTY_GEO_RATIO, i);
+    const normalizedPower = scores[i].score / bestScore;
+    multiplier += weight * normalizedPower;
+  }
+
+  // Clamp to [1.0, 1.5]
+  multiplier = Math.max(1.0, Math.min(1.5, multiplier));
+
+  return { multiplier, bestFighter: scores[0].name };
+}
+
+/**
  * Select the best party pokemon to fight the wild pokemon.
- * Picks the one with best type matchup, breaking ties with level.
+ * Picks the one with best relative combat power against the specific wild pokemon.
  */
 export function selectBattlePokemon(config: Config, state: State, wildTypes: string[]): string {
   const db = getPokemonDB();
@@ -104,15 +181,18 @@ export function resolveBattle(
   if (!wildData) return null;
   if (config.party.length === 0) return null;
 
-  // Select best fighter
-  const attacker = selectBattlePokemon(config, state, wildData.types);
+  // Select best fighter using party combat power
+  const { multiplier: partyMultiplier, bestFighter } = calculatePartyMultiplier(
+    config, state, wildData.types, wildLevel, wildData.base_stats,
+  );
+  const attacker = bestFighter;
   const attackerData = db.pokemon[attacker];
   if (!attackerData) return null;
 
   const attackerLevel = state.pokemon[attacker]?.level ?? 1;
 
-  // Calculate win rate
-  const { winRate, typeMultiplier } = calculateWinRate(
+  // Calculate base win rate (1v1)
+  const { winRate: baseWinRate, typeMultiplier } = calculateWinRate(
     attackerData.types,
     wildData.types,
     attackerLevel,
@@ -120,6 +200,9 @@ export function resolveBattle(
     attackerData.base_stats,
     wildData.base_stats,
   );
+
+  // Apply party multiplier and clamp
+  const winRate = Math.max(0.03, Math.min(0.95, baseWinRate * partyMultiplier));
 
   // Roll (with auto-retry on defeat)
   let won = Math.random() < winRate;
