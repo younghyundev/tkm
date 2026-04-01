@@ -37,7 +37,7 @@ After setup, your Pokemon will appear in the status line and start gaining XP.
 For manual installation without the marketplace:
 
 ```bash
-git clone https://github.com/ThunderConch/tokenmon.git
+git clone https://github.com/ThunderConch/tkm.git
 cd tokenmon
 npm install
 npx tsx install-standalone.ts
