@@ -125,6 +125,9 @@ async function main(): Promise<void> {
   try {
     const state = readState();
 
+    // Clear previous battle result (only show for one turn)
+    state.last_battle = null;
+
     // Delta tracking
     const prevSessionTokens = state.last_session_tokens[sessionId] ?? 0;
     const deltaTokens = totalTokens - prevSessionTokens;

@@ -110,10 +110,9 @@ describe('battle', () => {
       assert.ok(legendary > common);
     });
 
-    it('defeat gives 25% of victory XP', () => {
-      const victory = calculateBattleXp(20, 'common', false, 1.0, true);
+    it('defeat gives no XP', () => {
       const defeat = calculateBattleXp(20, 'common', false, 1.0, false);
-      assert.equal(defeat, Math.floor(victory * 0.25));
+      assert.equal(defeat, 0);
     });
 
     it('type disadvantage bonus', () => {

@@ -84,7 +84,7 @@ export function calculateBattleXp(
 
   const totalXp = Math.floor((base + levelBonus + typeBonus + rarityBonus) * xpBonusMultiplier);
 
-  return won ? totalXp : Math.floor(totalXp * 0.25);
+  return won ? totalXp : 0;
 }
 
 /**
