@@ -196,12 +196,12 @@ export function formatBattleMessage(result: BattleResult): string {
   };
 
   if (result.won) {
-    let msg = `⚔️ ${result.attacker} vs 야생 ${result.defender} (Lv.${result.defenderLevel}) → 승리! (XP +${result.xpReward})`;
+    let msg = `⚔️ vs 야생 ${result.defender} (Lv.${result.defenderLevel}) → 승리! (XP +${result.xpReward})`;
     if (result.caught) {
       msg += `\n🎉 ${result.defender}을(를) 포획했습니다! (tokenmon party add ${result.defender})`;
     }
     return msg;
   }
 
-  return `⚔️ ${result.attacker} vs 야생 ${result.defender} (Lv.${result.defenderLevel}) → 패배... (XP +${result.xpReward})`;
+  return `⚔️ vs 야생 ${result.defender} (Lv.${result.defenderLevel}) → 패배... (XP +${result.xpReward})`;
 }
