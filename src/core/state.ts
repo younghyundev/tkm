@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { STATE_PATH, SESSION_PATH, I18N_DATA_DIR } from './paths.js';
-import type { State, Session, PokemonState, PokedexEntry, Notification, Stats } from './types.js';
+import type { State, Session, PokemonState, PokedexEntry, Notification, Stats, LegendaryPending } from './types.js';
 
 const DEFAULT_STATS: Stats = {
   streak_days: 0,
@@ -47,6 +47,12 @@ const DEFAULT_STATE: State = {
   last_known_regions: 1,
   stats: { ...DEFAULT_STATS },
   events_triggered: [],
+  pokedex_milestones_claimed: [],
+  type_masters: [],
+  legendary_pool: [],
+  legendary_pending: [],
+  titles: [],
+  completed_chains: [],
 };
 
 const DEFAULT_SESSION: Session = {
@@ -77,6 +83,12 @@ export function readState(): State {
     last_known_regions: parsed.last_known_regions ?? 1,
     stats: { ...DEFAULT_STATS, ...(parsed.stats ?? {}) },
     events_triggered: parsed.events_triggered ?? [],
+    pokedex_milestones_claimed: parsed.pokedex_milestones_claimed ?? [],
+    type_masters: parsed.type_masters ?? [],
+    legendary_pool: parsed.legendary_pool ?? [],
+    legendary_pending: parsed.legendary_pending ?? [],
+    titles: parsed.titles ?? [],
+    completed_chains: parsed.completed_chains ?? [],
   };
 
   // Migrate per-pokemon fields (friendship, ev)

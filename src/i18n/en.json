@@ -410,5 +410,52 @@
   "cli.help.cmd_stats": "  stats               View stats (weekly + all-time)",
 
   "event.active_header": "Active Event",
-  "event.none": "No active events"
+  "event.none": "No active events",
+
+  "rewards.milestone_reached": "🎉 Pokédex Milestone: {label}",
+  "rewards.pokeball_reward": "  → Poké Ball x{count} received!",
+  "rewards.xp_multiplier_reward": "  → XP multiplier +{value}% permanent boost!",
+  "rewards.legendary_unlock": "  → Legendary group unlocked! (tokenmon legendary)",
+  "rewards.party_slot": "  → Party slot +{count} expanded!",
+  "rewards.title_earned": "  → Title earned: {title}",
+  "rewards.legendary_bonus": "  → {pokemon} now appears in the wild!",
+  "rewards.type_master": "⭐ Type Master: {type}! (Battle XP 1.2x)",
+  "rewards.chain_complete": "🔗 Evolution chain complete! (Poké Ball x{count} received)",
+  "rewards.type_master_legendary": "⭐ {count} types mastered! Special legendary group unlocked!",
+
+  "cli.legendary.header": "=== Legendary Pokémon ===",
+  "cli.legendary.no_pending": "No legendary groups pending. Catch more Pokémon to unlock!",
+  "cli.legendary.pool_header": "[ Legendary Pool (wild encounters) ]",
+  "cli.legendary.choose_hint": "Usage: tokenmon legendary <number> to select a legendary Pokémon.",
+  "cli.legendary.invalid_choice": "Invalid selection.",
+  "cli.legendary.selected": "✨ {pokemon} has joined your team!",
+  "cli.legendary.pool_added": "  {names} added to wild encounter pool.",
+
+  "cli.box.header": "[ Box ]",
+  "cli.box.empty": "  Box is empty.",
+  "cli.box.sort_hint": "Use --sort level|type|name to sort.",
+  "cli.box.can_evolve": "[Evolve Ready]",
+
+  "cli.party.swap_usage": "Usage: tokenmon party swap <slot> <pokemon>",
+  "cli.party.swap_invalid_slot": "Invalid slot number. (1-{max})",
+  "cli.party.swap_not_in_box": "{pokemon} is not in the box.",
+  "cli.party.swap_already_in_party": "{pokemon} is already in the party.",
+  "cli.party.swap_success": "✓ Slot {slot}: {out} → {in}",
+  "cli.party.reorder_usage": "Usage: tokenmon party reorder <from> <to>",
+  "cli.party.reorder_invalid": "Invalid slot number. (1-{max})",
+  "cli.party.reorder_success": "✓ {pokemon}: slot {from} → slot {to}",
+  "cli.party.suggest_header": "[ Recommended for {region} ]",
+  "cli.party.suggest_no_region": "No region set.",
+
+  "cli.help.cmd_legendary": "  legendary           View/select legendary Pokémon",
+  "cli.help.cmd_box": "  box [--sort key]    View box (stored Pokémon)",
+  "cli.help.cmd_party_swap": "  party swap <s> <p>  Swap party slot with box Pokémon",
+  "cli.help.cmd_party_reorder": "  party reorder <f> <t> Reorder party slots",
+  "cli.help.cmd_party_suggest": "  party suggest       Suggest party for current region",
+
+  "notification.legendary_unlocked": "Legendary group unlocked! Run: tokenmon legendary",
+
+  "cli.pokedex.type_master_header": "[ Type Masters ]",
+  "cli.pokedex.type_progress": "  {type}: {caught}/{total} ({pct}%)",
+  "cli.pokedex.type_mastered": "  {type}: Mastered ✓ (XP 1.2x)"
 }

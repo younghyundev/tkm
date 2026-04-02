@@ -410,5 +410,52 @@
   "cli.help.cmd_stats": "  stats               통계 보기 (주간 + 전체)",
 
   "event.active_header": "활성 이벤트",
-  "event.none": "활성 이벤트 없음"
+  "event.none": "활성 이벤트 없음",
+
+  "rewards.milestone_reached": "🎉 도감 마일스톤 달성: {label}",
+  "rewards.pokeball_reward": "  → 몬스터볼 x{count} 획득!",
+  "rewards.xp_multiplier_reward": "  → XP 배율 +{value}% 영구 증가!",
+  "rewards.legendary_unlock": "  → 전설의 포켓몬 그룹 해금! (tokenmon legendary)",
+  "rewards.party_slot": "  → 파티 슬롯 +{count} 확장!",
+  "rewards.title_earned": "  → 칭호 획득: {title}",
+  "rewards.legendary_bonus": "  → {pokemon}(이)가 야생에 출현합니다!",
+  "rewards.type_master": "⭐ 타입 마스터 달성: {type}! (배틀 XP 1.2배)",
+  "rewards.chain_complete": "🔗 진화 체인 완성! (몬스터볼 x{count} 획득)",
+  "rewards.type_master_legendary": "⭐ 타입 마스터 {count}개 달성! 특별 전설 포켓몬 해금!",
+
+  "cli.legendary.header": "=== 전설의 포켓몬 ===",
+  "cli.legendary.no_pending": "해금 대기 중인 전설 그룹이 없습니다. 더 많이 포획하세요!",
+  "cli.legendary.pool_header": "[ 전설 풀 (야생 출현) ]",
+  "cli.legendary.choose_hint": "사용법: tokenmon legendary <번호>로 전설 포켓몬을 선택하세요.",
+  "cli.legendary.invalid_choice": "잘못된 선택입니다.",
+  "cli.legendary.selected": "✨ {pokemon}(이)가 팀에 합류했습니다!",
+  "cli.legendary.pool_added": "  {names}(이)가 야생 인카운터 풀에 추가되었습니다.",
+
+  "cli.box.header": "[ 박스 ]",
+  "cli.box.empty": "  박스가 비어 있습니다.",
+  "cli.box.sort_hint": "--sort level|type|name 으로 정렬 가능.",
+  "cli.box.can_evolve": "[진화 가능]",
+
+  "cli.party.swap_usage": "사용법: tokenmon party swap <슬롯> <포켓몬>",
+  "cli.party.swap_invalid_slot": "잘못된 슬롯 번호입니다. (1-{max})",
+  "cli.party.swap_not_in_box": "{pokemon}(이)가 박스에 없습니다.",
+  "cli.party.swap_already_in_party": "{pokemon}(은)는 이미 파티에 있습니다.",
+  "cli.party.swap_success": "✓ 슬롯 {slot}: {out} → {in}",
+  "cli.party.reorder_usage": "사용법: tokenmon party reorder <원래> <목표>",
+  "cli.party.reorder_invalid": "잘못된 슬롯 번호입니다. (1-{max})",
+  "cli.party.reorder_success": "✓ {pokemon}: 슬롯 {from} → 슬롯 {to}",
+  "cli.party.suggest_header": "[ {region} 추천 파티 ]",
+  "cli.party.suggest_no_region": "지역이 설정되지 않았습니다.",
+
+  "cli.help.cmd_legendary": "  legendary           전설 포켓몬 보기/선택",
+  "cli.help.cmd_box": "  box [--sort key]    박스 보기 (보관된 포켓몬)",
+  "cli.help.cmd_party_swap": "  party swap <s> <p>  파티 슬롯과 박스 포켓몬 교환",
+  "cli.help.cmd_party_reorder": "  party reorder <f> <t> 파티 순서 변경",
+  "cli.help.cmd_party_suggest": "  party suggest       현재 지역 추천 파티",
+
+  "notification.legendary_unlocked": "전설 그룹 해금! 실행: tokenmon legendary",
+
+  "cli.pokedex.type_master_header": "[ 타입 마스터 ]",
+  "cli.pokedex.type_progress": "  {type}: {caught}/{total} ({pct}%)",
+  "cli.pokedex.type_mastered": "  {type}: 마스터 ✓ (XP 1.2배)"
 }

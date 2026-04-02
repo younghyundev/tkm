@@ -63,6 +63,19 @@ export function checkPendingNotifications(state: State, config: Config): Notific
     }
   }
 
+  // 4. Legendary unlocked
+  if (state.legendary_pending.length > 0) {
+    const id = `legendary_unlocked:${state.legendary_pending.map(p => p.group).join(',')}`;
+    if (!state.dismissed_notifications.includes(id)) {
+      notifications.push({
+        id,
+        type: 'legendary_unlocked',
+        message: t('notification.legendary_unlocked'),
+        created: now,
+      });
+    }
+  }
+
   return notifications;
 }
 

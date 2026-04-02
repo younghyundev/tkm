@@ -12,7 +12,8 @@ import { renderGuide, renderGuideIndex } from '../core/guide.js';
 import { getEligibleBranches, applyBranchEvolution } from '../core/evolution.js';
 import { getActiveNotifications, dismissAll } from '../core/notifications.js';
 import { getActiveEvents } from '../core/encounter.js';
-import { getEventsDB } from '../core/pokemon-data.js';
+import { getEventsDB, getRegionsDB, getPokedexRewardsDB } from '../core/pokemon-data.js';
+import { getTypeMasterProgress } from '../core/pokedex-rewards.js';
 import { t, initLocale, getLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
 import type { ExpGroup, EvolutionContext } from '../core/types.js';
@@ -246,6 +247,15 @@ function cmdParty(subcmd: string, pokemon?: string): void {
       success(t('cli.party.remove_success', { pokemon }));
       break;
     }
+    case 'swap':
+      cmdPartySwap(process.argv[4] ?? '', process.argv[5] ?? '');
+      break;
+    case 'reorder':
+      cmdPartyReorder(process.argv[4] ?? '', process.argv[5] ?? '');
+      break;
+    case 'suggest':
+      cmdPartySuggest();
+      break;
     default: {
       // list
       bold(t('cli.party.header'));
@@ -421,6 +431,23 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
     const nameDisplay = entry.status === 'unknown' ? `${GRAY}???${RESET}` : entry.name;
     console.log(`  ${icon} #${String(entry.id).padStart(3, '0')} ${nameDisplay.padEnd(8)} ${typeStr} ${GRAY}${entry.rarity}${RESET}`);
   }
+
+  // Show type master progress when --type filter is used or list is unfiltered
+  if (filters.type || Object.keys(filters).length === 0) {
+    console.log('');
+    bold(t('cli.pokedex.type_master_header'));
+    const progress = getTypeMasterProgress(state);
+    const typeColors = pokemonDB.type_colors;
+    for (const entry of progress) {
+      const color = typeColors[entry.type] ?? '';
+      if (entry.mastered) {
+        console.log(t('cli.pokedex.type_mastered', { type: `${color}${entry.type}${RESET}` }));
+      } else {
+        const pct = entry.total > 0 ? Math.round(entry.caught / entry.total * 100) : 0;
+        console.log(t('cli.pokedex.type_progress', { type: `${color}${entry.type}${RESET}`, caught: entry.caught, total: entry.total, pct }));
+      }
+    }
+  }
 }
 
 function cmdItems(): void {
@@ -536,6 +563,9 @@ function doReset(): void {
         total_catches: 0, total_encounters: 0, last_reset_week: '',
       },
       events_triggered: [],
+      pokedex_milestones_claimed: [], type_masters: [],
+      legendary_pool: [], legendary_pending: [], titles: [],
+      completed_chains: [],
     };
     writeState(defaultState);
   });
@@ -934,6 +964,296 @@ function cmdStats(): void {
   console.log(t('cli.stats.alltime_encounters', { count: stats.total_encounters }));
 }
 
+function cmdLegendary(action?: string): void {
+  const state = readState();
+  const rewardsDB = getPokedexRewardsDB();
+  const locale = readConfig().language ?? 'ko';
+
+  if (state.legendary_pending.length === 0) {
+    bold(t('cli.legendary.header'));
+    console.log('');
+    if (state.legendary_pool.length > 0) {
+      info(t('cli.legendary.pool_header'));
+      for (const id of state.legendary_pool) {
+        const caught = state.pokedex[id]?.caught ? `${GREEN}●${RESET}` : `${YELLOW}◐${RESET}`;
+        console.log(`  ${caught} ${getPokemonName(id)}`);
+      }
+    } else {
+      warn(t('cli.legendary.no_pending'));
+    }
+    return;
+  }
+
+  // Show pending groups
+  bold(t('cli.legendary.header'));
+  console.log('');
+  for (let gi = 0; gi < state.legendary_pending.length; gi++) {
+    const pending = state.legendary_pending[gi];
+    const groupDef = rewardsDB.legendary_groups[pending.group] ?? rewardsDB.type_master.special_legends;
+    const label = groupDef?.label[locale] ?? groupDef?.label.en ?? pending.group;
+    const desc = groupDef?.description[locale] ?? groupDef?.description.en ?? '';
+    info(`${label} — ${desc}`);
+    for (let i = 0; i < pending.options.length; i++) {
+      console.log(`  ${i + 1}. ${getPokemonName(pending.options[i])}`);
+    }
+    console.log('');
+  }
+
+  if (!action) {
+    console.log(t('cli.legendary.choose_hint'));
+    return;
+  }
+
+  // Parse "select <groupIndex> <optionIndex>" or just a number (first group)
+  const parts = action.split(/\s+/);
+  const rawGroup = parts.length > 1 ? parseInt(parts[0], 10) : 1;
+  const rawOption = parseInt(parts.length > 1 ? parts[1] : parts[0], 10);
+
+  if (!Number.isInteger(rawGroup) || !Number.isInteger(rawOption)) {
+    error(t('cli.legendary.invalid_choice'));
+    return;
+  }
+
+  const groupIdx = rawGroup - 1;
+  const optionIdx = rawOption - 1;
+
+  if (groupIdx < 0 || groupIdx >= state.legendary_pending.length) {
+    error(t('cli.legendary.invalid_choice'));
+    return;
+  }
+
+  const pending = state.legendary_pending[groupIdx];
+  if (!pending || optionIdx < 0 || optionIdx >= pending.options.length) {
+    error(t('cli.legendary.invalid_choice'));
+    return;
+  }
+
+  const chosen = pending.options[optionIdx];
+  const unchosen = pending.options.filter((_, i) => i !== optionIdx);
+
+  const lockResult = withLock(() => {
+    const s = readState();
+    const c = readConfig();
+
+    // Add chosen to party or unlocked
+    if (!s.unlocked.includes(chosen)) s.unlocked.push(chosen);
+    const pokemonDB = getPokemonDB();
+    const pData = pokemonDB.pokemon[chosen];
+    if (pData && !s.pokemon[chosen]) {
+      s.pokemon[chosen] = { id: pData.id, xp: 0, level: 50, friendship: 0, ev: 0 };
+    }
+    if (!s.pokedex[chosen]) {
+      s.pokedex[chosen] = { seen: true, caught: true, first_seen: new Date().toISOString().split('T')[0] };
+    } else {
+      s.pokedex[chosen].seen = true;
+      s.pokedex[chosen].caught = true;
+    }
+
+    // Add to party if space
+    if (c.party.length < c.max_party_size && !c.party.includes(chosen)) {
+      c.party.push(chosen);
+    }
+
+    // Unchosen go to legendary_pool
+    for (const id of unchosen) {
+      if (!s.legendary_pool.includes(id)) s.legendary_pool.push(id);
+    }
+
+    // Remove this pending group and mark as claimed
+    s.legendary_pending = s.legendary_pending.filter(p => p.group !== pending.group);
+    const claimKey = `type_master_legendary:${pending.group}`;
+    if (!s.pokedex_milestones_claimed.includes(claimKey)) {
+      s.pokedex_milestones_claimed.push(claimKey);
+    }
+
+    writeState(s);
+    writeConfig(c);
+  });
+
+  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  success(t('cli.legendary.selected', { pokemon: getPokemonName(chosen) }));
+  if (unchosen.length > 0) {
+    info(t('cli.legendary.pool_added', { names: unchosen.map(id => getPokemonName(id)).join(', ') }));
+  }
+}
+
+function cmdBox(sortBy?: string): void {
+  const state = readState();
+  const config = readConfig();
+  const pokemonDB = getPokemonDB();
+
+  // All owned pokemon not in party
+  const boxPokemon = state.unlocked
+    .filter(name => !config.party.includes(name) && state.pokemon[name])
+    .map(name => {
+      const pData = pokemonDB.pokemon[name];
+      const ps = state.pokemon[name];
+      return {
+        name,
+        level: ps?.level ?? 1,
+        types: pData?.types ?? [],
+        rarity: pData?.rarity ?? 'common',
+        evolutionReady: ps?.evolution_ready ?? false,
+      };
+    });
+
+  bold(t('cli.box.header'));
+  console.log('');
+
+  if (boxPokemon.length === 0) {
+    warn(t('cli.box.empty'));
+    return;
+  }
+
+  // Sort
+  if (sortBy === 'level') {
+    boxPokemon.sort((a, b) => b.level - a.level);
+  } else if (sortBy === 'type') {
+    boxPokemon.sort((a, b) => a.types[0]?.localeCompare(b.types[0] ?? '') ?? 0);
+  } else if (sortBy === 'name') {
+    boxPokemon.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  for (const p of boxPokemon) {
+    const typeStr = p.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
+    const evoTag = p.evolutionReady ? ` ${YELLOW}${t('cli.box.can_evolve')}${RESET}` : '';
+    console.log(`  ${getPokemonName(p.name)} Lv.${p.level} ${typeStr}${evoTag}`);
+  }
+  console.log('');
+  info(t('cli.box.sort_hint'));
+}
+
+function cmdPartySwap(slot: string, pokemon: string): void {
+  if (!slot || !pokemon) {
+    error(t('cli.party.swap_usage'));
+    return;
+  }
+
+  const slotNum = parseInt(slot, 10);
+  if (!Number.isInteger(slotNum) || slotNum < 1) {
+    error(t('cli.party.swap_usage'));
+    return;
+  }
+  const lockResult = withLock(() => {
+    const state = readState();
+    const config = readConfig();
+
+    if (slotNum > config.party.length) {
+      error(t('cli.party.swap_invalid_slot', { max: config.party.length }));
+      return;
+    }
+
+    // Resolve pokemon name to ID
+    const pokemonDB = getPokemonDB();
+    const targetId = pokemonDB.pokemon[pokemon] ? pokemon : Object.keys(pokemonDB.pokemon).find(k => getPokemonName(k).toLowerCase() === pokemon.toLowerCase());
+    if (!targetId || !state.unlocked.includes(targetId)) {
+      error(t('cli.party.swap_not_in_box', { pokemon }));
+      return;
+    }
+    if (config.party.includes(targetId)) {
+      error(t('cli.party.swap_already_in_party', { pokemon: getPokemonName(targetId) }));
+      return;
+    }
+
+    const outgoing = config.party[slotNum - 1];
+    config.party[slotNum - 1] = targetId;
+    writeConfig(config);
+    writeState(state);
+    success(t('cli.party.swap_success', { out: getPokemonName(outgoing), in: getPokemonName(targetId), slot: slotNum }));
+  });
+  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+}
+
+function cmdPartyReorder(from: string, to: string): void {
+  if (!from || !to) {
+    error(t('cli.party.reorder_usage'));
+    return;
+  }
+
+  const rawFrom = parseInt(from, 10);
+  const rawTo = parseInt(to, 10);
+  if (!Number.isInteger(rawFrom) || !Number.isInteger(rawTo) || rawFrom < 1 || rawTo < 1) {
+    error(t('cli.party.reorder_usage'));
+    return;
+  }
+  const fromIdx = rawFrom - 1;
+  const toIdx = rawTo - 1;
+
+  const lockResult = withLock(() => {
+    const config = readConfig();
+    if (fromIdx >= config.party.length || toIdx >= config.party.length) {
+      error(t('cli.party.reorder_invalid', { max: config.party.length }));
+      return;
+    }
+    if (fromIdx === toIdx) return;
+
+    const [moved] = config.party.splice(fromIdx, 1);
+    config.party.splice(toIdx, 0, moved);
+    writeConfig(config);
+    success(t('cli.party.reorder_success', { pokemon: getPokemonName(moved), from: fromIdx + 1, to: toIdx + 1 }));
+  });
+  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+}
+
+function cmdPartySuggest(): void {
+  const state = readState();
+  const config = readConfig();
+  const pokemonDB = getPokemonDB();
+  const regionsDB = getRegionsDB();
+  const region = regionsDB.regions[config.current_region];
+  if (!region) { error(t('cli.party.suggest_no_region')); return; }
+
+  // Build type distribution of wild pokemon in region
+  const typeCounts: Record<string, number> = {};
+  for (const wildName of region.pokemon_pool) {
+    const wildData = pokemonDB.pokemon[wildName];
+    if (!wildData) continue;
+    for (const wType of wildData.types) {
+      typeCounts[wType] = (typeCounts[wType] ?? 0) + 1;
+    }
+  }
+
+  // Score each owned pokemon by type effectiveness against region pool
+  const candidates = state.unlocked
+    .filter(name => state.pokemon[name] && pokemonDB.pokemon[name])
+    .map(name => {
+      const pData = pokemonDB.pokemon[name];
+      const ps = state.pokemon[name];
+      let score = 0;
+      const typeChart = pokemonDB.type_chart;
+
+      for (const pType of pData.types) {
+        const matchup = typeChart[pType];
+        if (!matchup) continue;
+        for (const strong of matchup.strong) {
+          score += (typeCounts[strong] ?? 0) * 2;
+        }
+        for (const weak of matchup.weak) {
+          score -= (typeCounts[weak] ?? 0);
+        }
+      }
+
+      // Level bonus
+      score += (ps?.level ?? 1) * 0.5;
+
+      return { name, score, level: ps?.level ?? 1, types: pData.types, inParty: config.party.includes(name) };
+    });
+
+  candidates.sort((a, b) => b.score - a.score);
+
+  bold(t('cli.party.suggest_header', { region: getRegionName(config.current_region) }));
+  console.log('');
+
+  const top = candidates.slice(0, 6);
+  for (let i = 0; i < top.length; i++) {
+    const c = top[i];
+    const typeStr = c.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
+    const stars = c.score >= 10 ? '★★★' : c.score >= 5 ? '★★☆' : '★☆☆';
+    const partyTag = c.inParty ? ` ${GREEN}[party]${RESET}` : '';
+    console.log(`  ${i + 1}. ${getPokemonName(c.name)} Lv.${c.level} ${typeStr} ${YELLOW}${stars}${RESET}${partyTag}`);
+  }
+}
+
 function cmdHelp(): void {
   bold(t('cli.help.title'));
   console.log('');
@@ -953,6 +1273,11 @@ function cmdHelp(): void {
   console.log(t('cli.help.cmd_notifications_clear'));
   console.log(t('cli.help.cmd_dashboard'));
   console.log(t('cli.help.cmd_stats'));
+  console.log(t('cli.help.cmd_legendary'));
+  console.log(t('cli.help.cmd_box'));
+  console.log(t('cli.help.cmd_party_swap'));
+  console.log(t('cli.help.cmd_party_reorder'));
+  console.log(t('cli.help.cmd_party_suggest'));
   console.log(t('cli.help.cmd_items'));
   console.log(t('cli.help.cmd_region'));
   console.log(t('cli.help.cmd_region_list'));
@@ -1018,6 +1343,12 @@ switch (command) {
     break;
   case 'stats':
     cmdStats();
+    break;
+  case 'legendary':
+    cmdLegendary(args.slice(1).join(' ') || undefined);
+    break;
+  case 'box':
+    cmdBox(args[1] === '--sort' ? args[2] : undefined);
     break;
   case 'guide':
     cmdGuide(args[1]);

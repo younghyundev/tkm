@@ -73,7 +73,41 @@ export interface PokemonState {
   evolution_options?: string[];
 }
 
-export type NotificationType = 'evolution_ready' | 'region_unlocked' | 'achievement_near';
+export type NotificationType = 'evolution_ready' | 'region_unlocked' | 'achievement_near' | 'legendary_unlocked';
+
+export interface MilestoneReward {
+  id: string;
+  threshold: number;
+  reward_type: 'pokeball' | 'xp_multiplier' | 'legendary_unlock' | 'party_slot' | 'title';
+  reward_value: number | string;
+  legendary_bonus?: string;
+  label: { en: string; ko: string };
+}
+
+export interface LegendaryGroup {
+  label: { en: string; ko: string };
+  description: { en: string; ko: string };
+  options: string[];
+}
+
+export interface LegendaryPending {
+  group: string;
+  options: string[];
+}
+
+export interface PokedexRewardsDB {
+  milestones: MilestoneReward[];
+  legendary_groups: Record<string, LegendaryGroup>;
+  type_master: {
+    xp_bonus: number;
+    legendary_unlock_threshold: number;
+    legendary_group: string;
+    special_legends: LegendaryGroup;
+  };
+  chain_completion_reward: {
+    pokeball_count: number;
+  };
+}
 
 export interface Notification {
   id: string;
@@ -173,6 +207,12 @@ export interface State {
   last_known_regions: number;
   stats: Stats;
   events_triggered: string[];
+  pokedex_milestones_claimed: string[];
+  type_masters: string[];
+  legendary_pool: string[];
+  legendary_pending: LegendaryPending[];
+  titles: string[];
+  completed_chains: string[];
 }
 
 export interface Config {
