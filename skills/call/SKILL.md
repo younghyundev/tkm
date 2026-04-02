@@ -17,39 +17,77 @@ try {
   const state = JSON.parse(fs.readFileSync(path.join(claudeDir, 'tokenmon/state.json'), 'utf8'));
   const ko = JSON.parse(fs.readFileSync(path.join(process.env.CLAUDE_PLUGIN_ROOT, 'data/i18n/ko.json'), 'utf8'));
   cfg.party.forEach(id => {
-    const displayName = ko.pokemon[id] ?? id;
+    const displayName = state.pokemon[id]?.nickname ?? ko.pokemon[id] ?? id;
     const p = state.pokemon[id] ?? {};
-    console.log(displayName + ' ev:' + (p.ev ?? 0) + ' lv:' + (p.level ?? 1));
+    console.log(displayName + ' id:' + id + ' ev:' + (p.ev ?? 0) + ' lv:' + (p.level ?? 1));
   });
 } catch(e) { console.error(e.message); }
 "
 ```
 
-## Step 2: Find the called Pokémon
+## Step 2: Find the called Pokémon and register the call
 
-Extract the Pokémon name from the user's message and match it against the party list from Step 1.
-Match by **nickname first**, then by species name (both work).
+Extract the Pokémon name from the user's message. Match by **nickname first**, then by species name.
 
-Then show the sprite:
+Once matched, register the call (increments call_count; every 5 calls → EV +1):
+
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" pokedex <포켓몬_이름>
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" call <포켓몬_ID>
 ```
 
-## Step 3: React based on EV
+The command outputs JSON: `{"ev": N, "call_count": N, "evGained": true/false}`
 
-Format: **[포켓몬 이름]**[은/는] [반응]
+If `evGained` is true, append a subtle note after the reaction:
+> *(사이가 조금 가까워진 것 같다... EV +1)*
 
-Choose the reaction tier based on EV:
+## Step 3: Show sprite
 
-| EV 범위 | 관계 | 반응 예시 |
-|---------|------|----------|
-| 0 | 처음 만남 | 경계하듯 슬그머니 뒤로 물러선다 / 눈을 피하며 주위를 두리번거린다 / 불안한 듯 몸을 잔뜩 움츠린다 |
-| 1–50 | 낯선 사이 | 살금살금 다가오다가 멈칫한다 / 멀찍이서 가만히 바라본다 / 낯선 듯 더듬더듬 다가온다 |
-| 51–120 | 익숙해지는 중 | 고개를 갸웃거리며 다가온다 / 꼬리를 조심스럽게 흔들어 본다 / 두 눈을 반짝이며 냄새를 맡는다 |
-| 121–200 | 친한 사이 | 신나게 달려와 발치에서 빙글빙글 돈다 / 기분 좋게 울음소리를 낸다! / 기쁜 듯 온몸을 비빈다 |
-| 201–252 | 오랜 파트너 | 꺄르르 웃으며 달려와 품에 안긴다 / 오랜 친구처럼 어깨에 올라탄다 / 눈을 가늘게 뜨며 기분 좋게 그르릉거린다 |
+```bash
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" pokedex <포켓몬_ID>
+```
 
-## Step 4: Not in party
+## Step 4: React based on EV
+
+Format: **[닉네임 또는 이름]**[은/는] [반응]
+
+Choose the reaction tier based on EV from Step 1:
+
+### EV 0 — 처음 만남
+Reactions (pick one randomly):
+- 경계하듯 슬그머니 뒤로 물러선다
+- 눈을 피하며 주위를 두리번거린다
+- 불안한 듯 몸을 잔뜩 움츠린다
+- 주변을 둘러본다
+- 궁금하다는 듯이 당신을 쳐다본다
+- 심심해하는 것 같다
+- 어색하게 서 있다
+- 멀찍이서 가만히 이쪽을 바라본다
+
+### EV 1–50 — 낯선 사이
+- 살금살금 다가오다가 멈칫한다
+- 낯선 듯 더듬더듬 다가온다
+- 조심스럽게 냄새를 맡아본다
+- 꼬리를 조금 흔들다가 멈춘다
+
+### EV 51–120 — 익숙해지는 중
+- 고개를 갸웃거리며 다가온다
+- 꼬리를 조심스럽게 흔들어 본다
+- 두 눈을 반짝이며 냄새를 맡는다
+- 기지개를 켜며 다가온다
+
+### EV 121–200 — 친한 사이
+- 신나게 달려와 발치에서 빙글빙글 돈다
+- 기분 좋게 울음소리를 낸다!
+- 기쁜 듯 온몸을 비빈다
+- 반갑게 점프한다
+
+### EV 201–252 — 오랜 파트너
+- 꺄르르 웃으며 달려와 품에 안긴다
+- 오랜 친구처럼 어깨에 올라탄다
+- 눈을 가늘게 뜨며 기분 좋게 그르릉거린다
+- 이름을 부르자마자 달려와 손을 핥는다
+
+## Step 5: Not in party
 
 If the Pokémon is **not in the party**, respond:
 

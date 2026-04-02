@@ -527,6 +527,33 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
   }
 }
 
+const CALLS_PER_EV = 5;
+
+function cmdCall(nameOrId: string): void {
+  const id = resolveNameToId(nameOrId);
+  if (!id) {
+    error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
+    process.exit(1);
+  }
+  const result = withLock(() => {
+    const s = readState();
+    const p = s.pokemon[id];
+    if (!p) return null;
+    p.call_count = (p.call_count ?? 0) + 1;
+    let evGained = false;
+    if (p.call_count >= CALLS_PER_EV) {
+      p.ev = Math.min(252, (p.ev ?? 0) + 1);
+      p.call_count = 0;
+      evGained = true;
+    }
+    writeState(s);
+    return { ev: p.ev, call_count: p.call_count, evGained };
+  });
+  if (result === null) { error('포켓몬 데이터가 없습니다.'); process.exit(1); }
+  // Print EV info for skill to use
+  console.log(JSON.stringify(result));
+}
+
 function cmdNickname(nameOrId: string, nickname?: string): void {
   const id = resolveNameToId(nameOrId);
   if (!id) {
@@ -1433,6 +1460,9 @@ switch (command) {
     execSync(`"${process.env.CLAUDE_PLUGIN_ROOT || '.'}/bin/tsx-resolve.sh" "${process.env.CLAUDE_PLUGIN_ROOT || '.'}/scripts/uninstall.ts"${uninstallArgs}`, { stdio: 'inherit' });
     break;
   }
+  case 'call':
+    cmdCall(args[1] ?? '');
+    break;
   case 'nickname':
     cmdNickname(args[1] ?? '', args.slice(2).join(' ') || undefined);
     break;

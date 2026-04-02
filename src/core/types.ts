@@ -70,6 +70,7 @@ export interface PokemonState {
   friendship: number;
   ev: number;
   nickname?: string;
+  call_count?: number;
   evolution_ready?: boolean;
   evolution_options?: string[];
 }
