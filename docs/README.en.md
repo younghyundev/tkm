@@ -14,6 +14,8 @@
 - [Configuration](#configuration)
 - [Pokémon & Regions](#pokémon--regions)
 - [Battle System](#battle-system)
+- [Event System](#event-system)
+- [Pokédex Rewards](#pokédex-rewards)
 - [Achievement System](#achievement-system)
 - [Renderer Options](#renderer-options)
 - [Status Bar](#status-bar)
@@ -76,6 +78,16 @@ npx tsx install-standalone.ts
 | `/tkm region list` | List all regions |
 | `/tkm region move <name>` | Move to another region |
 | `/tkm items` | View items |
+| `/tkm evolve` | List evolution-ready Pokémon |
+| `/tkm evolve <name>` | Evolve with branch selection |
+| `/tkm dashboard` | Full summary dashboard |
+| `/tkm stats` | Weekly + all-time stats |
+| `/tkm legendary` | View/select legendary Pokémon |
+| `/tkm box` | View stored (non-party) Pokémon |
+| `/tkm party swap <slot> <name>` | Swap party slot with box Pokémon |
+| `/tkm party reorder <from> <to>` | Reorder party slots |
+| `/tkm party suggest` | Suggest party for current region |
+| `/tkm notifications` | View notifications |
 | `/tkm achievements` | Achievement progress |
 | `/tkm config set <key> <value>` | Change a setting |
 | `/tkm help` | Full help text |
@@ -98,7 +110,7 @@ Settings are stored in `~/.claude/tokenmon/config.json`:
 
 ## Pokémon & Regions
 
-**107 Pokémon** across the full Sinnoh Pokédex (#387–#493), spanning 18 types and 6 experience groups.
+**112 Pokémon** across the full Sinnoh Pokédex (#280–#493), spanning 18 types and 6 experience groups. Includes 8 legendary Pokémon unlockable through Pokédex milestones.
 
 ### Starters
 
@@ -115,6 +127,36 @@ Settings are stored in `~/.claude/tokenmon/config.json`:
 ## Battle System
 
 Wild encounters happen during coding sessions. Battles are type-advantage based with stats (HP, Attack, Defense, Speed) derived from the original games. Win to gain bonus XP; throw a Poké Ball to attempt a catch. Catch rate uses the authentic Gen 4 formula.
+
+## Event System
+
+Dynamic events modify encounter rates based on time, day, and player activity:
+
+| Event Type | Effect |
+|------------|--------|
+| **Night Shift** (21:00–04:00) | Ghost/Dark type boost |
+| **Dawn Patrol** (05:00–07:00) | Flying/Grass type boost |
+| **High Noon** (11:00–13:00) | Fire/Ground type boost |
+| **Lucky Friday** | Rare encounter 2x multiplier |
+| **7-Day Streak** | Guaranteed rare/legendary encounters |
+| **Million Tokens** | One-time special encounter (Cresselia) |
+
+## Pokédex Rewards
+
+Catching Pokémon unlocks milestone rewards:
+
+| Caught | Reward |
+|--------|--------|
+| 10 | Poké Ball x5 |
+| 30 | +5% XP multiplier (permanent) |
+| 50 | Lake Trio legendary group unlock |
+| 80 | Cover Legends legendary group unlock |
+| 90 | +1 party slot |
+| 98 (all) | Pokédex Master title + Giratina |
+
+**Type Masters**: Catch all Pokémon of a type → 1.2x battle XP for that type. Master 3 types to unlock Special Legends.
+
+**Chain Completion**: Catch all members of an evolution line → Poké Ball x2 per chain.
 
 ## Achievement System
 

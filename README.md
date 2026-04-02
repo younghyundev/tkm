@@ -5,9 +5,9 @@
 **Train Pokémon while you code.**
 
 A Gen 4 Pokémon XP gamification plugin for [Claude Code](https://claude.ai/code).
-Earn XP from your coding sessions, level up, evolve, and catch 107 Sinnoh-region Pokémon.
+Earn XP from your coding sessions, level up, evolve, and catch 112 Sinnoh-region Pokémon.
 
-[![Version](https://img.shields.io/badge/version-0.0.3-blue.svg)](https://github.com/ThunderConch/tkm/releases/tag/v0.0.3)
+[![Version](https://img.shields.io/badge/version-0.1.0--rc.0-blue.svg)](https://github.com/ThunderConch/tkm/releases/tag/v0.1.0-rc.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.0.0-brightgreen.svg)](https://nodejs.org)
 
@@ -44,8 +44,12 @@ The setup wizard guides you through dependency install, starter selection (Turtw
 
 | | |
 |---|---|
-| **107 Pokémon** | Full Sinnoh Pokédex with 18 types |
+| **112 Pokémon** | Full Sinnoh Pokédex with 18 types |
 | **9 Regions** | Unlock new areas as you catch more |
+| **8 Legendary** | Unlock through Pokédex milestones & type mastery |
+| **Branching Evo** | Kirlia → Gardevoir/Gallade, Snorunt → Glalie/Froslass |
+| **Events** | Time-of-day type boosts, streak bonuses, milestone encounters |
+| **Dashboard** | Full stats, streaks, weekly activity, active events |
 | **21 Achievements** | Milestone rewards that unlock rare Pokémon |
 | **6 XP Groups** | Authentic leveling curves from the original games |
 | **Wild Encounters** | Battle and catch Pokémon mid-session |
@@ -57,7 +61,13 @@ The setup wizard guides you through dependency install, starter selection (Turtw
 
 ```
 /tkm status          # Party & stats
+/tkm dashboard       # Full summary dashboard
+/tkm stats           # Weekly + all-time stats
 /tkm party           # Detailed party view
+/tkm box             # View stored Pokémon
+/tkm party suggest   # Region-optimized party
+/tkm evolve          # Branching evolution
+/tkm legendary       # Legendary Pokémon
 /tkm pokedex         # Browse Pokédex
 /tkm region list     # Explore regions
 /tkm achievements    # Achievement progress
