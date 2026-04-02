@@ -1318,11 +1318,15 @@ function cmdGen(sub?: string, arg?: string): void {
     setActiveGenerationCache(targetGen);
     invalidateGenCache();
 
+    // Reset region to 1 (regions are per-generation, IDs don't carry over)
+    const targetConfig = readConfig(targetGen);
+    if (targetConfig.current_region !== '1') {
+      targetConfig.current_region = '1';
+      writeConfig(targetConfig, targetGen);
+    }
+
     const genData = gensDB.generations[targetGen];
     success(t('cli.gen.switched', { fallback: `Switched to ${genData.name} (${genRegionName(genData.region_name)})` }));
-
-    // Check if this gen needs setup
-    const targetConfig = readConfig(targetGen);
     if (!targetConfig.starter_chosen) {
       console.log('');
       warn(t('cli.gen.needs_setup', { fallback: 'This generation needs initial setup. Run /tkm:setup to choose your starter!' }));

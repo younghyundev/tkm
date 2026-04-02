@@ -28,9 +28,12 @@ If `$ARGUMENTS` is `--help` or `-h`, run `help`.
 | `unlock list` | List unlocked Pokémon |
 | `pokedex` | Browse Pokédex (--type/--region/--rarity filters) |
 | `pokedex <name>` | Show Pokémon details |
-| `region` | Show current region |
-| `region list` | List all regions |
-| `region move <region>` | Move to a region |
+| `region` | Show current region (within active generation) |
+| `region list` | List all regions in the active generation |
+| `region move <id>` | Move to a region by ID (e.g. `region move 3`) |
+| `gen` | Show active generation |
+| `gen list` | List available generations |
+| `gen switch <id>` | Switch generation (e.g. `gen switch gen1`) |
 | `items` | Show items |
 | `achievements` | Show achievements |
 | `config set <key> <value>` | Change config (e.g. `config set language en`) |
