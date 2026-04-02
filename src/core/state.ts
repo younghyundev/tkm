@@ -222,9 +222,14 @@ export function pruneSessionTokens(tokens: Record<string, number>, activeSession
     }
   }
 
+  // Hard cap: keep at most 50 active sessions (by most recent token count)
+  active.sort((a, b) => b[1] - a[1]);
+  const cappedActive = active.slice(0, 50);
+
+  // Fill remaining slots up to 20 with inactive
   inactive.sort((a, b) => b[1] - a[1]);
-  const maxInactive = Math.max(0, 20 - active.length);
-  return Object.fromEntries([...active, ...inactive.slice(0, maxInactive)]);
+  const maxInactive = Math.max(0, 20 - cappedActive.length);
+  return Object.fromEntries([...cappedActive, ...inactive.slice(0, maxInactive)]);
 }
 
 export function readSession(gen?: string, sessionId?: string): Session {

@@ -1332,6 +1332,11 @@ function cmdGen(sub?: string, arg?: string): void {
     const genDir = join(PLUGIN_ROOT, 'data', targetGen);
     const requiredFiles = ['pokemon.json', 'regions.json', 'achievements.json', 'pokedex-rewards.json'];
     const missingFiles = requiredFiles.filter(f => !existsSync(join(genDir, f)));
+    // Also check i18n files
+    const i18nDir = join(genDir, 'i18n');
+    if (!existsSync(i18nDir) || !existsSync(join(i18nDir, 'en.json')) || !existsSync(join(i18nDir, 'ko.json'))) {
+      missingFiles.push('i18n/en.json or i18n/ko.json');
+    }
     if (missingFiles.length > 0) {
       error(t('cli.gen.incomplete_data', { fallback: `Generation ${targetGen} is missing data files: ${missingFiles.join(', ')}` }));
       return;

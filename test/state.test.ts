@@ -121,6 +121,45 @@ await test('pruneSessionTokens with activeSessionIds fills remaining slots by to
   assert.equal(Object.keys(result).length, 20);
 });
 
+await test('pruneSessionTokens hard cap: keeps at most 50 active sessions even when more than 50 are active', () => {
+  const tokens: Record<string, number> = {};
+  // 60 active sessions, each with unique token counts
+  const activeIds = new Set<string>();
+  for (let i = 0; i < 60; i++) {
+    tokens[`active-${i}`] = (i + 1) * 100;
+    activeIds.add(`active-${i}`);
+  }
+  const result = pruneSessionTokens(tokens, activeIds);
+  // Hard cap: at most 50 active kept (by highest token count)
+  assert.ok(Object.keys(result).length <= 50, 'total entries should not exceed 50');
+  // Highest-value active sessions (active-59, active-58, ...) should be kept
+  assert.ok('active-59' in result, 'highest-value active session should be kept');
+  assert.ok('active-10' in result, 'active-10 (within top 50) should be kept');
+  // Lowest-value active sessions (active-0 through active-9) should be pruned
+  assert.ok(!('active-0' in result), 'lowest-value active session beyond cap should be pruned');
+  assert.ok(!('active-9' in result), 'active-9 (51st slot) should be pruned');
+});
+
+await test('pruneSessionTokens hard cap: total is capped at 50 even with many active + inactive', () => {
+  const tokens: Record<string, number> = {};
+  const activeIds = new Set<string>();
+  // 55 active sessions
+  for (let i = 0; i < 55; i++) {
+    tokens[`active-${i}`] = (i + 1) * 1000;
+    activeIds.add(`active-${i}`);
+  }
+  // 10 inactive sessions
+  for (let i = 0; i < 10; i++) {
+    tokens[`inactive-${i}`] = (i + 1) * 500;
+  }
+  const result = pruneSessionTokens(tokens, activeIds);
+  // Total must not exceed 50 (50 active cap + 0 inactive because 50 >= 20)
+  assert.ok(Object.keys(result).length <= 50, 'total should not exceed hard cap of 50');
+  // No inactive should appear because cappedActive.length (50) >= 20 → maxInactive = 0
+  const inactiveInResult = Object.keys(result).filter(k => k.startsWith('inactive-'));
+  assert.equal(inactiveInResult.length, 0, 'no inactive sessions when active cap fills all 50 slots');
+});
+
 // --- Session tests (sequential) ---
 
 await test('readSession returns defaults when missing', () => {
