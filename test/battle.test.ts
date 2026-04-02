@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeState as _makeState, makeConfig as _makeConfig } from './helpers.js';
-import { calculateWinRate, calculateBattleXp, selectBattlePokemon, calculatePartyMultiplier, resolveBattle } from '../src/core/battle.js';
+import { calculateWinRate, calculateBattleXp, selectBattlePokemon, calculatePartyMultiplier, resolveBattle, formatBattleMessage } from '../src/core/battle.js';
 import { getTypeEffectiveness, getRawTypeMultiplier, applyTypeDampening } from '../src/core/type-chart.js';
 
 import type { State, Config } from '../src/core/types.js';
@@ -287,6 +287,76 @@ describe('battle', () => {
         }
       }
       assert.ok(hadWin, 'Should have won at least once');
+    });
+  });
+
+  describe('formatBattleMessage', () => {
+    it('need_balls path: won but no balls — message does not contain raw key', () => {
+      const result = {
+        attacker: '387',
+        defender: '396',
+        defenderLevel: 5,
+        winRate: 0.8,
+        won: true,
+        xpReward: 65,
+        caught: false,
+        typeMultiplier: 1.0,
+        ballCost: 1,
+      };
+      const msg = formatBattleMessage(result);
+      assert.ok(!msg.includes('[battle.need_balls]'), `Raw key leaked: ${msg}`);
+      assert.ok(msg.length > 0, 'Message should not be empty');
+    });
+
+    it('need_balls path: message contains defender name and fled indicator', () => {
+      const result = {
+        attacker: '387',
+        defender: '396',
+        defenderLevel: 5,
+        winRate: 0.8,
+        won: true,
+        xpReward: 65,
+        caught: false,
+        typeMultiplier: 1.0,
+        ballCost: 1,
+      };
+      const msg = formatBattleMessage(result);
+      // The need_balls translation contains the defender name (via {defender} template)
+      // and a fled indicator ("도망쳤다" in KO or "fled" in EN)
+      const hasFled = msg.includes('도망쳤다') || msg.includes('fled');
+      assert.ok(hasFled, `Expected fled indicator in: ${msg}`);
+    });
+
+    it('win + caught path: message does not contain raw keys', () => {
+      const result = {
+        attacker: '387',
+        defender: '396',
+        defenderLevel: 5,
+        winRate: 0.8,
+        won: true,
+        xpReward: 65,
+        caught: true,
+        typeMultiplier: 1.0,
+        ballCost: 1,
+      };
+      const msg = formatBattleMessage(result);
+      assert.ok(!msg.includes('[battle.'), `Raw key leaked: ${msg}`);
+    });
+
+    it('lose path: message does not contain raw keys', () => {
+      const result = {
+        attacker: '387',
+        defender: '396',
+        defenderLevel: 5,
+        winRate: 0.2,
+        won: false,
+        xpReward: 0,
+        caught: false,
+        typeMultiplier: 1.0,
+        ballCost: 0,
+      };
+      const msg = formatBattleMessage(result);
+      assert.ok(!msg.includes('[battle.'), `Raw key leaked: ${msg}`);
     });
   });
 

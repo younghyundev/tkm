@@ -17,6 +17,26 @@ const pokemon = db.pokemon as Record<string, any>;
 const entries = Object.values(pokemon);
 const names = Object.keys(pokemon);
 
+import { pokemonIdByName } from '../src/core/pokemon-data.js';
+
+describe('pokemonIdByName', () => {
+  it('resolves Korean name to ID', () => {
+    assert.equal(pokemonIdByName('비버니'), '399');
+  });
+
+  it('resolves English name to ID', () => {
+    assert.equal(pokemonIdByName('Bidoof'), '399');
+  });
+
+  it('returns undefined for a numeric ID string', () => {
+    assert.equal(pokemonIdByName('399'), undefined);
+  });
+
+  it('returns undefined for nonexistent name', () => {
+    assert.equal(pokemonIdByName('nonexistent'), undefined);
+  });
+});
+
 describe('pokemon-data (M3a)', () => {
   describe('112 species completeness', () => {
     it('has exactly 112 entries', () => {
