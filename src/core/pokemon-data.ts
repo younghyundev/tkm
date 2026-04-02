@@ -161,9 +161,11 @@ export function getGameI18n(locale?: string, gen?: string): GameI18nData {
   return _gameI18n[key];
 }
 
-export function getPokemonName(id: string | number, gen?: string): string {
+export function getPokemonName(id: string | number, gen?: string, shiny?: boolean): string {
   const i18n = getGameI18n(undefined, gen);
-  return i18n.pokemon[String(id)] || String(id);
+  const name = i18n.pokemon[String(id)] || String(id);
+  if (shiny) return '★' + name;
+  return name;
 }
 
 export function getTypeName(typeId: string): string {

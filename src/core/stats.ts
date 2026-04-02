@@ -117,3 +117,24 @@ export function recordEncounter(state: State): void {
   state.stats.weekly_encounters += 1;
   state.stats.total_encounters += 1;
 }
+
+/**
+ * Record a shiny encounter.
+ */
+export function recordShinyEncounter(state: State): void {
+  state.shiny_encounter_count++;
+}
+
+/**
+ * Record a shiny catch.
+ */
+export function recordShinyCatch(state: State): void {
+  state.shiny_catch_count++;
+}
+
+/**
+ * Record a shiny escape.
+ */
+export function recordShinyEscaped(state: State): void {
+  state.shiny_escaped_count++;
+}

@@ -10,6 +10,9 @@ import {
   recordBattle,
   recordCatch,
   recordEncounter,
+  recordShinyEncounter,
+  recordShinyCatch,
+  recordShinyEscaped,
 } from '../src/core/stats.js';
 
 describe('stats', () => {
@@ -183,6 +186,35 @@ describe('stats', () => {
       recordEncounter(state);
       assert.equal(state.stats.weekly_encounters, 1);
       assert.equal(state.stats.total_encounters, 1);
+    });
+  });
+
+  describe('shiny record functions', () => {
+    it('recordShinyEncounter increments shiny_encounter_count by 1', () => {
+      const state = makeState();
+      assert.equal(state.shiny_encounter_count, 0);
+      recordShinyEncounter(state);
+      assert.equal(state.shiny_encounter_count, 1);
+      recordShinyEncounter(state);
+      assert.equal(state.shiny_encounter_count, 2);
+    });
+
+    it('recordShinyCatch increments shiny_catch_count by 1', () => {
+      const state = makeState();
+      assert.equal(state.shiny_catch_count, 0);
+      recordShinyCatch(state);
+      assert.equal(state.shiny_catch_count, 1);
+      recordShinyCatch(state);
+      assert.equal(state.shiny_catch_count, 2);
+    });
+
+    it('recordShinyEscaped increments shiny_escaped_count by 1', () => {
+      const state = makeState();
+      assert.equal(state.shiny_escaped_count, 0);
+      recordShinyEscaped(state);
+      assert.equal(state.shiny_escaped_count, 1);
+      recordShinyEscaped(state);
+      assert.equal(state.shiny_escaped_count, 2);
     });
   });
 });

@@ -83,7 +83,9 @@ function cmdStatus(): void {
       const bar = xpBar(xp, level, expGroup);
       const evolInfo = evolvesAt != null ? t('cli.status.evolves_at', { level: evolvesAt }) : '';
 
-      console.log(`  ${BOLD}${getPokemonName(pokemon)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
+      const isShiny = state.pokemon[pokemon]?.shiny ?? false;
+      const displayName = getPokemonName(pokemon, undefined, isShiny);
+      console.log(`  ${BOLD}${displayName}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
       console.log(`  Lv.${level} [${GREEN}${bar}${RESET}] XP: ${xp}${evolInfo}`);
     }
   }
@@ -110,6 +112,11 @@ function cmdStatus(): void {
 
   // Region
   console.log(t('cli.status.stat_region', { region: getRegionName(config.current_region ?? '1') }));
+
+  // Shiny stats
+  if (state.shiny_catch_count > 0) {
+    console.log(t('cli.status.stat_shiny_catches', { count: state.shiny_catch_count }));
+  }
 }
 
 function cmdStarter(choiceArg?: string): void {
@@ -408,6 +415,10 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
     if (pData.evolves_at) console.log(`  ${t('cli.pokedex.detail_evolves_at', { level: pData.evolves_at })}`);
     if (pData.evolves_condition) console.log(`  ${t('cli.pokedex.detail_evolves_cond', { cond: pData.evolves_condition })}`);
     if (pdex?.first_seen) console.log(`  ${t('cli.pokedex.detail_first_seen', { date: pdex.first_seen })}`);
+    const shinyCaught = pdex?.shiny_caught ?? false;
+    if (shinyCaught) {
+      console.log(`  ${t('cli.pokedex.shiny_caught')}`);
+    }
 
     if (state.pokemon[pokemonName]) {
       const ps = state.pokemon[pokemonName];

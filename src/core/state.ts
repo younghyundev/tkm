@@ -56,6 +56,9 @@ const DEFAULT_STATE: State = {
   titles: [],
   completed_chains: [],
   star_dismissed: false,
+  shiny_encounter_count: 0,
+  shiny_catch_count: 0,
+  shiny_escaped_count: 0,
 };
 
 const DEFAULT_SESSION: Session = {
@@ -96,10 +99,11 @@ export function readState(gen?: string): State {
     star_dismissed: parsed.star_dismissed ?? false,
   };
 
-  // Migrate per-pokemon fields (friendship, ev)
+  // Migrate per-pokemon fields (friendship, ev, shiny)
   for (const entry of Object.values(result.pokemon)) {
     if (entry.friendship === undefined) (entry as any).friendship = 0;
     if (entry.ev === undefined) (entry as any).ev = 0;
+    if (entry.shiny === undefined) (entry as any).shiny = false;
   }
 
   // Migrate retry_token -> pokeball

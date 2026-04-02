@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdirSync, rmSync, existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { mkdirSync, rmSync, existsSync, readFileSync, writeFileSync } from 'fs';
+import { join, dirname } from 'path';
 import { tmpdir } from 'os';
 
 // Set up isolated test directory before importing state module
@@ -168,6 +168,44 @@ await test('pruneSessionGenMap keeps all entries younger than maxAge', () => {
 
 await test('pruneSessionGenMap returns {} for empty map', () => {
   assert.deepEqual(pruneSessionGenMap({}, 7 * 24 * 3600 * 1000), {});
+});
+
+// --- Shiny migration tests ---
+
+await test('readState: shiny counters missing in JSON are filled with 0', () => {
+  freshDir();
+  // Write a state file WITHOUT shiny counters
+  const path = statePath();
+  const dir = dirname(path);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(path, JSON.stringify({
+    pokemon: {},
+    unlocked: [],
+    session_count: 1,
+    // no shiny_encounter_count, shiny_catch_count, shiny_escaped_count
+  }), 'utf-8');
+
+  const state = readState();
+  assert.equal(state.shiny_encounter_count, 0, 'shiny_encounter_count should default to 0');
+  assert.equal(state.shiny_catch_count, 0, 'shiny_catch_count should default to 0');
+  assert.equal(state.shiny_escaped_count, 0, 'shiny_escaped_count should default to 0');
+});
+
+await test('readState: PokemonState.shiny missing is corrected to false', () => {
+  freshDir();
+  const path = statePath();
+  const dir = dirname(path);
+  mkdirSync(dir, { recursive: true });
+  // Write a pokemon entry without shiny field
+  writeFileSync(path, JSON.stringify({
+    pokemon: {
+      '387': { id: 387, xp: 5000, level: 15, friendship: 0, ev: 0 },
+    },
+    unlocked: ['387'],
+  }), 'utf-8');
+
+  const state = readState();
+  assert.equal(state.pokemon['387'].shiny, false, 'PokemonState.shiny should default to false');
 });
 
 // Cleanup

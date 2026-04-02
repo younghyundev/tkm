@@ -41,6 +41,20 @@ export function markCaught(state: State, name: string): void {
 }
 
 /**
+ * Mark a pokemon species as shiny-caught in the pokedex.
+ */
+export function markShinyCaught(state: State, name: string): void {
+  if (!state.pokedex) state.pokedex = {};
+  const existing = state.pokedex[name];
+  if (existing) {
+    existing.shiny_caught = true;
+    return;
+  }
+  markCaught(state, name);
+  state.pokedex[name].shiny_caught = true;
+}
+
+/**
  * Auto-populate pokedex from unlocked/owned pokemon.
  * Call this on state load to sync existing data.
  */
@@ -56,6 +70,7 @@ export interface PokedexCompletion {
   caught: number;
   seenPct: number;
   caughtPct: number;
+  shinyCaught: number;
 }
 
 /**
@@ -66,10 +81,12 @@ export function getCompletion(state: State): PokedexCompletion {
   const total = Object.keys(db.pokemon).length;
   let seen = 0;
   let caught = 0;
+  let shinyCaught = 0;
 
   for (const entry of Object.values(state.pokedex ?? {})) {
     if (entry.seen) seen++;
     if (entry.caught) caught++;
+    if (entry.shiny_caught) shinyCaught++;
   }
 
   return {
@@ -78,6 +95,7 @@ export function getCompletion(state: State): PokedexCompletion {
     caught,
     seenPct: total > 0 ? Math.round(seen / total * 1000) / 10 : 0,
     caughtPct: total > 0 ? Math.round(caught / total * 1000) / 10 : 0,
+    shinyCaught,
   };
 }
 

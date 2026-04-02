@@ -11,11 +11,11 @@ import { t, initLocale } from '../i18n/index.js';
 import type { HookInput, HookOutput, ExpGroup } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
 import { playSfx } from '../audio/play-sfx.js';
-import { syncPokedexFromUnlocked } from '../core/pokedex.js';
+import { syncPokedexFromUnlocked, markShinyCaught } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
 import { withLock, withLockRetry } from '../core/lock.js';
 import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
-import { recordXp, recordBattle, recordCatch, recordEncounter } from '../core/stats.js';
+import { recordXp, recordBattle, recordCatch, recordEncounter, recordShinyEncounter, recordShinyCatch, recordShinyEscaped } from '../core/stats.js';
 
 function readStdin(): string {
   try {
@@ -234,6 +234,17 @@ async function main(): Promise<void> {
         recordBattle(state, battleResult.won);
         recordXp(state, battleResult.xpReward);
         if (battleResult.caught) recordCatch(state);
+
+        // Record shiny stats
+        if (battleResult.shiny) {
+          recordShinyEncounter(state);
+          if (battleResult.caught) {
+            recordShinyCatch(state);
+            markShinyCaught(state, battleResult.defender);
+          } else {
+            recordShinyEscaped(state);
+          }
+        }
 
         // Auto-add caught pokemon to party if below max
         if (battleResult.caught && config.party.length < config.max_party_size) {

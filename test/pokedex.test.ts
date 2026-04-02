@@ -1,7 +1,7 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeState } from './helpers.js';
-import { markSeen, markCaught, getCompletion, syncPokedexFromUnlocked } from '../src/core/pokedex.js';
+import { markSeen, markCaught, markShinyCaught, getCompletion, syncPokedexFromUnlocked } from '../src/core/pokedex.js';
 
 describe('pokedex', () => {
   describe('markSeen', () => {
@@ -91,6 +91,44 @@ describe('pokedex', () => {
       assert.equal(c.seen, 2);
       assert.equal(c.caught, 1);
       assert.equal(c.total, 112);
+    });
+  });
+
+  describe('markShinyCaught', () => {
+    it('sets shiny_caught=true on existing entry', () => {
+      const state = makeState({
+        pokedex: { '387': { seen: true, caught: true, first_seen: '2026-01-01' } },
+      });
+      markShinyCaught(state, '387');
+      assert.equal(state.pokedex['387'].shiny_caught, true);
+    });
+
+    it('is idempotent when already shiny_caught=true', () => {
+      const state = makeState({
+        pokedex: { '387': { seen: true, caught: true, first_seen: '2026-01-01', shiny_caught: true } },
+      });
+      markShinyCaught(state, '387');
+      assert.equal(state.pokedex['387'].shiny_caught, true);
+      assert.equal(state.pokedex['387'].caught, true);
+    });
+
+    it('after markShinyCaught getCompletion.shinyCaught increments', () => {
+      const state = makeState({
+        pokedex: {
+          '387': { seen: true, caught: true, first_seen: '2026-01-01' },
+          '393': { seen: true, caught: true, first_seen: '2026-01-02' },
+        },
+      });
+      const before = getCompletion(state);
+      assert.equal(before.shinyCaught, 0);
+
+      markShinyCaught(state, '387');
+      const after = getCompletion(state);
+      assert.equal(after.shinyCaught, 1);
+
+      markShinyCaught(state, '393');
+      const after2 = getCompletion(state);
+      assert.equal(after2.shinyCaught, 2);
     });
   });
 

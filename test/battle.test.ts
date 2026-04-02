@@ -1,10 +1,13 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeState as _makeState, makeConfig as _makeConfig } from './helpers.js';
-import { calculateWinRate, calculateBattleXp, selectBattlePokemon, calculatePartyMultiplier, resolveBattle } from '../src/core/battle.js';
+import { calculateWinRate, calculateBattleXp, selectBattlePokemon, calculatePartyMultiplier, resolveBattle, formatBattleMessage } from '../src/core/battle.js';
 import { getTypeEffectiveness, getRawTypeMultiplier, applyTypeDampening } from '../src/core/type-chart.js';
+import { initLocale } from '../src/i18n/index.js';
 
 import type { State, Config } from '../src/core/types.js';
+
+initLocale('ko');
 
 function makeState(overrides: Partial<State> = {}): State {
   return _makeState({
@@ -194,7 +197,7 @@ describe('battle', () => {
     it('returns BattleResult', () => {
       const state = makeState();
       const config = makeConfig();
-      const result = resolveBattle(state, config, '396', 5);
+      const result = resolveBattle(state, config, { name: '396', level: 5, shiny: false });
       assert.ok(result !== null);
       assert.equal(typeof result!.won, 'boolean');
       assert.equal(typeof result!.winRate, 'number');
@@ -204,7 +207,7 @@ describe('battle', () => {
     it('increments battle_count', () => {
       const state = makeState();
       const config = makeConfig();
-      resolveBattle(state, config, '396', 5);
+      resolveBattle(state, config, { name: '396', level: 5, shiny: false });
       assert.equal(state.battle_count, 1);
     });
 
@@ -212,14 +215,14 @@ describe('battle', () => {
       const state = makeState();
       const config = makeConfig();
       const prevXp = state.pokemon['387'].xp;
-      resolveBattle(state, config, '396', 5);
+      resolveBattle(state, config, { name: '396', level: 5, shiny: false });
       assert.ok(state.pokemon['387'].xp > prevXp);
     });
 
     it('marks wild pokemon as seen', () => {
       const state = makeState();
       const config = makeConfig();
-      resolveBattle(state, config, '396', 5);
+      resolveBattle(state, config, { name: '396', level: 5, shiny: false });
       assert.ok(state.pokedex['396']?.seen);
     });
   });
@@ -235,7 +238,7 @@ describe('battle', () => {
       let caughtResult = false;
       for (let i = 0; i < 50 && !caughtResult; i++) {
         const ballsBefore = state.items.pokeball;
-        const result = resolveBattle(state, config, '396', 1);
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: false });
         if (result?.won && result?.caught) {
           caughtResult = true;
           // Ball consumed: before-catch ball count minus after-catch (ignoring drops)
@@ -256,7 +259,7 @@ describe('battle', () => {
       for (let i = 0; i < 50; i++) {
         // Reset pokeballs to 0 before each battle to isolate the test
         state.items.pokeball = 0;
-        const result = resolveBattle(state, config, '396', 1);
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: false });
         if (result?.won) {
           hadWin = true;
           assert.equal(result.caught, false, 'Should not catch without pokeball');
@@ -277,7 +280,7 @@ describe('battle', () => {
       let hadWin = false;
       for (let i = 0; i < 50; i++) {
         const ballsBefore = state.items.pokeball;
-        const result = resolveBattle(state, config, '396', 1);
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: false });
         if (result?.won) {
           hadWin = true;
           assert.equal(result.caught, false, 'Already caught pokemon should not trigger catch');
@@ -321,7 +324,7 @@ describe('battle', () => {
       // Run battles until we get a win
       let won = false;
       for (let i = 0; i < 50 && !won; i++) {
-        const result = resolveBattle(state, config, '396', 1); // low level wild for easy win
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: false }); // low level wild for easy win
         if (result?.won) won = true;
       }
       if (won) {
@@ -339,7 +342,7 @@ describe('battle', () => {
       const config = makeConfig({ party: ['387'] });
       // Run battles against high level - likely to lose
       for (let i = 0; i < 20; i++) {
-        resolveBattle(state, config, '390', 100);
+        resolveBattle(state, config, { name: '390', level: 100, shiny: false });
       }
       // EV should only increase for wins, check it's bounded
       assert.ok(state.pokemon['387'].ev <= state.battle_wins, 'EV should not exceed win count');
@@ -354,9 +357,57 @@ describe('battle', () => {
       const config = makeConfig({ party: ['387'] });
       // Force a win against low level
       for (let i = 0; i < 10; i++) {
-        resolveBattle(state, config, '396', 1);
+        resolveBattle(state, config, { name: '396', level: 1, shiny: false });
       }
       assert.equal(state.pokemon['387'].ev, 252, 'EV should not exceed 252');
+    });
+  });
+
+  describe('shiny battle path', () => {
+    it('resolveBattle with shiny:true wild returns BattleResult.shiny === true', () => {
+      const state = makeState();
+      const config = makeConfig();
+      const result = resolveBattle(state, config, { name: '396', level: 5, shiny: true });
+      assert.ok(result !== null);
+      assert.equal(result!.shiny, true);
+    });
+
+    it('catch success + shiny:true records PokemonState.shiny === true', () => {
+      const state = makeState({
+        pokemon: { '387': { id: 387, xp: 500000, level: 80, friendship: 0, ev: 0 } },
+        items: { pokeball: 50 },
+      });
+      const config = makeConfig({ party: ['387'] });
+      let caughtShiny = false;
+      for (let i = 0; i < 100 && !caughtShiny; i++) {
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: true });
+        if (result?.won && result?.caught) {
+          caughtShiny = true;
+          assert.equal(state.pokemon['396']?.shiny, true, 'PokemonState.shiny should be true after shiny catch');
+        }
+      }
+      assert.ok(caughtShiny, 'Should catch at least one shiny pokemon');
+    });
+
+    it('formatBattleMessage includes "✦" when shiny=true', () => {
+      const msg = formatBattleMessage({
+        attacker: '387', defender: '396', defenderLevel: 5,
+        winRate: 0.6, won: true, xpReward: 65, caught: true, typeMultiplier: 1.0,
+        ballCost: 0, shiny: true,
+      });
+      assert.ok(msg.includes('✦'), `expected "✦" in shiny message: ${msg}`);
+    });
+
+    it('formatBattleMessage with shiny=undefined (legacy BattleResult) does not crash and omits "✦"', () => {
+      const legacyResult = {
+        attacker: '387', defender: '396', defenderLevel: 5,
+        winRate: 0.6, won: true, xpReward: 65, caught: true, typeMultiplier: 1.0,
+        ballCost: 0,
+      } as any;
+      // Should not throw
+      const msg = formatBattleMessage(legacyResult);
+      assert.equal(typeof msg, 'string');
+      assert.ok(!msg.includes('✦'), `"✦" should not appear when shiny is undefined: ${msg}`);
     });
   });
 });

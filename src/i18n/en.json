@@ -17,6 +17,7 @@
   "cli.status.stat_pokedex": "  Pokedex: {caught}/{total} ({pct}%)",
   "cli.status.stat_pokeballs": "  🔴 Poké Balls: {count}",
   "cli.status.stat_region": "  Current region: {region}",
+  "cli.status.stat_shiny_catches": "  ★Shiny catches: {count}",
 
   "cli.starter.already_chosen": "You have already chosen a starter.",
   "cli.starter.current_party": "Current party: {party}",
@@ -76,6 +77,7 @@
   "cli.pokedex.detail_evolves_cond": "  Evo condition: {cond}",
   "cli.pokedex.detail_first_seen": "  First seen: {date}",
   "cli.pokedex.detail_current_level": "  Current level: Lv.{level} (XP: {xp})",
+  "cli.pokedex.shiny_caught": "  ★Shiny caught",
   "cli.pokedex.list_title": "=== Pokedex ===",
   "cli.pokedex.list_summary": "  Seen: {seen}/{total} ({seenPct}%)  Caught: {caught}/{total} ({caughtPct}%)",
   "cli.pokedex.filter": "  Filter: {filter}",
@@ -339,6 +341,9 @@
   "battle.win_catch": "\n🎉 Caught {defender}! (tokenmon party add {defender})",
   "battle.need_balls": "— {defender} fled!",
   "battle.lose": "⚔️ vs wild {defender} (Lv.{level}) → Defeat... (XP +{xp})",
+  "battle.shiny_appeared": "✦ A shiny {pokemon} appeared!",
+  "battle.shiny_catch": "\n★ Shiny caught!",
+  "battle.shiny_escaped": "\nThe shiny {pokemon} got away...",
 
   "achievement.unlocked": "🏆 Achievement unlocked: {name}! ",
   "achievement.unlocked_pokemon": "🏆 Achievement unlocked: {name}! You got {pokemon}!",

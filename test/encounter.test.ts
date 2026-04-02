@@ -4,7 +4,7 @@ import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { makeState as _makeState, makeConfig as _makeConfig } from './helpers.js';
-import { rollEncounter, selectWildPokemon, processEncounter, getMinWildLevel } from '../src/core/encounter.js';
+import { rollEncounter, selectWildPokemon, processEncounter, getMinWildLevel, rollShiny, SHINY_RATE } from '../src/core/encounter.js';
 import { formatBattleMessage } from '../src/core/battle.js';
 import { initLocale } from '../src/i18n/index.js';
 
@@ -94,6 +94,23 @@ describe('encounter', () => {
       const total = Object.values(counts).reduce((a, b) => a + b, 0);
       assert.ok(common / total > 0.3, `Common ratio too low: ${common}/${total}`);
     });
+
+    it('returns object with shiny boolean field', () => {
+      const state = makeState();
+      const config = makeConfig({ current_region: '1' });
+      for (let i = 0; i < 50; i++) {
+        const wild = selectWildPokemon(state, config);
+        assert.ok(wild !== null);
+        assert.equal(typeof wild!.shiny, 'boolean', 'shiny field must be a boolean');
+      }
+    });
+  });
+
+  describe('rollShiny', () => {
+    it('returns boolean', () => {
+      const result = rollShiny();
+      assert.equal(typeof result, 'boolean');
+    });
   });
 
   describe('getMinWildLevel', () => {
@@ -166,6 +183,23 @@ describe('encounter', () => {
       assert.ok(caught, 'Should catch at least one pokemon in 500 attempts');
     });
 
+    it('shiny=true path when Math.random forced below SHINY_RATE', () => {
+      const state = makeState();
+      const config = makeConfig();
+      const originalRandom = Math.random;
+      try {
+        // Force Math.random to always return a value below SHINY_RATE
+        // This makes rollShiny() always return true, and also affects encounter/battle rolls
+        // We use a small number that is < SHINY_RATE (~0.00195)
+        Math.random = () => 0.0001;
+        const result = processEncounter(state, config);
+        assert.ok(result !== null, 'Should get an encounter when Math.random is always low');
+        assert.equal(result!.shiny, true, 'BattleResult.shiny should be true when Math.random < SHINY_RATE');
+      } finally {
+        Math.random = originalRandom;
+      }
+    });
+
     it('increments encounter_count and battle_count', () => {
       const state = makeState();
       const config = makeConfig();
@@ -183,6 +217,7 @@ describe('encounter', () => {
       const msg = formatBattleMessage({
         attacker: '387', defender: '396', defenderLevel: 5,
         winRate: 0.6, won: true, xpReward: 65, caught: true, typeMultiplier: 1.0,
+        ballCost: 0, shiny: false,
       });
       assert.ok(msg.includes('찌르꼬'), `expected '찌르꼬' in: ${msg}`);
       assert.ok(msg.includes('승리'));
@@ -193,6 +228,7 @@ describe('encounter', () => {
       const msg = formatBattleMessage({
         attacker: '387', defender: '396', defenderLevel: 5,
         winRate: 0.3, won: false, xpReward: 16, caught: false, typeMultiplier: 1.0,
+        ballCost: 0, shiny: false,
       });
       assert.ok(msg.includes('패배'));
     });
