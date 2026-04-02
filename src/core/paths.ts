@@ -1,6 +1,7 @@
 import { homedir } from 'os';
 import { join } from 'path';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
+import type { SessionGenMap } from './types.js';
 
 export const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude');
 
@@ -9,6 +10,7 @@ export const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.cla
 export const DATA_DIR = join(CLAUDE_DIR, 'tokenmon');
 export const GLOBAL_CONFIG_PATH = join(DATA_DIR, 'global-config.json');
 export const LOCK_PATH = join(DATA_DIR, 'tokenmon.lock');
+export const SESSION_GEN_MAP_PATH = join(DATA_DIR, 'session-gen-map.json');
 
 // Plugin root (where the npm package is installed)
 export const PLUGIN_ROOT = process.env.CLAUDE_PLUGIN_ROOT ?? join(import.meta.dirname, '..', '..');
@@ -72,6 +74,18 @@ export function setActiveGenerationCache(gen: string): void {
 
 export function clearActiveGenerationCache(): void {
   _activeGenCache = null;
+}
+
+export function getSessionGeneration(sessionId: string): string {
+  if (!sessionId) return getActiveGeneration();
+  try {
+    if (existsSync(SESSION_GEN_MAP_PATH)) {
+      const map = JSON.parse(readFileSync(SESSION_GEN_MAP_PATH, 'utf-8')) as Record<string, { generation: string }>;
+      if (map[sessionId]?.generation) return map[sessionId].generation;
+    }
+  } catch { /* fall through */ }
+  process.stderr.write(`tokenmon: session ${sessionId} not in gen map, using active generation\n`);
+  return getActiveGeneration();
 }
 
 // ── Per-generation data paths (plugin data) ──

@@ -13,8 +13,8 @@ process.env.CLAUDE_CONFIG_DIR = TEST_DIR;
 process.env.CLAUDE_PLUGIN_ROOT = join(TEST_DIR, '.claude', 'plugins', 'cache', 'tokenmon');
 
 // Dynamic import after env setup
-const { readState, writeState, pruneSessionTokens, readSession, writeSession } = await import('../src/core/state.js');
-const { statePath } = await import('../src/core/paths.js');
+const { readState, writeState, pruneSessionTokens, readSession, writeSession, readSessionGenMap, writeSessionGenMap, pruneSessionGenMap } = await import('../src/core/state.js');
+const { statePath, SESSION_GEN_MAP_PATH } = await import('../src/core/paths.js');
 
 function freshDir(): void {
   rmSync(TEST_DIR, { recursive: true, force: true });
@@ -69,28 +69,28 @@ await test('atomic write uses tmp file (no partial writes)', () => {
 
 // --- pruneSessionTokens ---
 
-await test('pruneSessionTokens keeps all when <= 10 entries', () => {
+await test('pruneSessionTokens keeps all when <= 20 entries', () => {
   const tokens: Record<string, number> = {};
-  for (let i = 0; i < 10; i++) tokens[`s${i}`] = i * 100;
+  for (let i = 0; i < 20; i++) tokens[`s${i}`] = i * 100;
   const result = pruneSessionTokens(tokens);
-  assert.equal(Object.keys(result).length, 10);
+  assert.equal(Object.keys(result).length, 20);
 });
 
-await test('pruneSessionTokens prunes to 10 when > 10 entries', () => {
+await test('pruneSessionTokens prunes to 20 when > 20 entries', () => {
   const tokens: Record<string, number> = {};
-  for (let i = 0; i < 15; i++) tokens[`s${i}`] = i * 100;
+  for (let i = 0; i < 25; i++) tokens[`s${i}`] = i * 100;
   const result = pruneSessionTokens(tokens);
-  assert.equal(Object.keys(result).length, 10);
+  assert.equal(Object.keys(result).length, 20);
 });
 
 await test('pruneSessionTokens keeps highest values', () => {
   const tokens: Record<string, number> = {};
-  for (let i = 0; i < 15; i++) tokens[`s${i}`] = i * 100;
+  for (let i = 0; i < 25; i++) tokens[`s${i}`] = i * 100;
   const result = pruneSessionTokens(tokens);
   assert.ok(!('s0' in result), 's0 (value 0) should be pruned');
   assert.ok(!('s4' in result), 's4 (value 400) should be pruned');
   assert.ok('s5' in result, 's5 (value 500) should be kept');
-  assert.ok('s14' in result, 's14 (value 1400) should be kept');
+  assert.ok('s24' in result, 's24 (value 2400) should be kept');
 });
 
 await test('pruneSessionTokens empty object returns empty', () => {
@@ -118,6 +118,56 @@ await test('writeSession + readSession roundtrip', () => {
   assert.equal(loaded.session_id, 'test-123');
   assert.equal(loaded.agent_assignments.length, 1);
   assert.equal(loaded.agent_assignments[0].pokemon, '모부기');
+});
+
+// --- Session-gen-map tests ---
+
+await test('readSessionGenMap returns {} when file missing', () => {
+  freshDir();
+  const map = readSessionGenMap();
+  assert.deepEqual(map, {});
+});
+
+await test('writeSessionGenMap + readSessionGenMap roundtrip', () => {
+  freshDir();
+  const map = {
+    'sess-abc': { generation: 'gen4', created: new Date().toISOString() },
+    'sess-xyz': { generation: 'gen1', created: new Date().toISOString() },
+  };
+  writeSessionGenMap(map);
+  const loaded = readSessionGenMap();
+  assert.equal(loaded['sess-abc'].generation, 'gen4');
+  assert.equal(loaded['sess-xyz'].generation, 'gen1');
+  assert.equal(Object.keys(loaded).length, 2);
+});
+
+await test('pruneSessionGenMap removes entries older than maxAge', () => {
+  const old = new Date(Date.now() - 10 * 24 * 3600 * 1000).toISOString(); // 10 days ago
+  const recent = new Date(Date.now() - 1 * 3600 * 1000).toISOString();   // 1 hour ago
+  const map = {
+    'old-sess': { generation: 'gen4', created: old },
+    'new-sess': { generation: 'gen4', created: recent },
+  };
+  const maxAge = 7 * 24 * 3600 * 1000; // 7 days
+  const result = pruneSessionGenMap(map, maxAge);
+  assert.ok(!('old-sess' in result), 'old entry should be pruned');
+  assert.ok('new-sess' in result, 'recent entry should be kept');
+  assert.equal(Object.keys(result).length, 1);
+});
+
+await test('pruneSessionGenMap keeps all entries younger than maxAge', () => {
+  const recent1 = new Date(Date.now() - 1 * 3600 * 1000).toISOString();
+  const recent2 = new Date(Date.now() - 2 * 3600 * 1000).toISOString();
+  const map = {
+    'a': { generation: 'gen4', created: recent1 },
+    'b': { generation: 'gen1', created: recent2 },
+  };
+  const result = pruneSessionGenMap(map, 7 * 24 * 3600 * 1000);
+  assert.equal(Object.keys(result).length, 2);
+});
+
+await test('pruneSessionGenMap returns {} for empty map', () => {
+  assert.deepEqual(pruneSessionGenMap({}, 7 * 24 * 3600 * 1000), {});
 });
 
 // Cleanup

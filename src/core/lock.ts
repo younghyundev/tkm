@@ -87,3 +87,18 @@ export function withLock<T>(fn: () => T, timeoutMs: number = 5000): T | null {
     releaseGlobalLock();
   }
 }
+
+/**
+ * Execute fn under lock with retries.
+ * Returns fn's result on success, or null after all retries exhausted.
+ */
+export function withLockRetry<T>(fn: () => T, retries: number = 1, timeoutMs: number = 3000): T | null {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const result = withLock(fn, timeoutMs);
+    if (result !== null) return result;
+    if (attempt < retries) {
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 500);
+    }
+  }
+  return null;
+}

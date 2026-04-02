@@ -27,9 +27,13 @@ function loadJson<T>(path: string): T {
   return JSON.parse(readFileSync(path, 'utf-8')) as T;
 }
 
-function resolveDataPath(perGenPath: string, legacyPath: string): string {
-  // Prefer per-gen path; fall back to legacy flat path for backward compat
-  return existsSync(perGenPath) ? perGenPath : legacyPath;
+function resolveDataPath(perGenPath: string, legacyPath: string, gen?: string): string {
+  if (existsSync(perGenPath)) return perGenPath;
+  // Legacy fallback only valid for gen4 (original generation)
+  if (gen && gen !== 'gen4') {
+    throw new Error(`Missing data file for ${gen}: ${perGenPath}`);
+  }
+  return legacyPath;
 }
 
 export function getSharedDB(): SharedDB {
@@ -77,7 +81,7 @@ export function getPokemonDB(gen?: string): PokemonDB {
   const g = gen ?? getActiveGeneration();
   if (!_pokemonDBCache[g]) {
     const perGen = pokemonJsonPath(g);
-    const path = resolveDataPath(perGen, POKEMON_JSON_PATH);
+    const path = resolveDataPath(perGen, POKEMON_JSON_PATH, g);
     const raw = loadJson<any>(path);
     const shared = getSharedDB();
     // Merge: per-gen pokemon data + shared type data
@@ -96,7 +100,7 @@ export function getAchievementsDB(gen?: string): AchievementsDB {
   const g = gen ?? getActiveGeneration();
   if (!_achievementsDBCache[g]) {
     const perGen = achievementsJsonPath(g);
-    const path = resolveDataPath(perGen, ACHIEVEMENTS_JSON_PATH);
+    const path = resolveDataPath(perGen, ACHIEVEMENTS_JSON_PATH, g);
     _achievementsDBCache[g] = loadJson<AchievementsDB>(path);
   }
   return _achievementsDBCache[g];
@@ -106,7 +110,7 @@ export function getRegionsDB(gen?: string): RegionsDB {
   const g = gen ?? getActiveGeneration();
   if (!_regionsDBCache[g]) {
     const perGen = regionsJsonPath(g);
-    const path = resolveDataPath(perGen, REGIONS_JSON_PATH);
+    const path = resolveDataPath(perGen, REGIONS_JSON_PATH, g);
     _regionsDBCache[g] = loadJson<RegionsDB>(path);
   }
   return _regionsDBCache[g];
@@ -123,7 +127,7 @@ export function getPokedexRewardsDB(gen?: string): PokedexRewardsDB {
   const g = gen ?? getActiveGeneration();
   if (!_pokedexRewardsDBCache[g]) {
     const perGen = pokedexRewardsJsonPath(g);
-    const path = resolveDataPath(perGen, POKEDEX_REWARDS_JSON_PATH);
+    const path = resolveDataPath(perGen, POKEDEX_REWARDS_JSON_PATH, g);
     _pokedexRewardsDBCache[g] = loadJson<PokedexRewardsDB>(path);
   }
   return _pokedexRewardsDBCache[g];
@@ -151,7 +155,7 @@ export function getGameI18n(locale?: string, gen?: string): GameI18nData {
   if (!_gameI18n[key]) {
     const perGen = join(i18nDataDir(g), `${loc}.json`);
     const legacy = join(I18N_DATA_DIR, `${loc}.json`);
-    const path = resolveDataPath(perGen, legacy);
+    const path = resolveDataPath(perGen, legacy, g);
     _gameI18n[key] = loadJson<GameI18nData>(path);
   }
   return _gameI18n[key];

@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
-import { readState, writeState, writeSession } from '../core/state.js';
+import { readState, writeState, writeSession, readSession, readSessionGenMap, writeSessionGenMap, pruneSessionGenMap } from '../core/state.js';
 import { readConfig, writeConfig } from '../core/config.js';
+import { getActiveGeneration, setActiveGenerationCache } from '../core/paths.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { refreshNotifications, getActiveNotifications, updateKnownRegions } from '../core/notifications.js';
 import { updateStreak, resetWeeklyStats } from '../core/stats.js';
@@ -26,6 +27,10 @@ function main(): void {
   const input = JSON.parse(readStdin()) as HookInput;
   const sessionId = input.session_id ?? '';
 
+  // Bind this session to the current active generation
+  const gen = getActiveGeneration();
+  setActiveGenerationCache(gen);
+
   const messages: string[] = [];
 
   const result = withLock(() => {
@@ -34,12 +39,24 @@ function main(): void {
     initLocale(config.language ?? 'en');
 
     // Reset session.json for new session
-    writeSession({
-      session_id: sessionId,
-      agent_assignments: [],
-      evolution_events: [],
-      achievement_events: [],
-    });
+    const existingSession = readSession();
+    if (existingSession.session_id && existingSession.session_id !== sessionId) {
+      existingSession.session_id = sessionId;
+      writeSession(existingSession);
+    } else {
+      writeSession({
+        session_id: sessionId,
+        agent_assignments: [],
+        evolution_events: [],
+        achievement_events: [],
+      });
+    }
+
+    // Register session → generation binding
+    const genMap = readSessionGenMap();
+    genMap[sessionId] = { generation: gen, created: new Date().toISOString() };
+    const pruned = pruneSessionGenMap(genMap);
+    writeSessionGenMap(pruned);
 
     // Increment session_count
     state.session_count += 1;
@@ -140,7 +157,7 @@ function main(): void {
 
   // Lock failed — skip gracefully (state not mutated)
   if (result === null) {
-    // no-op: proceed without state changes
+    process.stderr.write(`tokenmon session-start: lock timeout, session ${sessionId} not registered\n`);
   }
 
   // Play cry async (fire and forget)

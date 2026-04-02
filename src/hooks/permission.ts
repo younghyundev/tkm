@@ -5,7 +5,8 @@ import { checkAchievements, formatAchievementMessage } from '../core/achievement
 import { playCry } from '../audio/play-cry.js';
 import { initLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
-import type { HookOutput } from '../core/types.js';
+import { getSessionGeneration, setActiveGenerationCache } from '../core/paths.js';
+import type { HookInput, HookOutput } from '../core/types.js';
 
 function readStdin(): string {
   try {
@@ -17,7 +18,15 @@ function readStdin(): string {
 }
 
 function main(): void {
-  readStdin(); // consume stdin per hook protocol
+  const stdinData = readStdin();
+  try {
+    const input = JSON.parse(stdinData) as HookInput;
+    const sessionId = input.session_id ?? '';
+    if (sessionId) {
+      const resolvedGen = getSessionGeneration(sessionId);
+      setActiveGenerationCache(resolvedGen);
+    }
+  } catch { /* fall through */ }
 
   const messages: string[] = [];
 

@@ -13,7 +13,8 @@ import { playCry } from '../audio/play-cry.js';
 import { playSfx } from '../audio/play-sfx.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
-import { withLock } from '../core/lock.js';
+import { withLock, withLockRetry } from '../core/lock.js';
+import { getSessionGeneration, setActiveGenerationCache } from '../core/paths.js';
 import { recordXp, recordBattle, recordCatch, recordEncounter } from '../core/stats.js';
 
 function readStdin(): string {
@@ -70,6 +71,10 @@ async function main(): Promise<void> {
   const input = JSON.parse(readStdin()) as HookInput;
   const sessionId = input.session_id ?? '';
 
+  // Resolve and lock this hook to the session's bound generation
+  const resolvedGen = getSessionGeneration(sessionId);
+  setActiveGenerationCache(resolvedGen);
+
   const output: HookOutput = { continue: true };
 
   // Pre-lock: read config for early exit check (benign TOCTOU — worst case: enter lock unnecessarily)
@@ -101,7 +106,7 @@ async function main(): Promise<void> {
   // All state mutations under global lock
   const messages: string[] = [];
 
-  const result = withLock(() => {
+  const result = withLockRetry(() => {
     const config = readConfig();
     const state = readState();
 
@@ -258,6 +263,7 @@ async function main(): Promise<void> {
 
   // Lock failed — skip gracefully (state not mutated)
   if (result === null) {
+    process.stderr.write(`tokenmon stop: lock timeout after retries, session ${sessionId} XP may be lost\n`);
     playCry();
     console.log(JSON.stringify(output));
     return;

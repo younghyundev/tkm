@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import { readSession, writeSession } from '../core/state.js';
 import { withLock } from '../core/lock.js';
+import { getSessionGeneration, setActiveGenerationCache } from '../core/paths.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
 
@@ -16,6 +17,11 @@ function readStdin(): string {
 function main(): void {
   const input = JSON.parse(readStdin()) as HookInput;
   const agentId = input.agent_id ?? '';
+  const sessionId = input.session_id ?? '';
+  if (sessionId) {
+    const resolvedGen = getSessionGeneration(sessionId);
+    setActiveGenerationCache(resolvedGen);
+  }
 
   if (!agentId) {
     console.log('{"continue": true}');

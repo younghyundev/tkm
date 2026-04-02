@@ -245,6 +245,8 @@ export interface Session {
   achievement_events: string[];
 }
 
+export type SessionGenMap = Record<string, { generation: string; created: string }>;
+
 export interface AgentAssignment {
   agent_id: string;
   pokemon: string;

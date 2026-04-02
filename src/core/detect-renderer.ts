@@ -25,7 +25,8 @@ export function detectRenderer(env?: Record<string, string | undefined>): Detect
   }
 
   // Kitty Graphics Protocol
-  if (term === 'xterm-kitty' || termProgram === 'ghostty' || termProgram === 'WezTerm') {
+  // Ghostty: kitty protocol known broken, force braille
+  if (term === 'xterm-kitty' || termProgram === 'WezTerm') {
     supported.push('kitty');
   }
 

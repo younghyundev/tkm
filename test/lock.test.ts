@@ -5,6 +5,15 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { execFileSync, fork } from 'child_process';
 
+// Set up isolated test directory for withLockRetry tests that use the real LOCK_PATH
+const RETRY_TEST_DIR = join(tmpdir(), `tokenmon-lock-retry-${Date.now()}`);
+mkdirSync(RETRY_TEST_DIR, { recursive: true });
+process.env.CLAUDE_CONFIG_DIR = RETRY_TEST_DIR;
+process.env.CLAUDE_PLUGIN_ROOT = join(RETRY_TEST_DIR, '.claude', 'plugins', 'cache', 'tokenmon');
+
+const { withLockRetry } = await import('../src/core/lock.js');
+const { LOCK_PATH } = await import('../src/core/paths.js');
+
 /**
  * Tests for src/core/lock.ts — global tokenmon lock.
  *
@@ -173,3 +182,38 @@ describe('Global lock (withLock)', () => {
     assert.equal(final.value, N, `Expected counter=${N} but got ${final.value} (lost-update detected!)`);
   });
 });
+
+describe('withLockRetry', () => {
+  afterEach(() => {
+    // Clean up real lock file between tests
+    if (existsSync(LOCK_PATH)) unlinkSync(LOCK_PATH);
+  });
+
+  it('succeeds on first attempt when lock is free (same as withLock)', () => {
+    let called = false;
+    const result = withLockRetry(() => {
+      called = true;
+      return 42;
+    });
+    assert.equal(result, 42);
+    assert.ok(called, 'fn should have been called');
+  });
+
+  it('returns the value from fn', () => {
+    const result = withLockRetry(() => 'hello');
+    assert.equal(result, 'hello');
+  });
+
+  it('returns null after all retries exhausted (lock held by live PID)', () => {
+    // Write a lock file with a live PID (current process) to simulate a held lock
+    mkdirSync(join(RETRY_TEST_DIR, 'tokenmon'), { recursive: true });
+    writeFileSync(LOCK_PATH, String(process.pid), { flag: 'w' });
+
+    // withLockRetry should fail to acquire and return null (use very short timeout)
+    const result = withLockRetry(() => 'should-not-run', 0, 10);
+    assert.equal(result, null);
+  });
+});
+
+// Cleanup retry test dir
+rmSync(RETRY_TEST_DIR, { recursive: true, force: true });

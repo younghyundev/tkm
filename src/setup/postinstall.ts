@@ -102,11 +102,17 @@ function migrateToMultiGen(): void {
   const rootConfig = join(DATA_DIR, 'config.json');
   const rootSession = join(DATA_DIR, 'session.json');
 
-  // Only migrate if ANY root-level file exists AND gen4/ directory doesn't
   const gen4Dir = join(DATA_DIR, 'gen4');
   const hasAnyLegacy = existsSync(rootState) || existsSync(rootConfig) || existsSync(rootSession);
-  if (!hasAnyLegacy || existsSync(join(gen4Dir, 'state.json'))) {
-    return; // Already migrated or fresh install
+  if (!hasAnyLegacy) {
+    // Ensure global-config.json exists even on fresh install
+    if (!existsSync(GLOBAL_CONFIG_PATH)) {
+      writeFileSync(GLOBAL_CONFIG_PATH, JSON.stringify({
+        active_generation: 'gen4',
+        language: 'en',
+      }, null, 2), 'utf-8');
+    }
+    return;
   }
 
   console.log('');
@@ -124,7 +130,7 @@ function migrateToMultiGen(): void {
     } catch { /* use default */ }
   }
 
-  // Copy files to gen4/ (copy first, then remove originals for atomicity)
+  // Per-file independent migration — idempotent, safe to run multiple times
   const filesToMigrate = [
     { src: rootState, dest: join(gen4Dir, 'state.json') },
     { src: rootConfig, dest: join(gen4Dir, 'config.json') },

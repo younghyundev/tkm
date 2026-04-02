@@ -1,9 +1,9 @@
 import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
-import { statePath, sessionPath, i18nDataDir, DATA_DIR } from './paths.js';
+import { statePath, sessionPath, i18nDataDir, DATA_DIR, SESSION_GEN_MAP_PATH } from './paths.js';
 // Legacy imports for backward compat during migration
 import { STATE_PATH, SESSION_PATH, I18N_DATA_DIR } from './paths.js';
-import type { State, Session, PokemonState, PokedexEntry, Notification, Stats, LegendaryPending } from './types.js';
+import type { State, Session, PokemonState, PokedexEntry, Notification, Stats, LegendaryPending, SessionGenMap } from './types.js';
 
 const DEFAULT_STATS: Stats = {
   streak_days: 0,
@@ -204,13 +204,13 @@ export function writeState(state: State, gen?: string): void {
 }
 
 /**
- * Prune last_session_tokens to top 10 by value (descending).
+ * Prune last_session_tokens to top 20 by value (descending).
  */
 export function pruneSessionTokens(tokens: Record<string, number>): Record<string, number> {
   const entries = Object.entries(tokens);
-  if (entries.length <= 10) return tokens;
+  if (entries.length <= 20) return tokens;
   entries.sort((a, b) => b[1] - a[1]);
-  return Object.fromEntries(entries.slice(0, 10));
+  return Object.fromEntries(entries.slice(0, 20));
 }
 
 export function readSession(gen?: string): Session {
@@ -236,4 +236,29 @@ export function writeSession(session: Session, gen?: string): void {
   const tmpPath = path + '.tmp';
   writeFileSync(tmpPath, JSON.stringify(session, null, 2), 'utf-8');
   renameSync(tmpPath, path);
+}
+
+export function readSessionGenMap(): SessionGenMap {
+  if (!existsSync(SESSION_GEN_MAP_PATH)) return {};
+  try {
+    return JSON.parse(readFileSync(SESSION_GEN_MAP_PATH, 'utf-8'));
+  } catch { return {}; }
+}
+
+export function writeSessionGenMap(map: SessionGenMap): void {
+  const dir = dirname(SESSION_GEN_MAP_PATH);
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+  const tmpPath = SESSION_GEN_MAP_PATH + '.tmp';
+  writeFileSync(tmpPath, JSON.stringify(map, null, 2), 'utf-8');
+  renameSync(tmpPath, SESSION_GEN_MAP_PATH);
+}
+
+export function pruneSessionGenMap(map: SessionGenMap, maxAgeMs: number = 7 * 24 * 3600 * 1000): SessionGenMap {
+  const now = Date.now();
+  const result: SessionGenMap = {};
+  for (const [id, entry] of Object.entries(map)) {
+    const created = new Date(entry.created).getTime();
+    if (now - created < maxAgeMs) result[id] = entry;
+  }
+  return result;
 }

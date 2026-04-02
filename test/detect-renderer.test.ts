@@ -36,9 +36,10 @@ describe('detectRenderer', () => {
     assert.equal(result.recommended, 'braille');
   });
 
-  it('detects kitty for ghostty', () => {
+  it('forces braille only for ghostty (kitty protocol known broken)', () => {
     const result = detectRenderer({ TERM_PROGRAM: 'ghostty', TERM: 'xterm-256color' });
-    assert.ok(result.supported.includes('kitty'));
+    assert.deepStrictEqual(result.supported, ['braille']);
+    assert.equal(result.recommended, 'braille');
   });
 
   it('detects iterm2 for iTerm.app', () => {

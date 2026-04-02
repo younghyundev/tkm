@@ -9,6 +9,7 @@ const PROJECT_ROOT = join(__dirname, '..');
 const CRIES_DIR = join(PROJECT_ROOT, 'cries');
 const SPRITES_TERMINAL_DIR = join(PROJECT_ROOT, 'sprites', 'terminal');
 
+
 // Load pokemon.json directly (no env dependency)
 const { readFileSync } = await import('fs');
 const db = JSON.parse(readFileSync(join(PROJECT_ROOT, 'data', 'pokemon.json'), 'utf-8'));
