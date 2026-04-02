@@ -40,11 +40,11 @@ function main(): void {
     const config = readConfig();
     initLocale(config.language ?? 'en');
 
-    // Reset session.json for new session
-    const existingSession = readSession();
+    // Reset session file for new session (keyed by session_id)
+    const existingSession = readSession(undefined, sessionId);
     if (existingSession.session_id === sessionId) {
       // Same session reconnecting (crash recovery) — keep existing data
-      writeSession(existingSession);
+      writeSession(existingSession, undefined, sessionId);
     } else {
       // New session — always start fresh
       writeSession({
@@ -52,13 +52,13 @@ function main(): void {
         agent_assignments: [],
         evolution_events: [],
         achievement_events: [],
-      });
+      }, undefined, sessionId);
     }
 
     // Register session → generation binding (only for new sessions)
     if (!existingBinding) {
       const genMap = readSessionGenMap();
-      genMap[sessionId] = { generation: gen, created: new Date().toISOString() };
+      genMap[sessionId] = { generation: gen, created: new Date().toISOString(), last_seen: new Date().toISOString() };
       const pruned = pruneSessionGenMap(genMap);
       writeSessionGenMap(pruned);
     }

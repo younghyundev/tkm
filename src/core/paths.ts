@@ -152,9 +152,15 @@ export function configPath(gen?: string): string {
   return perGen;
 }
 
-export function sessionPath(gen?: string): string {
+export function sessionPath(gen?: string, sessionId?: string): string {
   const g = gen ?? getActiveGeneration();
-  const perGen = join(genUserDir(g), 'session.json');
+  const dir = genUserDir(g);
+  if (sessionId) {
+    const sessionsDir = join(dir, 'sessions');
+    return join(sessionsDir, `${sessionId}.json`);
+  }
+  // Legacy: no session_id → singleton session.json
+  const perGen = join(dir, 'session.json');
   if (!gen && !existsSync(perGen) && existsSync(join(DATA_DIR, 'session.json'))) {
     return join(DATA_DIR, 'session.json');
   }

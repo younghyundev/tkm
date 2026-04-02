@@ -1,7 +1,7 @@
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { readState, writeState, pruneSessionTokens } from '../core/state.js';
+import { readState, writeState, pruneSessionTokens, readSessionGenMap, writeSessionGenMap } from '../core/state.js';
 import { readConfig, writeConfig } from '../core/config.js';
 import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
@@ -264,6 +264,13 @@ async function main(): Promise<void> {
     if (!state.last_battle && config.tips_enabled && getRandomTip) {
       const tip = getRandomTip(state, config);
       if (tip) state.last_tip = tip;
+    }
+
+    // Refresh last_seen to prevent pruning of active sessions
+    const genMap = readSessionGenMap();
+    if (genMap[sessionId]) {
+      genMap[sessionId].last_seen = new Date().toISOString();
+      writeSessionGenMap(genMap);
     }
 
     writeState(state);

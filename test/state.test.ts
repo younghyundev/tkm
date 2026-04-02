@@ -14,7 +14,7 @@ process.env.CLAUDE_PLUGIN_ROOT = join(TEST_DIR, '.claude', 'plugins', 'cache', '
 
 // Dynamic import after env setup
 const { readState, writeState, pruneSessionTokens, readSession, writeSession, readSessionGenMap, writeSessionGenMap, pruneSessionGenMap } = await import('../src/core/state.js');
-const { statePath, SESSION_GEN_MAP_PATH } = await import('../src/core/paths.js');
+const { statePath, sessionPath, SESSION_GEN_MAP_PATH } = await import('../src/core/paths.js');
 
 function freshDir(): void {
   rmSync(TEST_DIR, { recursive: true, force: true });
@@ -130,9 +130,10 @@ await test('readSessionGenMap returns {} when file missing', () => {
 
 await test('writeSessionGenMap + readSessionGenMap roundtrip', () => {
   freshDir();
+  const now = new Date().toISOString();
   const map = {
-    'sess-abc': { generation: 'gen4', created: new Date().toISOString() },
-    'sess-xyz': { generation: 'gen1', created: new Date().toISOString() },
+    'sess-abc': { generation: 'gen4', created: now, last_seen: now },
+    'sess-xyz': { generation: 'gen1', created: now, last_seen: now },
   };
   writeSessionGenMap(map);
   const loaded = readSessionGenMap();
@@ -141,26 +142,40 @@ await test('writeSessionGenMap + readSessionGenMap roundtrip', () => {
   assert.equal(Object.keys(loaded).length, 2);
 });
 
-await test('pruneSessionGenMap removes entries older than maxAge', () => {
+await test('pruneSessionGenMap removes entries where last_seen is older than maxAge', () => {
   const old = new Date(Date.now() - 10 * 24 * 3600 * 1000).toISOString(); // 10 days ago
   const recent = new Date(Date.now() - 1 * 3600 * 1000).toISOString();   // 1 hour ago
   const map = {
-    'old-sess': { generation: 'gen4', created: old },
-    'new-sess': { generation: 'gen4', created: recent },
+    'old-sess': { generation: 'gen4', created: old, last_seen: old },
+    'new-sess': { generation: 'gen4', created: old, last_seen: recent },
   };
   const maxAge = 7 * 24 * 3600 * 1000; // 7 days
   const result = pruneSessionGenMap(map, maxAge);
   assert.ok(!('old-sess' in result), 'old entry should be pruned');
-  assert.ok('new-sess' in result, 'recent entry should be kept');
+  assert.ok('new-sess' in result, 'recent last_seen entry should be kept even if created is old');
   assert.equal(Object.keys(result).length, 1);
+});
+
+await test('pruneSessionGenMap uses created as fallback when last_seen missing', () => {
+  const old = new Date(Date.now() - 10 * 24 * 3600 * 1000).toISOString(); // 10 days ago
+  const recent = new Date(Date.now() - 1 * 3600 * 1000).toISOString();   // 1 hour ago
+  // Simulate legacy entries without last_seen field
+  const map = {
+    'old-sess': { generation: 'gen4', created: old, last_seen: '' },
+    'new-sess': { generation: 'gen4', created: recent, last_seen: '' },
+  };
+  const maxAge = 7 * 24 * 3600 * 1000;
+  const result = pruneSessionGenMap(map, maxAge);
+  assert.ok(!('old-sess' in result), 'old entry should be pruned via created fallback');
+  assert.ok('new-sess' in result, 'recent entry should be kept via created fallback');
 });
 
 await test('pruneSessionGenMap keeps all entries younger than maxAge', () => {
   const recent1 = new Date(Date.now() - 1 * 3600 * 1000).toISOString();
   const recent2 = new Date(Date.now() - 2 * 3600 * 1000).toISOString();
   const map = {
-    'a': { generation: 'gen4', created: recent1 },
-    'b': { generation: 'gen1', created: recent2 },
+    'a': { generation: 'gen4', created: recent1, last_seen: recent1 },
+    'b': { generation: 'gen1', created: recent2, last_seen: recent2 },
   };
   const result = pruneSessionGenMap(map, 7 * 24 * 3600 * 1000);
   assert.equal(Object.keys(result).length, 2);
@@ -168,6 +183,68 @@ await test('pruneSessionGenMap keeps all entries younger than maxAge', () => {
 
 await test('pruneSessionGenMap returns {} for empty map', () => {
   assert.deepEqual(pruneSessionGenMap({}, 7 * 24 * 3600 * 1000), {});
+});
+
+// --- sessionPath with sessionId tests ---
+
+await test('sessionPath with sessionId returns per-session path under sessions/ dir', () => {
+  freshDir();
+  const path = sessionPath('gen4', 'my-session-id');
+  assert.ok(path.includes('sessions'), 'path should include sessions/ dir');
+  assert.ok(path.endsWith('my-session-id.json'), 'path should end with session id .json');
+});
+
+await test('sessionPath without sessionId returns singleton session.json', () => {
+  freshDir();
+  const path = sessionPath('gen4');
+  assert.ok(path.endsWith('session.json'), 'path should end with session.json');
+  assert.ok(!path.includes('/sessions/'), 'path should not include sessions/ subdir');
+});
+
+await test('readSession and writeSession roundtrip with sessionId', () => {
+  freshDir();
+  writeSession({
+    session_id: 'sess-per-file',
+    agent_assignments: [{ agent_id: 'agent-1', pokemon: 'bulbasaur', xp_multiplier: 1.5 }],
+    evolution_events: [],
+    achievement_events: [],
+  }, undefined, 'sess-per-file');
+  const loaded = readSession(undefined, 'sess-per-file');
+  assert.equal(loaded.session_id, 'sess-per-file');
+  assert.equal(loaded.agent_assignments.length, 1);
+  assert.equal(loaded.agent_assignments[0].agent_id, 'agent-1');
+});
+
+await test('two sessions with different sessionIds do not clobber each other', () => {
+  freshDir();
+  writeSession({
+    session_id: 'sess-A',
+    agent_assignments: [{ agent_id: 'agent-A', pokemon: 'bulbasaur', xp_multiplier: 1.5 }],
+    evolution_events: [],
+    achievement_events: [],
+  }, undefined, 'sess-A');
+  writeSession({
+    session_id: 'sess-B',
+    agent_assignments: [{ agent_id: 'agent-B', pokemon: 'charmander', xp_multiplier: 1.5 }],
+    evolution_events: [],
+    achievement_events: [],
+  }, undefined, 'sess-B');
+  const sessA = readSession(undefined, 'sess-A');
+  const sessB = readSession(undefined, 'sess-B');
+  assert.equal(sessA.agent_assignments[0].agent_id, 'agent-A');
+  assert.equal(sessB.agent_assignments[0].agent_id, 'agent-B');
+});
+
+// --- Fail-closed behavior tests ---
+
+await test('pruneSessionGenMap: active session kept via last_seen even when created is old', () => {
+  const oldCreated = new Date(Date.now() - 10 * 24 * 3600 * 1000).toISOString(); // 10 days ago
+  const recentLastSeen = new Date(Date.now() - 1 * 3600 * 1000).toISOString();   // 1 hour ago
+  const map = {
+    'long-running': { generation: 'gen4', created: oldCreated, last_seen: recentLastSeen },
+  };
+  const result = pruneSessionGenMap(map, 7 * 24 * 3600 * 1000);
+  assert.ok('long-running' in result, 'long-running session with recent last_seen should be kept');
 });
 
 // Cleanup

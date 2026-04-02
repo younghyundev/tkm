@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { readSession, writeSession } from '../core/state.js';
 import { readConfig } from '../core/config.js';
 import { withLock } from '../core/lock.js';
-import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
+import { getSessionGeneration, setActiveGenerationCache } from '../core/paths.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
 
@@ -21,7 +21,13 @@ function main(): void {
   const sessionId = input.session_id ?? '';
   if (sessionId) {
     const resolvedGen = getSessionGeneration(sessionId);
-    setActiveGenerationCache(resolvedGen ?? getActiveGeneration());
+    if (resolvedGen) {
+      setActiveGenerationCache(resolvedGen);
+    } else {
+      process.stderr.write(`tokenmon subagent-start: no gen binding for session ${sessionId}, skipping\n`);
+      console.log('{"continue": true}');
+      return;
+    }
   }
 
   if (!agentId) {
@@ -32,7 +38,7 @@ function main(): void {
   let chosen: string | null = null;
 
   const lockResult = withLock(() => {
-    const session = readSession();
+    const session = readSession(undefined, sessionId || undefined);
     const config = readConfig();
 
     // Select dispatch pokemon: prefer default_dispatch, then first unassigned
@@ -51,7 +57,7 @@ function main(): void {
 
     if (chosen) {
       session.agent_assignments.push({ agent_id: agentId, pokemon: chosen, xp_multiplier: 1.5 });
-      writeSession(session);
+      writeSession(session, undefined, sessionId || undefined);
     }
   });
 

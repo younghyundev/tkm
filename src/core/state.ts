@@ -213,8 +213,8 @@ export function pruneSessionTokens(tokens: Record<string, number>): Record<strin
   return Object.fromEntries(entries.slice(0, 20));
 }
 
-export function readSession(gen?: string): Session {
-  const path = sessionPath(gen);
+export function readSession(gen?: string, sessionId?: string): Session {
+  const path = sessionPath(gen, sessionId);
   if (!existsSync(path)) {
     return { ...DEFAULT_SESSION, agent_assignments: [], evolution_events: [], achievement_events: [] };
   }
@@ -229,8 +229,8 @@ export function readSession(gen?: string): Session {
   };
 }
 
-export function writeSession(session: Session, gen?: string): void {
-  const path = sessionPath(gen);
+export function writeSession(session: Session, gen?: string, sessionId?: string): void {
+  const path = sessionPath(gen, sessionId);
   const dir = dirname(path);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   const tmpPath = path + '.tmp';
@@ -257,8 +257,8 @@ export function pruneSessionGenMap(map: SessionGenMap, maxAgeMs: number = 7 * 24
   const now = Date.now();
   const result: SessionGenMap = {};
   for (const [id, entry] of Object.entries(map)) {
-    const created = new Date(entry.created).getTime();
-    if (now - created < maxAgeMs) result[id] = entry;
+    const lastSeen = new Date(entry.last_seen || entry.created).getTime();
+    if (now - lastSeen < maxAgeMs) result[id] = entry;
   }
   return result;
 }

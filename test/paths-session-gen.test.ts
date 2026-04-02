@@ -19,30 +19,33 @@ setActiveGenerationCache('gen4');
 
 const MAP_PATH = SESSION_GEN_MAP_PATH;
 
-function writeMap(map: Record<string, { generation: string; created: string }>): void {
+function writeMap(map: Record<string, { generation: string; created: string; last_seen: string }>): void {
   mkdirSync(TEST_DATA_DIR, { recursive: true });
   writeFileSync(MAP_PATH, JSON.stringify(map, null, 2), 'utf-8');
 }
 
 test('getSessionGeneration returns bound generation when session exists in map', () => {
+  const now = new Date().toISOString();
   writeMap({
-    'sess-111': { generation: 'gen1', created: new Date().toISOString() },
+    'sess-111': { generation: 'gen1', created: now, last_seen: now },
   });
   const gen = getSessionGeneration('sess-111');
   assert.equal(gen, 'gen1');
 });
 
 test('getSessionGeneration returns null when session not in map', () => {
+  const now = new Date().toISOString();
   writeMap({
-    'sess-111': { generation: 'gen1', created: new Date().toISOString() },
+    'sess-111': { generation: 'gen1', created: now, last_seen: now },
   });
   const gen = getSessionGeneration('unknown-session');
   assert.equal(gen, null);
 });
 
 test('getSessionGeneration returns null when sessionId is empty string', () => {
+  const now = new Date().toISOString();
   writeMap({
-    'sess-111': { generation: 'gen1', created: new Date().toISOString() },
+    'sess-111': { generation: 'gen1', created: now, last_seen: now },
   });
   const gen = getSessionGeneration('');
   assert.equal(gen, null);

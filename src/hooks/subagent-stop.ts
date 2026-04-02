@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { readSession, writeSession } from '../core/state.js';
 import { withLock } from '../core/lock.js';
-import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
+import { getSessionGeneration, setActiveGenerationCache } from '../core/paths.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
 
@@ -20,7 +20,13 @@ function main(): void {
   const sessionId = input.session_id ?? '';
   if (sessionId) {
     const resolvedGen = getSessionGeneration(sessionId);
-    setActiveGenerationCache(resolvedGen ?? getActiveGeneration());
+    if (resolvedGen) {
+      setActiveGenerationCache(resolvedGen);
+    } else {
+      process.stderr.write(`tokenmon subagent-stop: no gen binding for session ${sessionId}, skipping\n`);
+      console.log('{"continue": true}');
+      return;
+    }
   }
 
   if (!agentId) {
@@ -31,10 +37,10 @@ function main(): void {
   let removedPokemon: string | null = null;
 
   const lockResult = withLock(() => {
-    const session = readSession();
+    const session = readSession(undefined, sessionId || undefined);
     const removed = session.agent_assignments.find(a => a.agent_id === agentId);
     session.agent_assignments = session.agent_assignments.filter(a => a.agent_id !== agentId);
-    writeSession(session);
+    writeSession(session, undefined, sessionId || undefined);
     if (removed) {
       removedPokemon = removed.pokemon;
     }
