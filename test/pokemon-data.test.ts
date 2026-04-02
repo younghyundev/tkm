@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { getPokemonName } from '../src/core/pokemon-data.js';
+import { getPokemonName, getRegionName } from '../src/core/pokemon-data.js';
 import { initLocale } from '../src/i18n/index.js';
 import { setActiveGenerationCache } from '../src/core/paths.js';
 
@@ -251,6 +251,35 @@ describe('pokemon-data (M3a)', () => {
     it('every pokemon has a valid exp_group', () => {
       for (const [name, p] of Object.entries(pokemon) as [string, any][]) {
         assert.ok(validGroups.includes(p.exp_group), `${name} has invalid exp_group: "${p.exp_group}"`);
+      }
+    });
+  });
+
+  describe('getRegionName returns localized names, not raw IDs', () => {
+    it('region "1" returns a localized name', () => {
+      const name = getRegionName('1');
+      assert.ok(name !== '1', `getRegionName("1") should return localized name, got: ${name}`);
+      assert.ok(name.length > 0);
+    });
+
+    it('all single-digit region IDs return non-numeric names', () => {
+      for (let i = 1; i <= 9; i++) {
+        const name = getRegionName(String(i));
+        // If region exists, name should not be just the digit
+        if (name !== String(i)) {
+          assert.ok(!/^\d+$/.test(name), `Region ${i} name should be localized, got: ${name}`);
+        }
+      }
+    });
+  });
+
+  describe('getPokemonName returns localized names for evolution line IDs', () => {
+    it('evolution line IDs resolve to non-numeric names', () => {
+      // Gen4 starter line: 387 → 388 → 389
+      const names = ['387', '388', '389'].map(id => getPokemonName(id));
+      for (let i = 0; i < names.length; i++) {
+        assert.ok(!/^\d+$/.test(names[i]), `Pokemon ${387 + i} should have localized name, got: ${names[i]}`);
+        assert.ok(names[i].length > 0);
       }
     });
   });

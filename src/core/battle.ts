@@ -277,7 +277,10 @@ export function resolveBattle(
   let ballCost = 0;
   if (won) {
     const alreadyCaught = state.pokedex[wild.name]?.caught ?? false;
-    if (!alreadyCaught) {
+    const alreadyShinyCaught = state.pokedex[wild.name]?.shiny_caught ?? false;
+    // Allow catch if: never caught, OR shiny variant not yet caught
+    const shouldAttemptCatch = !alreadyCaught || (wild.shiny && !alreadyShinyCaught);
+    if (shouldAttemptCatch) {
       ballCost = getBallCost(wildData.catch_rate);
       const hasBalls = getItemCount(state, 'pokeball') >= ballCost;
       if (hasBalls) {
@@ -291,6 +294,9 @@ export function resolveBattle(
         if (!state.pokemon[wild.name]) {
           const catchXp = levelToXp(wild.level, wildData.exp_group);
           state.pokemon[wild.name] = { id: wildData.id, xp: catchXp, level: wild.level, friendship: 0, ev: 0, shiny: wild.shiny };
+        } else if (wild.shiny) {
+          // Already have this species but caught a shiny — mark existing as shiny
+          state.pokemon[wild.name].shiny = true;
         }
       }
       // Not enough balls: markSeen already called above, XP already awarded. No catch.

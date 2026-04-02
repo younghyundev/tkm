@@ -1,5 +1,5 @@
 ---
-description: "Tokenmon CLI. status, party, pokedex, region, items, achievements. Korean: 상태 확인, 파티, 도감, 지역, 아이템, 업적, 포켓몬, tokenmon"
+description: "Tokenmon CLI. status, party, pokedex, region, items, achievements, nickname, call. Korean: 상태 확인, 파티, 도감, 지역, 아이템, 업적, 닉네임, 부르기, 포켓몬, tokenmon"
 ---
 
 Run a Tokenmon CLI command for the user.
@@ -27,6 +27,8 @@ If `$ARGUMENTS` is `--help` or `-h`, run `help`.
 | `party add <name>` | Add Pokémon to party |
 | `party remove <name>` | Remove Pokémon from party |
 | `party dispatch <name>` | Set subagent dispatch Pokémon (1.5x XP) |
+| `nickname <name> <nick>` | Set a nickname for a Pokémon |
+| `call <name>` | Call a Pokémon (EV bond system) |
 | `unlock list` | List unlocked Pokémon |
 | `pokedex` | Browse Pokédex (--type/--region/--rarity filters) |
 | `pokedex <name>` | Show Pokémon details |

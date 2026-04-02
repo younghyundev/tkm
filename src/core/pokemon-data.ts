@@ -169,15 +169,23 @@ export function getPokemonName(id: string | number, gen?: string, shiny?: boolea
 }
 
 /**
- * Resolve a display name or ID string to a pokemon ID.
- * Accepts numeric ID strings ("390") or localized names ("불꽃숭이", "Chimchar").
+ * Resolve a display name, nickname, or ID string to a pokemon ID.
+ * Accepts numeric ID strings ("390"), localized names ("불꽃숭이", "Chimchar"),
+ * or nicknames set by the user.
  * Delegates to existing pokemonIdByName for locale search.
  * Returns null if no match found.
  */
-export function resolveNameToId(nameOrId: string): string | null {
+export function resolveNameToId(nameOrId: string, state?: { pokemon: Record<string, { nickname?: string }> }): string | null {
   const db = getPokemonDB();
   // Direct ID match
   if (db.pokemon[nameOrId]) return nameOrId;
+
+  // Search by nickname in owned pokemon state
+  if (state) {
+    for (const [id, pState] of Object.entries(state.pokemon)) {
+      if (pState.nickname && pState.nickname === nameOrId) return id;
+    }
+  }
 
   // Delegate to existing locale-aware reverse lookup
   return pokemonIdByName(nameOrId) ?? null;

@@ -132,7 +132,7 @@ function main(): void {
 
   // Build per-pokemon data
   const pokeData: Array<{
-    name: string; level: number; xp: number; expGroup: ExpGroup;
+    speciesId: string; name: string; level: number; xp: number; expGroup: ExpGroup;
     pokemonId: number; types: string[]; agentLabel: string;
   }> = [];
 
@@ -142,6 +142,7 @@ function main(): void {
     const assignment = session.agent_assignments.find(a => a.pokemon === pokemonName);
     const nickname = state.pokemon[pokemonName]?.nickname;
     pokeData.push({
+      speciesId: pokemonName,
       name: getDisplayName(pokemonName, nickname),
       level: state.pokemon[pokemonName]?.level ?? 1,
       xp: state.pokemon[pokemonName]?.xp ?? 0,
@@ -161,7 +162,7 @@ function main(): void {
     for (let i = 0; i < pokeData.length; i++) {
       const p = pokeData[i];
       if (spriteMode === 'all' || i === 0) {
-        const isShinySprite = state.pokemon[p.name]?.shiny ?? false;
+        const isShinySprite = state.pokemon[p.speciesId]?.shiny ?? false;
         spriteEntries.push(loadSprite(p.pokemonId, isShinySprite));
       }
     }
@@ -205,8 +206,9 @@ function main(): void {
       ? (spriteMode === 'emoji_all' || (spriteMode === 'emoji_ace' && isAce)) ? `${emoji} ` : ''
       : '';
 
-    const isShiny = state.pokemon[p.name]?.shiny ?? false;
-    const displayName = getPokemonName(p.name, undefined, isShiny);
+    const isShiny = state.pokemon[p.speciesId]?.shiny ?? false;
+    const shinyPrefix = isShiny ? '★' : '';
+    const displayName = `${shinyPrefix}${p.name}`;
     let info: string;
     switch (infoMode) {
       case 'all_full':

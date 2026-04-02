@@ -459,6 +459,28 @@ describe('battle', () => {
       assert.ok(caughtShiny, 'Should catch at least one shiny pokemon');
     });
 
+    it('shiny catch of already-caught species marks existing pokemon as shiny', () => {
+      const state = makeState({
+        pokemon: {
+          '387': { id: 387, xp: 500000, level: 80, friendship: 0, ev: 0 },
+          '396': { id: 396, xp: 1000, level: 5, friendship: 0, ev: 0, shiny: false },
+        },
+        unlocked: ['387', '396'],
+        pokedex: { '396': { seen: true, caught: true, first_seen: '2026-01-01' } },
+        items: { pokeball: 50 },
+      });
+      const config = makeConfig({ party: ['387'] });
+      let caughtShiny = false;
+      for (let i = 0; i < 100 && !caughtShiny; i++) {
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: true });
+        if (result?.won && result?.caught) {
+          caughtShiny = true;
+          assert.equal(state.pokemon['396']?.shiny, true, 'existing pokemon should be marked shiny');
+        }
+      }
+      assert.ok(caughtShiny, 'Should be able to catch shiny of already-caught species');
+    });
+
     it('formatBattleMessage includes "✦" when shiny=true', () => {
       const msg = formatBattleMessage({
         attacker: '387', defender: '396', defenderLevel: 5,

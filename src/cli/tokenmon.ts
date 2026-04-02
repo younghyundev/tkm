@@ -16,7 +16,7 @@ import { getActiveEvents } from '../core/encounter.js';
 import { getEventsDB, getRegionsDB, getPokedexRewardsDB } from '../core/pokemon-data.js';
 import { getTypeMasterProgress } from '../core/pokedex-rewards.js';
 import { t, initLocale, getLocale } from '../i18n/index.js';
-import { withLock } from '../core/lock.js';
+import { withLock, withLockRetry } from '../core/lock.js';
 import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCache, PLUGIN_ROOT } from '../core/paths.js';
 import type { ExpGroup, EvolutionContext } from '../core/types.js';
 
@@ -415,11 +415,11 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
     console.log(`  ${t('cli.pokedex.detail_status', { icon: statusIcon, status: statusText })}`);
     console.log(`  ${t('cli.pokedex.detail_type', { types: pData.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join(' / ') })}`);
     console.log(`  ${t('cli.pokedex.detail_rarity', { rarity: pData.rarity })}`);
-    console.log(`  ${t('cli.pokedex.detail_region', { region: pData.region })}`);
+    console.log(`  ${t('cli.pokedex.detail_region', { region: getRegionName(pData.region) })}`);
     console.log(`  ${t('cli.pokedex.detail_exp_group', { group: pData.exp_group })}`);
     console.log(`  ${t('cli.pokedex.detail_catch_rate', { rate: pData.catch_rate })}`);
     console.log(`  ${t('cli.pokedex.detail_base_stats', { hp: pData.base_stats.hp, atk: pData.base_stats.attack, def: pData.base_stats.defense, spd: pData.base_stats.speed })}`);
-    console.log(`  ${t('cli.pokedex.detail_line', { line: pData.line.join(' → ') })}`);
+    console.log(`  ${t('cli.pokedex.detail_line', { line: pData.line.map((id: string) => getPokemonName(id)).join(' → ') })}`);
     if (pData.evolves_at) console.log(`  ${t('cli.pokedex.detail_evolves_at', { level: pData.evolves_at })}`);
     if (pData.evolves_condition) console.log(`  ${t('cli.pokedex.detail_evolves_cond', { cond: pData.evolves_condition })}`);
     if (pdex?.first_seen) console.log(`  ${t('cli.pokedex.detail_first_seen', { date: pdex.first_seen })}`);
@@ -557,61 +557,59 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
 const CALLS_PER_EV = 5;
 
 function cmdCall(nameOrId: string): void {
-  const id = resolveNameToId(nameOrId);
-  if (!id) {
-    error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
-    process.exit(1);
-  }
-  const result = withLock(() => {
+  // Resolve ID and mutate inside the same lock to prevent nickname race
+  const result = withLockRetry(() => {
     const s = readState();
+    const id = resolveNameToId(nameOrId, s);
+    if (!id) return { error: 'not_found' as const };
     const p = s.pokemon[id];
-    if (!p) return null;
+    if (!p) return { error: 'not_found' as const };
+    const prevEv = p.ev ?? 0;
     p.call_count = (p.call_count ?? 0) + 1;
     let evGained = false;
     if (p.call_count >= CALLS_PER_EV) {
-      p.ev = Math.min(252, (p.ev ?? 0) + 1);
+      p.ev = Math.min(252, prevEv + 1);
       p.call_count = 0;
-      evGained = true;
+      evGained = p.ev > prevEv;
     }
     writeState(s);
     return { ev: p.ev, call_count: p.call_count, evGained };
   });
-  if (result === null) { error('포켓몬 데이터가 없습니다.'); process.exit(1); }
+  if (result === null) { error('잠금 획득에 실패했습니다. 다시 시도해주세요.'); process.exit(1); }
+  if ('error' in result) { error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`); process.exit(1); }
   console.log(JSON.stringify(result));
 }
 
 function cmdNickname(nameOrId: string, nickname?: string): void {
-  const id = resolveNameToId(nameOrId);
-  if (!id) {
-    error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
-    process.exit(1);
-  }
-  const speciesName = getPokemonName(id);
-  const result = withLock(() => {
+  // Resolve ID and mutate inside the same lock to prevent nickname race
+  const result = withLockRetry(() => {
     const s = readState();
-    if (!s.pokemon[id]) {
-      return null;
-    }
+    const id = resolveNameToId(nameOrId, s);
+    if (!id || !s.pokemon[id]) return { error: 'not_found' as const };
     if (!nickname) {
-      return { current: s.pokemon[id].nickname };
+      return { current: s.pokemon[id].nickname, speciesName: getPokemonName(id) };
     }
     s.pokemon[id].nickname = nickname;
     writeState(s);
-    return { set: true };
+    return { set: true, speciesName: getPokemonName(id), nickname };
   });
   if (result === null) {
-    error(`${speciesName}의 데이터가 없습니다.`);
+    error('잠금 획득에 실패했습니다. 다시 시도해주세요.');
+    process.exit(1);
+  }
+  if ('error' in result) {
+    error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
     process.exit(1);
   }
   if ('current' in result) {
     const current = result.current;
     if (current) {
-      info(`${speciesName}의 닉네임: ${BOLD}${current}${RESET}`);
+      info(`${result.speciesName}의 닉네임: ${BOLD}${current}${RESET}`);
     } else {
-      info(`${speciesName}에게 아직 닉네임이 없습니다.`);
+      info(`${result.speciesName}에게 아직 닉네임이 없습니다.`);
     }
-  } else {
-    success(`${speciesName}의 닉네임을 '${BOLD}${nickname}${RESET}'(으)로 정했습니다!`);
+  } else if ('set' in result) {
+    success(`${result.speciesName}의 닉네임을 '${BOLD}${result.nickname}${RESET}'(으)로 정했습니다!`);
   }
 }
 

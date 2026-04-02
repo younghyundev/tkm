@@ -71,6 +71,25 @@ describe('notifications', () => {
       assert.ok(achNotifs.length >= 1, 'Should have at least one achievement_near notification');
     });
 
+    it('achievement_near message contains localized name, not raw ID', () => {
+      const state = makeState({ session_count: 9 });
+      const config = makeConfig();
+      const notifs = checkPendingNotifications(state, config);
+      const achNotifs = notifs.filter(n => n.type === 'achievement_near');
+      assert.ok(achNotifs.length >= 1);
+      for (const notif of achNotifs) {
+        // Raw IDs contain underscores (e.g., "ten_sessions"), localized names should not
+        const idMatch = notif.id.match(/achievement_near:(.+)/);
+        if (idMatch) {
+          const rawId = idMatch[1];
+          assert.ok(
+            !notif.message.includes(rawId),
+            `Notification message should use localized name, not raw ID "${rawId}": ${notif.message}`
+          );
+        }
+      }
+    });
+
     it('does not detect achievement_near below 90%', () => {
       const state = makeState({ session_count: 5 });
       const config = makeConfig();

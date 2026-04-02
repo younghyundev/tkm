@@ -1,4 +1,4 @@
-import { getAchievementsDB, getRegionsDB } from './pokemon-data.js';
+import { getAchievementsDB, getRegionsDB, getAchievementName } from './pokemon-data.js';
 import { isRegionUnlocked } from './regions.js';
 import { t } from '../i18n/index.js';
 import type { State, Config, Notification } from './types.js';
@@ -57,7 +57,7 @@ export function checkPendingNotifications(state: State, config: Config): Notific
       notifications.push({
         id,
         type: 'achievement_near',
-        message: t('notification.achievement_near', { name: ach.id, pct: Math.round(progress * 100) }),
+        message: t('notification.achievement_near', { name: getAchievementName(ach.id), pct: Math.round(progress * 100) }),
         created: now,
       });
     }
