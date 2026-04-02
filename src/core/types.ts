@@ -13,6 +13,11 @@ export interface BaseStats {
   speed: number;
 }
 
+export interface BranchEvolution {
+  name: string;
+  condition: string;
+}
+
 export interface PokemonData {
   id: number;
   name: string;
@@ -21,6 +26,7 @@ export interface PokemonData {
   line: string[];
   evolves_at: number | null;
   evolves_condition?: string;
+  evolves_to?: string | BranchEvolution[];
   unlock: string;
   exp_group: ExpGroup;
   rarity: Rarity;
@@ -63,6 +69,18 @@ export interface PokemonState {
   level: number;
   friendship: number;
   ev: number;
+  evolution_ready?: boolean;
+  evolution_options?: string[];
+}
+
+export type NotificationType = 'evolution_ready' | 'region_unlocked' | 'achievement_near';
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  message: string;
+  created: string;
+  data?: Record<string, unknown>;
 }
 
 export interface EvolutionContext {
@@ -97,6 +115,9 @@ export interface State {
   cheat_log: Array<{ timestamp: string; command: string }>;
   last_battle: BattleResult | null;
   last_tip: { id: string; text: string } | null;
+  notifications: Notification[];
+  dismissed_notifications: string[];
+  last_known_regions: number;
 }
 
 export interface Config {
@@ -117,6 +138,7 @@ export interface Config {
   renderer: SpriteRenderer;
   info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level';
   tips_enabled: boolean;
+  notifications_enabled: boolean;
   language: 'ko' | 'en';
 }
 
