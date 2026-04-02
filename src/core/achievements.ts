@@ -89,7 +89,7 @@ function applyAchievementEffects(achievementId: string, state: State, config: Co
           state.xp_bonus_multiplier += (effect.value ?? 0);
           break;
         case 'party_slot':
-          config.max_party_size = Math.min(8, config.max_party_size + (effect.count ?? 1));
+          config.max_party_size = Math.min(6, config.max_party_size + (effect.count ?? 1));
           break;
         case 'unlock_legendary':
           // Flag-only effect — no direct state change needed

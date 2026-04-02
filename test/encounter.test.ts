@@ -4,7 +4,7 @@ import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { makeState as _makeState, makeConfig as _makeConfig } from './helpers.js';
-import { rollEncounter, selectWildPokemon, processEncounter } from '../src/core/encounter.js';
+import { rollEncounter, selectWildPokemon, processEncounter, getMinWildLevel } from '../src/core/encounter.js';
 import { formatBattleMessage } from '../src/core/battle.js';
 import { initLocale } from '../src/i18n/index.js';
 
@@ -55,31 +55,36 @@ describe('encounter', () => {
 
   describe('selectWildPokemon', () => {
     it('returns pokemon from current region pool', () => {
+      const state = makeState();
       const config = makeConfig({ current_region: '2' });
       const region = regionsDB.regions['2'];
       for (let i = 0; i < 50; i++) {
-        const wild = selectWildPokemon(config);
+        const wild = selectWildPokemon(state, config);
         assert.ok(wild !== null);
         assert.ok(region.pokemon_pool.includes(wild!.name), `${wild!.name} not in region 2 pool`);
       }
     });
 
-    it('level is within region level_range', () => {
+    it('level is at least regionMin and at least evoMin', () => {
+      const state = makeState();
       const config = makeConfig({ current_region: '2' });
       const region = regionsDB.regions['2'];
       for (let i = 0; i < 50; i++) {
-        const wild = selectWildPokemon(config);
+        const wild = selectWildPokemon(state, config);
         assert.ok(wild !== null);
         assert.ok(wild!.level >= region.level_range[0]);
-        assert.ok(wild!.level <= region.level_range[1]);
+        // evoMin may exceed regionMax for high-stage pokemon — that's intentional
+        const evoMin = getMinWildLevel(wild!.name);
+        assert.ok(wild!.level >= evoMin, `${wild!.name} level ${wild!.level} < evoMin ${evoMin}`);
       }
     });
 
     it('respects rarity weights (common should appear most)', () => {
+      const state = makeState();
       const config = makeConfig({ current_region: '1' });
       const counts: Record<string, number> = {};
       for (let i = 0; i < 500; i++) {
-        const wild = selectWildPokemon(config);
+        const wild = selectWildPokemon(state, config);
         if (wild) {
           const rarity = pokemonDB.pokemon[wild.name]?.rarity ?? 'unknown';
           counts[rarity] = (counts[rarity] || 0) + 1;
@@ -88,6 +93,44 @@ describe('encounter', () => {
       const common = counts['common'] ?? 0;
       const total = Object.values(counts).reduce((a, b) => a + b, 0);
       assert.ok(common / total > 0.3, `Common ratio too low: ${common}/${total}`);
+    });
+  });
+
+  describe('getMinWildLevel', () => {
+    it('stage 0 returns 1', () => {
+      // 396 찌르꼬 is stage 0
+      assert.equal(getMinWildLevel('396'), 1);
+    });
+
+    it('stage 1 returns pre-evo evolves_at', () => {
+      // 397 찌르버드: stage 1, prev is 396 (evolves_at: 14)
+      assert.equal(getMinWildLevel('397'), 14);
+    });
+
+    it('stage 2 returns stage-1 evolves_at', () => {
+      // 398 찌르호크: stage 2, prev is 397 (evolves_at: 34)
+      assert.equal(getMinWildLevel('398'), 34);
+    });
+
+    it('cross-gen evolution falls back to 1', () => {
+      // 407 Roserade: stage 2, line=["406","407"] — line[1] is itself
+      assert.equal(getMinWildLevel('407'), 1);
+      // 424 Ambipom: stage 1, line=["424"] — line[0] is itself
+      assert.equal(getMinWildLevel('424'), 1);
+    });
+
+    it('stage-1 pokemon never spawns below pre-evo evolves_at', () => {
+      const state = makeState();
+      const config = makeConfig({ current_region: '1' });
+      for (let i = 0; i < 200; i++) {
+        const wild = selectWildPokemon(state, config);
+        if (!wild) continue;
+        const evoMin = getMinWildLevel(wild.name);
+        assert.ok(
+          wild.level >= evoMin,
+          `${wild.name} appeared at Lv.${wild.level} but evoMin is ${evoMin}`,
+        );
+      }
     });
   });
 

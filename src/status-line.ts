@@ -2,12 +2,12 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
 import { readConfig } from './core/config.js';
-import { getPokemonDB, getPokemonName, getRegionName } from './core/pokemon-data.js';
+import { getPokemonDB, getPokemonName, getRegionName, getGenerationsDB } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
-import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, SPRITES_KITTY_DIR, SPRITES_SIXEL_DIR, SPRITES_ITERM2_DIR } from './core/paths.js';
+import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, getActiveGeneration } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
 import { t, initLocale } from './i18n/index.js';
-import type { ExpGroup, SpriteRenderer } from './core/types.js';
+import type { ExpGroup } from './core/types.js';
 
 const TYPE_EMOJI: Record<string, string> = {
   'grass': '🌿', 'fire': '🔥', 'water': '💧', 'electric': '⚡', 'fighting': '🥊',
@@ -31,25 +31,7 @@ function getEmoji(types: string[]): string {
   return TYPE_EMOJI[types?.[0]] ?? '⭐';
 }
 
-const PNG_RENDERER_DIR: Record<Exclude<SpriteRenderer, 'braille'>, string> = {
-  kitty:  SPRITES_KITTY_DIR,
-  sixel:  SPRITES_SIXEL_DIR,
-  iterm2: SPRITES_ITERM2_DIR,
-};
-const PNG_RENDERER_EXT: Record<Exclude<SpriteRenderer, 'braille'>, string> = {
-  kitty:  '.bin',
-  sixel:  '.sixel',
-  iterm2: '.b64',
-};
-
-function loadSprite(pokemonId: number, renderer: SpriteRenderer = 'braille'): string[] {
-  if (renderer !== 'braille') {
-    const protoFile = join(PNG_RENDERER_DIR[renderer], `${pokemonId}${PNG_RENDERER_EXT[renderer]}`);
-    if (existsSync(protoFile)) {
-      return [readFileSync(protoFile, 'utf-8')];
-    }
-    // Fallback to braille if pre-generated sprite is missing
-  }
+function loadSprite(pokemonId: number): string[] {
   const brailleFile = join(SPRITES_BRAILLE_DIR, `${pokemonId}.txt`);
   const terminalFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
   const file = existsSync(brailleFile) ? brailleFile : existsSync(terminalFile) ? terminalFile : null;
@@ -57,12 +39,46 @@ function loadSprite(pokemonId: number, renderer: SpriteRenderer = 'braille'): st
   return readFileSync(file, 'utf-8').split('\n').filter(l => l.trim().length > 0);
 }
 
+function visibleLength(s: string): number {
+  // Strip ANSI escape codes, then count characters
+  // Unicode braille/CJK characters may be double-width in some terminals
+  const stripped = s.replace(/\x1b\[[^m]*m/g, '');
+  let len = 0;
+  for (const ch of stripped) {
+    const cp = ch.codePointAt(0) ?? 0;
+    // CJK, braille, and fullwidth characters take 2 columns
+    if (
+      (cp >= 0x2800 && cp <= 0x28FF) || // Braille
+      (cp >= 0x1100 && cp <= 0x115F) || // Hangul Jamo
+      (cp >= 0x2E80 && cp <= 0x9FFF) || // CJK
+      (cp >= 0xAC00 && cp <= 0xD7AF) || // Hangul Syllables
+      (cp >= 0xF900 && cp <= 0xFAFF) || // CJK Compatibility
+      (cp >= 0xFE10 && cp <= 0xFE6F) || // CJK Forms
+      (cp >= 0xFF01 && cp <= 0xFF60) || // Fullwidth
+      (cp >= 0xFFE0 && cp <= 0xFFE6) || // Fullwidth
+      (cp >= 0x20000 && cp <= 0x2FA1F)   // CJK Extension
+    ) {
+      len += 2;
+    } else {
+      len += 1;
+    }
+  }
+  return len;
+}
+
 function wrapPrint(parts: string[], maxWidth: number): void {
+  // Try single line first
+  const singleLine = parts.join(' | ');
+  if (visibleLength(singleLine) <= maxWidth) {
+    console.log(singleLine);
+    return;
+  }
+
+  // Wrap: greedy line packing
   let currentLine = '';
   for (const part of parts) {
     const test = currentLine ? currentLine + ' | ' + part : part;
-    const visibleLen = test.replace(/\x1b\[[^m]*m/g, '').length;
-    if (currentLine && visibleLen > maxWidth) {
+    if (currentLine && visibleLength(test) > maxWidth) {
       console.log(currentLine);
       currentLine = part;
     } else {
@@ -74,7 +90,7 @@ function wrapPrint(parts: string[], maxWidth: number): void {
 
 function main(): void {
   const config = readConfig();
-  initLocale(config.language ?? 'ko');
+  initLocale(config.language ?? 'en');
 
   if (!config.starter_chosen) {
     console.log(t('statusline.no_starter'));
@@ -91,14 +107,23 @@ function main(): void {
   const pokemonDB = getPokemonDB();
   const termWidth = process.stdout.columns || 80;
   const spriteMode = config.sprite_mode ?? 'all';
-  const renderer: SpriteRenderer = config.renderer ?? 'braille';
   const infoMode = config.info_mode ?? 'ace_full';
 
   // Footer
+  const activeGen = getActiveGeneration();
+  const gensDB = getGenerationsDB();
+  const genData = gensDB.generations[activeGen];
+  const lang = config.language ?? 'en';
+  const genRegionRaw = genData?.region_name;
+  const genRegion = genRegionRaw
+    ? (typeof genRegionRaw === 'string' ? genRegionRaw : genRegionRaw[lang] ?? genRegionRaw.en)
+    : activeGen;
+  const genOrder = genData?.order ?? 0;
+  const genSuffix = lang === 'ko' ? `(${genOrder}세대)` : `(Gen ${genOrder})`;
   const regionName = getRegionName(config.current_region ?? '1');
   const pokeballs = state.items?.pokeball ?? 0;
   const itemInfo = pokeballs > 0 ? ` 🔴 ${pokeballs}` : '';
-  const footer = `📍${regionName}${itemInfo}`;
+  const footer = `🎮${genRegion} ${genSuffix} 📍${regionName}${itemInfo}`;
 
   // Build per-pokemon data
   const pokeData: Array<{
@@ -130,31 +155,22 @@ function main(): void {
     for (let i = 0; i < pokeData.length; i++) {
       const p = pokeData[i];
       if (spriteMode === 'all' || i === 0) {
-        spriteEntries.push(loadSprite(p.pokemonId, renderer));
+        spriteEntries.push(loadSprite(p.pokemonId));
       }
     }
 
-    if (renderer !== 'braille') {
-      // PNG protocol renderers: each entry is a single escape sequence
-      for (const entry of spriteEntries) {
-        if (entry.length > 0) {
-          process.stdout.write(entry[0] + '\n');
-        }
-      }
-    } else {
-      // Braille: row-by-row grid rendering
-      const SPRITE_WIDTH = 20;
-      const spritesPerRow = Math.max(1, Math.floor(termWidth / (SPRITE_WIDTH + 1)));
-      for (let gi = 0; gi < spriteEntries.length; gi += spritesPerRow) {
-        const group = spriteEntries.slice(gi, gi + spritesPerRow);
-        const maxRows = Math.max(...group.map(s => s.length), 0);
-        for (let row = 0; row < maxRows; row++) {
-          console.log(group.map(s => {
-            const line = s[row] ?? '';
-            const visibleLen = line.replace(/\x1b\[[^m]*m/g, '').length;
-            return visibleLen < SPRITE_WIDTH ? line + ' '.repeat(SPRITE_WIDTH - visibleLen) : line;
-          }).join(' '));
-        }
+    // Braille: row-by-row grid rendering
+    const SPRITE_WIDTH = 20;
+    const spritesPerRow = Math.max(1, Math.floor(termWidth / (SPRITE_WIDTH + 1)));
+    for (let gi = 0; gi < spriteEntries.length; gi += spritesPerRow) {
+      const group = spriteEntries.slice(gi, gi + spritesPerRow);
+      const maxRows = Math.max(...group.map(s => s.length), 0);
+      for (let row = 0; row < maxRows; row++) {
+        console.log(group.map(s => {
+          const line = s[row] ?? '';
+          const visibleLen = line.replace(/\x1b\[[^m]*m/g, '').length;
+          return visibleLen < SPRITE_WIDTH ? line + ' '.repeat(SPRITE_WIDTH - visibleLen) : line;
+        }).join(' '));
       }
     }
   }
@@ -210,4 +226,9 @@ function main(): void {
   wrapPrint(infoParts, termWidth);
 }
 
-main();
+try {
+  main();
+} catch {
+  // Output minimal status on crash to prevent Claude Code from breaking
+  console.log('tokenmon: error');
+}

@@ -60,4 +60,9 @@ function main(): void {
   console.log('{"continue": true}');
 }
 
-main();
+try {
+  main();
+} catch (err) {
+  process.stderr.write(`tokenmon subagent-start: ${err}\n`);
+  console.log(JSON.stringify({ continue: true }));
+}

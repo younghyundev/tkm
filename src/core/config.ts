@@ -1,7 +1,12 @@
 import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
-import { CONFIG_PATH, I18N_DATA_DIR } from './paths.js';
-import type { Config } from './types.js';
+import { configPath, i18nDataDir, GLOBAL_CONFIG_PATH, DATA_DIR, I18N_DATA_DIR } from './paths.js';
+import type { Config, GlobalConfig } from './types.js';
+
+const DEFAULT_GLOBAL_CONFIG: GlobalConfig = {
+  active_generation: 'gen4',
+  language: 'en',
+};
 
 const DEFAULT_CONFIG: Config = {
   tokens_per_xp: 10000,
@@ -12,7 +17,7 @@ const DEFAULT_CONFIG: Config = {
   cry_enabled: true,
   xp_formula: 'medium_fast',
   xp_bonus_multiplier: 1.0,
-  max_party_size: 6,
+  max_party_size: 3,
   peon_ping_integration: false,
   peon_ping_port: 19998,
   current_region: '1',
@@ -21,10 +26,45 @@ const DEFAULT_CONFIG: Config = {
   renderer: 'braille',
   info_mode: 'ace_full',
   tips_enabled: true,
-  language: 'ko' as const,
+  notifications_enabled: true,
+  language: 'en' as const,
 };
 
-function migrateConfig(config: Config): Config {
+// ── Global config (shared across generations) ──
+
+export function readGlobalConfig(): GlobalConfig {
+  if (!existsSync(GLOBAL_CONFIG_PATH)) {
+    // If legacy config exists at root, read language from it
+    const legacyConfigPath = join(DATA_DIR, 'config.json');
+    if (existsSync(legacyConfigPath)) {
+      try {
+        const legacy = JSON.parse(readFileSync(legacyConfigPath, 'utf-8'));
+        return {
+          ...DEFAULT_GLOBAL_CONFIG,
+          language: legacy.language ?? 'en',
+        };
+      } catch { /* fall through */ }
+    }
+    return { ...DEFAULT_GLOBAL_CONFIG };
+  }
+  const raw = readFileSync(GLOBAL_CONFIG_PATH, 'utf-8');
+  const parsed = JSON.parse(raw) as Partial<GlobalConfig>;
+  return {
+    ...DEFAULT_GLOBAL_CONFIG,
+    ...parsed,
+  };
+}
+
+export function writeGlobalConfig(config: GlobalConfig): void {
+  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
+  const tmpPath = GLOBAL_CONFIG_PATH + '.tmp';
+  writeFileSync(tmpPath, JSON.stringify(config, null, 2), 'utf-8');
+  renameSync(tmpPath, GLOBAL_CONFIG_PATH);
+}
+
+// ── Per-generation config ──
+
+function migrateConfig(config: Config, i18nDir: string): Config {
   // Quick check: does any party member or region look like a Korean name?
   const hasKorean = (s: string) => /[\uac00-\ud7a3]/.test(s);
   const needsMigration =
@@ -34,13 +74,15 @@ function migrateConfig(config: Config): Config {
 
   if (!needsMigration) return config;
 
-  // Build Korean name -> ID maps from data/i18n/ko.json
-  const koI18nPath = join(I18N_DATA_DIR, 'ko.json');
-  if (!existsSync(koI18nPath)) return config;
+  // Build Korean name -> ID maps from i18n/ko.json
+  const koI18nPath = join(i18nDir, 'ko.json');
+  // Also check legacy path as fallback
+  const koPath = existsSync(koI18nPath) ? koI18nPath : join(I18N_DATA_DIR, 'ko.json');
+  if (!existsSync(koPath)) return config;
 
   let koData: { pokemon: Record<string, string>; regions: Record<string, { name: string }> };
   try {
-    koData = JSON.parse(readFileSync(koI18nPath, 'utf-8'));
+    koData = JSON.parse(readFileSync(koPath, 'utf-8'));
   } catch {
     return config;
   }
@@ -73,26 +115,57 @@ function migrateConfig(config: Config): Config {
   return config;
 }
 
-export function readConfig(): Config {
-  if (!existsSync(CONFIG_PATH)) {
-    return { ...DEFAULT_CONFIG, party: [] };
+export function readConfig(gen?: string): Config {
+  const path = configPath(gen);
+  let result: Config;
+  let hasExplicitPartySize = false;
+  if (!existsSync(path)) {
+    result = { ...DEFAULT_CONFIG, party: [] };
+  } else {
+    const raw = readFileSync(path, 'utf-8');
+    const parsed = JSON.parse(raw) as Partial<Config>;
+    hasExplicitPartySize = parsed.max_party_size !== undefined;
+    result = {
+      ...DEFAULT_CONFIG,
+      ...parsed,
+      party: parsed.party ?? [],
+    };
   }
-  const raw = readFileSync(CONFIG_PATH, 'utf-8');
-  const parsed = JSON.parse(raw) as Partial<Config>;
-  const result: Config = {
-    ...DEFAULT_CONFIG,
-    ...parsed,
-    party: parsed.party ?? [],
-  };
-  return migrateConfig(result);
+  // Sync language from global config
+  const globalConfig = readGlobalConfig();
+  result.language = globalConfig.language;
+
+  // For pre-migration configs that don't have max_party_size persisted:
+  // if party is already larger than the new default (3), preserve their earned capacity
+  if (!hasExplicitPartySize && result.party.length > result.max_party_size) {
+    result.max_party_size = Math.min(6, result.party.length);
+  }
+  // Hard cap at 6 (original games)
+  if (result.max_party_size > 6) {
+    result.max_party_size = 6;
+  }
+  // Trim party to match cap (migration for users who had 7-8)
+  if (result.party.length > result.max_party_size) {
+    result.party = result.party.slice(0, result.max_party_size);
+  }
+
+  return migrateConfig(result, i18nDataDir(gen));
 }
 
-export function writeConfig(config: Config): void {
-  const dir = dirname(CONFIG_PATH);
+export function writeConfig(config: Config, gen?: string): void {
+  const path = configPath(gen);
+  const dir = dirname(path);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  const tmpPath = CONFIG_PATH + '.tmp';
+  const tmpPath = path + '.tmp';
   writeFileSync(tmpPath, JSON.stringify(config, null, 2), 'utf-8');
-  renameSync(tmpPath, CONFIG_PATH);
+  renameSync(tmpPath, path);
+
+  // Sync language to global config (single source of truth)
+  const gc = readGlobalConfig();
+  if (gc.language !== config.language) {
+    gc.language = config.language;
+    writeGlobalConfig(gc);
+  }
 }
 
 export function getDefaultConfig(): Config {

@@ -1,4 +1,8 @@
 import type { State, Config } from '../src/core/types.js';
+import { setActiveGenerationCache } from '../src/core/paths.js';
+
+// Pin active generation to gen4 for tests (prevents env leakage from global-config.json)
+setActiveGenerationCache('gen4');
 
 /**
  * Canonical test factory for State — includes ALL fields from the State interface.
@@ -27,6 +31,33 @@ export function makeState(overrides: Partial<State> = {}): State {
     cheat_log: [],
     last_battle: null,
     last_tip: null,
+    notifications: [],
+    dismissed_notifications: [],
+    last_known_regions: 1,
+    stats: {
+      streak_days: 0,
+      longest_streak: 0,
+      last_active_date: '',
+      weekly_xp: 0,
+      weekly_battles_won: 0,
+      weekly_battles_lost: 0,
+      weekly_catches: 0,
+      weekly_encounters: 0,
+      total_xp_earned: 0,
+      total_battles_won: 0,
+      total_battles_lost: 0,
+      total_catches: 0,
+      total_encounters: 0,
+      last_reset_week: '',
+    },
+    events_triggered: [],
+    pokedex_milestones_claimed: [],
+    type_masters: [],
+    legendary_pool: [],
+    legendary_pending: [],
+    titles: [],
+    completed_chains: [],
+    star_dismissed: false,
     ...overrides,
   };
 }
@@ -53,7 +84,9 @@ export function makeConfig(overrides: Partial<Config> = {}): Config {
     sprite_mode: 'all',
     info_mode: 'ace_full',
     tips_enabled: true,
+    notifications_enabled: true,
     language: 'ko' as const,
+    renderer: 'braille' as const,
     ...overrides,
   };
 }

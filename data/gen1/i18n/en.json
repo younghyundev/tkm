@@ -1,0 +1,320 @@
+{
+  "pokemon": {
+    "1": "Bulbasaur",
+    "2": "Ivysaur",
+    "3": "Venusaur",
+    "4": "Charmander",
+    "5": "Charmeleon",
+    "6": "Charizard",
+    "7": "Squirtle",
+    "8": "Wartortle",
+    "9": "Blastoise",
+    "10": "Caterpie",
+    "11": "Metapod",
+    "12": "Butterfree",
+    "13": "Weedle",
+    "14": "Kakuna",
+    "15": "Beedrill",
+    "16": "Pidgey",
+    "17": "Pidgeotto",
+    "18": "Pidgeot",
+    "19": "Rattata",
+    "20": "Raticate",
+    "21": "Spearow",
+    "22": "Fearow",
+    "23": "Ekans",
+    "24": "Arbok",
+    "25": "Pikachu",
+    "26": "Raichu",
+    "27": "Sandshrew",
+    "28": "Sandslash",
+    "29": "Nidoran♀",
+    "30": "Nidorina",
+    "31": "Nidoqueen",
+    "32": "Nidoran♂",
+    "33": "Nidorino",
+    "34": "Nidoking",
+    "35": "Clefairy",
+    "36": "Clefable",
+    "37": "Vulpix",
+    "38": "Ninetales",
+    "39": "Jigglypuff",
+    "40": "Wigglytuff",
+    "41": "Zubat",
+    "42": "Golbat",
+    "43": "Oddish",
+    "44": "Gloom",
+    "45": "Vileplume",
+    "46": "Paras",
+    "47": "Parasect",
+    "48": "Venonat",
+    "49": "Venomoth",
+    "50": "Diglett",
+    "51": "Dugtrio",
+    "52": "Meowth",
+    "53": "Persian",
+    "54": "Psyduck",
+    "55": "Golduck",
+    "56": "Mankey",
+    "57": "Primeape",
+    "58": "Growlithe",
+    "59": "Arcanine",
+    "60": "Poliwag",
+    "61": "Poliwhirl",
+    "62": "Poliwrath",
+    "63": "Abra",
+    "64": "Kadabra",
+    "65": "Alakazam",
+    "66": "Machop",
+    "67": "Machoke",
+    "68": "Machamp",
+    "69": "Bellsprout",
+    "70": "Weepinbell",
+    "71": "Victreebel",
+    "72": "Tentacool",
+    "73": "Tentacruel",
+    "74": "Geodude",
+    "75": "Graveler",
+    "76": "Golem",
+    "77": "Ponyta",
+    "78": "Rapidash",
+    "79": "Slowpoke",
+    "80": "Slowbro",
+    "81": "Magnemite",
+    "82": "Magneton",
+    "83": "Farfetch’d",
+    "84": "Doduo",
+    "85": "Dodrio",
+    "86": "Seel",
+    "87": "Dewgong",
+    "88": "Grimer",
+    "89": "Muk",
+    "90": "Shellder",
+    "91": "Cloyster",
+    "92": "Gastly",
+    "93": "Haunter",
+    "94": "Gengar",
+    "95": "Onix",
+    "96": "Drowzee",
+    "97": "Hypno",
+    "98": "Krabby",
+    "99": "Kingler",
+    "100": "Voltorb",
+    "101": "Electrode",
+    "102": "Exeggcute",
+    "103": "Exeggutor",
+    "104": "Cubone",
+    "105": "Marowak",
+    "106": "Hitmonlee",
+    "107": "Hitmonchan",
+    "108": "Lickitung",
+    "109": "Koffing",
+    "110": "Weezing",
+    "111": "Rhyhorn",
+    "112": "Rhydon",
+    "113": "Chansey",
+    "114": "Tangela",
+    "115": "Kangaskhan",
+    "116": "Horsea",
+    "117": "Seadra",
+    "118": "Goldeen",
+    "119": "Seaking",
+    "120": "Staryu",
+    "121": "Starmie",
+    "122": "Mr. Mime",
+    "123": "Scyther",
+    "124": "Jynx",
+    "125": "Electabuzz",
+    "126": "Magmar",
+    "127": "Pinsir",
+    "128": "Tauros",
+    "129": "Magikarp",
+    "130": "Gyarados",
+    "131": "Lapras",
+    "132": "Ditto",
+    "133": "Eevee",
+    "134": "Vaporeon",
+    "135": "Jolteon",
+    "136": "Flareon",
+    "137": "Porygon",
+    "138": "Omanyte",
+    "139": "Omastar",
+    "140": "Kabuto",
+    "141": "Kabutops",
+    "142": "Aerodactyl",
+    "143": "Snorlax",
+    "144": "Articuno",
+    "145": "Zapdos",
+    "146": "Moltres",
+    "147": "Dratini",
+    "148": "Dragonair",
+    "149": "Dragonite",
+    "150": "Mewtwo",
+    "151": "Mew"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fire",
+    "water": "Water",
+    "electric": "Electric",
+    "grass": "Grass",
+    "ice": "Ice",
+    "fighting": "Fighting",
+    "poison": "Poison",
+    "ground": "Ground",
+    "flying": "Flying",
+    "psychic": "Psychic",
+    "bug": "Bug",
+    "rock": "Rock",
+    "ghost": "Ghost",
+    "dragon": "Dragon",
+    "dark": "Dark",
+    "steel": "Steel",
+    "fairy": "Fairy"
+  },
+  "regions": {
+    "1": {
+      "name": "Pallet Town",
+      "description": "Where your journey begins"
+    },
+    "2": {
+      "name": "Pewter City",
+      "description": "A stone gray city"
+    },
+    "3": {
+      "name": "Cerulean City",
+      "description": "A mysterious blue aura surrounds it"
+    },
+    "4": {
+      "name": "Vermilion City",
+      "description": "The port of exquisite sunsets"
+    },
+    "5": {
+      "name": "Celadon City",
+      "description": "The city of rainbow dreams"
+    },
+    "6": {
+      "name": "Fuchsia City",
+      "description": "Happening and Pokemon ninja"
+    },
+    "7": {
+      "name": "Saffron City",
+      "description": "Shining golden land of commerce"
+    },
+    "8": {
+      "name": "Cinnabar Island",
+      "description": "The fiery town of burning desire"
+    },
+    "9": {
+      "name": "Indigo Plateau",
+      "description": "The ultimate Pokemon League challenge"
+    }
+  },
+  "achievements": {
+    "first_catch": {
+      "name": "First Catch",
+      "description": "Catch your first wild Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_10": {
+      "name": "Boulder Badge",
+      "description": "Catch 10 Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_25": {
+      "name": "Cascade Badge",
+      "description": "Catch 25 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_50": {
+      "name": "Thunder Badge",
+      "description": "Catch 50 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_75": {
+      "name": "Rainbow Badge",
+      "description": "Catch 75 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_100": {
+      "name": "Soul Badge",
+      "description": "Catch 100 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_120": {
+      "name": "Marsh Badge",
+      "description": "Catch 120 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_140": {
+      "name": "Volcano Badge",
+      "description": "Catch 140 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_151": {
+      "name": "Earth Badge",
+      "description": "Complete the Kanto Pokédex!",
+      "rarity_label": "Legendary"
+    },
+    "first_evolution": {
+      "name": "First Evolution",
+      "description": "Evolve a Pokémon for the first time",
+      "rarity_label": "Common"
+    },
+    "evolve_10": {
+      "name": "Evolution Expert",
+      "description": "Evolve 10 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "win_10": {
+      "name": "Rising Trainer",
+      "description": "Win 10 battles",
+      "rarity_label": "Common"
+    },
+    "win_50": {
+      "name": "Battle Veteran",
+      "description": "Win 50 battles",
+      "rarity_label": "Uncommon"
+    },
+    "win_100": {
+      "name": "Battle Master",
+      "description": "Win 100 battles",
+      "rarity_label": "Rare"
+    },
+    "level_50": {
+      "name": "Power Trainer",
+      "description": "Reach level 50 with any Pokémon",
+      "rarity_label": "Rare"
+    },
+    "level_100": {
+      "name": "Champion",
+      "description": "Reach level 100 with any Pokémon",
+      "rarity_label": "Epic"
+    },
+    "streak_7": {
+      "name": "Weekly Warrior",
+      "description": "Maintain a 7-day streak",
+      "rarity_label": "Uncommon"
+    },
+    "streak_30": {
+      "name": "Monthly Master",
+      "description": "Maintain a 30-day streak",
+      "rarity_label": "Rare"
+    },
+    "all_types": {
+      "name": "Type Collector",
+      "description": "Catch at least one Pokémon of every type",
+      "rarity_label": "Rare"
+    },
+    "all_starters": {
+      "name": "Professor's Pride",
+      "description": "Obtain all three Kanto starters",
+      "rarity_label": "Uncommon"
+    },
+    "eevee_trio": {
+      "name": "Eevee Master",
+      "description": "Obtain all three Eevee evolutions",
+      "rarity_label": "Rare"
+    }
+  }
+}

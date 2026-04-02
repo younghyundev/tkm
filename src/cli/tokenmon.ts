@@ -2,16 +2,22 @@
 import * as readline from 'readline';
 import { readFileSync } from 'fs';
 import { readState, writeState } from '../core/state.js';
-import { readConfig, writeConfig, getDefaultConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName } from '../core/pokemon-data.js';
+import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { getCurrentRegion, getRegionList, moveToRegion } from '../core/regions.js';
 import { renderGuide, renderGuideIndex } from '../core/guide.js';
-import { t, initLocale } from '../i18n/index.js';
+import { getEligibleBranches, applyBranchEvolution } from '../core/evolution.js';
+import { getActiveNotifications, dismissAll } from '../core/notifications.js';
+import { getActiveEvents } from '../core/encounter.js';
+import { getEventsDB, getRegionsDB, getPokedexRewardsDB } from '../core/pokemon-data.js';
+import { getTypeMasterProgress } from '../core/pokedex-rewards.js';
+import { t, initLocale, getLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
-import type { ExpGroup } from '../core/types.js';
+import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCache } from '../core/paths.js';
+import type { ExpGroup, EvolutionContext } from '../core/types.js';
 
 // ANSI color helpers
 const BOLD = '\x1b[1m';
@@ -99,71 +105,75 @@ function cmdStatus(): void {
   console.log(t('cli.status.stat_region', { region: getRegionName(config.current_region ?? '1') }));
 }
 
-function cmdStarter(): void {
+function cmdStarter(choiceArg?: string): void {
   const config = readConfig();
   const state = readState();
   const pokemonDB = getPokemonDB();
 
   if (config.starter_chosen) {
     warn(t('cli.starter.already_chosen'));
-    info(t('cli.starter.current_party', { party: config.party.map(getPokemonName).join(', ') }));
+    info(t('cli.starter.current_party', { party: config.party.map(p => getPokemonName(p)).join(', ') }));
     return;
   }
 
-  bold(t('cli.starter.prompt_title'));
-  console.log('');
-
   const starters = pokemonDB.starters;
-  for (let i = 0; i < starters.length; i++) {
-    const s = starters[i];
-    const pData = pokemonDB.pokemon[s];
-    const types = pData?.types?.join('/') ?? '';
-    const pokemonId = pData?.id ?? '?';
-    console.log(`  ${i + 1}) ${BOLD}${getPokemonName(s)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
+
+  // No argument: list options and exit (Claude Code uses AskUserQuestion)
+  if (!choiceArg) {
+    bold(t('cli.starter.prompt_title'));
+    console.log('');
+    for (let i = 0; i < starters.length; i++) {
+      const s = starters[i];
+      const pData = pokemonDB.pokemon[s];
+      const types = pData?.types?.join('/') ?? '';
+      const pokemonId = pData?.id ?? '?';
+      console.log(`  ${i + 1}) ${BOLD}${getPokemonName(s)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
+    }
+    return;
   }
 
-  console.log('');
-  // Read choice from stdin
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  rl.question(t('cli.starter.prompt_input', { count: starters.length }), (answer: string) => {
-    rl.close();
-    const choice = parseInt(answer, 10);
-    if (isNaN(choice) || choice < 1 || choice > starters.length) {
-      error(t('cli.starter.invalid_choice'));
-      process.exit(1);
+  // Resolve choice: number (1-based index) or pokemon ID
+  let chosen: string | undefined;
+  const num = parseInt(choiceArg, 10);
+  if (!isNaN(num) && num >= 1 && num <= starters.length) {
+    chosen = starters[num - 1];
+  } else if (starters.includes(choiceArg)) {
+    chosen = choiceArg;
+  }
+
+  if (!chosen) {
+    error(t('cli.starter.invalid_choice'));
+    return;
+  }
+
+  // Mutation under lock (re-read fresh state)
+  const lockResult = withLock(() => {
+    const freshConfig = readConfig();
+    const freshState = readState();
+    const pData = pokemonDB.pokemon[chosen];
+
+    freshConfig.party = [chosen];
+    freshConfig.starter_chosen = true;
+    writeConfig(freshConfig);
+
+    if (!freshState.pokemon[chosen]) {
+      const starterLevel = 5;
+      const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
+      freshState.pokemon[chosen] = { id: pData?.id ?? 0, xp: levelToXp(starterLevel, expGroup), level: starterLevel, friendship: 0, ev: 0 };
     }
-
-    const chosen = starters[choice - 1];
-
-    // Mutation under lock (re-read fresh state)
-    const lockResult = withLock(() => {
-      const freshConfig = readConfig();
-      const freshState = readState();
-      const pData = pokemonDB.pokemon[chosen];
-
-      freshConfig.party = [chosen];
-      freshConfig.starter_chosen = true;
-      writeConfig(freshConfig);
-
-      if (!freshState.pokemon[chosen]) {
-        const starterLevel = 5;
-        const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
-        freshState.pokemon[chosen] = { id: pData?.id ?? 0, xp: levelToXp(starterLevel, expGroup), level: starterLevel, friendship: 0, ev: 0 };
-      }
-      if (!freshState.unlocked.includes(chosen)) {
-        freshState.unlocked.push(chosen);
-      }
-      writeState(freshState);
-    });
-
-    if (lockResult === null) {
-      error(t('cli.lock_busy'));
-      process.exit(1);
+    if (!freshState.unlocked.includes(chosen)) {
+      freshState.unlocked.push(chosen);
     }
-
-    success(t('cli.starter.chosen', { pokemon: getPokemonName(chosen) }));
-    playCry(chosen);
+    writeState(freshState);
   });
+
+  if (lockResult === null) {
+    error(t('cli.lock_busy'));
+    process.exit(1);
+  }
+
+  success(t('cli.starter.chosen', { pokemon: getPokemonName(chosen) }));
+  playCry(chosen);
 }
 
 function cmdParty(subcmd: string, pokemon?: string): void {
@@ -242,6 +252,15 @@ function cmdParty(subcmd: string, pokemon?: string): void {
       success(t('cli.party.remove_success', { pokemon }));
       break;
     }
+    case 'swap':
+      cmdPartySwap(process.argv[4] ?? '', process.argv[5] ?? '');
+      break;
+    case 'reorder':
+      cmdPartyReorder(process.argv[4] ?? '', process.argv[5] ?? '');
+      break;
+    case 'suggest':
+      cmdPartySuggest();
+      break;
     default: {
       // list
       bold(t('cli.party.header'));
@@ -305,6 +324,7 @@ function cmdConfigSet(key: string, value: string): void {
     console.log(t('cli.config.key_max_party'));
     console.log(t('cli.config.key_peon_ping'));
     console.log(t('cli.config.key_tips_enabled'));
+    console.log(t('cli.config.key_notifications'));
     console.log(t('cli.config.help_renderer'));
 
     process.exit(1);
@@ -313,7 +333,7 @@ function cmdConfigSet(key: string, value: string): void {
   const config = readConfig();
   const numericKeys = ['tokens_per_xp', 'max_party_size', 'peon_ping_port'];
   const floatKeys = ['volume', 'xp_bonus_multiplier'];
-  const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration', 'tips_enabled'];
+  const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration', 'tips_enabled', 'notifications_enabled'];
   const stringEnumKeys: Record<string, string[]> = {
     sprite_mode: ['all', 'ace_only', 'emoji_all', 'emoji_ace'],
     info_mode:   ['ace_full', 'name_level', 'all_full', 'ace_level'],
@@ -415,6 +435,23 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
     const typeStr = entry.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
     const nameDisplay = entry.status === 'unknown' ? `${GRAY}???${RESET}` : entry.name;
     console.log(`  ${icon} #${String(entry.id).padStart(3, '0')} ${nameDisplay.padEnd(8)} ${typeStr} ${GRAY}${entry.rarity}${RESET}`);
+  }
+
+  // Show type master progress when --type filter is used or list is unfiltered
+  if (filters.type || Object.keys(filters).length === 0) {
+    console.log('');
+    bold(t('cli.pokedex.type_master_header'));
+    const progress = getTypeMasterProgress(state);
+    const typeColors = pokemonDB.type_colors;
+    for (const entry of progress) {
+      const color = typeColors[entry.type] ?? '';
+      if (entry.mastered) {
+        console.log(t('cli.pokedex.type_mastered', { type: `${color}${entry.type}${RESET}` }));
+      } else {
+        const pct = entry.total > 0 ? Math.round(entry.caught / entry.total * 100) : 0;
+        console.log(t('cli.pokedex.type_progress', { type: `${color}${entry.type}${RESET}`, caught: entry.caught, total: entry.total, pct }));
+      }
+    }
   }
 }
 
@@ -522,6 +559,19 @@ function doReset(): void {
       encounter_count: 0, catch_count: 0, battle_count: 0,
       battle_wins: 0, battle_losses: 0, items: {}, cheat_log: cheatLog,
       last_battle: null, last_tip: null,
+      notifications: [], dismissed_notifications: [], last_known_regions: 1,
+      stats: {
+        streak_days: 0, longest_streak: 0, last_active_date: '',
+        weekly_xp: 0, weekly_battles_won: 0, weekly_battles_lost: 0,
+        weekly_catches: 0, weekly_encounters: 0,
+        total_xp_earned: 0, total_battles_won: 0, total_battles_lost: 0,
+        total_catches: 0, total_encounters: 0, last_reset_week: '',
+      },
+      events_triggered: [],
+      pokedex_milestones_claimed: [], type_masters: [],
+      legendary_pool: [], legendary_pending: [], titles: [],
+      completed_chains: [],
+      star_dismissed: false,
     };
     writeState(defaultState);
   });
@@ -626,12 +676,670 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
   }
 }
 
+function cmdEvolve(pokemonArg?: string, targetArg?: string): void {
+  const config = readConfig();
+  const state = readState();
+  const pokemonDB = getPokemonDB();
+
+  // No args: list all evolution-ready pokemon in party
+  if (!pokemonArg) {
+    const ready = config.party.filter(p => state.pokemon[p]?.evolution_ready);
+    if (ready.length === 0) {
+      info(t('cli.evolve.none_ready'));
+      return;
+    }
+    bold(t('cli.evolve.ready_header'));
+    for (const p of ready) {
+      const opts = state.pokemon[p].evolution_options ?? [];
+      console.log(`  ${BOLD}${getPokemonName(p)}${RESET} → ${opts.map(o => getPokemonName(o)).join(' / ')}`);
+    }
+    console.log('');
+    info(t('cli.evolve.usage_hint'));
+    return;
+  }
+
+  // Validate pokemon
+  const pState = state.pokemon[pokemonArg];
+  if (!pState) {
+    error(t('cli.evolve.not_found', { pokemon: pokemonArg }));
+    return;
+  }
+  if (!pState.evolution_ready) {
+    warn(t('cli.evolve.not_ready', { pokemon: getPokemonName(pokemonArg) }));
+    return;
+  }
+
+  const ctx: EvolutionContext = {
+    oldLevel: pState.level - 1,
+    newLevel: pState.level,
+    friendship: pState.friendship ?? 0,
+    currentRegion: config.current_region ?? '1',
+    unlockedAchievements: Object.keys(state.achievements).filter(k => state.achievements[k]),
+    items: state.items ?? {},
+  };
+  const branches = getEligibleBranches(pokemonArg, ctx);
+  const eligible = branches.filter(b => b.conditionMet);
+
+  if (eligible.length === 0) {
+    warn(t('cli.evolve.no_eligible', { pokemon: getPokemonName(pokemonArg) }));
+    return;
+  }
+
+  // Direct evolution with target specified
+  if (targetArg) {
+    const branch = eligible.find(b => b.name === targetArg);
+    if (!branch) {
+      error(t('cli.evolve.invalid_target', { target: targetArg }));
+      return;
+    }
+    executeEvolve(pokemonArg, targetArg, config);
+    return;
+  }
+
+  // Show eligible branches only (ineligible branches not shown to avoid confusion)
+  bold(t('cli.evolve.select_header', { pokemon: getPokemonName(pokemonArg) }));
+  console.log('');
+  for (let i = 0; i < eligible.length; i++) {
+    const b = eligible[i];
+    const targetData = pokemonDB.pokemon[b.name];
+    const types = targetData?.types?.join('/') ?? '';
+    console.log(`  ${i + 1}) ${BOLD}${getPokemonName(b.name)}${RESET} ${GRAY}${types}${RESET}`);
+    console.log(`     ${GRAY}${t('cli.evolve.condition', { cond: b.conditionLabel })}${RESET}`);
+  }
+  // Show ineligible branches as info
+  const ineligible = branches.filter(b => !b.conditionMet);
+  if (ineligible.length > 0) {
+    console.log('');
+    for (const b of ineligible) {
+      console.log(`  ${GRAY}✗ ${getPokemonName(b.name)} — ${t('cli.evolve.condition', { cond: b.conditionLabel })}${RESET}`);
+    }
+  }
+  console.log('');
+
+  if (eligible.length === 1) {
+    // Single eligible — confirm
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    rl.question(t('cli.evolve.confirm', { target: getPokemonName(eligible[0].name) }), (answer: string) => {
+      rl.close();
+      if (answer.toLowerCase() === 'y') {
+        executeEvolve(pokemonArg!, eligible[0].name, config);
+      } else {
+        info(t('cli.evolve.cancelled'));
+      }
+    });
+  } else {
+    // Multiple eligible — select by number
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    rl.question(t('cli.evolve.prompt_select', { count: eligible.length }), (answer: string) => {
+      rl.close();
+      const idx = parseInt(answer, 10);
+      if (isNaN(idx) || idx < 1 || idx > eligible.length) {
+        error(t('cli.evolve.invalid_choice'));
+        process.exit(1);
+      }
+      executeEvolve(pokemonArg!, eligible[idx - 1].name, config);
+    });
+  }
+}
+
+function executeEvolve(pokemonName: string, targetName: string, _config: unknown): void {
+  const evolveResult = withLock(() => {
+    const freshState = readState();
+    const freshConfig = readConfig();
+    const result = applyBranchEvolution(freshState, freshConfig, pokemonName, targetName);
+    if (!result) return { ok: false as const };
+    writeState(freshState);
+    writeConfig(freshConfig);
+    return { ok: true as const, result };
+  });
+
+  if (evolveResult === null) {
+    error(t('cli.lock_failed'));
+    process.exit(1);
+  }
+  if (!evolveResult.ok) {
+    error(t('cli.evolve.failed'));
+    return;
+  }
+
+  const { result } = evolveResult;
+  success(t('cli.evolve.success', { old: getPokemonName(result.oldPokemon), new: getPokemonName(result.newPokemon) }));
+  playCry(result.newPokemon);
+}
+
+function cmdNotifications(subcmd?: string): void {
+  const state = readState();
+
+  if (subcmd === 'clear') {
+    const clearResult = withLock(() => {
+      const freshState = readState();
+      dismissAll(freshState);
+      writeState(freshState);
+    });
+    if (clearResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+    success(t('cli.notifications.cleared'));
+    return;
+  }
+
+  // List active notifications
+  const active = getActiveNotifications(state);
+  bold(t('cli.notifications.header'));
+  if (active.length === 0) {
+    info(t('cli.notifications.empty'));
+    return;
+  }
+
+  const icons: Record<string, string> = {
+    evolution_ready: '✨',
+    region_unlocked: '🗺️',
+    achievement_near: '🏆',
+  };
+  for (const n of active) {
+    const icon = icons[n.type] ?? '📢';
+    console.log(`  ${icon} ${n.message}`);
+  }
+  console.log('');
+  info(t('cli.notifications.clear_hint'));
+}
+
 function cmdGuide(topic?: string): void {
   if (!topic) {
     renderGuideIndex();
   } else {
     renderGuide(topic);
   }
+}
+
+function cmdDashboard(): void {
+  const state = readState();
+  const config = readConfig();
+  const pokemonDB = getPokemonDB();
+  const events = getActiveEvents(state);
+  const locale = getLocale();
+
+  // Region info
+  const region = getCurrentRegion(config);
+  const regionName = region ? getRegionName(config.current_region) : '—';
+  const [minLv, maxLv] = region?.level_range ?? [1, 10];
+
+  // Pokedex
+  const totalPokemon = Object.keys(pokemonDB.pokemon).length;
+  const caughtCount = Object.values(state.pokedex).filter(e => e.caught).length;
+  const caughtPct = totalPokemon > 0 ? ((caughtCount / totalPokemon) * 100).toFixed(1) : '0.0';
+
+  // Width
+  const W = 40;
+  const hr = '═'.repeat(W);
+  const pad = (s: string, len: number) => {
+    // Strip ANSI for length calc
+    const stripped = s.replace(/\x1b\[[0-9;]*m/g, '');
+    const diff = len - stripped.length;
+    return diff > 0 ? s + ' '.repeat(diff) : s;
+  };
+  const row = (s: string) => {
+    console.log(`║  ${pad(s, W - 4)}  ║`);
+  };
+
+  console.log(`╔${hr}╗`);
+  row(t('cli.dashboard.region', { region: regionName, min: minLv, max: maxLv }));
+  row(t('cli.dashboard.streak', { days: state.stats.streak_days, best: state.stats.longest_streak }));
+  row(t('cli.dashboard.pokedex', { caught: caughtCount, total: totalPokemon, pct: caughtPct }));
+  console.log(`╠${hr}╣`);
+
+  // Party
+  row(t('cli.dashboard.party_title'));
+  if (config.party.length === 0) {
+    row(t('cli.dashboard.party_empty'));
+  } else {
+    for (const name of config.party) {
+      const p = state.pokemon[name];
+      if (!p) continue;
+      const pName = getPokemonName(name);
+      const level = p.level;
+      const pData = pokemonDB.pokemon[name];
+      const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
+      const bar = xpBar(p.xp, level, expGroup, 10);
+      const currLvlXp = levelToXp(level, expGroup);
+      const nextLvlXp = levelToXp(level + 1, expGroup);
+      const xpNeeded = Math.max(1, nextLvlXp - currLvlXp);
+      const xpInLevel = Math.max(0, p.xp - currLvlXp);
+      const pct = Math.min(100, Math.floor((xpInLevel / xpNeeded) * 100));
+      row(`${pName}  Lv.${level}  ${bar}  ${pct}%`);
+    }
+  }
+  console.log(`╠${hr}╣`);
+
+  // Recent activity (weekly stats)
+  row(t('cli.dashboard.activity_title'));
+  row(t('cli.dashboard.activity_xp', { xp: state.stats.weekly_xp.toLocaleString() }));
+  const bTotal = state.stats.weekly_battles_won + state.stats.weekly_battles_lost;
+  row(t('cli.dashboard.activity_battles', { total: bTotal, wins: state.stats.weekly_battles_won, losses: state.stats.weekly_battles_lost }));
+  row(t('cli.dashboard.activity_catches', { count: state.stats.weekly_catches }));
+  row(t('cli.dashboard.activity_encounters', { count: state.stats.weekly_encounters }));
+
+  // Active notifications
+  const notifs = getActiveNotifications(state);
+  for (const n of notifs) {
+    row(`• ${n.message}`);
+  }
+  console.log(`╠${hr}╣`);
+
+  // Active events
+  row(t('cli.dashboard.events_title'));
+  const allEvents = [
+    ...events.timeEvents.map(e => e.label[locale] ?? e.label.en),
+    ...events.dayEvents.map(e => e.label[locale] ?? e.label.en),
+    ...events.streakEvents.map(e => e.label[locale] ?? e.label.en),
+  ];
+  if (allEvents.length === 0) {
+    row(t('cli.dashboard.events_none'));
+  } else {
+    for (const label of allEvents) {
+      row(label);
+    }
+  }
+  console.log(`╚${hr}╝`);
+}
+
+function cmdStats(): void {
+  const state = readState();
+  const stats = state.stats;
+
+  bold(t('cli.stats.header'));
+  console.log('');
+
+  // Streak
+  info(t('cli.stats.streak_header'));
+  console.log(t('cli.stats.streak_days', { days: stats.streak_days }));
+  console.log(t('cli.stats.streak_best', { days: stats.longest_streak }));
+  console.log('');
+
+  // Weekly
+  info(t('cli.stats.weekly_header'));
+  console.log(t('cli.stats.weekly_xp', { xp: stats.weekly_xp.toLocaleString() }));
+  console.log(t('cli.stats.weekly_battles', { wins: stats.weekly_battles_won, losses: stats.weekly_battles_lost }));
+  console.log(t('cli.stats.weekly_catches', { count: stats.weekly_catches }));
+  console.log(t('cli.stats.weekly_encounters', { count: stats.weekly_encounters }));
+  console.log('');
+
+  // All-time
+  info(t('cli.stats.alltime_header'));
+  console.log(t('cli.stats.alltime_xp', { xp: stats.total_xp_earned.toLocaleString() }));
+  console.log(t('cli.stats.alltime_battles', { wins: stats.total_battles_won, losses: stats.total_battles_lost }));
+  console.log(t('cli.stats.alltime_catches', { count: stats.total_catches }));
+  console.log(t('cli.stats.alltime_encounters', { count: stats.total_encounters }));
+}
+
+function cmdLegendary(action?: string): void {
+  const state = readState();
+  const rewardsDB = getPokedexRewardsDB();
+  const locale = readConfig().language ?? 'ko';
+
+  if (state.legendary_pending.length === 0) {
+    bold(t('cli.legendary.header'));
+    console.log('');
+    if (state.legendary_pool.length > 0) {
+      info(t('cli.legendary.pool_header'));
+      for (const id of state.legendary_pool) {
+        const caught = state.pokedex[id]?.caught ? `${GREEN}●${RESET}` : `${YELLOW}◐${RESET}`;
+        console.log(`  ${caught} ${getPokemonName(id)}`);
+      }
+    } else {
+      warn(t('cli.legendary.no_pending'));
+    }
+    return;
+  }
+
+  // Show pending groups
+  bold(t('cli.legendary.header'));
+  console.log('');
+  for (let gi = 0; gi < state.legendary_pending.length; gi++) {
+    const pending = state.legendary_pending[gi];
+    const groupDef = rewardsDB.legendary_groups[pending.group] ?? rewardsDB.type_master.special_legends;
+    const label = groupDef?.label[locale] ?? groupDef?.label.en ?? pending.group;
+    const desc = groupDef?.description[locale] ?? groupDef?.description.en ?? '';
+    info(`${label} — ${desc}`);
+    for (let i = 0; i < pending.options.length; i++) {
+      console.log(`  ${i + 1}. ${getPokemonName(pending.options[i])}`);
+    }
+    console.log('');
+  }
+
+  if (!action) {
+    console.log(t('cli.legendary.choose_hint'));
+    return;
+  }
+
+  // Parse "select <groupIndex> <optionIndex>" or just a number (first group)
+  const parts = action.split(/\s+/);
+  const rawGroup = parts.length > 1 ? parseInt(parts[0], 10) : 1;
+  const rawOption = parseInt(parts.length > 1 ? parts[1] : parts[0], 10);
+
+  if (!Number.isInteger(rawGroup) || !Number.isInteger(rawOption)) {
+    error(t('cli.legendary.invalid_choice'));
+    return;
+  }
+
+  const groupIdx = rawGroup - 1;
+  const optionIdx = rawOption - 1;
+
+  if (groupIdx < 0 || groupIdx >= state.legendary_pending.length) {
+    error(t('cli.legendary.invalid_choice'));
+    return;
+  }
+
+  const pending = state.legendary_pending[groupIdx];
+  if (!pending || optionIdx < 0 || optionIdx >= pending.options.length) {
+    error(t('cli.legendary.invalid_choice'));
+    return;
+  }
+
+  const chosen = pending.options[optionIdx];
+  const unchosen = pending.options.filter((_, i) => i !== optionIdx);
+
+  const lockResult = withLock(() => {
+    const s = readState();
+    const c = readConfig();
+
+    // Add chosen to party or unlocked
+    if (!s.unlocked.includes(chosen)) s.unlocked.push(chosen);
+    const pokemonDB = getPokemonDB();
+    const pData = pokemonDB.pokemon[chosen];
+    if (pData && !s.pokemon[chosen]) {
+      s.pokemon[chosen] = { id: pData.id, xp: 0, level: 50, friendship: 0, ev: 0 };
+    }
+    if (!s.pokedex[chosen]) {
+      s.pokedex[chosen] = { seen: true, caught: true, first_seen: new Date().toISOString().split('T')[0] };
+    } else {
+      s.pokedex[chosen].seen = true;
+      s.pokedex[chosen].caught = true;
+    }
+
+    // Add to party if space
+    if (c.party.length < c.max_party_size && !c.party.includes(chosen)) {
+      c.party.push(chosen);
+    }
+
+    // Unchosen go to legendary_pool
+    for (const id of unchosen) {
+      if (!s.legendary_pool.includes(id)) s.legendary_pool.push(id);
+    }
+
+    // Remove this pending group and mark as claimed
+    s.legendary_pending = s.legendary_pending.filter(p => p.group !== pending.group);
+    const claimKey = `type_master_legendary:${pending.group}`;
+    if (!s.pokedex_milestones_claimed.includes(claimKey)) {
+      s.pokedex_milestones_claimed.push(claimKey);
+    }
+
+    writeState(s);
+    writeConfig(c);
+  });
+
+  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  success(t('cli.legendary.selected', { pokemon: getPokemonName(chosen) }));
+  if (unchosen.length > 0) {
+    info(t('cli.legendary.pool_added', { names: unchosen.map(id => getPokemonName(id)).join(', ') }));
+  }
+}
+
+function cmdBox(sortBy?: string): void {
+  const state = readState();
+  const config = readConfig();
+  const pokemonDB = getPokemonDB();
+
+  // All owned pokemon not in party
+  const boxPokemon = state.unlocked
+    .filter(name => !config.party.includes(name) && state.pokemon[name])
+    .map(name => {
+      const pData = pokemonDB.pokemon[name];
+      const ps = state.pokemon[name];
+      return {
+        name,
+        level: ps?.level ?? 1,
+        types: pData?.types ?? [],
+        rarity: pData?.rarity ?? 'common',
+        evolutionReady: ps?.evolution_ready ?? false,
+      };
+    });
+
+  bold(t('cli.box.header'));
+  console.log('');
+
+  if (boxPokemon.length === 0) {
+    warn(t('cli.box.empty'));
+    return;
+  }
+
+  // Sort
+  if (sortBy === 'level') {
+    boxPokemon.sort((a, b) => b.level - a.level);
+  } else if (sortBy === 'type') {
+    boxPokemon.sort((a, b) => a.types[0]?.localeCompare(b.types[0] ?? '') ?? 0);
+  } else if (sortBy === 'name') {
+    boxPokemon.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  for (const p of boxPokemon) {
+    const typeStr = p.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
+    const evoTag = p.evolutionReady ? ` ${YELLOW}${t('cli.box.can_evolve')}${RESET}` : '';
+    console.log(`  ${getPokemonName(p.name)} Lv.${p.level} ${typeStr}${evoTag}`);
+  }
+  console.log('');
+  info(t('cli.box.sort_hint'));
+}
+
+function cmdPartySwap(slot: string, pokemon: string): void {
+  if (!slot || !pokemon) {
+    error(t('cli.party.swap_usage'));
+    return;
+  }
+
+  const slotNum = parseInt(slot, 10);
+  if (!Number.isInteger(slotNum) || slotNum < 1) {
+    error(t('cli.party.swap_usage'));
+    return;
+  }
+  const lockResult = withLock(() => {
+    const state = readState();
+    const config = readConfig();
+
+    if (slotNum > config.party.length) {
+      error(t('cli.party.swap_invalid_slot', { max: config.party.length }));
+      return;
+    }
+
+    // Resolve pokemon name to ID
+    const pokemonDB = getPokemonDB();
+    const targetId = pokemonDB.pokemon[pokemon] ? pokemon : Object.keys(pokemonDB.pokemon).find(k => getPokemonName(k).toLowerCase() === pokemon.toLowerCase());
+    if (!targetId || !state.unlocked.includes(targetId)) {
+      error(t('cli.party.swap_not_in_box', { pokemon }));
+      return;
+    }
+    if (config.party.includes(targetId)) {
+      error(t('cli.party.swap_already_in_party', { pokemon: getPokemonName(targetId) }));
+      return;
+    }
+
+    const outgoing = config.party[slotNum - 1];
+    config.party[slotNum - 1] = targetId;
+    writeConfig(config);
+    writeState(state);
+    success(t('cli.party.swap_success', { out: getPokemonName(outgoing), in: getPokemonName(targetId), slot: slotNum }));
+  });
+  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+}
+
+function cmdPartyReorder(from: string, to: string): void {
+  if (!from || !to) {
+    error(t('cli.party.reorder_usage'));
+    return;
+  }
+
+  const rawFrom = parseInt(from, 10);
+  const rawTo = parseInt(to, 10);
+  if (!Number.isInteger(rawFrom) || !Number.isInteger(rawTo) || rawFrom < 1 || rawTo < 1) {
+    error(t('cli.party.reorder_usage'));
+    return;
+  }
+  const fromIdx = rawFrom - 1;
+  const toIdx = rawTo - 1;
+
+  const lockResult = withLock(() => {
+    const config = readConfig();
+    if (fromIdx >= config.party.length || toIdx >= config.party.length) {
+      error(t('cli.party.reorder_invalid', { max: config.party.length }));
+      return;
+    }
+    if (fromIdx === toIdx) return;
+
+    const [moved] = config.party.splice(fromIdx, 1);
+    config.party.splice(toIdx, 0, moved);
+    writeConfig(config);
+    success(t('cli.party.reorder_success', { pokemon: getPokemonName(moved), from: fromIdx + 1, to: toIdx + 1 }));
+  });
+  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+}
+
+function cmdPartySuggest(): void {
+  const state = readState();
+  const config = readConfig();
+  const pokemonDB = getPokemonDB();
+  const regionsDB = getRegionsDB();
+  const region = regionsDB.regions[config.current_region];
+  if (!region) { error(t('cli.party.suggest_no_region')); return; }
+
+  // Build type distribution of wild pokemon in region
+  const typeCounts: Record<string, number> = {};
+  for (const wildName of region.pokemon_pool) {
+    const wildData = pokemonDB.pokemon[wildName];
+    if (!wildData) continue;
+    for (const wType of wildData.types) {
+      typeCounts[wType] = (typeCounts[wType] ?? 0) + 1;
+    }
+  }
+
+  // Score each owned pokemon by type effectiveness against region pool
+  const candidates = state.unlocked
+    .filter(name => state.pokemon[name] && pokemonDB.pokemon[name])
+    .map(name => {
+      const pData = pokemonDB.pokemon[name];
+      const ps = state.pokemon[name];
+      let score = 0;
+      const typeChart = pokemonDB.type_chart;
+
+      for (const pType of pData.types) {
+        const matchup = typeChart[pType];
+        if (!matchup) continue;
+        for (const strong of matchup.strong) {
+          score += (typeCounts[strong] ?? 0) * 2;
+        }
+        for (const weak of matchup.weak) {
+          score -= (typeCounts[weak] ?? 0);
+        }
+      }
+
+      // Level bonus
+      score += (ps?.level ?? 1) * 0.5;
+
+      return { name, score, level: ps?.level ?? 1, types: pData.types, inParty: config.party.includes(name) };
+    });
+
+  candidates.sort((a, b) => b.score - a.score);
+
+  bold(t('cli.party.suggest_header', { region: getRegionName(config.current_region) }));
+  console.log('');
+
+  const top = candidates.slice(0, 6);
+  for (let i = 0; i < top.length; i++) {
+    const c = top[i];
+    const typeStr = c.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
+    const stars = c.score >= 10 ? '★★★' : c.score >= 5 ? '★★☆' : '★☆☆';
+    const partyTag = c.inParty ? ` ${GREEN}[party]${RESET}` : '';
+    console.log(`  ${i + 1}. ${getPokemonName(c.name)} Lv.${c.level} ${typeStr} ${YELLOW}${stars}${RESET}${partyTag}`);
+  }
+}
+
+function genRegionName(regionName: string | { en: string; ko: string }): string {
+  if (typeof regionName === 'string') return regionName;
+  return regionName[getLocale() as 'en' | 'ko'] ?? regionName.en;
+}
+
+function cmdGen(sub?: string, arg?: string): void {
+  const gensDB = getGenerationsDB();
+  const globalConfig = readGlobalConfig();
+  const activeGen = globalConfig.active_generation;
+
+  if (!sub || sub === 'status') {
+    bold(t('cli.gen.title', { fallback: '🎮 Generation' }));
+    console.log('');
+    const genData = gensDB.generations[activeGen];
+    if (genData) {
+      console.log(`  ${BOLD}${genData.name}${RESET} (${genRegionName(genData.region_name)})`);
+      console.log(`  ${GRAY}ID: ${activeGen} | Pokémon: #${genData.pokemon_range[0]}-#${genData.pokemon_range[1]}${RESET}`);
+    }
+    console.log('');
+    return;
+  }
+
+  if (sub === 'list') {
+    bold(t('cli.gen.list_title', { fallback: '📋 Available Generations' }));
+    console.log('');
+    const sorted = Object.values(gensDB.generations).sort((a, b) => a.order - b.order);
+    for (const gen of sorted) {
+      const marker = gen.id === activeGen ? ` ${GREEN}← active${RESET}` : '';
+      const config = readConfig(gen.id);
+      const setupStatus = config.starter_chosen ? '' : ` ${YELLOW}(not set up)${RESET}`;
+      console.log(`  ${BOLD}${gen.name}${RESET} [${gen.id}] — ${genRegionName(gen.region_name)}${marker}${setupStatus}`);
+    }
+    console.log('');
+    info(t('cli.gen.switch_hint', { fallback: 'Use: gen switch <id>' }));
+    return;
+  }
+
+  if (sub === 'switch') {
+    if (!arg) {
+      error(t('cli.gen.switch_usage', { fallback: 'Usage: gen switch <gen_id>' }));
+      info(t('cli.gen.switch_example', { fallback: 'Example: gen switch gen1' }));
+      return;
+    }
+    const targetGen = arg;
+    if (!gensDB.generations[targetGen]) {
+      error(t('cli.gen.not_found', { fallback: `Generation "${targetGen}" not found.` }));
+      const available = Object.keys(gensDB.generations).join(', ');
+      info(t('cli.gen.available', { fallback: `Available: ${available}` }));
+      return;
+    }
+    if (targetGen === activeGen) {
+      warn(t('cli.gen.already_active', { fallback: `Already on ${targetGen}.` }));
+      return;
+    }
+
+    // Switch generation
+    globalConfig.active_generation = targetGen;
+    writeGlobalConfig(globalConfig);
+    clearActiveGenerationCache();
+    setActiveGenerationCache(targetGen);
+    invalidateGenCache();
+
+    // Reset region to 1 (regions are per-generation, IDs don't carry over)
+    const targetConfig = readConfig(targetGen);
+    if (targetConfig.current_region !== '1') {
+      targetConfig.current_region = '1';
+      writeConfig(targetConfig, targetGen);
+    }
+
+    const genData = gensDB.generations[targetGen];
+    success(t('cli.gen.switched', { fallback: `Switched to ${genData.name} (${genRegionName(genData.region_name)})` }));
+    if (!targetConfig.starter_chosen) {
+      console.log('');
+      warn(t('cli.gen.needs_setup', { fallback: 'This generation needs initial setup. Run /tkm:tkm starter to choose your starter!' }));
+    }
+    return;
+  }
+
+  error(t('cli.gen.unknown_sub', { fallback: `Unknown subcommand: ${sub}` }));
+  info(t('cli.gen.usage', { fallback: 'Usage: gen [list|switch <id>|status]' }));
 }
 
 function cmdHelp(): void {
@@ -647,6 +1355,17 @@ function cmdHelp(): void {
   console.log(t('cli.help.cmd_party_remove'));
   console.log(t('cli.help.cmd_unlock'));
   console.log(t('cli.help.cmd_achievements'));
+  console.log(t('cli.help.cmd_evolve'));
+  console.log(t('cli.help.cmd_evolve_pokemon'));
+  console.log(t('cli.help.cmd_notifications'));
+  console.log(t('cli.help.cmd_notifications_clear'));
+  console.log(t('cli.help.cmd_dashboard'));
+  console.log(t('cli.help.cmd_stats'));
+  console.log(t('cli.help.cmd_legendary'));
+  console.log(t('cli.help.cmd_box'));
+  console.log(t('cli.help.cmd_party_swap'));
+  console.log(t('cli.help.cmd_party_reorder'));
+  console.log(t('cli.help.cmd_party_suggest'));
   console.log(t('cli.help.cmd_items'));
   console.log(t('cli.help.cmd_region'));
   console.log(t('cli.help.cmd_region_list'));
@@ -683,7 +1402,7 @@ switch (command) {
     cmdStatus();
     break;
   case 'starter':
-    cmdStarter();
+    cmdStarter(args[1]);
     break;
   case 'party':
     cmdParty(args[1] ?? 'list', args[2]);
@@ -700,6 +1419,52 @@ switch (command) {
     break;
   case 'region':
     cmdRegion(args[1], args.slice(2).join(' ') || undefined);
+    break;
+  case 'evolve':
+    cmdEvolve(args[1], args[2]);
+    break;
+  case 'notifications':
+    cmdNotifications(args[1]);
+    break;
+  case 'dashboard':
+    cmdDashboard();
+    break;
+  case 'stats':
+    cmdStats();
+    break;
+  case 'legendary':
+    cmdLegendary(args.slice(1).join(' ') || undefined);
+    break;
+  case 'box':
+    cmdBox(args[1] === '--sort' ? args[2] : undefined);
+    break;
+  case 'star': {
+    const { execSync } = await import('child_process');
+    try {
+      execSync('gh api -X PUT user/starred/ThunderConch/tkm', { stdio: 'pipe' });
+      const starResult = withLock(() => {
+        const s = readState();
+        s.star_dismissed = true;
+        writeState(s);
+      });
+      success(t('star.success'));
+    } catch {
+      error(t('star.failed'));
+    }
+    break;
+  }
+  case 'star-dismiss': {
+    const dismissResult = withLock(() => {
+      const s = readState();
+      s.star_dismissed = true;
+      writeState(s);
+    });
+    if (dismissResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+    success(t('star.dismissed'));
+    break;
+  }
+  case 'gen':
+    cmdGen(args[1], args[2]);
     break;
   case 'guide':
     cmdGuide(args[1]);

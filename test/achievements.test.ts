@@ -76,20 +76,19 @@ describe('checkAchievements', () => {
 
   it('permission_master increases max_party_size', () => {
     const state = makeState({ permission_count: 50 });
-    const config = makeConfig({ max_party_size: 6 });
+    const config = makeConfig({ max_party_size: 5 });
     checkAchievements(state, config);
 
     assert.ok(state.achievements['permission_master']);
-    assert.equal(config.max_party_size, 7);
+    assert.equal(config.max_party_size, 6);
   });
 
-  it('permission_master caps at 8', () => {
+  it('permission_master caps at 6', () => {
     const state = makeState({ permission_count: 50 });
-    const config = makeConfig({ max_party_size: 7 });
-    // Force achievement not yet triggered
+    const config = makeConfig({ max_party_size: 6 });
     checkAchievements(state, config);
 
-    assert.equal(config.max_party_size, 8);
+    assert.equal(config.max_party_size, 6);
   });
 
   it('does not re-trigger already achieved', () => {

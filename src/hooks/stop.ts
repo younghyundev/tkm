@@ -14,6 +14,7 @@ import { playSfx } from '../audio/play-sfx.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
 import { withLock } from '../core/lock.js';
+import { recordXp, recordBattle, recordCatch, recordEncounter } from '../core/stats.js';
 
 function readStdin(): string {
   try {
@@ -73,7 +74,7 @@ async function main(): Promise<void> {
 
   // Pre-lock: read config for early exit check (benign TOCTOU — worst case: enter lock unnecessarily)
   const configCheck = readConfig();
-  initLocale(configCheck.language ?? 'ko');
+  initLocale(configCheck.language ?? 'en');
 
   if (configCheck.party.length === 0 || !sessionId) {
     playCry();
@@ -178,7 +179,7 @@ async function main(): Promise<void> {
         unlockedAchievements: Object.keys(state.achievements).filter(k => state.achievements[k]),
         items: state.items ?? {},
       };
-      const evolution = checkEvolution(pokemonName, evoContext);
+      const evolution = checkEvolution(pokemonName, evoContext, state);
       if (evolution) {
         applyEvolution(state, config, evolution, newXp);
         messages.push(t('hook.evolution', { pokemon: getPokemonName(pokemonName), newPokemon: getPokemonName(evolution.newPokemon) }));
@@ -191,6 +192,9 @@ async function main(): Promise<void> {
         }
       }
     }
+
+    // Record XP in stats (total XP earned across all party members)
+    recordXp(state, xpPerPokemon * config.party.length);
 
     // Update session tokens tracking & total
     state.last_session_tokens[sessionId] = totalTokens;
@@ -215,8 +219,14 @@ async function main(): Promise<void> {
         const battleMsg = formatEncounterMessage(battleResult);
         if (battleMsg) messages.push(battleMsg);
 
-        // Auto-add caught pokemon to party if < 6
-        if (battleResult.caught && config.party.length < 6) {
+        // Record battle stats
+        recordEncounter(state);
+        recordBattle(state, battleResult.won);
+        recordXp(state, battleResult.xpReward);
+        if (battleResult.caught) recordCatch(state);
+
+        // Auto-add caught pokemon to party if below max
+        if (battleResult.caught && config.party.length < config.max_party_size) {
           if (!config.party.includes(battleResult.defender)) {
             config.party.push(battleResult.defender);
             messages.push(t('hook.party_join', { pokemon: getPokemonName(battleResult.defender) }));

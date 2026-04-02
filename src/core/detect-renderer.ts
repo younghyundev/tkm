@@ -19,6 +19,11 @@ export function detectRenderer(env?: Record<string, string | undefined>): Detect
 
   const supported: SpriteRenderer[] = ['braille']; // always available
 
+  // VSCode terminal doesn't support any graphics protocol — force braille
+  if (termProgram === 'vscode') {
+    return { supported, recommended: 'braille' };
+  }
+
   // Kitty Graphics Protocol
   if (term === 'xterm-kitty' || termProgram === 'ghostty' || termProgram === 'WezTerm') {
     supported.push('kitty');
@@ -34,9 +39,8 @@ export function detectRenderer(env?: Record<string, string | undefined>): Detect
     supported.push('iterm2');
   }
 
-  // Priority: kitty > iterm2 > sixel > braille
-  const priority: SpriteRenderer[] = ['kitty', 'iterm2', 'sixel', 'braille'];
-  const recommended = priority.find(r => supported.includes(r)) ?? 'braille';
+  // Braille is always recommended — other renderers are experimental
+  const recommended: SpriteRenderer = 'braille';
 
   return { supported, recommended };
 }

@@ -1,0 +1,47 @@
+{
+  "time_of_day": [
+    {
+      "id": "night_shift",
+      "hours": [21, 22, 23, 0, 1, 2, 3, 4],
+      "type_boost": { "ghost": 2.0, "dark": 1.5 },
+      "label": { "en": "Night Shift — Ghost & Dark \u2191", "ko": "\uc57c\uac04 \u2014 \uace0\uc2a4\ud2b8 & \uc545 \ud0c0\uc785 \u2191" }
+    },
+    {
+      "id": "dawn_patrol",
+      "hours": [5, 6, 7],
+      "type_boost": { "flying": 1.5, "normal": 1.3 },
+      "label": { "en": "Dawn Patrol — Flying & Normal \u2191", "ko": "\uc0c8\ubcbd \u2014 \ube44\ud589 & \ub178\uba40 \ud0c0\uc785 \u2191" }
+    },
+    {
+      "id": "high_noon",
+      "hours": [11, 12, 13],
+      "type_boost": { "fire": 1.5, "grass": 1.3 },
+      "label": { "en": "High Noon — Fire & Grass \u2191", "ko": "\ud55c\ub0ae \u2014 \ubd88\uaf43 & \ud480 \ud0c0\uc785 \u2191" }
+    }
+  ],
+  "day_of_week": [
+    {
+      "id": "lucky_friday",
+      "day": 5,
+      "rare_multiplier": 2.0,
+      "label": { "en": "Lucky Friday — Rare \u2191", "ko": "\ub7ed\ud0a4 \ud504\ub77c\uc774\ub370\uc774 \u2014 \ub808\uc5b4 \u2191" }
+    }
+  ],
+  "streak": [
+    {
+      "id": "weekly_streak",
+      "days": 7,
+      "reward": "guaranteed_rare_encounter",
+      "label": { "en": "7-day streak reward!", "ko": "7\uc77c \uc5f0\uc18d \ubcf4\uc0c1!" }
+    }
+  ],
+  "milestone": [
+    {
+      "id": "million_tokens",
+      "trigger_type": "total_tokens_consumed",
+      "trigger_value": 1000000,
+      "reward": "special_encounter",
+      "label": { "en": "1M Token Milestone!", "ko": "100\ub9cc \ud1a0\ud070 \ub9c8\uc77c\uc2a4\ud1a4!" }
+    }
+  ]
+}

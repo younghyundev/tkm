@@ -13,6 +13,11 @@ export interface BaseStats {
   speed: number;
 }
 
+export interface BranchEvolution {
+  name: string;
+  condition: string;
+}
+
 export interface PokemonData {
   id: number;
   name: string;
@@ -21,6 +26,7 @@ export interface PokemonData {
   line: string[];
   evolves_at: number | null;
   evolves_condition?: string;
+  evolves_to?: string | BranchEvolution[];
   unlock: string;
   exp_group: ExpGroup;
   rarity: Rarity;
@@ -63,6 +69,105 @@ export interface PokemonState {
   level: number;
   friendship: number;
   ev: number;
+  evolution_ready?: boolean;
+  evolution_options?: string[];
+}
+
+export type NotificationType = 'evolution_ready' | 'region_unlocked' | 'achievement_near' | 'legendary_unlocked';
+
+export interface MilestoneReward {
+  id: string;
+  threshold: number;
+  reward_type: 'pokeball' | 'xp_multiplier' | 'legendary_unlock' | 'party_slot' | 'title';
+  reward_value: number | string;
+  legendary_bonus?: string;
+  label: { en: string; ko: string };
+}
+
+export interface LegendaryGroup {
+  label: { en: string; ko: string };
+  description: { en: string; ko: string };
+  options: string[];
+}
+
+export interface LegendaryPending {
+  group: string;
+  options: string[];
+}
+
+export interface PokedexRewardsDB {
+  milestones: MilestoneReward[];
+  legendary_groups: Record<string, LegendaryGroup>;
+  type_master: {
+    xp_bonus: number;
+    legendary_unlock_threshold: number;
+    legendary_group: string;
+    special_legends: LegendaryGroup;
+  };
+  chain_completion_reward: {
+    pokeball_count: number;
+  };
+}
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  message: string;
+  created: string;
+  data?: Record<string, unknown>;
+}
+
+export interface Stats {
+  streak_days: number;
+  longest_streak: number;
+  last_active_date: string;
+  weekly_xp: number;
+  weekly_battles_won: number;
+  weekly_battles_lost: number;
+  weekly_catches: number;
+  weekly_encounters: number;
+  total_xp_earned: number;
+  total_battles_won: number;
+  total_battles_lost: number;
+  total_catches: number;
+  total_encounters: number;
+  last_reset_week: string;
+}
+
+export interface TimeEvent {
+  id: string;
+  hours: number[];
+  type_boost: Record<string, number>;
+  label: { en: string; ko: string };
+}
+
+export interface DayEvent {
+  id: string;
+  day: number;
+  rare_multiplier: number;
+  label: { en: string; ko: string };
+}
+
+export interface StreakEvent {
+  id: string;
+  days: number;
+  reward: string;
+  label: { en: string; ko: string };
+}
+
+export interface MilestoneEvent {
+  id: string;
+  trigger_type: string;
+  trigger_value: number;
+  reward: string;
+  label: { en: string; ko: string };
+}
+
+export interface EventsDB {
+  time_of_day: TimeEvent[];
+  day_of_week: DayEvent[];
+  streak: StreakEvent[];
+  milestone: MilestoneEvent[];
 }
 
 export interface EvolutionContext {
@@ -97,6 +202,18 @@ export interface State {
   cheat_log: Array<{ timestamp: string; command: string }>;
   last_battle: BattleResult | null;
   last_tip: { id: string; text: string } | null;
+  notifications: Notification[];
+  dismissed_notifications: string[];
+  last_known_regions: number;
+  stats: Stats;
+  events_triggered: string[];
+  pokedex_milestones_claimed: string[];
+  type_masters: string[];
+  legendary_pool: string[];
+  legendary_pending: LegendaryPending[];
+  titles: string[];
+  completed_chains: string[];
+  star_dismissed: boolean;
 }
 
 export interface Config {
@@ -117,6 +234,7 @@ export interface Config {
   renderer: SpriteRenderer;
   info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level';
   tips_enabled: boolean;
+  notifications_enabled: boolean;
   language: 'ko' | 'en';
 }
 
@@ -189,6 +307,7 @@ export interface BattleResult {
   xpReward: number;
   caught: boolean;
   typeMultiplier: number;
+  ballCost: number;
 }
 
 export interface HookInput {
@@ -200,4 +319,31 @@ export interface HookInput {
 export interface HookOutput {
   continue: boolean;
   system_message?: string;
+}
+
+// ── Multi-generation support ──
+
+export interface GlobalConfig {
+  active_generation: string;
+  language: 'ko' | 'en';
+}
+
+export interface GenerationData {
+  id: string;
+  name: string;
+  region_name: string | { en: string; ko: string };
+  pokemon_range: [number, number];
+  starters: string[];
+  order: number;
+}
+
+export interface GenerationsDB {
+  generations: Record<string, GenerationData>;
+  default_generation: string;
+}
+
+export interface SharedDB {
+  type_colors: Record<string, string>;
+  type_chart: Record<string, TypeMatchup>;
+  rarity_weights: RarityWeights;
 }

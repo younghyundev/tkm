@@ -1,7 +1,31 @@
-import { getRegionsDB } from './pokemon-data.js';
+import { getRegionsDB, getGameI18n } from './pokemon-data.js';
 import { getCompletion } from './pokedex.js';
 import { t } from '../i18n/index.js';
 import type { State, Config, RegionData } from './types.js';
+
+/**
+ * Resolve a region name (localized or ID) to a region ID string.
+ * Checks both ko and en i18n catalogs.
+ */
+function resolveRegionId(input: string): string {
+  const db = getRegionsDB();
+  // Direct ID match
+  if (db.regions[input]) return input;
+
+  // Search i18n catalogs for name → ID
+  for (const locale of ['ko', 'en'] as const) {
+    try {
+      const i18n = getGameI18n(locale);
+      for (const [id, data] of Object.entries(i18n.regions)) {
+        if (data.name === input) return id;
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  return input; // Return as-is if no match (will fail in caller)
+}
 
 /**
  * Get the current region data.
@@ -36,15 +60,16 @@ export function isRegionUnlocked(regionName: string, state: State): boolean {
  */
 export function moveToRegion(regionName: string, state: State, config: Config): string | null {
   const db = getRegionsDB();
-  if (!db.regions[regionName]) {
+  const regionId = resolveRegionId(regionName);
+  if (!db.regions[regionId]) {
     return t('region.not_found', { name: regionName });
   }
-  if (!isRegionUnlocked(regionName, state)) {
-    const cond = db.regions[regionName].unlock_condition!;
+  if (!isRegionUnlocked(regionId, state)) {
+    const cond = db.regions[regionId].unlock_condition!;
     const label = cond.type === 'pokedex_caught' ? t('region.locked_caught') : t('region.locked_seen');
     return t('region.locked', { count: cond.value, label });
   }
-  config.current_region = regionName;
+  config.current_region = regionId;
   return null;
 }
 

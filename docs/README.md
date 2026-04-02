@@ -1,6 +1,6 @@
 # Tokenmon Documentation
 
-> **tkm** v0.0.2-rc.3 | Gen 4 Pokemon Claude Code Plugin
+> **tkm** v0.1.0-rc.0 | Gen 4 Pokemon Claude Code Plugin
 
 ## Documents
 
@@ -19,13 +19,13 @@
 
 ```
 src/
-  core/       # 게임 로직 (battle, xp, evolution, encounter, achievements, items, regions)
+  core/       # 게임 로직 (battle, xp, evolution, encounter, achievements, items, regions, stats, pokedex-rewards, notifications)
   cli/        # CLI 인터페이스 (tokenmon 명령어)
   hooks/      # Claude Code 훅 (session-start, stop, permission, subagent)
   audio/      # 울음소리 + 효과음 재생
   sprites/    # PNG → ANSI 변환
   setup/      # 설치 + StatusLine 설정
-data/         # pokemon.json, achievements.json, regions.json, tips.json
+data/         # pokemon.json, achievements.json, regions.json, events.json, pokedex-rewards.json, tips.json
 skills/       # tkm, setup, doctor, reset, uninstall
-test/         # 309 tests (battle, evolution, encounter, achievements, state, xp)
+test/         # 439 tests (battle, evolution, encounter, events, stats, pokedex-rewards, legendary, party-management)
 ```
