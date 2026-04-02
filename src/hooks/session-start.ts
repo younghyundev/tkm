@@ -40,10 +40,11 @@ function main(): void {
 
     // Reset session.json for new session
     const existingSession = readSession();
-    if (existingSession.session_id && existingSession.session_id !== sessionId) {
-      existingSession.session_id = sessionId;
+    if (existingSession.session_id === sessionId) {
+      // Same session reconnecting (crash recovery) — keep existing data
       writeSession(existingSession);
     } else {
+      // New session — always start fresh
       writeSession({
         session_id: sessionId,
         agent_assignments: [],

@@ -174,7 +174,6 @@ function bakeHookPaths(): void {
   if (!content.includes('${CLAUDE_PLUGIN_ROOT}')) return;
 
   content = content.replace(/\$\{CLAUDE_PLUGIN_ROOT\}/g, PLUGIN_ROOT);
-  content = content.replace(/\$\{CLAUDE_PLUGIN_DATA\}/g, DATA_DIR);
   writeFileSync(hooksJsonPath, content, 'utf-8');
   console.log(`  ✓ hooks.json paths resolved to ${PLUGIN_ROOT}`);
 }

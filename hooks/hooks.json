@@ -1,10 +1,10 @@
 {
   "hooks": {
-    "SessionStart": [{"hooks": [{"type": "command", "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\" >/dev/null 2>&1 || (cd \"${CLAUDE_PLUGIN_ROOT}\" && npm install --no-audit --no-fund 2>/dev/null && cp \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\") || true"}, {"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/session-start.ts\""}]}],
-    "Stop": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/stop.ts\""}]}],
-    "PermissionRequest": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/permission.ts\""}]}],
-    "PostToolUseFailure": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/tool-fail.ts\""}]}],
-    "SubagentStart": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/subagent-start.ts\""}]}],
-    "SubagentStop": [{"hooks": [{"type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/subagent-stop.ts\""}]}]
+    "SessionStart": [{"hooks": [{"type": "command", "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\" >/dev/null 2>&1 || (cd \"${CLAUDE_PLUGIN_ROOT}\" && npm install --no-audit --no-fund 2>/dev/null && cp \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\") || true"}, {"type": "command", "command": "TOKENMON_HOOK_MODE=1 \"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/session-start.ts\""}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "TOKENMON_HOOK_MODE=1 \"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/stop.ts\""}]}],
+    "PermissionRequest": [{"hooks": [{"type": "command", "command": "TOKENMON_HOOK_MODE=1 \"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/permission.ts\""}]}],
+    "PostToolUseFailure": [{"hooks": [{"type": "command", "command": "TOKENMON_HOOK_MODE=1 \"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/tool-fail.ts\""}]}],
+    "SubagentStart": [{"hooks": [{"type": "command", "command": "TOKENMON_HOOK_MODE=1 \"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/subagent-start.ts\""}]}],
+    "SubagentStop": [{"hooks": [{"type": "command", "command": "TOKENMON_HOOK_MODE=1 \"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/subagent-stop.ts\""}]}]
   }
 }

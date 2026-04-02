@@ -10,14 +10,13 @@ if [ -x "$LOCAL_TSX" ]; then
 elif command -v tsx >/dev/null 2>&1; then
   exec tsx "$@"
 else
-  echo "⚠️ tsx not found. Run: npm install --prefix $PLUGIN_DIR"
   echo "⚠️ tsx not found. Run: npm install --prefix $PLUGIN_DIR" >&2
-  # In hook context (stdin is pipe), emit safe JSON and exit 0
-  # In CLI context (stdin is TTY), exit non-zero
-  if [ -t 0 ]; then
-    exit 1
-  else
+  # In hook context, emit safe JSON and exit 0
+  # In CLI/script context, exit non-zero
+  if [ -n "$TOKENMON_HOOK_MODE" ]; then
     echo '{"continue": true}'
     exit 0
+  else
+    exit 1
   fi
 fi

@@ -75,8 +75,14 @@ async function main(): Promise<void> {
   const resolvedGen = getSessionGeneration(sessionId);
   if (resolvedGen !== null) {
     setActiveGenerationCache(resolvedGen);
+  } else if (sessionId) {
+    // Session exists but no gen binding — fail closed, skip mutations
+    process.stderr.write(`tokenmon stop: no gen binding for session ${sessionId}, skipping XP to prevent cross-gen corruption\n`);
+    playCry();
+    console.log(JSON.stringify({ continue: true }));
+    return;
   } else {
-    process.stderr.write(`tokenmon stop: session ${sessionId} not in gen map, falling back to active generation\n`);
+    // No session ID at all — legacy fallback
     setActiveGenerationCache(getActiveGeneration());
   }
 
