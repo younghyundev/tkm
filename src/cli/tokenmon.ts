@@ -1,6 +1,7 @@
 #!/usr/bin/env -S npx tsx
 import * as readline from 'readline';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
 import { readState, writeState } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
 import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName } from '../core/pokemon-data.js';
@@ -1324,6 +1325,15 @@ function cmdGen(sub?: string, arg?: string): void {
     }
     if (targetGen === activeGen) {
       warn(t('cli.gen.already_active', { fallback: `Already on ${targetGen}.` }));
+      return;
+    }
+
+    // Validate generation has required data files before switching
+    const genDir = join(PLUGIN_ROOT, 'data', targetGen);
+    const requiredFiles = ['pokemon.json', 'regions.json', 'achievements.json', 'pokedex-rewards.json'];
+    const missingFiles = requiredFiles.filter(f => !existsSync(join(genDir, f)));
+    if (missingFiles.length > 0) {
+      error(t('cli.gen.incomplete_data', { fallback: `Generation ${targetGen} is missing data files: ${missingFiles.join(', ')}` }));
       return;
     }
 

@@ -167,10 +167,10 @@ function migrateToMultiGen(): void {
     }
   }
 
-  // Create global-config.json — use current default_generation for active_generation
+  // Create global-config.json — legacy users stay on LEGACY_GEN (gen4) where their data is
   if (!existsSync(GLOBAL_CONFIG_PATH)) {
     writeFileSync(GLOBAL_CONFIG_PATH, JSON.stringify({
-      active_generation: getDefaultGen(),
+      active_generation: LEGACY_GEN,
       language,
     }, null, 2), 'utf-8');
     console.log(`  ✓ ${GLOBAL_CONFIG_PATH}`);

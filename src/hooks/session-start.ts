@@ -30,7 +30,8 @@ function main(): void {
   // Resolve generation: use existing binding on reconnect, active gen for new sessions
   const existingGenMap = readSessionGenMap();
   const existingBinding = existingGenMap[sessionId]?.generation;
-  const gen = existingBinding ?? getActiveGeneration();
+  // Use a mutable variable so gen resolution inside the lock can update it for new sessions
+  let gen = existingBinding ?? getActiveGeneration();
   setActiveGenerationCache(gen);
 
   const messages: string[] = [];
@@ -39,6 +40,12 @@ function main(): void {
     const state = readState();
     const config = readConfig();
     initLocale(config.language ?? 'en');
+
+    // Re-resolve gen inside lock for new sessions (avoids stale gen if gen switch happened before lock)
+    if (!existingBinding) {
+      gen = getActiveGeneration();
+      setActiveGenerationCache(gen);
+    }
 
     // Reset session file for new session (keyed by session_id)
     const existingSession = readSession(undefined, sessionId);
@@ -55,12 +62,18 @@ function main(): void {
       }, undefined, sessionId);
     }
 
-    // Register session → generation binding (only for new sessions)
+    // Register session → generation binding (only for new sessions); refresh last_seen on reconnect
+    const genMap = readSessionGenMap();
     if (!existingBinding) {
-      const genMap = readSessionGenMap();
       genMap[sessionId] = { generation: gen, created: new Date().toISOString(), last_seen: new Date().toISOString() };
       const pruned = pruneSessionGenMap(genMap);
       writeSessionGenMap(pruned);
+    } else {
+      // Reconnect: refresh last_seen so prune doesn't evict long-running sessions
+      if (genMap[sessionId]) {
+        genMap[sessionId].last_seen = new Date().toISOString();
+        writeSessionGenMap(genMap);
+      }
     }
 
     // Increment session_count
@@ -163,6 +176,18 @@ function main(): void {
   // Lock failed — skip gracefully (state not mutated)
   if (result === null) {
     process.stderr.write(`tokenmon session-start: lock timeout, session ${sessionId} not registered\n`);
+    // Emergency: try to write JUST the session binding without the lock
+    // This is safe because session-gen-map is append-only for new sessions
+    try {
+      const emergencyMap = readSessionGenMap();
+      if (!emergencyMap[sessionId]) {
+        emergencyMap[sessionId] = { generation: gen, created: new Date().toISOString(), last_seen: new Date().toISOString() };
+        writeSessionGenMap(emergencyMap);
+        process.stderr.write(`tokenmon session-start: emergency binding written for session ${sessionId}\n`);
+      }
+    } catch {
+      process.stderr.write(`tokenmon session-start: emergency binding failed for session ${sessionId}\n`);
+    }
   }
 
   // Play cry async (fire and forget)

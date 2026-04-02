@@ -97,6 +97,30 @@ await test('pruneSessionTokens empty object returns empty', () => {
   assert.deepEqual(pruneSessionTokens({}), {});
 });
 
+await test('pruneSessionTokens with activeSessionIds preserves active sessions even with low token count', () => {
+  const tokens: Record<string, number> = {};
+  for (let i = 0; i < 25; i++) tokens[`s${i}`] = i * 100;
+  // s0 has value 0 (would normally be pruned), but mark it as active
+  const activeIds = new Set(['s0', 's1']);
+  const result = pruneSessionTokens(tokens, activeIds);
+  assert.ok('s0' in result, 's0 (active, value 0) should be preserved');
+  assert.ok('s1' in result, 's1 (active, value 100) should be preserved');
+  assert.equal(Object.keys(result).length, 20);
+});
+
+await test('pruneSessionTokens with activeSessionIds fills remaining slots by token count', () => {
+  const tokens: Record<string, number> = {};
+  for (let i = 0; i < 25; i++) tokens[`s${i}`] = i * 100;
+  const activeIds = new Set(['s0']); // 1 active, 19 slots for inactive
+  const result = pruneSessionTokens(tokens, activeIds);
+  assert.ok('s0' in result, 's0 (active) should be preserved');
+  // The 19 highest-value inactive sessions should fill remaining slots
+  assert.ok('s24' in result, 's24 (highest value inactive) should be kept');
+  assert.ok('s6' in result, 's6 should be kept (top 19 inactive)');
+  assert.ok(!('s5' in result), 's5 should be pruned (21st slot)');
+  assert.equal(Object.keys(result).length, 20);
+});
+
 // --- Session tests (sequential) ---
 
 await test('readSession returns defaults when missing', () => {
@@ -183,6 +207,25 @@ await test('pruneSessionGenMap keeps all entries younger than maxAge', () => {
 
 await test('pruneSessionGenMap returns {} for empty map', () => {
   assert.deepEqual(pruneSessionGenMap({}, 7 * 24 * 3600 * 1000), {});
+});
+
+await test('pruneSessionGenMap default TTL is 30 days (keeps 20-day-old entries)', () => {
+  const twentyDaysAgo = new Date(Date.now() - 20 * 24 * 3600 * 1000).toISOString();
+  const map = {
+    'twenty-day-old': { generation: 'gen4', created: twentyDaysAgo, last_seen: twentyDaysAgo },
+  };
+  // Default maxAge should be 30 days, so 20-day-old entry should be kept
+  const result = pruneSessionGenMap(map);
+  assert.ok('twenty-day-old' in result, '20-day-old session should be kept with 30-day default TTL');
+});
+
+await test('pruneSessionGenMap default TTL prunes entries older than 30 days', () => {
+  const thirtyOneDaysAgo = new Date(Date.now() - 31 * 24 * 3600 * 1000).toISOString();
+  const map = {
+    'very-old': { generation: 'gen4', created: thirtyOneDaysAgo, last_seen: thirtyOneDaysAgo },
+  };
+  const result = pruneSessionGenMap(map);
+  assert.ok(!('very-old' in result), '31-day-old session should be pruned with 30-day default TTL');
 });
 
 // --- sessionPath with sessionId tests ---

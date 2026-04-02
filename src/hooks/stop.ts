@@ -133,7 +133,8 @@ async function main(): Promise<void> {
     if (isFirstStop) {
       // First stop in this session: record baseline, no XP yet
       state.last_session_tokens[sessionId] = totalTokens;
-      state.last_session_tokens = pruneSessionTokens(state.last_session_tokens);
+      const activeIds = new Set(Object.keys(readSessionGenMap()));
+      state.last_session_tokens = pruneSessionTokens(state.last_session_tokens, activeIds);
       writeState(state);
       return 'first_stop';
     }
@@ -214,7 +215,8 @@ async function main(): Promise<void> {
 
     // Update session tokens tracking & total
     state.last_session_tokens[sessionId] = totalTokens;
-    state.last_session_tokens = pruneSessionTokens(state.last_session_tokens);
+    const activeIds = new Set(Object.keys(readSessionGenMap()));
+    state.last_session_tokens = pruneSessionTokens(state.last_session_tokens, activeIds);
     state.total_tokens_consumed += deltaTokens;
 
     // Check token-based achievements

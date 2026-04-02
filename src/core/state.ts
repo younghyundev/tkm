@@ -205,12 +205,26 @@ export function writeState(state: State, gen?: string): void {
 
 /**
  * Prune last_session_tokens to top 20 by value (descending).
+ * Sessions present in activeSessionIds (from session-gen-map) are always kept first.
  */
-export function pruneSessionTokens(tokens: Record<string, number>): Record<string, number> {
+export function pruneSessionTokens(tokens: Record<string, number>, activeSessionIds?: Set<string>): Record<string, number> {
   const entries = Object.entries(tokens);
   if (entries.length <= 20) return tokens;
-  entries.sort((a, b) => b[1] - a[1]);
-  return Object.fromEntries(entries.slice(0, 20));
+
+  // Keep all active sessions (in session-gen-map), fill remaining slots by token count
+  const active: Array<[string, number]> = [];
+  const inactive: Array<[string, number]> = [];
+  for (const entry of entries) {
+    if (activeSessionIds?.has(entry[0])) {
+      active.push(entry);
+    } else {
+      inactive.push(entry);
+    }
+  }
+
+  inactive.sort((a, b) => b[1] - a[1]);
+  const maxInactive = Math.max(0, 20 - active.length);
+  return Object.fromEntries([...active, ...inactive.slice(0, maxInactive)]);
 }
 
 export function readSession(gen?: string, sessionId?: string): Session {
@@ -253,7 +267,7 @@ export function writeSessionGenMap(map: SessionGenMap): void {
   renameSync(tmpPath, SESSION_GEN_MAP_PATH);
 }
 
-export function pruneSessionGenMap(map: SessionGenMap, maxAgeMs: number = 7 * 24 * 3600 * 1000): SessionGenMap {
+export function pruneSessionGenMap(map: SessionGenMap, maxAgeMs: number = 30 * 24 * 3600 * 1000): SessionGenMap {
   const now = Date.now();
   const result: SessionGenMap = {};
   for (const [id, entry] of Object.entries(map)) {
