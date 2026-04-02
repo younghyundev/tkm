@@ -1,62 +1,59 @@
 ---
-description: "Call a Pokémon by name and it reacts. Korean: 불러, 불러줘, 야, 이리와, 포켓몬 이름, 반응, 파이숭이야, 불꽃숭이야"
+description: "Call a Pokémon by name and it reacts based on bond (EV). Korean: 불러, 불러줘, 야, 이리와, 포켓몬 이름, 반응, 파이숭이야, 불꽃숭이야"
 ---
 
 # Call Your Pokémon
 
-The user called a Pokémon by name. Make it react with personality.
+The user called a Pokémon by name. Make it react based on how long you've been together (EV).
 
-## Step 1: Identify the Pokémon
-
-Extract the Pokémon name from the user's message (e.g. "파이숭이야~" → "파이숭이", "불꽃숭이야" → "불꽃숭이").
-
-Check the current party:
+## Step 1: Read party EV data
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" party
+node -e "
+const fs = require('fs'), os = require('os'), path = require('path');
+const claudeDir = process.env.CLAUDE_CONFIG_DIR ?? path.join(os.homedir(), '.claude');
+try {
+  const cfg = JSON.parse(fs.readFileSync(path.join(claudeDir, 'tokenmon/config.json'), 'utf8'));
+  const state = JSON.parse(fs.readFileSync(path.join(claudeDir, 'tokenmon/state.json'), 'utf8'));
+  const ko = JSON.parse(fs.readFileSync(path.join(process.env.CLAUDE_PLUGIN_ROOT, 'data/i18n/ko.json'), 'utf8'));
+  cfg.party.forEach(id => {
+    const displayName = ko.pokemon[id] ?? id;
+    const p = state.pokemon[id] ?? {};
+    console.log(displayName + ' ev:' + (p.ev ?? 0) + ' lv:' + (p.level ?? 1));
+  });
+} catch(e) { console.error(e.message); }
+"
 ```
 
-Show the sprite of the called Pokémon:
+## Step 2: Find the called Pokémon
 
+Extract the Pokémon name from the user's message and match it against the party list from Step 1.
+
+Then show the sprite:
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" pokedex <이름>
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" pokedex <포켓몬_이름>
 ```
 
-## Step 2: React
+## Step 3: React based on EV
 
-If the Pokémon is **in the party**, respond with a cute reaction line in this format:
+Format: **[포켓몬 이름]**[은/는] [반응]
 
-> **[포켓몬 이름]**[은/는] [반응]
+Choose the reaction tier based on EV:
 
-Pick one reaction based on the Pokémon's **primary type**. Keep it short and charming (10–20자).
+| EV 범위 | 관계 | 반응 예시 |
+|---------|------|----------|
+| 0 | 처음 만남 | 경계하듯 슬그머니 뒤로 물러선다 / 눈을 피하며 주위를 두리번거린다 / 불안한 듯 몸을 잔뜩 움츠린다 |
+| 1–50 | 낯선 사이 | 살금살금 다가오다가 멈칫한다 / 멀찍이서 가만히 바라본다 / 낯선 듯 더듬더듬 다가온다 |
+| 51–120 | 익숙해지는 중 | 고개를 갸웃거리며 다가온다 / 꼬리를 조심스럽게 흔들어 본다 / 두 눈을 반짝이며 냄새를 맡는다 |
+| 121–200 | 친한 사이 | 신나게 달려와 발치에서 빙글빙글 돈다 / 기분 좋게 울음소리를 낸다! / 기쁜 듯 온몸을 비빈다 |
+| 201–252 | 오랜 파트너 | 꺄르르 웃으며 달려와 품에 안긴다 / 오랜 친구처럼 어깨에 올라탄다 / 눈을 가늘게 뜨며 기분 좋게 그르릉거린다 |
 
-| Type | Example reactions |
-|------|------------------|
-| 불꽃 | 불꽃을 내뿜는다!, 기분 좋게 꼬리를 흔든다, 흥분해서 콧김을 뿜는다 |
-| 물 | 물보라를 튀긴다!, 꼬리로 물을 철벅인다, 반갑게 물을 뿜어낸다 |
-| 풀 | 잎사귀를 살랑살랑 흔든다, 기지개를 켠다, 눈을 반짝인다 |
-| 전기 | 온몸에 스파크가 튄다!, 귀를 쫑긋 세운다, 꼬리를 빳빳이 세운다 |
-| 노말 | 눈을 깜빡인다, 기분 좋게 울음소리를 낸다, 살랑살랑 꼬리를 흔든다 |
-| 비행 | 날갯짓을 한다, 높이 날아올랐다가 내려앉는다, 깃털을 부풀린다 |
-| 격투 | 파이팅 포즈를 취한다!, 주먹을 불끈 쥔다, 신나게 달려온다 |
-| 바위 | 듬직하게 고개를 끄덕인다, 무게감 있게 발을 구른다 |
-| 땅 | 발을 굴러 작은 흙먼지를 일으킨다, 기분 좋게 땅을 판다 |
-| 얼음 | 차가운 입김을 내뿜는다, 서리를 흩날린다, 빙그르르 돈다 |
-| 독 | 으쓱거리며 다가온다, 독침을 살짝 드러낸다, 장난스럽게 윙크한다 |
-| 고스트 | 반투명하게 스르르 나타난다, 몸이 잠시 사라졌다가 다시 나타난다 |
-| 드래곤 | 위엄 있게 포효한다!, 날카로운 눈으로 바라본다, 꼬리를 힘차게 내리친다 |
-| 에스퍼 | 눈을 빛내며 주위 물건이 살짝 떠오른다, 조용히 눈을 감았다가 뜬다 |
-| 벌레 | 더듬이를 씰룩인다, 날개를 재빠르게 퍼덕인다 |
-| 강철 | 묵직하게 발소리를 내며 다가온다, 몸을 빛나게 반짝인다 |
-| 악 | 장난스럽게 뒤로 숨었다가 나타난다, 눈을 가늘게 뜨며 비실 웃는다 |
-| 페어리 | 반짝이는 가루를 날리며 다가온다, 팔짝팔짝 뛰며 좋아한다 |
+## Step 4: Not in party
 
-If the Pokémon is **NOT in the party**, respond:
+If the Pokémon is **not in the party**, respond:
 
 > **[포켓몬 이름]**[은/는] 파티에 없어서 달려오지 못했다...
 
-## Notes
+---
 
-- Use natural Korean particles (은/는, 이/가) based on the name ending.
-- One reaction per call — keep it to a single line.
-- No tool calls after Step 2; just output the reaction line.
+Keep the reaction to **one line**. Use correct Korean particles (은/는, 이/가).
