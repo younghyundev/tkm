@@ -68,6 +68,36 @@ export function getPokemonName(id: string | number): string {
   return i18n.pokemon[String(id)] || String(id);
 }
 
+/**
+ * Resolve a display name or ID string to a pokemon ID.
+ * Accepts numeric ID strings ("390") or localized names ("불꽃숭이", "Chimchar").
+ * Checks current locale first, then falls back to other locales.
+ * Returns null if no match found.
+ */
+export function resolveNameToId(nameOrId: string): string | null {
+  const db = getPokemonDB();
+  // Direct ID match
+  if (db.pokemon[nameOrId]) return nameOrId;
+
+  // Search by display name across all loaded locales
+  for (const loc of ['ko', 'en']) {
+    try {
+      const i18n = getGameI18n(loc);
+      const found = Object.entries(i18n.pokemon).find(([, name]) => name === nameOrId);
+      if (found) return found[0];
+    } catch { /* locale file may not exist */ }
+  }
+  return null;
+}
+
+/**
+ * Get the display name for a pokemon, preferring nickname over species name.
+ */
+export function getDisplayName(id: string | number, nickname?: string): string {
+  if (nickname) return nickname;
+  return getPokemonName(id);
+}
+
 export function getTypeName(typeId: string): string {
   const i18n = getGameI18n();
   return i18n.types[typeId] || typeId;

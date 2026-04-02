@@ -28,6 +28,7 @@ try {
 ## Step 2: Find the called Pokémon
 
 Extract the Pokémon name from the user's message and match it against the party list from Step 1.
+Match by **nickname first**, then by species name (both work).
 
 Then show the sprite:
 ```bash

@@ -3,7 +3,7 @@ import * as readline from 'readline';
 import { readFileSync } from 'fs';
 import { readState, writeState } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName } from '../core/pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, resolveNameToId, getDisplayName } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/pokedex.js';
@@ -75,7 +75,10 @@ function cmdStatus(): void {
       const bar = xpBar(xp, level, expGroup);
       const evolInfo = evolvesAt != null ? t('cli.status.evolves_at', { level: evolvesAt }) : '';
 
-      console.log(`  ${BOLD}${getPokemonName(pokemon)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
+      const nickname = state.pokemon[pokemon]?.nickname;
+      const displayName = getDisplayName(pokemon, nickname);
+      const nameLabel = nickname ? `${displayName} (${getPokemonName(pokemon)})` : displayName;
+      console.log(`  ${BOLD}${nameLabel}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
       console.log(`  Lv.${level} [${GREEN}${bar}${RESET}] XP: ${xp}${evolInfo}`);
     }
   }
@@ -264,7 +267,9 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         const xp = state.pokemon[p]?.xp ?? 0;
         const expGroup: ExpGroup = pokemonDB.pokemon[p]?.exp_group ?? 'medium_fast';
         const bar = xpBar(xp, level, expGroup);
-        console.log(`  ${BOLD}${getPokemonName(p)}${RESET} Lv.${level} [${GREEN}${bar}${RESET}]`);
+        const nick = state.pokemon[p]?.nickname;
+        const label = nick ? `${nick} (${getPokemonName(p)})` : getPokemonName(p);
+        console.log(`  ${BOLD}${label}${RESET} Lv.${level} [${GREEN}${bar}${RESET}]`);
       }
       break;
     }
@@ -519,6 +524,42 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
     const typeStr = pData.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
     const nameDisplay = pdex?.seen ? name : `${GRAY}???${RESET}`;
     console.log(`  ${icon} ${nameDisplay} ${typeStr} ${GRAY}${pData.rarity}${RESET}`);
+  }
+}
+
+function cmdNickname(nameOrId: string, nickname?: string): void {
+  const id = resolveNameToId(nameOrId);
+  if (!id) {
+    error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
+    process.exit(1);
+  }
+  const speciesName = getPokemonName(id);
+  const result = withLock(() => {
+    const s = readState();
+    if (!s.pokemon[id]) {
+      return null;
+    }
+    if (!nickname) {
+      // Show current nickname
+      return { current: s.pokemon[id].nickname };
+    }
+    s.pokemon[id].nickname = nickname;
+    writeState(s);
+    return { set: true };
+  });
+  if (result === null) {
+    error(`${speciesName}의 데이터가 없습니다.`);
+    process.exit(1);
+  }
+  if ('current' in result) {
+    const current = result.current;
+    if (current) {
+      info(`${speciesName}의 닉네임: ${BOLD}${current}${RESET}`);
+    } else {
+      info(`${speciesName}에게 아직 닉네임이 없습니다.`);
+    }
+  } else {
+    success(`${speciesName}의 닉네임을 '${BOLD}${nickname}${RESET}'(으)로 정했습니다!`);
   }
 }
 
@@ -1392,6 +1433,9 @@ switch (command) {
     execSync(`"${process.env.CLAUDE_PLUGIN_ROOT || '.'}/bin/tsx-resolve.sh" "${process.env.CLAUDE_PLUGIN_ROOT || '.'}/scripts/uninstall.ts"${uninstallArgs}`, { stdio: 'inherit' });
     break;
   }
+  case 'nickname':
+    cmdNickname(args[1] ?? '', args.slice(2).join(' ') || undefined);
+    break;
   case 'reset':
     cmdReset(args.includes('--confirm'));
     break;

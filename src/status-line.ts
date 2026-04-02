@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
 import { readConfig } from './core/config.js';
-import { getPokemonDB, getPokemonName, getRegionName } from './core/pokemon-data.js';
+import { getPokemonDB, getPokemonName, getRegionName, getDisplayName } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
 import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
@@ -125,8 +125,9 @@ function main(): void {
     if (!pokemonName) continue;
     const pData = pokemonDB.pokemon[pokemonName];
     const assignment = session.agent_assignments.find(a => a.pokemon === pokemonName);
+    const nickname = state.pokemon[pokemonName]?.nickname;
     pokeData.push({
-      name: pokemonName,
+      name: getDisplayName(pokemonName, nickname),
       level: state.pokemon[pokemonName]?.level ?? 1,
       xp: state.pokemon[pokemonName]?.xp ?? 0,
       expGroup: pData?.exp_group ?? 'medium_fast',
