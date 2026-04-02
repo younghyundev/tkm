@@ -30,15 +30,24 @@ export function rollEncounter(state: State, config: Config): boolean {
 
 /**
  * Get the minimum wild level for a pokemon based on its evolution stage.
- * Stage 0 → 1 (no restriction), stage N → evolves_at level of previous stage.
+ * Stage 0 → 1 (no restriction).
+ * Stage N → evolves_at of the previous stage entry in the line.
+ * Cross-gen evolutions (line is incomplete or loops back to self) → falls back to 1.
  */
-function getMinWildLevel(name: string): number {
+export function getMinWildLevel(name: string): number {
   const db = getPokemonDB();
   const pData = db.pokemon[name];
   if (!pData || pData.stage === 0) return 1;
+
   const prevId = pData.line[pData.stage - 1];
+  // Guard: cross-gen evolutions where line doesn't include pre-evos from prior gen
+  if (!prevId || prevId === name) return 1;
+
   const prevData = db.pokemon[prevId];
-  return prevData?.evolves_at ?? 1;
+  // Guard: prevData loops back to same or higher stage (malformed line)
+  if (!prevData || prevData.stage >= pData.stage) return 1;
+
+  return prevData.evolves_at ?? 1;
 }
 
 /**
