@@ -690,16 +690,23 @@ function cmdEvolve(pokemonArg?: string, targetArg?: string): void {
     return;
   }
 
-  // Show branches and prompt
+  // Show eligible branches only (ineligible branches not shown to avoid confusion)
   bold(t('cli.evolve.select_header', { pokemon: getPokemonName(pokemonArg) }));
   console.log('');
-  for (let i = 0; i < branches.length; i++) {
-    const b = branches[i];
-    const icon = b.conditionMet ? `${GREEN}✓${RESET}` : `${RED}✗${RESET}`;
+  for (let i = 0; i < eligible.length; i++) {
+    const b = eligible[i];
     const targetData = pokemonDB.pokemon[b.name];
     const types = targetData?.types?.join('/') ?? '';
-    console.log(`  ${i + 1}) ${icon} ${BOLD}${getPokemonName(b.name)}${RESET} ${GRAY}${types}${RESET}`);
+    console.log(`  ${i + 1}) ${BOLD}${getPokemonName(b.name)}${RESET} ${GRAY}${types}${RESET}`);
     console.log(`     ${GRAY}${t('cli.evolve.condition', { cond: b.conditionLabel })}${RESET}`);
+  }
+  // Show ineligible branches as info
+  const ineligible = branches.filter(b => !b.conditionMet);
+  if (ineligible.length > 0) {
+    console.log('');
+    for (const b of ineligible) {
+      console.log(`  ${GRAY}✗ ${getPokemonName(b.name)} — ${t('cli.evolve.condition', { cond: b.conditionLabel })}${RESET}`);
+    }
   }
   console.log('');
 
@@ -715,19 +722,16 @@ function cmdEvolve(pokemonArg?: string, targetArg?: string): void {
       }
     });
   } else {
-    // Multiple eligible — select
+    // Multiple eligible — select by number
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
     rl.question(t('cli.evolve.prompt_select', { count: eligible.length }), (answer: string) => {
       rl.close();
       const idx = parseInt(answer, 10);
-      // Map selection back to eligible branches using their position in the full branches list
-      const eligibleIndices = branches.map((b, i) => b.conditionMet ? i : -1).filter(i => i >= 0);
-      const selectedFullIdx = eligibleIndices[idx - 1];
-      if (isNaN(idx) || idx < 1 || idx > eligible.length || selectedFullIdx === undefined) {
+      if (isNaN(idx) || idx < 1 || idx > eligible.length) {
         error(t('cli.evolve.invalid_choice'));
         process.exit(1);
       }
-      executeEvolve(pokemonArg!, branches[selectedFullIdx].name, config);
+      executeEvolve(pokemonArg!, eligible[idx - 1].name, config);
     });
   }
 }
@@ -737,23 +741,24 @@ function executeEvolve(pokemonName: string, targetName: string, _config: unknown
     const freshState = readState();
     const freshConfig = readConfig();
     const result = applyBranchEvolution(freshState, freshConfig, pokemonName, targetName);
-    if (!result) return null;
+    if (!result) return { ok: false as const };
     writeState(freshState);
     writeConfig(freshConfig);
-    return result;
+    return { ok: true as const, result };
   });
 
   if (evolveResult === null) {
     error(t('cli.lock_failed'));
     process.exit(1);
   }
-  if (!evolveResult) {
+  if (!evolveResult.ok) {
     error(t('cli.evolve.failed'));
     return;
   }
 
-  success(t('cli.evolve.success', { old: getPokemonName(evolveResult.oldPokemon), new: getPokemonName(evolveResult.newPokemon) }));
-  playCry(evolveResult.newPokemon);
+  const { result } = evolveResult;
+  success(t('cli.evolve.success', { old: getPokemonName(result.oldPokemon), new: getPokemonName(result.newPokemon) }));
+  playCry(result.newPokemon);
 }
 
 function cmdNotifications(subcmd?: string): void {

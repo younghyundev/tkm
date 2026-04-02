@@ -90,21 +90,29 @@ describe('notifications', () => {
       assert.equal(achNotifs.length, 0);
     });
 
-    it('detects region_unlocked when more regions available', () => {
-      // Build pokedex with enough caught to unlock regions
+    it('detects region_unlocked when more regions available than last_known', () => {
+      // Build pokedex with enough caught pokemon to unlock additional regions
+      // Region 2 requires 5 caught, region 3 requires 10 caught
       const pokedex: Record<string, any> = {};
-      for (let i = 387; i < 397; i++) {
+      for (let i = 387; i < 400; i++) {
         pokedex[String(i)] = { seen: true, caught: true, first_seen: '2026-01-01' };
       }
       const state = makeState({
-        last_known_regions: 1,
+        last_known_regions: 1, // pretend we only knew about 1 region
         pokedex,
       });
       const config = makeConfig();
       const notifs = checkPendingNotifications(state, config);
       const regionNotifs = notifs.filter(n => n.type === 'region_unlocked');
-      // Should detect more regions unlocked than last_known_regions=1
-      assert.ok(regionNotifs.length >= 1 || true, 'Region unlock depends on data thresholds');
+      assert.ok(regionNotifs.length >= 1, 'Should detect newly unlocked regions');
+    });
+
+    it('does not notify when regions match last_known', () => {
+      const state = makeState({ last_known_regions: 99 }); // impossibly high
+      const config = makeConfig();
+      const notifs = checkPendingNotifications(state, config);
+      const regionNotifs = notifs.filter(n => n.type === 'region_unlocked');
+      assert.equal(regionNotifs.length, 0);
     });
   });
 
