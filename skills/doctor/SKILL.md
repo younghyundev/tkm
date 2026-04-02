@@ -13,9 +13,9 @@ Run each step in order using the Bash tool. Record PASS/FAIL for each step.
 ### Step 1: Plugin Cache
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 if [ -z "$PLUGIN_ROOT" ]; then
   echo "FAIL: plugin cache not found. Run '/plugin install tkm@tkm' first."
   exit 1
@@ -28,9 +28,9 @@ echo "PASS: plugin cache exists"
 ### Step 2: npm install
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 cd "$PLUGIN_ROOT" && npm install 2>&1 | tail -3
 echo "---"
 [ -d "$PLUGIN_ROOT/node_modules/.bin" ] && "$PLUGIN_ROOT/bin/tsx-resolve.sh" --version > /dev/null 2>&1 && echo "PASS: npm install + tsx" || echo "FAIL: tsx not found — run: npm install --prefix $PLUGIN_ROOT"
@@ -41,9 +41,9 @@ If FAIL: auto-fix by running `cd "$PLUGIN_ROOT" && npm install`.
 ### Step 3: Multi-Generation Migration
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 node -e "
 const fs = require('fs');
 const home = process.env.HOME || require('os').homedir();
@@ -122,9 +122,9 @@ If any FAIL found in migration checks, auto-fix by running postinstall:
 ### Step 4: StatusLine Integration
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 "$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/setup/setup-statusline.ts" 2>&1
 echo "---"
 node -e "
@@ -136,9 +136,9 @@ console.log(d.statusLine ? 'PASS: statusLine configured' : 'FAIL: statusLine mis
 ### Step 5: CLI Command Verification
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 TSX="$PLUGIN_ROOT/bin/tsx-resolve.sh"
 CLI="$PLUGIN_ROOT/src/cli/tokenmon.ts"
 PASS=0; TOTAL=0
@@ -160,9 +160,9 @@ echo "---"
 ### Step 6: Data Integrity
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 node -e "
 const fs = require('fs');
 const genJson = '$PLUGIN_ROOT/data/generations.json';
@@ -214,9 +214,9 @@ console.log(totalPass === totalChecks ? 'PASS: data integrity (' + totalPass + '
 ### Step 7: Asset Files
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 
 node -e "
 const fs = require('fs');
@@ -251,9 +251,9 @@ console.log(allPass ? 'PASS: assets' : 'FAIL: assets (some missing)');
 ### Step 8: Starter & Party Check (read-only)
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 TSX="$PLUGIN_ROOT/bin/tsx-resolve.sh"
 CLI="$PLUGIN_ROOT/src/cli/tokenmon.ts"
 
@@ -295,9 +295,9 @@ Render and visually verify CLI output.
 **9a. Status Line**
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 "$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/status-line.ts" 2>&1
 ```
 
@@ -306,9 +306,9 @@ Check: sprite ANSI art + Pokémon name + level + XP bar
 **9b. Region List**
 
 ```bash
-PLUGIN_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
 MKT_ROOT=$(ls -d ~/.claude/plugins/marketplaces/tkm/ 2>/dev/null | head -1)
-PLUGIN_ROOT="${PLUGIN_ROOT:-$MKT_ROOT}"
+CACHE_ROOT=$(ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)
+PLUGIN_ROOT="${MKT_ROOT:-$CACHE_ROOT}"
 "$PLUGIN_ROOT/bin/tsx-resolve.sh" "$PLUGIN_ROOT/src/cli/tokenmon.ts" region list 2>&1
 ```
 

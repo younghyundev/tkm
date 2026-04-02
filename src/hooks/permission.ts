@@ -5,7 +5,7 @@ import { checkAchievements, formatAchievementMessage } from '../core/achievement
 import { playCry } from '../audio/play-cry.js';
 import { initLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
-import { getSessionGeneration, setActiveGenerationCache } from '../core/paths.js';
+import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 
 function readStdin(): string {
@@ -24,7 +24,7 @@ function main(): void {
     const sessionId = input.session_id ?? '';
     if (sessionId) {
       const resolvedGen = getSessionGeneration(sessionId);
-      setActiveGenerationCache(resolvedGen);
+      setActiveGenerationCache(resolvedGen ?? getActiveGeneration());
     }
   } catch { /* fall through */ }
 

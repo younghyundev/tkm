@@ -14,7 +14,7 @@ import { playSfx } from '../audio/play-sfx.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
 import { withLock, withLockRetry } from '../core/lock.js';
-import { getSessionGeneration, setActiveGenerationCache } from '../core/paths.js';
+import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import { recordXp, recordBattle, recordCatch, recordEncounter } from '../core/stats.js';
 
 function readStdin(): string {
@@ -73,7 +73,12 @@ async function main(): Promise<void> {
 
   // Resolve and lock this hook to the session's bound generation
   const resolvedGen = getSessionGeneration(sessionId);
-  setActiveGenerationCache(resolvedGen);
+  if (resolvedGen !== null) {
+    setActiveGenerationCache(resolvedGen);
+  } else {
+    process.stderr.write(`tokenmon stop: session ${sessionId} not in gen map, falling back to active generation\n`);
+    setActiveGenerationCache(getActiveGeneration());
+  }
 
   const output: HookOutput = { continue: true };
 

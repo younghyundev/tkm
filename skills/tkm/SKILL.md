@@ -8,8 +8,9 @@ Run a Tokenmon CLI command for the user.
 
 Run with the Bash tool and show the result:
 
-```
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" $ARGUMENTS
+```bash
+P="${CLAUDE_PLUGIN_ROOT:-$(ls -d ~/.claude/plugins/marketplaces/tkm 2>/dev/null || ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)}"
+"$P/bin/tsx-resolve.sh" "$P/src/cli/tokenmon.ts" $ARGUMENTS
 ```
 
 If `$ARGUMENTS` is empty, default to `status`.

@@ -32,27 +32,27 @@ test('getSessionGeneration returns bound generation when session exists in map',
   assert.equal(gen, 'gen1');
 });
 
-test('getSessionGeneration falls back to active generation when session not in map', () => {
+test('getSessionGeneration returns null when session not in map', () => {
   writeMap({
     'sess-111': { generation: 'gen1', created: new Date().toISOString() },
   });
   const gen = getSessionGeneration('unknown-session');
-  assert.equal(gen, 'gen4');
+  assert.equal(gen, null);
 });
 
-test('getSessionGeneration falls back when sessionId is empty string', () => {
+test('getSessionGeneration returns null when sessionId is empty string', () => {
   writeMap({
     'sess-111': { generation: 'gen1', created: new Date().toISOString() },
   });
   const gen = getSessionGeneration('');
-  assert.equal(gen, 'gen4');
+  assert.equal(gen, null);
 });
 
-test('getSessionGeneration falls back when map file is missing', () => {
+test('getSessionGeneration returns null when map file is missing', () => {
   // Remove map file
   try { rmSync(MAP_PATH); } catch { /* already absent */ }
   const gen = getSessionGeneration('any-session');
-  assert.equal(gen, 'gen4');
+  assert.equal(gen, null);
 });
 
 // Cleanup

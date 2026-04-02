@@ -11,7 +11,8 @@ Clean up tokenmon before removing the plugin. Always run this **before** `/plugi
 ### Step 1: Cleanup
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/scripts/uninstall.ts"
+P="${CLAUDE_PLUGIN_ROOT:-$(ls -d ~/.claude/plugins/marketplaces/tkm 2>/dev/null || ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)}"
+"$P/bin/tsx-resolve.sh" "$P/scripts/uninstall.ts"
 ```
 
 ### Step 2: Inform User
@@ -30,7 +31,8 @@ Clean up tokenmon before removing the plugin. Always run this **before** `/plugi
 To preserve Pokémon state (state.json) for a future reinstall:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/scripts/uninstall.ts" --keep-state
+P="${CLAUDE_PLUGIN_ROOT:-$(ls -d ~/.claude/plugins/marketplaces/tkm 2>/dev/null || ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)}"
+"$P/bin/tsx-resolve.sh" "$P/scripts/uninstall.ts" --keep-state
 ```
 
 > state.json preserved. Reinstalling later will restore your existing Pokémon.

@@ -38,17 +38,20 @@ If the user chose **Switch**:
 
 Switch from `ko` to `en`:
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set language en
+P="${CLAUDE_PLUGIN_ROOT:-$(ls -d ~/.claude/plugins/marketplaces/tkm 2>/dev/null || ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)}"
+"$P/bin/tsx-resolve.sh" "$P/src/cli/tokenmon.ts" config set language en
 ```
 
 Switch from `en` to `ko`:
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set language ko
+P="${CLAUDE_PLUGIN_ROOT:-$(ls -d ~/.claude/plugins/marketplaces/tkm 2>/dev/null || ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)}"
+"$P/bin/tsx-resolve.sh" "$P/src/cli/tokenmon.ts" config set language ko
 ```
 
 Then show the updated status:
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" status
+P="${CLAUDE_PLUGIN_ROOT:-$(ls -d ~/.claude/plugins/marketplaces/tkm 2>/dev/null || ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)}"
+"$P/bin/tsx-resolve.sh" "$P/src/cli/tokenmon.ts" status
 ```
 
 ## Step 3b: Keep current language

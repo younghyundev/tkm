@@ -4,15 +4,16 @@ description: "Tokenmon initial setup. Install dependencies, StatusLine integrati
 
 Run Tokenmon plugin initial setup in order.
 
-## Step 0: Verify Environment
+## Step 0: Resolve Plugin Root
 
-```
+```bash
+export CLAUDE_PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(ls -d ~/.claude/plugins/marketplaces/tkm 2>/dev/null || ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)}"
 echo "CLAUDE_PLUGIN_ROOT=${CLAUDE_PLUGIN_ROOT}" && test -n "${CLAUDE_PLUGIN_ROOT}" && test -f "${CLAUDE_PLUGIN_ROOT}/package.json" && echo "OK" || echo "FAIL"
 ```
 
 - `OK` → proceed to Step 1.
 - `FAIL` → inform the user:
-  > `CLAUDE_PLUGIN_ROOT` is not set or package.json not found. This skill can only run in a Claude Code plugin environment.
+  > `CLAUDE_PLUGIN_ROOT` could not be resolved. Install tokenmon first via `/plugin install tkm@tkm`.
 
 ## Step 1: Install Dependencies
 

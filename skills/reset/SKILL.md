@@ -27,7 +27,8 @@ Options: [Reset everything] [Reset config only (keep Pokémon data)] [Cancel]
 If the user chose "Reset everything":
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" reset --confirm
+P="${CLAUDE_PLUGIN_ROOT:-$(ls -d ~/.claude/plugins/marketplaces/tkm 2>/dev/null || ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)}"
+"$P/bin/tsx-resolve.sh" "$P/src/cli/tokenmon.ts" reset --confirm
 ```
 
 ### Step 2b: Config-only Reset
@@ -35,8 +36,9 @@ If the user chose "Reset everything":
 If the user chose "Reset config only" — resets config but keeps Pokémon state:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set starter_chosen false
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set current_region 1
+P="${CLAUDE_PLUGIN_ROOT:-$(ls -d ~/.claude/plugins/marketplaces/tkm 2>/dev/null || ls -d ~/.claude/plugins/cache/tkm/tkm/*/ 2>/dev/null | sort -V | tail -1)}"
+"$P/bin/tsx-resolve.sh" "$P/src/cli/tokenmon.ts" config set starter_chosen false
+"$P/bin/tsx-resolve.sh" "$P/src/cli/tokenmon.ts" config set current_region 1
 ```
 
 ### Step 3: Starter Re-selection Prompt

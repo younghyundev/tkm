@@ -76,16 +76,15 @@ export function clearActiveGenerationCache(): void {
   _activeGenCache = null;
 }
 
-export function getSessionGeneration(sessionId: string): string {
-  if (!sessionId) return getActiveGeneration();
+export function getSessionGeneration(sessionId: string): string | null {
+  if (!sessionId) return null;
   try {
     if (existsSync(SESSION_GEN_MAP_PATH)) {
       const map = JSON.parse(readFileSync(SESSION_GEN_MAP_PATH, 'utf-8')) as Record<string, { generation: string }>;
       if (map[sessionId]?.generation) return map[sessionId].generation;
     }
   } catch { /* fall through */ }
-  process.stderr.write(`tokenmon: session ${sessionId} not in gen map, using active generation\n`);
-  return getActiveGeneration();
+  return null;
 }
 
 // ── Per-generation data paths (plugin data) ──
