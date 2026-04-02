@@ -331,7 +331,7 @@ export interface GlobalConfig {
 export interface GenerationData {
   id: string;
   name: string;
-  region_name: string;
+  region_name: string | { en: string; ko: string };
   pokemon_range: [number, number];
   starters: string[];
   order: number;

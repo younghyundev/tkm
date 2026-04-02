@@ -1256,6 +1256,11 @@ function cmdPartySuggest(): void {
   }
 }
 
+function genRegionName(regionName: string | { en: string; ko: string }): string {
+  if (typeof regionName === 'string') return regionName;
+  return regionName[getLocale() as 'en' | 'ko'] ?? regionName.en;
+}
+
 function cmdGen(sub?: string, arg?: string): void {
   const gensDB = getGenerationsDB();
   const globalConfig = readGlobalConfig();
@@ -1266,7 +1271,7 @@ function cmdGen(sub?: string, arg?: string): void {
     console.log('');
     const genData = gensDB.generations[activeGen];
     if (genData) {
-      console.log(`  ${BOLD}${genData.name}${RESET} (${genData.region_name})`);
+      console.log(`  ${BOLD}${genData.name}${RESET} (${genRegionName(genData.region_name)})`);
       console.log(`  ${GRAY}ID: ${activeGen} | Pokémon: #${genData.pokemon_range[0]}-#${genData.pokemon_range[1]}${RESET}`);
     }
     console.log('');
@@ -1281,7 +1286,7 @@ function cmdGen(sub?: string, arg?: string): void {
       const marker = gen.id === activeGen ? ` ${GREEN}← active${RESET}` : '';
       const config = readConfig(gen.id);
       const setupStatus = config.starter_chosen ? '' : ` ${YELLOW}(not set up)${RESET}`;
-      console.log(`  ${BOLD}${gen.name}${RESET} [${gen.id}] — ${gen.region_name}${marker}${setupStatus}`);
+      console.log(`  ${BOLD}${gen.name}${RESET} [${gen.id}] — ${genRegionName(gen.region_name)}${marker}${setupStatus}`);
     }
     console.log('');
     info(t('cli.gen.switch_hint', { fallback: 'Use: gen switch <id>' }));
@@ -1314,7 +1319,7 @@ function cmdGen(sub?: string, arg?: string): void {
     invalidateGenCache();
 
     const genData = gensDB.generations[targetGen];
-    success(t('cli.gen.switched', { fallback: `Switched to ${genData.name} (${genData.region_name})` }));
+    success(t('cli.gen.switched', { fallback: `Switched to ${genData.name} (${genRegionName(genData.region_name)})` }));
 
     // Check if this gen needs setup
     const targetConfig = readConfig(targetGen);

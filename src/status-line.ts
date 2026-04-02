@@ -113,11 +113,17 @@ function main(): void {
   const activeGen = getActiveGeneration();
   const gensDB = getGenerationsDB();
   const genData = gensDB.generations[activeGen];
-  const genLabel = genData ? genData.region_name : activeGen;
+  const lang = config.language ?? 'en';
+  const genRegionRaw = genData?.region_name;
+  const genRegion = genRegionRaw
+    ? (typeof genRegionRaw === 'string' ? genRegionRaw : genRegionRaw[lang] ?? genRegionRaw.en)
+    : activeGen;
+  const genOrder = genData?.order ?? 0;
+  const genSuffix = lang === 'ko' ? `(${genOrder}세대)` : `(Gen ${genOrder})`;
   const regionName = getRegionName(config.current_region ?? '1');
   const pokeballs = state.items?.pokeball ?? 0;
   const itemInfo = pokeballs > 0 ? ` 🔴 ${pokeballs}` : '';
-  const footer = `🎮${genLabel} 📍${regionName}${itemInfo}`;
+  const footer = `🎮${genRegion} ${genSuffix} 📍${regionName}${itemInfo}`;
 
   // Build per-pokemon data
   const pokeData: Array<{
