@@ -12,6 +12,12 @@ elif command -v tsx >/dev/null 2>&1; then
 else
   echo "⚠️ tsx not found. Run: npm install --prefix $PLUGIN_DIR"
   echo "⚠️ tsx not found. Run: npm install --prefix $PLUGIN_DIR" >&2
-  echo '{"continue": true}'
-  exit 0
+  # In hook context (stdin is pipe), emit safe JSON and exit 0
+  # In CLI context (stdin is TTY), exit non-zero
+  if [ -t 0 ]; then
+    exit 1
+  else
+    echo '{"continue": true}'
+    exit 0
+  fi
 fi

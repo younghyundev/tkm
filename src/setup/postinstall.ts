@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync, renameSync } from 'fs';
 import { join } from 'path';
-import { DATA_DIR, GLOBAL_CONFIG_PATH, CLAUDE_DIR } from '../core/paths.js';
+import { DATA_DIR, GLOBAL_CONFIG_PATH, CLAUDE_DIR, PLUGIN_ROOT } from '../core/paths.js';
 import { t, initLocale } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
 
@@ -165,6 +165,20 @@ function migrateToMultiGen(): void {
   console.log('  ✓ Multi-generation migration complete');
 }
 
+function bakeHookPaths(): void {
+  const hooksJsonPath = join(PLUGIN_ROOT, 'hooks', 'hooks.json');
+  if (!existsSync(hooksJsonPath)) return;
+
+  let content = readFileSync(hooksJsonPath, 'utf-8');
+  // Only bake if template vars are present
+  if (!content.includes('${CLAUDE_PLUGIN_ROOT}')) return;
+
+  content = content.replace(/\$\{CLAUDE_PLUGIN_ROOT\}/g, PLUGIN_ROOT);
+  content = content.replace(/\$\{CLAUDE_PLUGIN_DATA\}/g, DATA_DIR);
+  writeFileSync(hooksJsonPath, content, 'utf-8');
+  console.log(`  ✓ hooks.json paths resolved to ${PLUGIN_ROOT}`);
+}
+
 function main(): void {
   // Initialize locale — try reading from global config first, fallback to legacy config
   let lang: 'ko' | 'en' = 'en';
@@ -238,6 +252,8 @@ function main(): void {
     console.log(t('setup.postinstall.legacy_cleanup'));
     console.log('');
   }
+
+  bakeHookPaths();
 }
 
 main();

@@ -16,7 +16,7 @@ import { getEventsDB, getRegionsDB, getPokedexRewardsDB } from '../core/pokemon-
 import { getTypeMasterProgress } from '../core/pokedex-rewards.js';
 import { t, initLocale, getLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
-import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCache } from '../core/paths.js';
+import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCache, PLUGIN_ROOT } from '../core/paths.js';
 import type { ExpGroup, EvolutionContext } from '../core/types.js';
 
 // ANSI color helpers
@@ -197,17 +197,20 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         info(t('cli.party.dispatch_usage'));
         return;
       }
-      // Validation before lock
+      // Fast-path check before lock
       if (!config.party.includes(pokemon)) {
         error(t('cli.party.dispatch_not_in_party', { pokemon }));
         process.exit(1);
       }
       const dispatchResult = withLock(() => {
         const freshConfig = readConfig();
+        if (!freshConfig.party.includes(pokemon!)) return 'not_in_party';
         freshConfig.default_dispatch = pokemon!;
         writeConfig(freshConfig);
+        return 'ok';
       });
       if (dispatchResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+      if (dispatchResult === 'not_in_party') { error(t('cli.party.dispatch_not_in_party', { pokemon })); process.exit(1); }
       success(t('cli.party.dispatch_set', { pokemon }));
       break;
     }
@@ -1488,7 +1491,7 @@ switch (command) {
   case 'uninstall': {
     const { execSync } = await import('child_process');
     const uninstallArgs = args.includes('--keep-state') ? ' --keep-state' : '';
-    execSync(`"${process.env.CLAUDE_PLUGIN_ROOT || '.'}/bin/tsx-resolve.sh" "${process.env.CLAUDE_PLUGIN_ROOT || '.'}/scripts/uninstall.ts"${uninstallArgs}`, { stdio: 'inherit' });
+    execSync(`"${PLUGIN_ROOT}/bin/tsx-resolve.sh" "${PLUGIN_ROOT}/scripts/uninstall.ts"${uninstallArgs}`, { stdio: 'inherit' });
     break;
   }
   case 'reset':
