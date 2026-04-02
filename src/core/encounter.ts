@@ -181,7 +181,7 @@ export function processEncounter(
   state.encounter_count++;
 
   // Resolve battle (handles seen/caught/XP internally)
-  return resolveBattle(state, config, wild.name, wild.level);
+  return resolveBattle(state, config, { name: wild.name, level: wild.level, shiny: false });
 }
 
 // Re-export for stop hook

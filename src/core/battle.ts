@@ -5,7 +5,7 @@ import { rollItemDrop, getItemCount, useItem } from './items.js';
 import { getTypeMasterXpMultiplier } from './pokedex-rewards.js';
 import { levelToXp } from './xp.js';
 import { t } from '../i18n/index.js';
-import type { State, Config, BattleResult } from './types.js';
+import type { State, Config, BattleResult, WildPokemon } from './types.js';
 
 /**
  * Calculate Poké Ball cost based on catch_rate.
@@ -203,17 +203,16 @@ export function calculateBattleXp(
 export function resolveBattle(
   state: State,
   config: Config,
-  wildName: string,
-  wildLevel: number,
+  wild: WildPokemon,
 ): BattleResult | null {
   const db = getPokemonDB();
-  const wildData = db.pokemon[wildName];
+  const wildData = db.pokemon[wild.name];
   if (!wildData) return null;
   if (config.party.length === 0) return null;
 
   // Select best fighter using party combat power
   const { multiplier: partyMultiplier, bestFighter } = calculatePartyMultiplier(
-    config, state, wildData.types, wildLevel, wildData.base_stats,
+    config, state, wildData.types, wild.level, wildData.base_stats,
   );
   const attacker = bestFighter;
   const attackerData = db.pokemon[attacker];
@@ -226,7 +225,7 @@ export function resolveBattle(
     attackerData.types,
     wildData.types,
     attackerLevel,
-    wildLevel,
+    wild.level,
     attackerData.base_stats,
     wildData.base_stats,
     state.pokemon[attacker]?.ev ?? 0,
@@ -244,7 +243,7 @@ export function resolveBattle(
   // Calculate XP (with type master 1.2x bonus)
   const xpBonus = Math.max(config.xp_bonus_multiplier, state.xp_bonus_multiplier);
   const typeMasterMult = getTypeMasterXpMultiplier(state, attackerData.types, wildData.types);
-  const totalBattleXp = Math.floor(calculateBattleXp(wildLevel, wildData.rarity, typeDisadvantage, xpBonus, won) * typeMasterMult);
+  const totalBattleXp = Math.floor(calculateBattleXp(wild.level, wildData.rarity, typeDisadvantage, xpBonus, won) * typeMasterMult);
   // All party members receive the full XP (not divided)
   const xpPerPokemon = Math.max(1, totalBattleXp);
 
@@ -271,27 +270,27 @@ export function resolveBattle(
   }
 
   // Mark pokemon as seen
-  markSeen(state, wildName);
+  markSeen(state, wild.name);
 
   // Catch on victory (requires pokeballs based on catch_rate)
   let caught = false;
   let ballCost = 0;
   if (won) {
-    const alreadyCaught = state.pokedex[wildName]?.caught ?? false;
+    const alreadyCaught = state.pokedex[wild.name]?.caught ?? false;
     if (!alreadyCaught) {
       ballCost = getBallCost(wildData.catch_rate);
       const hasBalls = getItemCount(state, 'pokeball') >= ballCost;
       if (hasBalls) {
         for (let i = 0; i < ballCost; i++) useItem(state, 'pokeball');
         caught = true;
-        markCaught(state, wildName);
+        markCaught(state, wild.name);
         state.catch_count++;
-        if (!state.unlocked.includes(wildName)) {
-          state.unlocked.push(wildName);
+        if (!state.unlocked.includes(wild.name)) {
+          state.unlocked.push(wild.name);
         }
-        if (!state.pokemon[wildName]) {
-          const catchXp = levelToXp(wildLevel, wildData.exp_group);
-          state.pokemon[wildName] = { id: wildData.id, xp: catchXp, level: wildLevel, friendship: 0, ev: 0 };
+        if (!state.pokemon[wild.name]) {
+          const catchXp = levelToXp(wild.level, wildData.exp_group);
+          state.pokemon[wild.name] = { id: wildData.id, xp: catchXp, level: wild.level, friendship: 0, ev: 0 };
         }
       }
       // Not enough balls: markSeen already called above, XP already awarded. No catch.
@@ -303,8 +302,8 @@ export function resolveBattle(
 
   return {
     attacker,
-    defender: wildName,
-    defenderLevel: wildLevel,
+    defender: wild.name,
+    defenderLevel: wild.level,
     winRate,
     won,
     xpReward: xpPerPokemon,

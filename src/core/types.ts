@@ -69,6 +69,8 @@ export interface PokemonState {
   level: number;
   friendship: number;
   ev: number;
+  nickname?: string;
+  call_count?: number;
   evolution_ready?: boolean;
   evolution_options?: string[];
 }
@@ -310,6 +312,13 @@ export interface BattleResult {
   caught: boolean;
   typeMultiplier: number;
   ballCost: number;
+  shiny?: boolean;
+}
+
+export interface WildPokemon {
+  name: string;
+  level: number;
+  shiny: boolean;
 }
 
 export interface HookInput {

@@ -194,7 +194,7 @@ describe('battle', () => {
     it('returns BattleResult', () => {
       const state = makeState();
       const config = makeConfig();
-      const result = resolveBattle(state, config, '396', 5);
+      const result = resolveBattle(state, config, { name: '396', level: 5, shiny: false });
       assert.ok(result !== null);
       assert.equal(typeof result!.won, 'boolean');
       assert.equal(typeof result!.winRate, 'number');
@@ -204,7 +204,7 @@ describe('battle', () => {
     it('increments battle_count', () => {
       const state = makeState();
       const config = makeConfig();
-      resolveBattle(state, config, '396', 5);
+      resolveBattle(state, config, { name: '396', level: 5, shiny: false });
       assert.equal(state.battle_count, 1);
     });
 
@@ -212,14 +212,14 @@ describe('battle', () => {
       const state = makeState();
       const config = makeConfig();
       const prevXp = state.pokemon['387'].xp;
-      resolveBattle(state, config, '396', 5);
+      resolveBattle(state, config, { name: '396', level: 5, shiny: false });
       assert.ok(state.pokemon['387'].xp > prevXp);
     });
 
     it('marks wild pokemon as seen', () => {
       const state = makeState();
       const config = makeConfig();
-      resolveBattle(state, config, '396', 5);
+      resolveBattle(state, config, { name: '396', level: 5, shiny: false });
       assert.ok(state.pokedex['396']?.seen);
     });
   });
@@ -235,7 +235,7 @@ describe('battle', () => {
       let caughtResult = false;
       for (let i = 0; i < 50 && !caughtResult; i++) {
         const ballsBefore = state.items.pokeball;
-        const result = resolveBattle(state, config, '396', 1);
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: false });
         if (result?.won && result?.caught) {
           caughtResult = true;
           // Ball consumed: before-catch ball count minus after-catch (ignoring drops)
@@ -256,7 +256,7 @@ describe('battle', () => {
       for (let i = 0; i < 50; i++) {
         // Reset pokeballs to 0 before each battle to isolate the test
         state.items.pokeball = 0;
-        const result = resolveBattle(state, config, '396', 1);
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: false });
         if (result?.won) {
           hadWin = true;
           assert.equal(result.caught, false, 'Should not catch without pokeball');
@@ -277,7 +277,7 @@ describe('battle', () => {
       let hadWin = false;
       for (let i = 0; i < 50; i++) {
         const ballsBefore = state.items.pokeball;
-        const result = resolveBattle(state, config, '396', 1);
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: false });
         if (result?.won) {
           hadWin = true;
           assert.equal(result.caught, false, 'Already caught pokemon should not trigger catch');
@@ -391,7 +391,7 @@ describe('battle', () => {
       // Run battles until we get a win
       let won = false;
       for (let i = 0; i < 50 && !won; i++) {
-        const result = resolveBattle(state, config, '396', 1); // low level wild for easy win
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: false }); // low level wild for easy win
         if (result?.won) won = true;
       }
       if (won) {
@@ -409,7 +409,7 @@ describe('battle', () => {
       const config = makeConfig({ party: ['387'] });
       // Run battles against high level - likely to lose
       for (let i = 0; i < 20; i++) {
-        resolveBattle(state, config, '390', 100);
+        resolveBattle(state, config, { name: '390', level: 100, shiny: false });
       }
       // EV should only increase for wins, check it's bounded
       assert.ok(state.pokemon['387'].ev <= state.battle_wins, 'EV should not exceed win count');
@@ -424,7 +424,7 @@ describe('battle', () => {
       const config = makeConfig({ party: ['387'] });
       // Force a win against low level
       for (let i = 0; i < 10; i++) {
-        resolveBattle(state, config, '396', 1);
+        resolveBattle(state, config, { name: '396', level: 1, shiny: false });
       }
       assert.equal(state.pokemon['387'].ev, 252, 'EV should not exceed 252');
     });
