@@ -144,6 +144,10 @@ export function readConfig(gen?: string): Config {
   if (result.max_party_size > 6) {
     result.max_party_size = 6;
   }
+  // Trim party to match cap (migration for users who had 7-8)
+  if (result.party.length > result.max_party_size) {
+    result.party = result.party.slice(0, result.max_party_size);
+  }
 
   return migrateConfig(result, i18nDataDir(gen));
 }
