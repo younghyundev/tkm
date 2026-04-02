@@ -146,21 +146,21 @@
   {
     "id": "item_ball_drop",
     "category": "item",
-    "template": "🔴 포켓몬볼은 전투 승리 시 20%, 패배 시 5% 확률로 드랍됩니다",
+    "template": "🔴 몬스터볼은 전투 승리 시 20%, 패배 시 5% 확률로 드랍됩니다",
     "dynamic": false,
     "template_key": "tip.item_ball_drop"
   },
   {
     "id": "item_ball_catch",
     "category": "item",
-    "template": "🔴 포켓몬볼이 있어야 야생 포켓몬을 포획할 수 있습니다",
+    "template": "🔴 몬스터볼이 있어야 야생 포켓몬을 포획할 수 있습니다",
     "dynamic": false,
     "template_key": "tip.item_ball_catch"
   },
   {
     "id": "item_ball_count",
     "category": "item",
-    "template": "🔴 현재 포켓몬볼: {count}개. 새로운 포켓몬을 만날 준비를 하세요!",
+    "template": "🔴 현재 몬스터볼: {count}개. 새로운 포켓몬을 만날 준비를 하세요!",
     "dynamic": true,
     "resolver": "pokeBallCount",
     "template_key": "tip.item_ball_count"
@@ -168,14 +168,14 @@
   {
     "id": "item_achievement_balls",
     "category": "item",
-    "template": "🔴 업적 보상으로 포켓몬볼을 대량 획득할 수 있습니다 (최대 10개!)",
+    "template": "🔴 업적 보상으로 몬스터볼을 대량 획득할 수 있습니다 (최대 10개!)",
     "dynamic": false,
     "template_key": "tip.item_achievement_balls"
   },
   {
     "id": "item_ball_strategy",
     "category": "item",
-    "template": "🔴 이미 포획한 포켓몬과의 전투에서는 포켓몬볼이 소비되지 않습니다",
+    "template": "🔴 이미 포획한 포켓몬과의 전투에서는 몬스터볼이 소비되지 않습니다",
     "dynamic": false,
     "template_key": "tip.item_ball_strategy"
   }
