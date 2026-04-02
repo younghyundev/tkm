@@ -376,5 +376,39 @@
   "tip.item_ball_catch": "🔴 몬스터볼이 있어야 야생 포켓몬을 포획할 수 있습니다",
   "tip.item_ball_count": "🔴 현재 몬스터볼: {count}개. 새로운 포켓몬을 만날 준비를 하세요!",
   "tip.item_achievement_balls": "🔴 업적 보상으로 몬스터볼을 대량 획득할 수 있습니다 (최대 10개!)",
-  "tip.item_ball_strategy": "🔴 이미 포획한 포켓몬과의 전투에서는 몬스터볼이 소비되지 않습니다"
+  "tip.item_ball_strategy": "🔴 이미 포획한 포켓몬과의 전투에서는 몬스터볼이 소비되지 않습니다",
+
+  "cli.dashboard.region": "지역: {region} (Lv.{min}-{max})",
+  "cli.dashboard.streak": "연속 출석: {days}일 (최고: {best})",
+  "cli.dashboard.pokedex": "도감: {caught}/{total} ({pct}%)",
+  "cli.dashboard.party_title": "파티",
+  "cli.dashboard.party_empty": "파티가 비어있습니다.",
+  "cli.dashboard.activity_title": "최근 활동 (7일)",
+  "cli.dashboard.activity_xp": "• +{xp} XP 획득",
+  "cli.dashboard.activity_battles": "• 전투 {total}회 ({wins}승/{losses}패)",
+  "cli.dashboard.activity_catches": "• 포획 {count}회",
+  "cli.dashboard.activity_encounters": "• 인카운터 {count}회",
+  "cli.dashboard.events_title": "오늘의 이벤트",
+  "cli.dashboard.events_none": "활성 이벤트 없음",
+
+  "cli.stats.header": "=== 통계 ===",
+  "cli.stats.streak_header": "[ 연속 출석 ]",
+  "cli.stats.streak_days": "  현재 연속: {days}일",
+  "cli.stats.streak_best": "  최고 기록: {days}일",
+  "cli.stats.weekly_header": "[ 이번 주 ]",
+  "cli.stats.weekly_xp": "  획득 XP: {xp}",
+  "cli.stats.weekly_battles": "  전투: {wins}승 / {losses}패",
+  "cli.stats.weekly_catches": "  포획: {count}회",
+  "cli.stats.weekly_encounters": "  인카운터: {count}회",
+  "cli.stats.alltime_header": "[ 전체 ]",
+  "cli.stats.alltime_xp": "  획득 XP: {xp}",
+  "cli.stats.alltime_battles": "  전투: {wins}승 / {losses}패",
+  "cli.stats.alltime_catches": "  포획: {count}회",
+  "cli.stats.alltime_encounters": "  인카운터: {count}회",
+
+  "cli.help.cmd_dashboard": "  dashboard           전체 대시보드",
+  "cli.help.cmd_stats": "  stats               통계 보기 (주간 + 전체)",
+
+  "event.active_header": "활성 이벤트",
+  "event.none": "활성 이벤트 없음"
 }

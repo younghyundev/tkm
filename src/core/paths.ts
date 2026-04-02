@@ -17,6 +17,7 @@ export const PLUGIN_ROOT = process.env.CLAUDE_PLUGIN_ROOT ?? join(import.meta.di
 export const POKEMON_JSON_PATH = join(PLUGIN_ROOT, 'data', 'pokemon.json');
 export const ACHIEVEMENTS_JSON_PATH = join(PLUGIN_ROOT, 'data', 'achievements.json');
 export const REGIONS_JSON_PATH = join(PLUGIN_ROOT, 'data', 'regions.json');
+export const EVENTS_JSON_PATH = join(PLUGIN_ROOT, 'data', 'events.json');
 export const CRIES_DIR = join(PLUGIN_ROOT, 'cries');
 export const SPRITES_RAW_DIR = join(PLUGIN_ROOT, 'sprites', 'raw');
 export const SPRITES_TERMINAL_DIR = join(PLUGIN_ROOT, 'sprites', 'terminal');

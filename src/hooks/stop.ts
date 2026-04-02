@@ -14,6 +14,7 @@ import { playSfx } from '../audio/play-sfx.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
 import { withLock } from '../core/lock.js';
+import { recordXp, recordBattle, recordCatch, recordEncounter } from '../core/stats.js';
 
 function readStdin(): string {
   try {
@@ -192,6 +193,9 @@ async function main(): Promise<void> {
       }
     }
 
+    // Record XP in stats (total XP earned across all party members)
+    recordXp(state, xpPerPokemon * config.party.length);
+
     // Update session tokens tracking & total
     state.last_session_tokens[sessionId] = totalTokens;
     state.last_session_tokens = pruneSessionTokens(state.last_session_tokens);
@@ -214,6 +218,12 @@ async function main(): Promise<void> {
         state.last_battle = battleResult;
         const battleMsg = formatEncounterMessage(battleResult);
         if (battleMsg) messages.push(battleMsg);
+
+        // Record battle stats
+        recordEncounter(state);
+        recordBattle(state, battleResult.won);
+        recordXp(state, battleResult.xpReward);
+        if (battleResult.caught) recordCatch(state);
 
         // Auto-add caught pokemon to party if < 6
         if (battleResult.caught && config.party.length < 6) {

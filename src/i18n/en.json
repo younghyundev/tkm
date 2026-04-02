@@ -376,5 +376,39 @@
   "tip.item_ball_catch": "🔴 You need a Poké Ball to catch wild Pokemon.",
   "tip.item_ball_count": "🔴 Current Poké Balls: {count}. Get ready for new encounters!",
   "tip.item_achievement_balls": "🔴 Achievement rewards can give you large batches of Poké Balls (up to 10!).",
-  "tip.item_ball_strategy": "🔴 Battling already-caught Pokemon does not consume a Poké Ball."
+  "tip.item_ball_strategy": "🔴 Battling already-caught Pokemon does not consume a Poké Ball.",
+
+  "cli.dashboard.region": "Region: {region} (Lv.{min}-{max})",
+  "cli.dashboard.streak": "Day streak: {days} (best: {best})",
+  "cli.dashboard.pokedex": "Pokedex: {caught}/{total} ({pct}%)",
+  "cli.dashboard.party_title": "Party",
+  "cli.dashboard.party_empty": "Party is empty.",
+  "cli.dashboard.activity_title": "Recent Activity (7d)",
+  "cli.dashboard.activity_xp": "• +{xp} XP earned",
+  "cli.dashboard.activity_battles": "• {total} battles ({wins}W/{losses}L)",
+  "cli.dashboard.activity_catches": "• {count} catches",
+  "cli.dashboard.activity_encounters": "• {count} encounters",
+  "cli.dashboard.events_title": "Today's Event",
+  "cli.dashboard.events_none": "No active events",
+
+  "cli.stats.header": "=== Stats ===",
+  "cli.stats.streak_header": "[ Streak ]",
+  "cli.stats.streak_days": "  Current streak: {days} days",
+  "cli.stats.streak_best": "  Personal best: {days} days",
+  "cli.stats.weekly_header": "[ This Week ]",
+  "cli.stats.weekly_xp": "  XP earned: {xp}",
+  "cli.stats.weekly_battles": "  Battles: {wins}W / {losses}L",
+  "cli.stats.weekly_catches": "  Catches: {count}",
+  "cli.stats.weekly_encounters": "  Encounters: {count}",
+  "cli.stats.alltime_header": "[ All-Time ]",
+  "cli.stats.alltime_xp": "  XP earned: {xp}",
+  "cli.stats.alltime_battles": "  Battles: {wins}W / {losses}L",
+  "cli.stats.alltime_catches": "  Catches: {count}",
+  "cli.stats.alltime_encounters": "  Encounters: {count}",
+
+  "cli.help.cmd_dashboard": "  dashboard           Full summary dashboard",
+  "cli.help.cmd_stats": "  stats               View stats (weekly + all-time)",
+
+  "event.active_header": "Active Event",
+  "event.none": "No active events"
 }

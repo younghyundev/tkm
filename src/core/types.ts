@@ -83,6 +83,59 @@ export interface Notification {
   data?: Record<string, unknown>;
 }
 
+export interface Stats {
+  streak_days: number;
+  longest_streak: number;
+  last_active_date: string;
+  weekly_xp: number;
+  weekly_battles_won: number;
+  weekly_battles_lost: number;
+  weekly_catches: number;
+  weekly_encounters: number;
+  total_xp_earned: number;
+  total_battles_won: number;
+  total_battles_lost: number;
+  total_catches: number;
+  total_encounters: number;
+  last_reset_week: string;
+}
+
+export interface TimeEvent {
+  id: string;
+  hours: number[];
+  type_boost: Record<string, number>;
+  label: { en: string; ko: string };
+}
+
+export interface DayEvent {
+  id: string;
+  day: number;
+  rare_multiplier: number;
+  label: { en: string; ko: string };
+}
+
+export interface StreakEvent {
+  id: string;
+  days: number;
+  reward: string;
+  label: { en: string; ko: string };
+}
+
+export interface MilestoneEvent {
+  id: string;
+  trigger_type: string;
+  trigger_value: number;
+  reward: string;
+  label: { en: string; ko: string };
+}
+
+export interface EventsDB {
+  time_of_day: TimeEvent[];
+  day_of_week: DayEvent[];
+  streak: StreakEvent[];
+  milestone: MilestoneEvent[];
+}
+
 export interface EvolutionContext {
   oldLevel: number;
   newLevel: number;
@@ -118,6 +171,8 @@ export interface State {
   notifications: Notification[];
   dismissed_notifications: string[];
   last_known_regions: number;
+  stats: Stats;
+  events_triggered: string[];
 }
 
 export interface Config {
