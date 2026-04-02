@@ -328,7 +328,7 @@ export function formatBattleMessage(result: BattleResult): string {
       }
     } else if (result.ballCost > 0 && !result.caught) {
       // Won but couldn't catch — not enough balls
-      msg += ` [${t('battle.need_balls', { count: result.ballCost, fallback: `Need ${result.ballCost} balls to catch` })}]`;
+      msg += ` ${t('battle.need_balls', { defender: defenderName })}`;
     }
     return msg;
   }

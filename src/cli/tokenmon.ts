@@ -3,7 +3,7 @@ import * as readline from 'readline';
 import { readFileSync } from 'fs';
 import { readState, writeState } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache } from '../core/pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/pokedex.js';
@@ -32,6 +32,13 @@ const success = (s: string) => console.log(`${GREEN}${s}${RESET}`);
 const warn = (s: string) => console.log(`${YELLOW}${s}${RESET}`);
 const error = (s: string) => console.error(`${RED}${s}${RESET}`);
 const bold = (s: string) => console.log(`${BOLD}${s}${RESET}`);
+
+function resolvePokemonArg(name: string): string {
+  const pokemonDB = getPokemonDB();
+  if (pokemonDB.pokemon[name]) return name;
+  const id = pokemonIdByName(name);
+  return id ?? name;
+}
 
 function xpBar(currentXp: number, level: number, group: ExpGroup, blocks: number = 10): string {
   const currLvlXp = levelToXp(level, group);
@@ -177,6 +184,7 @@ function cmdStarter(choiceArg?: string): void {
 }
 
 function cmdParty(subcmd: string, pokemon?: string): void {
+  if (pokemon) pokemon = resolvePokemonArg(pokemon);
   const config = readConfig();
   const state = readState();
   const pokemonDB = getPokemonDB();
@@ -677,6 +685,7 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
 }
 
 function cmdEvolve(pokemonArg?: string, targetArg?: string): void {
+  if (pokemonArg) pokemonArg = resolvePokemonArg(pokemonArg);
   const config = readConfig();
   const state = readState();
   const pokemonDB = getPokemonDB();

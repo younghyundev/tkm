@@ -337,6 +337,7 @@
 
   "battle.win": "⚔️ vs wild {defender} (Lv.{level}) → Win! (XP +{xp})",
   "battle.win_catch": "\n🎉 Caught {defender}! (tokenmon party add {defender})",
+  "battle.need_balls": "— {defender} fled!",
   "battle.lose": "⚔️ vs wild {defender} (Lv.{level}) → Defeat... (XP +{xp})",
 
   "achievement.unlocked": "🏆 Achievement unlocked: {name}! ",

@@ -337,6 +337,7 @@
 
   "battle.win": "⚔️ vs 야생 {defender} (Lv.{level}) → 승리! (XP +{xp})",
   "battle.win_catch": "\n🎉 {defender:을/를} 포획했습니다! (tokenmon party add {defender})",
+  "battle.need_balls": "— {defender}(은/는) 도망쳤다!",
   "battle.lose": "⚔️ vs 야생 {defender} (Lv.{level}) → 패배... (XP +{xp})",
 
   "achievement.unlocked": "🏆 업적 달성: {name}! ",
