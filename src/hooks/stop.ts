@@ -74,7 +74,7 @@ async function main(): Promise<void> {
 
   // Pre-lock: read config for early exit check (benign TOCTOU — worst case: enter lock unnecessarily)
   const configCheck = readConfig();
-  initLocale(configCheck.language ?? 'ko');
+  initLocale(configCheck.language ?? 'en');
 
   if (configCheck.party.length === 0 || !sessionId) {
     playCry();

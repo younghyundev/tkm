@@ -195,10 +195,10 @@
   "cli.cheat.item_added": "Added {name} x{count} (total: {total})",
   "cli.cheat.xp_multiplier_set": "Set XP multiplier to {value}",
 
-  "renderer.kitty_desc": "Kitty Graphics Protocol (highest quality, original PNG)",
-  "renderer.sixel_desc": "Sixel (DEC compatible, wide terminal support)",
-  "renderer.iterm2_desc": "iTerm2 Inline Images (macOS iTerm2/WezTerm)",
-  "renderer.braille_desc": "Braille (classic method, all terminals compatible)",
+  "renderer.kitty_desc": "Kitty Graphics Protocol (experimental — highest quality, original PNG)",
+  "renderer.sixel_desc": "Sixel (experimental — DEC compatible, wide terminal support)",
+  "renderer.iterm2_desc": "iTerm2 Inline Images (experimental — macOS iTerm2/WezTerm)",
+  "renderer.braille_desc": "Braille (recommended — classic method, all terminals compatible)",
 
   "setup.recommended": " [Recommended]",
 

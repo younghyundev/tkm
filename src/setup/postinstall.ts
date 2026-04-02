@@ -36,6 +36,8 @@ const DEFAULT_CONFIG = JSON.stringify({
   renderer: 'braille',
   info_mode: 'ace_full',
   tips_enabled: true,
+  notifications_enabled: true,
+  language: 'en',
 }, null, 2);
 
 const DEFAULT_SESSION = JSON.stringify({
@@ -91,7 +93,7 @@ function migrateFile(srcPath: string, destPath: string, defaultContent: string):
 }
 
 function main(): void {
-  initLocale(readConfig().language ?? 'ko');
+  initLocale(readConfig().language ?? 'en');
   console.log('');
   console.log(t('setup.postinstall.title'));
   console.log('');

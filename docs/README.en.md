@@ -65,32 +65,32 @@ npx tsx install-standalone.ts
 
 | Command | Description |
 |---------|-------------|
-| `/tkm status` | Show party and stats |
-| `/tkm starter` | Choose starter Pokémon |
-| `/tkm party` | View current party |
-| `/tkm party add <name>` | Add Pokémon to party |
-| `/tkm party remove <name>` | Remove from party |
-| `/tkm party dispatch <name>` | Set dispatch Pokémon (1.5x XP in subagents) |
-| `/tkm unlock list` | List unlocked Pokémon |
-| `/tkm pokedex` | Browse Pokédex (supports `--type`, `--region`, `--rarity` filters) |
-| `/tkm pokedex <name>` | Pokémon detail view |
-| `/tkm region` | Show current region |
-| `/tkm region list` | List all regions |
-| `/tkm region move <name>` | Move to another region |
-| `/tkm items` | View items |
-| `/tkm evolve` | List evolution-ready Pokémon |
-| `/tkm evolve <name>` | Evolve with branch selection |
-| `/tkm dashboard` | Full summary dashboard |
-| `/tkm stats` | Weekly + all-time stats |
-| `/tkm legendary` | View/select legendary Pokémon |
-| `/tkm box` | View stored (non-party) Pokémon |
-| `/tkm party swap <slot> <name>` | Swap party slot with box Pokémon |
-| `/tkm party reorder <from> <to>` | Reorder party slots |
-| `/tkm party suggest` | Suggest party for current region |
-| `/tkm notifications` | View notifications |
-| `/tkm achievements` | Achievement progress |
-| `/tkm config set <key> <value>` | Change a setting |
-| `/tkm help` | Full help text |
+| `/tkm:tkm status` | Show party and stats |
+| `/tkm:tkm starter` | Choose starter Pokémon |
+| `/tkm:tkm party` | View current party |
+| `/tkm:tkm party add <name>` | Add Pokémon to party |
+| `/tkm:tkm party remove <name>` | Remove from party |
+| `/tkm:tkm party dispatch <name>` | Set dispatch Pokémon (1.5x XP in subagents) |
+| `/tkm:tkm unlock list` | List unlocked Pokémon |
+| `/tkm:tkm pokedex` | Browse Pokédex (supports `--type`, `--region`, `--rarity` filters) |
+| `/tkm:tkm pokedex <name>` | Pokémon detail view |
+| `/tkm:tkm region` | Show current region |
+| `/tkm:tkm region list` | List all regions |
+| `/tkm:tkm region move <name>` | Move to another region |
+| `/tkm:tkm items` | View items |
+| `/tkm:tkm evolve` | List evolution-ready Pokémon |
+| `/tkm:tkm evolve <name>` | Evolve with branch selection |
+| `/tkm:tkm dashboard` | Full summary dashboard |
+| `/tkm:tkm stats` | Weekly + all-time stats |
+| `/tkm:tkm legendary` | View/select legendary Pokémon |
+| `/tkm:tkm box` | View stored (non-party) Pokémon |
+| `/tkm:tkm party swap <slot> <name>` | Swap party slot with box Pokémon |
+| `/tkm:tkm party reorder <from> <to>` | Reorder party slots |
+| `/tkm:tkm party suggest` | Suggest party for current region |
+| `/tkm:tkm notifications` | View notifications |
+| `/tkm:tkm achievements` | Achievement progress |
+| `/tkm:tkm config set <key> <value>` | Change a setting |
+| `/tkm:tkm help` | Full help text |
 
 ## Configuration
 
@@ -103,7 +103,7 @@ Settings are stored in `~/.claude/tokenmon/config.json`:
 | `sprite_enabled` | true | Show terminal sprites |
 | `cry_enabled` | true | Play Pokémon cries |
 | `max_party_size` | 6 | Maximum party members |
-| `language` | ko | Display language (`ko` or `en`) |
+| `language` | en | Display language (`en` or `ko`) |
 | `renderer` | braille | Sprite renderer (`braille`, `kitty`, `sixel`, `iterm2`) |
 | `sprite_mode` | all | Status bar sprite mode (`all`, `ace_only`, `emoji_all`, `emoji_ace`) |
 | `info_mode` | ace_full | Status bar info mode (`ace_full`, `name_level`, `all_full`, `ace_level`) |
@@ -164,14 +164,14 @@ Catching Pokémon unlocks milestone rewards:
 
 ## Renderer Options
 
-| Renderer | Quality | Compatibility |
-|----------|---------|---------------|
-| **Braille** | ⬛⬛⬜⬜⬜ | All terminals |
-| **Kitty** | ⬛⬛⬛⬛⬛ | Kitty terminal |
-| **Sixel** | ⬛⬛⬛⬛⬜ | Sixel-capable terminals |
-| **iTerm2** | ⬛⬛⬛⬛⬜ | iTerm2 / compatible |
+| Renderer | Quality | Compatibility | Status |
+|----------|---------|---------------|--------|
+| **Braille** | ⬛⬛⬜⬜⬜ | All terminals | Recommended |
+| **Kitty** | ⬛⬛⬛⬛⬛ | Kitty terminal | Experimental |
+| **Sixel** | ⬛⬛⬛⬛⬜ | Sixel-capable terminals | Experimental |
+| **iTerm2** | ⬛⬛⬛⬛⬜ | iTerm2 / compatible | Experimental |
 
-Set during `/tkm:setup` or change anytime: `/tkm config set renderer kitty`
+Set during `/tkm:setup` or change anytime: `/tkm:tkm config set renderer kitty`
 
 ## Status Bar
 

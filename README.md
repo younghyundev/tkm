@@ -7,7 +7,7 @@
 A Gen 4 Pokémon XP gamification plugin for [Claude Code](https://claude.ai/code).
 Earn XP from your coding sessions, level up, evolve, and catch 112 Sinnoh-region Pokémon.
 
-[![Version](https://img.shields.io/badge/version-0.1.0--rc.0-blue.svg)](https://github.com/ThunderConch/tkm/releases/tag/v0.1.0-rc.0)
+[![Version](https://img.shields.io/badge/version-0.1.0--rc.0-blue.svg)](https://github.com/ThunderConch/tkm/releases/tag/v0.1.0-rc.1)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.0.0-brightgreen.svg)](https://nodejs.org)
 
@@ -60,18 +60,18 @@ The setup wizard guides you through dependency install, starter selection (Turtw
 ## Commands
 
 ```
-/tkm status          # Party & stats
-/tkm dashboard       # Full summary dashboard
-/tkm stats           # Weekly + all-time stats
-/tkm party           # Detailed party view
-/tkm box             # View stored Pokémon
-/tkm party suggest   # Region-optimized party
-/tkm evolve          # Branching evolution
-/tkm legendary       # Legendary Pokémon
-/tkm pokedex         # Browse Pokédex
-/tkm region list     # Explore regions
-/tkm achievements    # Achievement progress
-/tkm help            # Full command list
+/tkm:tkm status          # Party & stats
+/tkm:tkm dashboard       # Full summary dashboard
+/tkm:tkm stats           # Weekly + all-time stats
+/tkm:tkm party           # Detailed party view
+/tkm:tkm box             # View stored Pokémon
+/tkm:tkm party suggest   # Region-optimized party
+/tkm:tkm evolve          # Branching evolution
+/tkm:tkm legendary       # Legendary Pokémon
+/tkm:tkm pokedex         # Browse Pokédex
+/tkm:tkm region list     # Explore regions
+/tkm:tkm achievements    # Achievement progress
+/tkm:tkm help            # Full command list
 ```
 
 ## Requirements

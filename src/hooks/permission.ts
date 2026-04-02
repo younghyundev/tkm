@@ -24,7 +24,7 @@ function main(): void {
   const result = withLock(() => {
     const state = readState();
     const config = readConfig();
-    initLocale(config.language ?? 'ko');
+    initLocale(config.language ?? 'en');
 
     // Increment permission_count
     state.permission_count += 1;
@@ -58,4 +58,9 @@ function main(): void {
   console.log(JSON.stringify(output));
 }
 
-main();
+try {
+  main();
+} catch (err) {
+  process.stderr.write(`tokenmon permission: ${err}\n`);
+  console.log(JSON.stringify({ continue: true }));
+}

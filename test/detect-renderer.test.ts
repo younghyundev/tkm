@@ -33,7 +33,7 @@ describe('detectRenderer', () => {
   it('detects kitty for xterm-kitty', () => {
     const result = detectRenderer({ TERM: 'xterm-kitty' });
     assert.ok(result.supported.includes('kitty'));
-    assert.equal(result.recommended, 'kitty');
+    assert.equal(result.recommended, 'braille');
   });
 
   it('detects kitty for ghostty', () => {
@@ -44,7 +44,7 @@ describe('detectRenderer', () => {
   it('detects iterm2 for iTerm.app', () => {
     const result = detectRenderer({ TERM_PROGRAM: 'iTerm.app', TERM: 'xterm-256color' });
     assert.ok(result.supported.includes('iterm2'));
-    assert.equal(result.recommended, 'iterm2');
+    assert.equal(result.recommended, 'braille');
   });
 
   it('detects kitty, sixel, iterm2 for WezTerm', () => {
@@ -52,7 +52,7 @@ describe('detectRenderer', () => {
     assert.ok(result.supported.includes('kitty'));
     assert.ok(result.supported.includes('sixel'));
     assert.ok(result.supported.includes('iterm2'));
-    assert.equal(result.recommended, 'kitty');
+    assert.equal(result.recommended, 'braille');
   });
 
   it('detects sixel for mintty', () => {
@@ -60,20 +60,20 @@ describe('detectRenderer', () => {
     assert.ok(result.supported.includes('sixel'));
   });
 
-  it('kitty takes priority over iterm2 and sixel', () => {
+  it('braille is always recommended regardless of supported protocols', () => {
     const result = detectRenderer({ TERM: 'xterm-kitty', TERM_PROGRAM: 'iTerm.app' });
-    assert.equal(result.recommended, 'kitty');
+    assert.equal(result.recommended, 'braille');
   });
 });
 
 describe('formatDetectionChoices', () => {
-  it('marks recommended renderer', () => {
+  it('marks braille as recommended', () => {
     const result = detectRenderer({ TERM: 'xterm-kitty' });
     const choices = formatDetectionChoices(result);
-    const kittyChoice = choices.find(c => c.value === 'kitty');
-    assert.ok(kittyChoice?.recommended);
     const brailleChoice = choices.find(c => c.value === 'braille');
-    assert.ok(!brailleChoice?.recommended);
+    assert.ok(brailleChoice?.recommended);
+    const kittyChoice = choices.find(c => c.value === 'kitty');
+    assert.ok(!kittyChoice?.recommended);
   });
 
   it('returns all supported renderers as choices', () => {

@@ -6,7 +6,7 @@ type Locale = 'ko' | 'en';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-let currentLocale: Locale = 'ko';
+let currentLocale: Locale = 'en';
 let messages: Record<string, Record<string, string>> = {};
 let loaded = false;
 
@@ -79,9 +79,9 @@ export function t(key: string, vars?: Record<string, string | number>): string {
   // 1. Try current locale
   let template = messages[currentLocale]?.[key];
 
-  // 2. Fallback to Korean
-  if (template === undefined && currentLocale !== 'ko') {
-    template = messages['ko']?.[key];
+  // 2. Fallback to English
+  if (template === undefined && currentLocale !== 'en') {
+    template = messages['en']?.[key];
   }
 
   // 3. Fallback to key itself
@@ -101,5 +101,5 @@ export function t(key: string, vars?: Record<string, string | number>): string {
 export function _resetForTesting(): void {
   messages = {};
   loaded = false;
-  currentLocale = 'ko';
+  currentLocale = 'en';
 }

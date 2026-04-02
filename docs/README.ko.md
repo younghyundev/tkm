@@ -65,32 +65,32 @@ npx tsx install-standalone.ts
 
 | 명령 | 설명 |
 |------|------|
-| `/tkm status` | 파티와 통계 보기 |
-| `/tkm starter` | 스타터 포켓몬 선택 |
-| `/tkm party` | 파티 상세 보기 |
-| `/tkm party add <이름>` | 파티에 포켓몬 추가 |
-| `/tkm party remove <이름>` | 파티에서 제거 |
-| `/tkm party dispatch <이름>` | 디스패치 포켓몬 설정 (서브에이전트에서 1.5x XP) |
-| `/tkm unlock list` | 잠금해제된 포켓몬 목록 |
-| `/tkm pokedex` | 도감 보기 (`--type`, `--region`, `--rarity` 필터 지원) |
-| `/tkm pokedex <이름>` | 포켓몬 상세 정보 |
-| `/tkm region` | 현재 지역 보기 |
-| `/tkm region list` | 전체 지역 목록 |
-| `/tkm region move <지역>` | 지역 이동 |
-| `/tkm items` | 아이템 보기 |
-| `/tkm evolve` | 진화 가능 포켓몬 목록 |
-| `/tkm evolve <이름>` | 분기 진화 선택 |
-| `/tkm dashboard` | 전체 대시보드 |
-| `/tkm stats` | 주간 + 전체 통계 |
-| `/tkm legendary` | 전설 포켓몬 보기/선택 |
-| `/tkm box` | 박스 포켓몬 보기 |
-| `/tkm party swap <슬롯> <이름>` | 파티-박스 교환 |
-| `/tkm party reorder <원래> <목표>` | 파티 순서 변경 |
-| `/tkm party suggest` | 현재 지역 추천 파티 |
-| `/tkm notifications` | 알림 보기 |
-| `/tkm achievements` | 업적 진행도 |
-| `/tkm config set <키> <값>` | 설정 변경 |
-| `/tkm help` | 전체 도움말 |
+| `/tkm:tkm status` | 파티와 통계 보기 |
+| `/tkm:tkm starter` | 스타터 포켓몬 선택 |
+| `/tkm:tkm party` | 파티 상세 보기 |
+| `/tkm:tkm party add <이름>` | 파티에 포켓몬 추가 |
+| `/tkm:tkm party remove <이름>` | 파티에서 제거 |
+| `/tkm:tkm party dispatch <이름>` | 디스패치 포켓몬 설정 (서브에이전트에서 1.5x XP) |
+| `/tkm:tkm unlock list` | 잠금해제된 포켓몬 목록 |
+| `/tkm:tkm pokedex` | 도감 보기 (`--type`, `--region`, `--rarity` 필터 지원) |
+| `/tkm:tkm pokedex <이름>` | 포켓몬 상세 정보 |
+| `/tkm:tkm region` | 현재 지역 보기 |
+| `/tkm:tkm region list` | 전체 지역 목록 |
+| `/tkm:tkm region move <지역>` | 지역 이동 |
+| `/tkm:tkm items` | 아이템 보기 |
+| `/tkm:tkm evolve` | 진화 가능 포켓몬 목록 |
+| `/tkm:tkm evolve <이름>` | 분기 진화 선택 |
+| `/tkm:tkm dashboard` | 전체 대시보드 |
+| `/tkm:tkm stats` | 주간 + 전체 통계 |
+| `/tkm:tkm legendary` | 전설 포켓몬 보기/선택 |
+| `/tkm:tkm box` | 박스 포켓몬 보기 |
+| `/tkm:tkm party swap <슬롯> <이름>` | 파티-박스 교환 |
+| `/tkm:tkm party reorder <원래> <목표>` | 파티 순서 변경 |
+| `/tkm:tkm party suggest` | 현재 지역 추천 파티 |
+| `/tkm:tkm notifications` | 알림 보기 |
+| `/tkm:tkm achievements` | 업적 진행도 |
+| `/tkm:tkm config set <키> <값>` | 설정 변경 |
+| `/tkm:tkm help` | 전체 도움말 |
 
 ## 설정
 
@@ -103,7 +103,7 @@ npx tsx install-standalone.ts
 | `sprite_enabled` | true | 터미널 스프라이트 표시 |
 | `cry_enabled` | true | 포켓몬 울음소리 재생 |
 | `max_party_size` | 6 | 최대 파티 수 |
-| `language` | ko | 표시 언어 (`ko` 또는 `en`) |
+| `language` | en | 표시 언어 (`en` 또는 `ko`) |
 | `renderer` | braille | 스프라이트 렌더러 (`braille`, `kitty`, `sixel`, `iterm2`) |
 | `sprite_mode` | all | 상태 바 스프라이트 모드 (`all`, `ace_only`, `emoji_all`, `emoji_ace`) |
 | `info_mode` | ace_full | 상태 바 정보 모드 (`ace_full`, `name_level`, `all_full`, `ace_level`) |
@@ -164,14 +164,14 @@ npx tsx install-standalone.ts
 
 ## 렌더러 옵션
 
-| 렌더러 | 품질 | 호환성 |
-|--------|------|--------|
-| **Braille** | ⬛⬛⬜⬜⬜ | 모든 터미널 |
-| **Kitty** | ⬛⬛⬛⬛⬛ | Kitty 터미널 |
-| **Sixel** | ⬛⬛⬛⬛⬜ | Sixel 지원 터미널 |
-| **iTerm2** | ⬛⬛⬛⬛⬜ | iTerm2 및 호환 터미널 |
+| 렌더러 | 품질 | 호환성 | 상태 |
+|--------|------|--------|------|
+| **Braille** | ⬛⬛⬜⬜⬜ | 모든 터미널 | 권장 |
+| **Kitty** | ⬛⬛⬛⬛⬛ | Kitty 터미널 | 실험적 |
+| **Sixel** | ⬛⬛⬛⬛⬜ | Sixel 지원 터미널 | 실험적 |
+| **iTerm2** | ⬛⬛⬛⬛⬜ | iTerm2 및 호환 터미널 | 실험적 |
 
-`/tkm:setup`에서 선택하거나 나중에 변경: `/tkm config set renderer kitty`
+`/tkm:setup`에서 선택하거나 나중에 변경: `/tkm:tkm config set renderer kitty`
 
 ## 상태 바
 

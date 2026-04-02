@@ -7,6 +7,7 @@ import { levelToXp, xpToLevel } from './core/xp.js';
 import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, SPRITES_KITTY_DIR, SPRITES_SIXEL_DIR, SPRITES_ITERM2_DIR } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
 import { t, initLocale } from './i18n/index.js';
+import { detectRenderer } from './core/detect-renderer.js';
 import type { ExpGroup, SpriteRenderer } from './core/types.js';
 
 const TYPE_EMOJI: Record<string, string> = {
@@ -108,7 +109,7 @@ function wrapPrint(parts: string[], maxWidth: number): void {
 
 function main(): void {
   const config = readConfig();
-  initLocale(config.language ?? 'ko');
+  initLocale(config.language ?? 'en');
 
   if (!config.starter_chosen) {
     console.log(t('statusline.no_starter'));
@@ -125,7 +126,14 @@ function main(): void {
   const pokemonDB = getPokemonDB();
   const termWidth = process.stdout.columns || 80;
   const spriteMode = config.sprite_mode ?? 'all';
-  const renderer: SpriteRenderer = config.renderer ?? 'braille';
+  // Runtime check: fallback to braille if terminal doesn't support configured renderer
+  let renderer: SpriteRenderer = config.renderer ?? 'braille';
+  if (renderer !== 'braille') {
+    const detected = detectRenderer();
+    if (!detected.supported.includes(renderer)) {
+      renderer = 'braille';
+    }
+  }
   const infoMode = config.info_mode ?? 'ace_full';
 
   // Footer
@@ -244,4 +252,9 @@ function main(): void {
   wrapPrint(infoParts, termWidth);
 }
 
-main();
+try {
+  main();
+} catch {
+  // Output minimal status on crash to prevent Claude Code from breaking
+  console.log('tokenmon: error');
+}

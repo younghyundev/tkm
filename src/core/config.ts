@@ -22,7 +22,7 @@ const DEFAULT_CONFIG: Config = {
   info_mode: 'ace_full',
   tips_enabled: true,
   notifications_enabled: true,
-  language: 'ko' as const,
+  language: 'en' as const,
 };
 
 function migrateConfig(config: Config): Config {

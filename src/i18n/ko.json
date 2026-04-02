@@ -195,10 +195,10 @@
   "cli.cheat.item_added": "{name} x{count} 추가 (총 {total})",
   "cli.cheat.xp_multiplier_set": "XP 배율을 {value}로 설정",
 
-  "renderer.kitty_desc": "Kitty Graphics Protocol (최고 품질, 원본 PNG)",
-  "renderer.sixel_desc": "Sixel (DEC 호환, 넓은 터미널 지원)",
-  "renderer.iterm2_desc": "iTerm2 Inline Images (macOS iTerm2/WezTerm)",
-  "renderer.braille_desc": "Braille (기존 방식, 모든 터미널 호환)",
+  "renderer.kitty_desc": "Kitty Graphics Protocol (실험적 — 최고 품질, 원본 PNG)",
+  "renderer.sixel_desc": "Sixel (실험적 — DEC 호환, 넓은 터미널 지원)",
+  "renderer.iterm2_desc": "iTerm2 Inline Images (실험적 — macOS iTerm2/WezTerm)",
+  "renderer.braille_desc": "Braille (권장 — 기존 방식, 모든 터미널 호환)",
 
   "setup.recommended": " [추천]",
 

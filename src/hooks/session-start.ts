@@ -31,7 +31,7 @@ function main(): void {
   const result = withLock(() => {
     const state = readState();
     const config = readConfig();
-    initLocale(config.language ?? 'ko');
+    initLocale(config.language ?? 'en');
 
     // Reset session.json for new session
     writeSession({
@@ -57,7 +57,7 @@ function main(): void {
 
     // Sync pokedex and check pokedex rewards
     syncPokedexFromUnlocked(state);
-    const locale = config.language ?? 'ko';
+    const locale = config.language ?? 'en';
 
     const milestones = checkMilestoneRewards(state, config);
     for (const claim of milestones) {
@@ -157,4 +157,9 @@ function main(): void {
   console.log(JSON.stringify(output));
 }
 
-main();
+try {
+  main();
+} catch (err) {
+  process.stderr.write(`tokenmon session-start: ${err}\n`);
+  console.log(JSON.stringify({ continue: true }));
+}

@@ -20,7 +20,21 @@ echo "CLAUDE_PLUGIN_ROOT=${CLAUDE_PLUGIN_ROOT}" && test -n "${CLAUDE_PLUGIN_ROOT
 cd "${CLAUDE_PLUGIN_ROOT}" && npm install
 ```
 
-On success proceed to Step 2. On failure show the error.
+On success proceed to Step 1.5. On failure show the error.
+
+## Step 1.5: Language Selection
+
+Use AskUserQuestion to let the user choose their preferred language:
+
+> Which language would you like to use?
+
+Options:
+1. English (default)
+2. 한국어 (Korean)
+
+```
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set language <en|ko>
+```
 
 ## Step 2: StatusLine Integration
 

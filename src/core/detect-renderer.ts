@@ -39,9 +39,8 @@ export function detectRenderer(env?: Record<string, string | undefined>): Detect
     supported.push('iterm2');
   }
 
-  // Priority: kitty > iterm2 > sixel > braille
-  const priority: SpriteRenderer[] = ['kitty', 'iterm2', 'sixel', 'braille'];
-  const recommended = priority.find(r => supported.includes(r)) ?? 'braille';
+  // Braille is always recommended — other renderers are experimental
+  const recommended: SpriteRenderer = 'braille';
 
   return { supported, recommended };
 }
