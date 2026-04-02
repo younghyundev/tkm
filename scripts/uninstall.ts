@@ -84,8 +84,8 @@ async function main() {
   }
 
   if (keepState) {
-    // Remove everything except state.json (flat root files)
-    const files = ['config.json', 'session.json', 'status-wrapper.mjs', 'global-config.json', 'session-gen-map.json'];
+    // Remove everything except state.json, global-config.json, and per-gen config.json (flat root files)
+    const files = ['session.json', 'status-wrapper.mjs', 'session-gen-map.json'];
     for (const f of files) {
       const p = join(DATA_DIR, f);
       if (existsSync(p)) {
@@ -98,13 +98,13 @@ async function main() {
       if (existsSync(p)) rmSync(p);
     }
 
-    // Clean per-gen directories: remove config.json and session.json, keep state.json
+    // Clean per-gen directories: remove session.json only, keep state.json and config.json
     try {
       const entries = readdirSync(DATA_DIR, { withFileTypes: true });
       for (const entry of entries) {
         if (!entry.isDirectory()) continue;
         const genDir = join(DATA_DIR, entry.name);
-        for (const f of ['config.json', 'session.json']) {
+        for (const f of ['session.json']) {
           const p = join(genDir, f);
           if (existsSync(p)) {
             rmSync(p);

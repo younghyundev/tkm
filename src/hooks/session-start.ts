@@ -27,8 +27,10 @@ function main(): void {
   const input = JSON.parse(readStdin()) as HookInput;
   const sessionId = input.session_id ?? '';
 
-  // Bind this session to the current active generation
-  const gen = getActiveGeneration();
+  // Resolve generation: use existing binding on reconnect, active gen for new sessions
+  const existingGenMap = readSessionGenMap();
+  const existingBinding = existingGenMap[sessionId]?.generation;
+  const gen = existingBinding ?? getActiveGeneration();
   setActiveGenerationCache(gen);
 
   const messages: string[] = [];
@@ -53,11 +55,13 @@ function main(): void {
       });
     }
 
-    // Register session → generation binding
-    const genMap = readSessionGenMap();
-    genMap[sessionId] = { generation: gen, created: new Date().toISOString() };
-    const pruned = pruneSessionGenMap(genMap);
-    writeSessionGenMap(pruned);
+    // Register session → generation binding (only for new sessions)
+    if (!existingBinding) {
+      const genMap = readSessionGenMap();
+      genMap[sessionId] = { generation: gen, created: new Date().toISOString() };
+      const pruned = pruneSessionGenMap(genMap);
+      writeSessionGenMap(pruned);
+    }
 
     // Increment session_count
     state.session_count += 1;
