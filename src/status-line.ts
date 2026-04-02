@@ -4,11 +4,10 @@ import { readState, readSession } from './core/state.js';
 import { readConfig } from './core/config.js';
 import { getPokemonDB, getPokemonName, getRegionName } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
-import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, SPRITES_KITTY_DIR, SPRITES_SIXEL_DIR, SPRITES_ITERM2_DIR } from './core/paths.js';
+import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
 import { t, initLocale } from './i18n/index.js';
-import { detectRenderer } from './core/detect-renderer.js';
-import type { ExpGroup, SpriteRenderer } from './core/types.js';
+import type { ExpGroup } from './core/types.js';
 
 const TYPE_EMOJI: Record<string, string> = {
   'grass': '🌿', 'fire': '🔥', 'water': '💧', 'electric': '⚡', 'fighting': '🥊',
@@ -32,25 +31,7 @@ function getEmoji(types: string[]): string {
   return TYPE_EMOJI[types?.[0]] ?? '⭐';
 }
 
-const PNG_RENDERER_DIR: Record<Exclude<SpriteRenderer, 'braille'>, string> = {
-  kitty:  SPRITES_KITTY_DIR,
-  sixel:  SPRITES_SIXEL_DIR,
-  iterm2: SPRITES_ITERM2_DIR,
-};
-const PNG_RENDERER_EXT: Record<Exclude<SpriteRenderer, 'braille'>, string> = {
-  kitty:  '.bin',
-  sixel:  '.sixel',
-  iterm2: '.b64',
-};
-
-function loadSprite(pokemonId: number, renderer: SpriteRenderer = 'braille'): string[] {
-  if (renderer !== 'braille') {
-    const protoFile = join(PNG_RENDERER_DIR[renderer], `${pokemonId}${PNG_RENDERER_EXT[renderer]}`);
-    if (existsSync(protoFile)) {
-      return [readFileSync(protoFile, 'utf-8')];
-    }
-    // Fallback to braille if pre-generated sprite is missing
-  }
+function loadSprite(pokemonId: number): string[] {
   const brailleFile = join(SPRITES_BRAILLE_DIR, `${pokemonId}.txt`);
   const terminalFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
   const file = existsSync(brailleFile) ? brailleFile : existsSync(terminalFile) ? terminalFile : null;
@@ -126,14 +107,6 @@ function main(): void {
   const pokemonDB = getPokemonDB();
   const termWidth = process.stdout.columns || 80;
   const spriteMode = config.sprite_mode ?? 'all';
-  // Runtime check: fallback to braille if terminal doesn't support configured renderer
-  let renderer: SpriteRenderer = config.renderer ?? 'braille';
-  if (renderer !== 'braille') {
-    const detected = detectRenderer();
-    if (!detected.supported.includes(renderer)) {
-      renderer = 'braille';
-    }
-  }
   const infoMode = config.info_mode ?? 'ace_full';
 
   // Footer
@@ -172,31 +145,22 @@ function main(): void {
     for (let i = 0; i < pokeData.length; i++) {
       const p = pokeData[i];
       if (spriteMode === 'all' || i === 0) {
-        spriteEntries.push(loadSprite(p.pokemonId, renderer));
+        spriteEntries.push(loadSprite(p.pokemonId));
       }
     }
 
-    if (renderer !== 'braille') {
-      // PNG protocol renderers: each entry is a single escape sequence
-      for (const entry of spriteEntries) {
-        if (entry.length > 0) {
-          process.stdout.write(entry[0] + '\n');
-        }
-      }
-    } else {
-      // Braille: row-by-row grid rendering
-      const SPRITE_WIDTH = 20;
-      const spritesPerRow = Math.max(1, Math.floor(termWidth / (SPRITE_WIDTH + 1)));
-      for (let gi = 0; gi < spriteEntries.length; gi += spritesPerRow) {
-        const group = spriteEntries.slice(gi, gi + spritesPerRow);
-        const maxRows = Math.max(...group.map(s => s.length), 0);
-        for (let row = 0; row < maxRows; row++) {
-          console.log(group.map(s => {
-            const line = s[row] ?? '';
-            const visibleLen = line.replace(/\x1b\[[^m]*m/g, '').length;
-            return visibleLen < SPRITE_WIDTH ? line + ' '.repeat(SPRITE_WIDTH - visibleLen) : line;
-          }).join(' '));
-        }
+    // Braille: row-by-row grid rendering
+    const SPRITE_WIDTH = 20;
+    const spritesPerRow = Math.max(1, Math.floor(termWidth / (SPRITE_WIDTH + 1)));
+    for (let gi = 0; gi < spriteEntries.length; gi += spritesPerRow) {
+      const group = spriteEntries.slice(gi, gi + spritesPerRow);
+      const maxRows = Math.max(...group.map(s => s.length), 0);
+      for (let row = 0; row < maxRows; row++) {
+        console.log(group.map(s => {
+          const line = s[row] ?? '';
+          const visibleLen = line.replace(/\x1b\[[^m]*m/g, '').length;
+          return visibleLen < SPRITE_WIDTH ? line + ' '.repeat(SPRITE_WIDTH - visibleLen) : line;
+        }).join(' '));
       }
     }
   }
