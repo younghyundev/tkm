@@ -1,7 +1,7 @@
 #!/usr/bin/env -S npx tsx
 import * as readline from 'readline';
 import { readFileSync } from 'fs';
-import { readState, writeState } from '../core/state.js';
+import { readState, writeState, readSessionGenMap, writeSessionGenMap } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
 import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
@@ -1333,6 +1333,13 @@ function cmdGen(sub?: string, arg?: string): void {
     clearActiveGenerationCache();
     setActiveGenerationCache(targetGen);
     invalidateGenCache();
+
+    // Update all active session bindings to new generation
+    const genMap = readSessionGenMap();
+    for (const entry of Object.values(genMap)) {
+      entry.generation = targetGen;
+    }
+    writeSessionGenMap(genMap);
 
     // Reset region to 1 (regions are per-generation, IDs don't carry over)
     const targetConfig = readConfig(targetGen);

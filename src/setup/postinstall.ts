@@ -4,6 +4,17 @@ import { DATA_DIR, GLOBAL_CONFIG_PATH, CLAUDE_DIR, PLUGIN_ROOT } from '../core/p
 import { t, initLocale } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
 
+function getDefaultGen(): string {
+  try {
+    const gensPath = join(PLUGIN_ROOT, 'data', 'generations.json');
+    if (existsSync(gensPath)) {
+      const gens = JSON.parse(readFileSync(gensPath, 'utf-8'));
+      return gens.default_generation ?? 'gen4';
+    }
+  } catch { /* fall through */ }
+  return 'gen4';
+}
+
 const DEFAULT_STATE = JSON.stringify({
   pokemon: {},
   unlocked: [],
@@ -102,13 +113,14 @@ function migrateToMultiGen(): void {
   const rootConfig = join(DATA_DIR, 'config.json');
   const rootSession = join(DATA_DIR, 'session.json');
 
-  const gen4Dir = join(DATA_DIR, 'gen4');
+  const defaultGen = getDefaultGen();
+  const targetDir = join(DATA_DIR, defaultGen);
   const hasAnyLegacy = existsSync(rootState) || existsSync(rootConfig) || existsSync(rootSession);
   if (!hasAnyLegacy) {
     // Ensure global-config.json exists even on fresh install
     if (!existsSync(GLOBAL_CONFIG_PATH)) {
       writeFileSync(GLOBAL_CONFIG_PATH, JSON.stringify({
-        active_generation: 'gen4',
+        active_generation: defaultGen,
         language: 'en',
       }, null, 2), 'utf-8');
     }
@@ -118,8 +130,8 @@ function migrateToMultiGen(): void {
   console.log('');
   console.log('  ⚙ Multi-generation migration...');
 
-  // Create gen4 directory
-  mkdirSync(gen4Dir, { recursive: true });
+  // Create target generation directory
+  mkdirSync(targetDir, { recursive: true });
 
   // Read language from existing config before moving
   let language: 'ko' | 'en' = 'en';
@@ -132,9 +144,9 @@ function migrateToMultiGen(): void {
 
   // Per-file independent migration — idempotent, safe to run multiple times
   const filesToMigrate = [
-    { src: rootState, dest: join(gen4Dir, 'state.json') },
-    { src: rootConfig, dest: join(gen4Dir, 'config.json') },
-    { src: rootSession, dest: join(gen4Dir, 'session.json') },
+    { src: rootState, dest: join(targetDir, 'state.json') },
+    { src: rootConfig, dest: join(targetDir, 'config.json') },
+    { src: rootSession, dest: join(targetDir, 'session.json') },
   ];
 
   for (const { src, dest } of filesToMigrate) {
@@ -156,7 +168,7 @@ function migrateToMultiGen(): void {
   // Create global-config.json
   if (!existsSync(GLOBAL_CONFIG_PATH)) {
     writeFileSync(GLOBAL_CONFIG_PATH, JSON.stringify({
-      active_generation: 'gen4',
+      active_generation: defaultGen,
       language,
     }, null, 2), 'utf-8');
     console.log(`  ✓ ${GLOBAL_CONFIG_PATH}`);
@@ -205,15 +217,16 @@ function main(): void {
   const legacyDir = join(CLAUDE_DIR, 'hooks', 'tokenmon');
 
   // Determine target paths based on whether multi-gen is already set up
-  const gen4Dir = join(DATA_DIR, 'gen4');
-  const isMultiGen = existsSync(gen4Dir) || existsSync(GLOBAL_CONFIG_PATH);
+  const defaultGenForMain = getDefaultGen();
+  const defaultGenDir = join(DATA_DIR, defaultGenForMain);
+  const isMultiGen = existsSync(defaultGenDir) || existsSync(GLOBAL_CONFIG_PATH);
 
   if (isMultiGen) {
-    // Multi-gen mode: migrate legacy bash data directly to gen4/
-    mkdirSync(gen4Dir, { recursive: true });
-    migrateFile(join(legacyDir, 'state.json'), join(gen4Dir, 'state.json'), DEFAULT_STATE);
-    migrateFile(join(legacyDir, 'config.json'), join(gen4Dir, 'config.json'), DEFAULT_CONFIG);
-    migrateFile(join(legacyDir, 'session.json'), join(gen4Dir, 'session.json'), DEFAULT_SESSION);
+    // Multi-gen mode: migrate legacy bash data directly to default gen dir
+    mkdirSync(defaultGenDir, { recursive: true });
+    migrateFile(join(legacyDir, 'state.json'), join(defaultGenDir, 'state.json'), DEFAULT_STATE);
+    migrateFile(join(legacyDir, 'config.json'), join(defaultGenDir, 'config.json'), DEFAULT_CONFIG);
+    migrateFile(join(legacyDir, 'session.json'), join(defaultGenDir, 'session.json'), DEFAULT_SESSION);
   } else {
     // Legacy single-gen mode: migrate to root first (will be moved to gen4/ by migrateToMultiGen)
     migrateFile(join(legacyDir, 'state.json'), join(DATA_DIR, 'state.json'), DEFAULT_STATE);
@@ -222,7 +235,7 @@ function main(): void {
   }
 
   // Migrate tokens_per_xp from old defaults to new default (10000)
-  const configToCheck = isMultiGen ? join(gen4Dir, 'config.json') : join(DATA_DIR, 'config.json');
+  const configToCheck = isMultiGen ? join(defaultGenDir, 'config.json') : join(DATA_DIR, 'config.json');
   if (existsSync(configToCheck)) {
     try {
       const config = JSON.parse(readFileSync(configToCheck, 'utf-8'));

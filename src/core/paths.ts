@@ -49,7 +49,14 @@ export function getActiveGeneration(): string {
       }
     } catch { /* fall through */ }
   }
-  return 'gen4'; // default for backward compat
+  // Read default_generation from generations.json before falling back to 'gen4'
+  if (existsSync(GENERATIONS_JSON_PATH)) {
+    try {
+      const gdb = JSON.parse(readFileSync(GENERATIONS_JSON_PATH, 'utf-8'));
+      if (gdb.default_generation) return gdb.default_generation;
+    } catch { /* fall through */ }
+  }
+  return 'gen4'; // ultimate fallback for backward compat
 }
 
 function validateGeneration(gen: string): string {

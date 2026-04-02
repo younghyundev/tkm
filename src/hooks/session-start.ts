@@ -11,7 +11,7 @@ import { syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { getPokemonName } from '../core/pokemon-data.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale, t } from '../i18n/index.js';
-import { withLock } from '../core/lock.js';
+import { withLockRetry } from '../core/lock.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 
 function readStdin(): string {
@@ -35,7 +35,7 @@ function main(): void {
 
   const messages: string[] = [];
 
-  const result = withLock(() => {
+  const result = withLockRetry(() => {
     const state = readState();
     const config = readConfig();
     initLocale(config.language ?? 'en');

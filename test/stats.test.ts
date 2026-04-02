@@ -66,7 +66,10 @@ describe('stats', () => {
     it('increments on consecutive day', () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().slice(0, 10);
+      const y = yesterday.getFullYear();
+      const m = String(yesterday.getMonth() + 1).padStart(2, '0');
+      const d = String(yesterday.getDate()).padStart(2, '0');
+      const yesterdayStr = `${y}-${m}-${d}`;
 
       const state = makeState({
         stats: {
@@ -102,7 +105,10 @@ describe('stats', () => {
     it('updates longest_streak when current exceeds it', () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().slice(0, 10);
+      const y = yesterday.getFullYear();
+      const m = String(yesterday.getMonth() + 1).padStart(2, '0');
+      const d = String(yesterday.getDate()).padStart(2, '0');
+      const yesterdayStr = `${y}-${m}-${d}`;
 
       const state = makeState({
         stats: {
