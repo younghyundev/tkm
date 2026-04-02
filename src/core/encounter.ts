@@ -110,7 +110,7 @@ export function selectWildPokemon(state: State, config: Config): { name: string;
 
   // Streak guarantee: force rare-only pool
   if (events.streakEvents.length > 0) {
-    const rarePool = pool.filter(p => p.rarity === 'rare' || p.rarity === 'legendary');
+    const rarePool = pool.filter(p => p.rarity === 'rare' || p.rarity === 'legendary' || p.rarity === 'mythical');
     if (rarePool.length > 0) {
       const pick = rarePool[Math.floor(Math.random() * rarePool.length)];
       const [minLv, maxLv] = region.level_range;

@@ -861,12 +861,13 @@ function cmdDashboard(): void {
       const pName = getPokemonName(name);
       const level = p.level;
       const pData = pokemonDB.pokemon[name];
-      const maxXp = pData ? levelToXp(level + 1, pData.exp_group) : 0;
-      const curXp = p.xp;
-      const pct = maxXp > 0 ? Math.min(100, Math.floor((curXp / maxXp) * 100)) : 100;
-      const barLen = 10;
-      const filled = Math.round((pct / 100) * barLen);
-      const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
+      const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
+      const bar = xpBar(p.xp, level, expGroup, 10);
+      const currLvlXp = levelToXp(level, expGroup);
+      const nextLvlXp = levelToXp(level + 1, expGroup);
+      const xpNeeded = Math.max(1, nextLvlXp - currLvlXp);
+      const xpInLevel = Math.max(0, p.xp - currLvlXp);
+      const pct = Math.min(100, Math.floor((xpInLevel / xpNeeded) * 100));
       row(`${pName}  Lv.${level}  ${bar}  ${pct}%`);
     }
   }
