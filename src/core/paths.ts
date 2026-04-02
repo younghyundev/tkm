@@ -99,8 +99,8 @@ export function getSessionGeneration(sessionId: string): string | null {
 export function genDataDir(gen?: string): string {
   const g = gen ?? getActiveGeneration();
   const perGen = join(PLUGIN_ROOT, 'data', g);
-  // Backward compat: if per-gen dir doesn't exist, fall back to flat data/
-  if (!existsSync(perGen) && existsSync(join(PLUGIN_ROOT, 'data', 'pokemon.json'))) {
+  // Legacy flat fallback only valid for gen4 (the original generation)
+  if (!existsSync(perGen) && g === 'gen4' && existsSync(join(PLUGIN_ROOT, 'data', 'pokemon.json'))) {
     return join(PLUGIN_ROOT, 'data');
   }
   return perGen;

@@ -113,12 +113,14 @@ function migrateToMultiGen(): void {
   const rootConfig = join(DATA_DIR, 'config.json');
   const rootSession = join(DATA_DIR, 'session.json');
 
-  const defaultGen = getDefaultGen();
-  const targetDir = join(DATA_DIR, defaultGen);
+  // Legacy files always belong to gen4 — the original generation
+  const LEGACY_GEN = 'gen4';
+  const targetDir = join(DATA_DIR, LEGACY_GEN);
   const hasAnyLegacy = existsSync(rootState) || existsSync(rootConfig) || existsSync(rootSession);
   if (!hasAnyLegacy) {
     // Ensure global-config.json exists even on fresh install
     if (!existsSync(GLOBAL_CONFIG_PATH)) {
+      const defaultGen = getDefaultGen();
       writeFileSync(GLOBAL_CONFIG_PATH, JSON.stringify({
         active_generation: defaultGen,
         language: 'en',
@@ -165,10 +167,10 @@ function migrateToMultiGen(): void {
     }
   }
 
-  // Create global-config.json
+  // Create global-config.json — use current default_generation for active_generation
   if (!existsSync(GLOBAL_CONFIG_PATH)) {
     writeFileSync(GLOBAL_CONFIG_PATH, JSON.stringify({
-      active_generation: defaultGen,
+      active_generation: getDefaultGen(),
       language,
     }, null, 2), 'utf-8');
     console.log(`  ✓ ${GLOBAL_CONFIG_PATH}`);
@@ -217,8 +219,9 @@ function main(): void {
   const legacyDir = join(CLAUDE_DIR, 'hooks', 'tokenmon');
 
   // Determine target paths based on whether multi-gen is already set up
-  const defaultGenForMain = getDefaultGen();
-  const defaultGenDir = join(DATA_DIR, defaultGenForMain);
+  // Legacy bash files always belong to gen4 — the original generation
+  const LEGACY_GEN = 'gen4';
+  const defaultGenDir = join(DATA_DIR, LEGACY_GEN);
   const isMultiGen = existsSync(defaultGenDir) || existsSync(GLOBAL_CONFIG_PATH);
 
   if (isMultiGen) {

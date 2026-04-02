@@ -62,9 +62,9 @@ await test('getActiveGeneration falls back to gen4 when generations.json missing
   assert.equal(gen, 'gen4', 'should fall back to gen4 when generations.json missing');
 });
 
-// --- Fix 2: gen switch updates all session-gen-map entries ---
+// --- Fix 2: gen switch does NOT modify session-gen-map (session isolation) ---
 
-await test('gen switch updates all active session bindings to new generation', () => {
+await test('gen switch does not modify session-gen-map (existing sessions keep their gen)', () => {
   freshDir();
 
   // Simulate existing session-gen-map with entries bound to gen4
@@ -75,36 +75,26 @@ await test('gen switch updates all active session bindings to new generation', (
   };
   writeSessionGenMap(initialMap);
 
-  // Simulate what gen switch does: update all entries to new gen
-  const targetGen = 'gen1';
-  const genMap = readSessionGenMap();
-  for (const entry of Object.values(genMap)) {
-    entry.generation = targetGen;
-  }
-  writeSessionGenMap(genMap);
+  // Gen switch only updates global-config.json, NOT session-gen-map
+  // Existing sessions remain on their original generation until restarted
 
-  // Verify all sessions now point to gen1
-  const updated = readSessionGenMap();
-  assert.equal(updated['session-aaa'].generation, 'gen1', 'session-aaa should switch to gen1');
-  assert.equal(updated['session-bbb'].generation, 'gen1', 'session-bbb should switch to gen1');
-  assert.equal(updated['session-ccc'].generation, 'gen1', 'session-ccc should switch to gen1');
-  assert.equal(Object.keys(updated).length, 3, 'all sessions should be preserved');
+  // Verify session-gen-map is untouched after switch
+  const after = readSessionGenMap();
+  assert.equal(after['session-aaa'].generation, 'gen4', 'session-aaa should remain on gen4');
+  assert.equal(after['session-bbb'].generation, 'gen4', 'session-bbb should remain on gen4');
+  assert.equal(after['session-ccc'].generation, 'gen4', 'session-ccc should remain on gen4');
+  assert.equal(Object.keys(after).length, 3, 'all sessions should be preserved');
 });
 
-await test('gen switch on empty session-gen-map is a no-op', () => {
+await test('gen switch on empty session-gen-map leaves it empty', () => {
   freshDir();
 
-  // Empty map
+  // Empty map — nothing to update
   writeSessionGenMap({});
 
-  const genMap = readSessionGenMap();
-  for (const entry of Object.values(genMap)) {
-    entry.generation = 'gen1';
-  }
-  writeSessionGenMap(genMap);
-
-  const updated = readSessionGenMap();
-  assert.deepEqual(updated, {}, 'empty map should remain empty after switch');
+  // Gen switch does not touch session-gen-map
+  const after = readSessionGenMap();
+  assert.deepEqual(after, {}, 'empty map should remain empty after switch');
 });
 
 // Cleanup
