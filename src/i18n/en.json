@@ -1,7 +1,7 @@
 {
   "cli.status.title": "=== Tokenmon Status ===",
   "cli.status.no_starter": "No starter Pokemon selected.",
-  "cli.status.starter_hint": "  Run tokenmon starter  to choose your starter.",
+  "cli.status.starter_hint": "  Run /tkm:tkm starter  to choose your starter.",
   "cli.status.party_header": "[ Party ]",
   "cli.status.party_empty": "  Party is empty.",
   "cli.status.evolves_at": " (evolves at Lv.{level})",
@@ -178,7 +178,7 @@
   "cli.help.cmd_help": "  help                Show this help",
   "cli.help.examples": "Examples:",
   "cli.help.ex1": "  tokenmon status",
-  "cli.help.ex2": "  tokenmon starter",
+  "cli.help.ex2": "  /tkm:tkm starter",
   "cli.help.ex3": "  tokenmon party add Piplup",
   "cli.help.ex4": "  tokenmon config set cry_enabled false",
   "cli.unknown_command": "Unknown command: {command}",
@@ -324,7 +324,7 @@
   "setup.postinstall.legacy_new": "    New data:      {path}",
   "setup.postinstall.legacy_cleanup": "    Please clean up the old bash hooks manually.",
 
-  "statusline.no_starter": "[Choose a starter: tokenmon starter]",
+  "statusline.no_starter": "[Choose a starter: /tkm:tkm starter]",
   "statusline.party_empty": "[Party is empty]",
 
   "setup.statusline.already_set": "  ✓ tokenmon statusLine already configured (skipped)",

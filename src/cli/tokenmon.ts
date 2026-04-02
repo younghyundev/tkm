@@ -105,7 +105,7 @@ function cmdStatus(): void {
   console.log(t('cli.status.stat_region', { region: getRegionName(config.current_region ?? '1') }));
 }
 
-function cmdStarter(): void {
+function cmdStarter(choiceArg?: string): void {
   const config = readConfig();
   const state = readState();
   const pokemonDB = getPokemonDB();
@@ -116,60 +116,64 @@ function cmdStarter(): void {
     return;
   }
 
-  bold(t('cli.starter.prompt_title'));
-  console.log('');
-
   const starters = pokemonDB.starters;
-  for (let i = 0; i < starters.length; i++) {
-    const s = starters[i];
-    const pData = pokemonDB.pokemon[s];
-    const types = pData?.types?.join('/') ?? '';
-    const pokemonId = pData?.id ?? '?';
-    console.log(`  ${i + 1}) ${BOLD}${getPokemonName(s)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
+
+  // No argument: list options and exit (Claude Code uses AskUserQuestion)
+  if (!choiceArg) {
+    bold(t('cli.starter.prompt_title'));
+    console.log('');
+    for (let i = 0; i < starters.length; i++) {
+      const s = starters[i];
+      const pData = pokemonDB.pokemon[s];
+      const types = pData?.types?.join('/') ?? '';
+      const pokemonId = pData?.id ?? '?';
+      console.log(`  ${i + 1}) ${BOLD}${getPokemonName(s)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
+    }
+    return;
   }
 
-  console.log('');
-  // Read choice from stdin
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  rl.question(t('cli.starter.prompt_input', { count: starters.length }), (answer: string) => {
-    rl.close();
-    const choice = parseInt(answer, 10);
-    if (isNaN(choice) || choice < 1 || choice > starters.length) {
-      error(t('cli.starter.invalid_choice'));
-      process.exit(1);
+  // Resolve choice: number (1-based index) or pokemon ID
+  let chosen: string | undefined;
+  const num = parseInt(choiceArg, 10);
+  if (!isNaN(num) && num >= 1 && num <= starters.length) {
+    chosen = starters[num - 1];
+  } else if (starters.includes(choiceArg)) {
+    chosen = choiceArg;
+  }
+
+  if (!chosen) {
+    error(t('cli.starter.invalid_choice'));
+    return;
+  }
+
+  // Mutation under lock (re-read fresh state)
+  const lockResult = withLock(() => {
+    const freshConfig = readConfig();
+    const freshState = readState();
+    const pData = pokemonDB.pokemon[chosen];
+
+    freshConfig.party = [chosen];
+    freshConfig.starter_chosen = true;
+    writeConfig(freshConfig);
+
+    if (!freshState.pokemon[chosen]) {
+      const starterLevel = 5;
+      const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
+      freshState.pokemon[chosen] = { id: pData?.id ?? 0, xp: levelToXp(starterLevel, expGroup), level: starterLevel, friendship: 0, ev: 0 };
     }
-
-    const chosen = starters[choice - 1];
-
-    // Mutation under lock (re-read fresh state)
-    const lockResult = withLock(() => {
-      const freshConfig = readConfig();
-      const freshState = readState();
-      const pData = pokemonDB.pokemon[chosen];
-
-      freshConfig.party = [chosen];
-      freshConfig.starter_chosen = true;
-      writeConfig(freshConfig);
-
-      if (!freshState.pokemon[chosen]) {
-        const starterLevel = 5;
-        const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
-        freshState.pokemon[chosen] = { id: pData?.id ?? 0, xp: levelToXp(starterLevel, expGroup), level: starterLevel, friendship: 0, ev: 0 };
-      }
-      if (!freshState.unlocked.includes(chosen)) {
-        freshState.unlocked.push(chosen);
-      }
-      writeState(freshState);
-    });
-
-    if (lockResult === null) {
-      error(t('cli.lock_busy'));
-      process.exit(1);
+    if (!freshState.unlocked.includes(chosen)) {
+      freshState.unlocked.push(chosen);
     }
-
-    success(t('cli.starter.chosen', { pokemon: getPokemonName(chosen) }));
-    playCry(chosen);
+    writeState(freshState);
   });
+
+  if (lockResult === null) {
+    error(t('cli.lock_busy'));
+    process.exit(1);
+  }
+
+  success(t('cli.starter.chosen', { pokemon: getPokemonName(chosen) }));
+  playCry(chosen);
 }
 
 function cmdParty(subcmd: string, pokemon?: string): void {
@@ -1329,7 +1333,7 @@ function cmdGen(sub?: string, arg?: string): void {
     success(t('cli.gen.switched', { fallback: `Switched to ${genData.name} (${genRegionName(genData.region_name)})` }));
     if (!targetConfig.starter_chosen) {
       console.log('');
-      warn(t('cli.gen.needs_setup', { fallback: 'This generation needs initial setup. Run /tkm:setup to choose your starter!' }));
+      warn(t('cli.gen.needs_setup', { fallback: 'This generation needs initial setup. Run /tkm:tkm starter to choose your starter!' }));
     }
     return;
   }
@@ -1398,7 +1402,7 @@ switch (command) {
     cmdStatus();
     break;
   case 'starter':
-    cmdStarter();
+    cmdStarter(args[1]);
     break;
   case 'party':
     cmdParty(args[1] ?? 'list', args[2]);

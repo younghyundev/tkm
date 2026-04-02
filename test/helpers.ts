@@ -1,4 +1,8 @@
 import type { State, Config } from '../src/core/types.js';
+import { setActiveGenerationCache } from '../src/core/paths.js';
+
+// Pin active generation to gen4 for tests (prevents env leakage from global-config.json)
+setActiveGenerationCache('gen4');
 
 /**
  * Canonical test factory for State — includes ALL fields from the State interface.
