@@ -3,6 +3,8 @@ import { readState, writeState, writeSession } from '../core/state.js';
 import { readConfig } from '../core/config.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { refreshNotifications, getActiveNotifications, updateKnownRegions } from '../core/notifications.js';
+import { updateStreak, resetWeeklyStats } from '../core/stats.js';
+import { getActiveEvents } from '../core/encounter.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
@@ -40,6 +42,10 @@ function main(): void {
     state.session_count += 1;
     state.last_session_id = sessionId;
 
+    // Update streak and reset weekly stats if needed
+    updateStreak(state);
+    resetWeeklyStats(state);
+
     // Check achievements (first_session, ten_sessions)
     const achEvents = checkAchievements(state, config);
     for (const achEvent of achEvents) {
@@ -60,6 +66,18 @@ function main(): void {
         const icon = icons[n.type] ?? '📢';
         messages.push(`${icon} ${n.message}`);
       }
+    }
+
+    // Show active events
+    const activeEvts = getActiveEvents(state);
+    const locale = config.language ?? 'ko';
+    const eventLabels = [
+      ...activeEvts.timeEvents.map(e => e.label[locale] ?? e.label.en),
+      ...activeEvts.dayEvents.map(e => e.label[locale] ?? e.label.en),
+      ...activeEvts.streakEvents.map(e => e.label[locale] ?? e.label.en),
+    ];
+    for (const label of eventLabels) {
+      messages.push(`🎪 ${label}`);
     }
 
     writeState(state);

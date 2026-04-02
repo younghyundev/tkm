@@ -1,7 +1,24 @@
 import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { STATE_PATH, SESSION_PATH, I18N_DATA_DIR } from './paths.js';
-import type { State, Session, PokemonState, PokedexEntry, Notification } from './types.js';
+import type { State, Session, PokemonState, PokedexEntry, Notification, Stats } from './types.js';
+
+const DEFAULT_STATS: Stats = {
+  streak_days: 0,
+  longest_streak: 0,
+  last_active_date: '',
+  weekly_xp: 0,
+  weekly_battles_won: 0,
+  weekly_battles_lost: 0,
+  weekly_catches: 0,
+  weekly_encounters: 0,
+  total_xp_earned: 0,
+  total_battles_won: 0,
+  total_battles_lost: 0,
+  total_catches: 0,
+  total_encounters: 0,
+  last_reset_week: '',
+};
 
 const DEFAULT_STATE: State = {
   pokemon: {},
@@ -28,6 +45,8 @@ const DEFAULT_STATE: State = {
   notifications: [],
   dismissed_notifications: [],
   last_known_regions: 1,
+  stats: { ...DEFAULT_STATS },
+  events_triggered: [],
 };
 
 const DEFAULT_SESSION: Session = {
@@ -56,6 +75,8 @@ export function readState(): State {
     notifications: parsed.notifications ?? [],
     dismissed_notifications: parsed.dismissed_notifications ?? [],
     last_known_regions: parsed.last_known_regions ?? 1,
+    stats: { ...DEFAULT_STATS, ...(parsed.stats ?? {}) },
+    events_triggered: parsed.events_triggered ?? [],
   };
 
   // Migrate per-pokemon fields (friendship, ev)

@@ -30,6 +30,23 @@ export function makeState(overrides: Partial<State> = {}): State {
     notifications: [],
     dismissed_notifications: [],
     last_known_regions: 1,
+    stats: {
+      streak_days: 0,
+      longest_streak: 0,
+      last_active_date: '',
+      weekly_xp: 0,
+      weekly_battles_won: 0,
+      weekly_battles_lost: 0,
+      weekly_catches: 0,
+      weekly_encounters: 0,
+      total_xp_earned: 0,
+      total_battles_won: 0,
+      total_battles_lost: 0,
+      total_catches: 0,
+      total_encounters: 0,
+      last_reset_week: '',
+    },
+    events_triggered: [],
     ...overrides,
   };
 }

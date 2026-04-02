@@ -55,20 +55,22 @@ describe('encounter', () => {
 
   describe('selectWildPokemon', () => {
     it('returns pokemon from current region pool', () => {
+      const state = makeState();
       const config = makeConfig({ current_region: '2' });
       const region = regionsDB.regions['2'];
       for (let i = 0; i < 50; i++) {
-        const wild = selectWildPokemon(config);
+        const wild = selectWildPokemon(state, config);
         assert.ok(wild !== null);
         assert.ok(region.pokemon_pool.includes(wild!.name), `${wild!.name} not in region 2 pool`);
       }
     });
 
     it('level is at least regionMin and at least evoMin', () => {
+      const state = makeState();
       const config = makeConfig({ current_region: '2' });
       const region = regionsDB.regions['2'];
       for (let i = 0; i < 50; i++) {
-        const wild = selectWildPokemon(config);
+        const wild = selectWildPokemon(state, config);
         assert.ok(wild !== null);
         assert.ok(wild!.level >= region.level_range[0]);
         // evoMin may exceed regionMax for high-stage pokemon — that's intentional
@@ -78,10 +80,11 @@ describe('encounter', () => {
     });
 
     it('respects rarity weights (common should appear most)', () => {
+      const state = makeState();
       const config = makeConfig({ current_region: '1' });
       const counts: Record<string, number> = {};
       for (let i = 0; i < 500; i++) {
-        const wild = selectWildPokemon(config);
+        const wild = selectWildPokemon(state, config);
         if (wild) {
           const rarity = pokemonDB.pokemon[wild.name]?.rarity ?? 'unknown';
           counts[rarity] = (counts[rarity] || 0) + 1;
@@ -117,9 +120,10 @@ describe('encounter', () => {
     });
 
     it('stage-1 pokemon never spawns below pre-evo evolves_at', () => {
+      const state = makeState();
       const config = makeConfig({ current_region: '1' });
       for (let i = 0; i < 200; i++) {
-        const wild = selectWildPokemon(config);
+        const wild = selectWildPokemon(state, config);
         if (!wild) continue;
         const evoMin = getMinWildLevel(wild.name);
         assert.ok(

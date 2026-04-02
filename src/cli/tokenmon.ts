@@ -11,7 +11,9 @@ import { getCurrentRegion, getRegionList, moveToRegion } from '../core/regions.j
 import { renderGuide, renderGuideIndex } from '../core/guide.js';
 import { getEligibleBranches, applyBranchEvolution } from '../core/evolution.js';
 import { getActiveNotifications, dismissAll } from '../core/notifications.js';
-import { t, initLocale } from '../i18n/index.js';
+import { getActiveEvents } from '../core/encounter.js';
+import { getEventsDB } from '../core/pokemon-data.js';
+import { t, initLocale, getLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
 import type { ExpGroup, EvolutionContext } from '../core/types.js';
 
@@ -526,6 +528,14 @@ function doReset(): void {
       battle_wins: 0, battle_losses: 0, items: {}, cheat_log: cheatLog,
       last_battle: null, last_tip: null,
       notifications: [], dismissed_notifications: [], last_known_regions: 1,
+      stats: {
+        streak_days: 0, longest_streak: 0, last_active_date: '',
+        weekly_xp: 0, weekly_battles_won: 0, weekly_battles_lost: 0,
+        weekly_catches: 0, weekly_encounters: 0,
+        total_xp_earned: 0, total_battles_won: 0, total_battles_lost: 0,
+        total_catches: 0, total_encounters: 0, last_reset_week: '',
+      },
+      events_triggered: [],
     };
     writeState(defaultState);
   });
@@ -804,6 +814,125 @@ function cmdGuide(topic?: string): void {
   }
 }
 
+function cmdDashboard(): void {
+  const state = readState();
+  const config = readConfig();
+  const pokemonDB = getPokemonDB();
+  const events = getActiveEvents(state);
+  const locale = getLocale();
+
+  // Region info
+  const region = getCurrentRegion(config);
+  const regionName = region ? getRegionName(config.current_region) : '—';
+  const [minLv, maxLv] = region?.level_range ?? [1, 10];
+
+  // Pokedex
+  const totalPokemon = Object.keys(pokemonDB.pokemon).length;
+  const caughtCount = Object.values(state.pokedex).filter(e => e.caught).length;
+  const caughtPct = totalPokemon > 0 ? ((caughtCount / totalPokemon) * 100).toFixed(1) : '0.0';
+
+  // Width
+  const W = 40;
+  const hr = '═'.repeat(W);
+  const pad = (s: string, len: number) => {
+    // Strip ANSI for length calc
+    const stripped = s.replace(/\x1b\[[0-9;]*m/g, '');
+    const diff = len - stripped.length;
+    return diff > 0 ? s + ' '.repeat(diff) : s;
+  };
+  const row = (s: string) => {
+    console.log(`║  ${pad(s, W - 4)}  ║`);
+  };
+
+  console.log(`╔${hr}╗`);
+  row(t('cli.dashboard.region', { region: regionName, min: minLv, max: maxLv }));
+  row(t('cli.dashboard.streak', { days: state.stats.streak_days, best: state.stats.longest_streak }));
+  row(t('cli.dashboard.pokedex', { caught: caughtCount, total: totalPokemon, pct: caughtPct }));
+  console.log(`╠${hr}╣`);
+
+  // Party
+  row(t('cli.dashboard.party_title'));
+  if (config.party.length === 0) {
+    row(t('cli.dashboard.party_empty'));
+  } else {
+    for (const name of config.party) {
+      const p = state.pokemon[name];
+      if (!p) continue;
+      const pName = getPokemonName(name);
+      const level = p.level;
+      const pData = pokemonDB.pokemon[name];
+      const maxXp = pData ? levelToXp(level + 1, pData.exp_group) : 0;
+      const curXp = p.xp;
+      const pct = maxXp > 0 ? Math.min(100, Math.floor((curXp / maxXp) * 100)) : 100;
+      const barLen = 10;
+      const filled = Math.round((pct / 100) * barLen);
+      const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
+      row(`${pName}  Lv.${level}  ${bar}  ${pct}%`);
+    }
+  }
+  console.log(`╠${hr}╣`);
+
+  // Recent activity (weekly stats)
+  row(t('cli.dashboard.activity_title'));
+  row(t('cli.dashboard.activity_xp', { xp: state.stats.weekly_xp.toLocaleString() }));
+  const bTotal = state.stats.weekly_battles_won + state.stats.weekly_battles_lost;
+  row(t('cli.dashboard.activity_battles', { total: bTotal, wins: state.stats.weekly_battles_won, losses: state.stats.weekly_battles_lost }));
+  row(t('cli.dashboard.activity_catches', { count: state.stats.weekly_catches }));
+  row(t('cli.dashboard.activity_encounters', { count: state.stats.weekly_encounters }));
+
+  // Active notifications
+  const notifs = getActiveNotifications(state);
+  for (const n of notifs) {
+    row(`• ${n.message}`);
+  }
+  console.log(`╠${hr}╣`);
+
+  // Active events
+  row(t('cli.dashboard.events_title'));
+  const allEvents = [
+    ...events.timeEvents.map(e => e.label[locale] ?? e.label.en),
+    ...events.dayEvents.map(e => e.label[locale] ?? e.label.en),
+    ...events.streakEvents.map(e => e.label[locale] ?? e.label.en),
+  ];
+  if (allEvents.length === 0) {
+    row(t('cli.dashboard.events_none'));
+  } else {
+    for (const label of allEvents) {
+      row(label);
+    }
+  }
+  console.log(`╚${hr}╝`);
+}
+
+function cmdStats(): void {
+  const state = readState();
+  const stats = state.stats;
+
+  bold(t('cli.stats.header'));
+  console.log('');
+
+  // Streak
+  info(t('cli.stats.streak_header'));
+  console.log(t('cli.stats.streak_days', { days: stats.streak_days }));
+  console.log(t('cli.stats.streak_best', { days: stats.longest_streak }));
+  console.log('');
+
+  // Weekly
+  info(t('cli.stats.weekly_header'));
+  console.log(t('cli.stats.weekly_xp', { xp: stats.weekly_xp.toLocaleString() }));
+  console.log(t('cli.stats.weekly_battles', { wins: stats.weekly_battles_won, losses: stats.weekly_battles_lost }));
+  console.log(t('cli.stats.weekly_catches', { count: stats.weekly_catches }));
+  console.log(t('cli.stats.weekly_encounters', { count: stats.weekly_encounters }));
+  console.log('');
+
+  // All-time
+  info(t('cli.stats.alltime_header'));
+  console.log(t('cli.stats.alltime_xp', { xp: stats.total_xp_earned.toLocaleString() }));
+  console.log(t('cli.stats.alltime_battles', { wins: stats.total_battles_won, losses: stats.total_battles_lost }));
+  console.log(t('cli.stats.alltime_catches', { count: stats.total_catches }));
+  console.log(t('cli.stats.alltime_encounters', { count: stats.total_encounters }));
+}
+
 function cmdHelp(): void {
   bold(t('cli.help.title'));
   console.log('');
@@ -821,6 +950,8 @@ function cmdHelp(): void {
   console.log(t('cli.help.cmd_evolve_pokemon'));
   console.log(t('cli.help.cmd_notifications'));
   console.log(t('cli.help.cmd_notifications_clear'));
+  console.log(t('cli.help.cmd_dashboard'));
+  console.log(t('cli.help.cmd_stats'));
   console.log(t('cli.help.cmd_items'));
   console.log(t('cli.help.cmd_region'));
   console.log(t('cli.help.cmd_region_list'));
@@ -880,6 +1011,12 @@ switch (command) {
     break;
   case 'notifications':
     cmdNotifications(args[1]);
+    break;
+  case 'dashboard':
+    cmdDashboard();
+    break;
+  case 'stats':
+    cmdStats();
     break;
   case 'guide':
     cmdGuide(args[1]);

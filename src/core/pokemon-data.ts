@@ -1,12 +1,13 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { POKEMON_JSON_PATH, ACHIEVEMENTS_JSON_PATH, REGIONS_JSON_PATH, I18N_DATA_DIR } from './paths.js';
-import type { PokemonDB, AchievementsDB, RegionsDB } from './types.js';
+import { POKEMON_JSON_PATH, ACHIEVEMENTS_JSON_PATH, REGIONS_JSON_PATH, EVENTS_JSON_PATH, I18N_DATA_DIR } from './paths.js';
+import type { PokemonDB, AchievementsDB, RegionsDB, EventsDB } from './types.js';
 import { getLocale } from '../i18n/index.js';
 
 let _pokemonDB: PokemonDB | null = null;
 let _achievementsDB: AchievementsDB | null = null;
 let _regionsDB: RegionsDB | null = null;
+let _eventsDB: EventsDB | null = null;
 
 export function getPokemonDB(): PokemonDB {
   if (!_pokemonDB) {
@@ -27,6 +28,13 @@ export function getRegionsDB(): RegionsDB {
     _regionsDB = JSON.parse(readFileSync(REGIONS_JSON_PATH, 'utf-8')) as RegionsDB;
   }
   return _regionsDB;
+}
+
+export function getEventsDB(): EventsDB {
+  if (!_eventsDB) {
+    _eventsDB = JSON.parse(readFileSync(EVENTS_JSON_PATH, 'utf-8')) as EventsDB;
+  }
+  return _eventsDB;
 }
 
 interface GameI18nData {
@@ -108,5 +116,6 @@ export function _resetForTesting(): void {
   _pokemonDB = null;
   _achievementsDB = null;
   _regionsDB = null;
+  _eventsDB = null;
   _gameI18n = {};
 }
