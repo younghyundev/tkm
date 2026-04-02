@@ -108,9 +108,16 @@ export function dismissAll(state: State): void {
 
 /**
  * Update state.notifications with freshly checked notifications.
+ * Also prunes dismissed_notifications to prevent unbounded growth.
  */
 export function refreshNotifications(state: State, config: Config): void {
   state.notifications = checkPendingNotifications(state, config);
+
+  // Prune: keep only dismissed IDs that match current active notifications + cap at 100
+  const activeIds = new Set(state.notifications.map(n => n.id));
+  if (state.dismissed_notifications.length > 100) {
+    state.dismissed_notifications = state.dismissed_notifications.filter(id => activeIds.has(id));
+  }
 }
 
 /**

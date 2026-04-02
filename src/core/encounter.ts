@@ -108,6 +108,14 @@ export function selectWildPokemon(state: State, config: Config): { name: string;
   // Get active events
   const events = getActiveEvents(state);
 
+  // Legendary pool substitution (2% chance, checked before streak guarantee)
+  const [minLv, maxLv] = region.level_range;
+  if (state.legendary_pool.length > 0 && Math.random() < 0.02) {
+    const legendaryPick = state.legendary_pool[Math.floor(Math.random() * state.legendary_pool.length)];
+    const legendaryLevel = Math.max(50, maxLv + 5);
+    return { name: legendaryPick, level: legendaryLevel };
+  }
+
   // Streak guarantee: force rare-only pool
   if (events.streakEvents.length > 0) {
     const rarePool = pool.filter(p => p.rarity === 'rare' || p.rarity === 'legendary' || p.rarity === 'mythical');
@@ -140,15 +148,6 @@ export function selectWildPokemon(state: State, config: Config): { name: string;
     }
 
     weighted.push({ name: p.name, weight: w });
-  }
-
-  // Legendary pool substitution (2% chance)
-  const [minLv, maxLv] = region.level_range;
-  if (state.legendary_pool.length > 0 && Math.random() < 0.02) {
-    const legendaryPick = state.legendary_pool[Math.floor(Math.random() * state.legendary_pool.length)];
-    // Legendary encounters are high-level (region max + 5, minimum 50)
-    const legendaryLevel = Math.max(50, maxLv + 5);
-    return { name: legendaryPick, level: legendaryLevel };
   }
 
   // Normalize and select

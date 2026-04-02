@@ -179,7 +179,7 @@ async function main(): Promise<void> {
         unlockedAchievements: Object.keys(state.achievements).filter(k => state.achievements[k]),
         items: state.items ?? {},
       };
-      const evolution = checkEvolution(pokemonName, evoContext);
+      const evolution = checkEvolution(pokemonName, evoContext, state);
       if (evolution) {
         applyEvolution(state, config, evolution, newXp);
         messages.push(t('hook.evolution', { pokemon: getPokemonName(pokemonName), newPokemon: getPokemonName(evolution.newPokemon) }));
@@ -225,8 +225,8 @@ async function main(): Promise<void> {
         recordXp(state, battleResult.xpReward);
         if (battleResult.caught) recordCatch(state);
 
-        // Auto-add caught pokemon to party if < 6
-        if (battleResult.caught && config.party.length < 6) {
+        // Auto-add caught pokemon to party if below max
+        if (battleResult.caught && config.party.length < config.max_party_size) {
           if (!config.party.includes(battleResult.defender)) {
             config.party.push(battleResult.defender);
             messages.push(t('hook.party_join', { pokemon: getPokemonName(battleResult.defender) }));

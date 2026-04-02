@@ -208,7 +208,9 @@ export function getTypeMasterProgress(state: State): Array<{ type: string; caugh
   // Sort: mastered first, then by completion percentage descending
   progress.sort((a, b) => {
     if (a.mastered !== b.mastered) return a.mastered ? -1 : 1;
-    return (b.caught / b.total) - (a.caught / a.total);
+    const aPct = a.total > 0 ? a.caught / a.total : 0;
+    const bPct = b.total > 0 ? b.caught / b.total : 0;
+    return bPct - aPct;
   });
 
   return progress;
