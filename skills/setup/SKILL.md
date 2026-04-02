@@ -20,9 +20,80 @@ echo "CLAUDE_PLUGIN_ROOT=${CLAUDE_PLUGIN_ROOT}" && test -n "${CLAUDE_PLUGIN_ROOT
 cd "${CLAUDE_PLUGIN_ROOT}" && npm install
 ```
 
-On success proceed to Step 1.5. On failure show the error.
+On success proceed to Step 1.3. On failure show the error.
 
-## Step 1.5: Language Selection
+## Step 1.3: Multi-Generation Migration Check
+
+Verify multi-gen migration completed successfully:
+
+```bash
+TSX="${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh"
+node -e "
+const fs = require('fs');
+const home = process.env.HOME || require('os').homedir();
+const dataDir = (process.env.CLAUDE_CONFIG_DIR || home + '/.claude') + '/tokenmon';
+const globalCfg = dataDir + '/global-config.json';
+const gen4Dir = dataDir + '/gen4';
+const rootState = dataDir + '/state.json';
+const rootConfig = dataDir + '/config.json';
+
+// Check if legacy root files need migration
+const hasLegacy = fs.existsSync(rootState) || fs.existsSync(rootConfig);
+const hasMigrated = fs.existsSync(gen4Dir + '/state.json') || fs.existsSync(gen4Dir + '/config.json');
+const hasGlobalCfg = fs.existsSync(globalCfg);
+
+if (hasLegacy && !hasMigrated) {
+  console.log('NEEDS_MIGRATION');
+} else if (!hasGlobalCfg && hasMigrated) {
+  console.log('NEEDS_GLOBAL_CONFIG');
+} else {
+  console.log('OK');
+}
+"
+```
+
+- `OK` → proceed to Step 1.5.
+- `NEEDS_MIGRATION` → Run postinstall to trigger migration:
+  ```
+  "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/setup/postinstall.ts"
+  ```
+- `NEEDS_GLOBAL_CONFIG` → Create global config:
+  ```bash
+  node -e "
+  const fs = require('fs');
+  const home = process.env.HOME || require('os').homedir();
+  const dataDir = (process.env.CLAUDE_CONFIG_DIR || home + '/.claude') + '/tokenmon';
+  const globalCfg = dataDir + '/global-config.json';
+  let lang = 'en';
+  try {
+    const cfg = JSON.parse(fs.readFileSync(dataDir + '/gen4/config.json', 'utf-8'));
+    lang = cfg.language || 'en';
+  } catch {}
+  fs.writeFileSync(globalCfg, JSON.stringify({ active_generation: 'gen4', language: lang }, null, 2));
+  console.log('Created ' + globalCfg);
+  "
+  ```
+
+## Step 1.5: Generation Selection
+
+Use AskUserQuestion:
+
+> Which generation would you like to play?
+
+```bash
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" gen list
+```
+
+Options (show available generations from output):
+1. Gen 1 — Kanto (Bulbasaur / Charmander / Squirtle)
+2. Gen 4 — Sinnoh (Turtwig / Chimchar / Piplup) (default for existing users)
+
+If user picks a different generation than current active:
+```
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" gen switch <gen_id>
+```
+
+## Step 1.7: Language Selection
 
 Use AskUserQuestion to let the user choose their preferred language:
 
@@ -56,10 +127,22 @@ Show any errors to the user.
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" status
 ```
 
-If the party already has a Pokémon, skip to Step 4.
+If the party already has a Pokémon, skip to Step 4.5.
 
-Otherwise use AskUserQuestion to let the user choose one of 3 starters:
+Otherwise, determine starters based on active generation:
 
+```bash
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" gen status
+```
+
+Use AskUserQuestion with the appropriate starters:
+
+**Gen 1 starters:**
+1. Bulbasaur (Grass) — 이상해씨
+2. Charmander (Fire) — 파이리
+3. Squirtle (Water) — 꼬부기
+
+**Gen 4 starters:**
 1. Turtwig (Grass) — 모부기
 2. Chimchar (Fire) — 불꽃숭이
 3. Piplup (Water) — 팽도리
@@ -67,10 +150,10 @@ Otherwise use AskUserQuestion to let the user choose one of 3 starters:
 ## Step 4: Initialize Starter
 
 ```
-"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" starter <pokemon_name>
+"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" starter <pokemon_id>
 ```
 
-Pass the Pokémon name in the user's chosen language (e.g. `Turtwig` or `모부기`).
+Pass the Pokémon **ID** (Gen 1: `1`/`4`/`7`, Gen 4: `387`/`390`/`393`).
 
 ## Step 4.5: Renderer Selection
 
