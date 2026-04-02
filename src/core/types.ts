@@ -213,6 +213,7 @@ export interface State {
   legendary_pending: LegendaryPending[];
   titles: string[];
   completed_chains: string[];
+  star_dismissed: boolean;
 }
 
 export interface Config {

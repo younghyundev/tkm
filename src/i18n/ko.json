@@ -457,5 +457,10 @@
 
   "cli.pokedex.type_master_header": "[ 타입 마스터 ]",
   "cli.pokedex.type_progress": "  {type}: {caught}/{total} ({pct}%)",
-  "cli.pokedex.type_mastered": "  {type}: 마스터 ✓ (XP 1.2배)"
+  "cli.pokedex.type_mastered": "  {type}: 마스터 ✓ (XP 1.2배)",
+
+  "star.prompt": "⭐ Tok\u00e9mon 즐기고 계신가요? tokenmon star 로 GitHub 스타를 눌러주세요!",
+  "star.success": "⭐ Tok\u00e9mon에 스타를 눌러주셔서 감사합니다!",
+  "star.failed": "스타 실패. gh CLI가 설치되어 있고 인증되었는지 확인하세요.",
+  "star.dismissed": "스타 프롬프트를 비활성화했습니다."
 }

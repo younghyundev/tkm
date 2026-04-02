@@ -19,6 +19,11 @@ export function detectRenderer(env?: Record<string, string | undefined>): Detect
 
   const supported: SpriteRenderer[] = ['braille']; // always available
 
+  // VSCode terminal doesn't support any graphics protocol — force braille
+  if (termProgram === 'vscode') {
+    return { supported, recommended: 'braille' };
+  }
+
   // Kitty Graphics Protocol
   if (term === 'xterm-kitty' || termProgram === 'ghostty' || termProgram === 'WezTerm') {
     supported.push('kitty');

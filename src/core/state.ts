@@ -53,6 +53,7 @@ const DEFAULT_STATE: State = {
   legendary_pending: [],
   titles: [],
   completed_chains: [],
+  star_dismissed: false,
 };
 
 const DEFAULT_SESSION: Session = {
@@ -89,6 +90,7 @@ export function readState(): State {
     legendary_pending: parsed.legendary_pending ?? [],
     titles: parsed.titles ?? [],
     completed_chains: parsed.completed_chains ?? [],
+    star_dismissed: parsed.star_dismissed ?? false,
   };
 
   // Migrate per-pokemon fields (friendship, ev)

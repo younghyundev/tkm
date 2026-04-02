@@ -53,6 +53,7 @@ export function makeState(overrides: Partial<State> = {}): State {
     legendary_pending: [],
     titles: [],
     completed_chains: [],
+    star_dismissed: false,
     ...overrides,
   };
 }

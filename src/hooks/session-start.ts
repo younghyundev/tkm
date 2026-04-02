@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs';
+import { execSync } from 'child_process';
 import { readState, writeState, writeSession } from '../core/state.js';
 import { readConfig, writeConfig } from '../core/config.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
@@ -128,6 +129,23 @@ function main(): void {
     ];
     for (const label of eventLabels) {
       messages.push(`🎪 ${label}`);
+    }
+
+    // GitHub star prompt (after 5+ sessions, not dismissed)
+    if (state.session_count >= 5 && !state.star_dismissed) {
+      try {
+        const starred = execSync(
+          'gh api user/starred/ThunderConch/tkm --silent 2>/dev/null && echo "yes" || echo "no"',
+          { encoding: 'utf-8', timeout: 3000 },
+        ).trim();
+        if (starred === 'yes') {
+          state.star_dismissed = true; // already starred, don't ask again
+        } else {
+          messages.push(t('star.prompt'));
+        }
+      } catch {
+        // gh not available or network error — skip silently
+      }
     }
 
     writeState(state);

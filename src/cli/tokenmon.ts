@@ -566,6 +566,7 @@ function doReset(): void {
       pokedex_milestones_claimed: [], type_masters: [],
       legendary_pool: [], legendary_pending: [], titles: [],
       completed_chains: [],
+      star_dismissed: false,
     };
     writeState(defaultState);
   });
@@ -1350,6 +1351,31 @@ switch (command) {
   case 'box':
     cmdBox(args[1] === '--sort' ? args[2] : undefined);
     break;
+  case 'star': {
+    const { execSync } = await import('child_process');
+    try {
+      execSync('gh api -X PUT user/starred/ThunderConch/tkm', { stdio: 'pipe' });
+      const starResult = withLock(() => {
+        const s = readState();
+        s.star_dismissed = true;
+        writeState(s);
+      });
+      success(t('star.success'));
+    } catch {
+      error(t('star.failed'));
+    }
+    break;
+  }
+  case 'star-dismiss': {
+    const dismissResult = withLock(() => {
+      const s = readState();
+      s.star_dismissed = true;
+      writeState(s);
+    });
+    if (dismissResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+    success(t('star.dismissed'));
+    break;
+  }
   case 'guide':
     cmdGuide(args[1]);
     break;
