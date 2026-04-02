@@ -57,12 +57,46 @@ function loadSprite(pokemonId: number, renderer: SpriteRenderer = 'braille'): st
   return readFileSync(file, 'utf-8').split('\n').filter(l => l.trim().length > 0);
 }
 
+function visibleLength(s: string): number {
+  // Strip ANSI escape codes, then count characters
+  // Unicode braille/CJK characters may be double-width in some terminals
+  const stripped = s.replace(/\x1b\[[^m]*m/g, '');
+  let len = 0;
+  for (const ch of stripped) {
+    const cp = ch.codePointAt(0) ?? 0;
+    // CJK, braille, and fullwidth characters take 2 columns
+    if (
+      (cp >= 0x2800 && cp <= 0x28FF) || // Braille
+      (cp >= 0x1100 && cp <= 0x115F) || // Hangul Jamo
+      (cp >= 0x2E80 && cp <= 0x9FFF) || // CJK
+      (cp >= 0xAC00 && cp <= 0xD7AF) || // Hangul Syllables
+      (cp >= 0xF900 && cp <= 0xFAFF) || // CJK Compatibility
+      (cp >= 0xFE10 && cp <= 0xFE6F) || // CJK Forms
+      (cp >= 0xFF01 && cp <= 0xFF60) || // Fullwidth
+      (cp >= 0xFFE0 && cp <= 0xFFE6) || // Fullwidth
+      (cp >= 0x20000 && cp <= 0x2FA1F)   // CJK Extension
+    ) {
+      len += 2;
+    } else {
+      len += 1;
+    }
+  }
+  return len;
+}
+
 function wrapPrint(parts: string[], maxWidth: number): void {
+  // Try single line first
+  const singleLine = parts.join(' | ');
+  if (visibleLength(singleLine) <= maxWidth) {
+    console.log(singleLine);
+    return;
+  }
+
+  // Wrap: greedy line packing
   let currentLine = '';
   for (const part of parts) {
     const test = currentLine ? currentLine + ' | ' + part : part;
-    const visibleLen = test.replace(/\x1b\[[^m]*m/g, '').length;
-    if (currentLine && visibleLen > maxWidth) {
+    if (currentLine && visibleLength(test) > maxWidth) {
       console.log(currentLine);
       currentLine = part;
     } else {

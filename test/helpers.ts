@@ -47,6 +47,13 @@ export function makeState(overrides: Partial<State> = {}): State {
       last_reset_week: '',
     },
     events_triggered: [],
+    pokedex_milestones_claimed: [],
+    type_masters: [],
+    legendary_pool: [],
+    legendary_pending: [],
+    titles: [],
+    completed_chains: [],
+    star_dismissed: false,
     ...overrides,
   };
 }
