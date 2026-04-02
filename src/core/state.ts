@@ -1,5 +1,7 @@
 import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
+import { statePath, sessionPath, i18nDataDir, DATA_DIR } from './paths.js';
+// Legacy imports for backward compat during migration
 import { STATE_PATH, SESSION_PATH, I18N_DATA_DIR } from './paths.js';
 import type { State, Session, PokemonState, PokedexEntry, Notification, Stats, LegendaryPending } from './types.js';
 
@@ -63,11 +65,12 @@ const DEFAULT_SESSION: Session = {
   achievement_events: [],
 };
 
-export function readState(): State {
-  if (!existsSync(STATE_PATH)) {
+export function readState(gen?: string): State {
+  const path = statePath(gen);
+  if (!existsSync(path)) {
     return { ...DEFAULT_STATE, pokemon: {}, unlocked: [], achievements: {}, last_session_tokens: {} };
   }
-  const raw = readFileSync(STATE_PATH, 'utf-8');
+  const raw = readFileSync(path, 'utf-8');
   const parsed = JSON.parse(raw) as Partial<State>;
   // Merge with defaults to fill missing fields
   const result: State = {
@@ -106,25 +109,27 @@ export function readState(): State {
   }
 
   // Migrate Korean name keys -> ID keys
-  migrateNameToId(result);
+  migrateNameToId(result, path, i18nDataDir(gen));
 
   return result;
 }
 
-function migrateNameToId(state: State): State {
+function migrateNameToId(state: State, stateFilePath: string, i18nDir: string): State {
   // Skip if already migrated
   if (state.state_version && state.state_version >= 2) return state;
 
-  // Build Korean name -> ID map from data/i18n/ko.json
-  const koI18nPath = join(I18N_DATA_DIR, 'ko.json');
-  if (!existsSync(koI18nPath)) {
+  // Build Korean name -> ID map from i18n/ko.json
+  const koI18nPath = join(i18nDir, 'ko.json');
+  // Also check legacy path as fallback
+  const koPath = existsSync(koI18nPath) ? koI18nPath : join(I18N_DATA_DIR, 'ko.json');
+  if (!existsSync(koPath)) {
     state.state_version = 2;
     return state;
   }
 
   let koData: { pokemon: Record<string, string>; regions: Record<string, { name: string }> };
   try {
-    koData = JSON.parse(readFileSync(koI18nPath, 'utf-8'));
+    koData = JSON.parse(readFileSync(koPath, 'utf-8'));
   } catch {
     state.state_version = 2;
     return state;
@@ -156,11 +161,11 @@ function migrateNameToId(state: State): State {
     return state;
   }
 
-  // Create backup (best-effort)
+  // Create backup (best-effort) using the actual state file path
   try {
-    if (existsSync(STATE_PATH)) {
-      const backupPath = STATE_PATH + '.bak';
-      writeFileSync(backupPath, readFileSync(STATE_PATH, 'utf-8'), 'utf-8');
+    if (existsSync(stateFilePath)) {
+      const backupPath = stateFilePath + '.bak';
+      writeFileSync(backupPath, readFileSync(stateFilePath, 'utf-8'), 'utf-8');
     }
   } catch { /* backup is best-effort */ }
 
@@ -189,12 +194,13 @@ function migrateNameToId(state: State): State {
   return state;
 }
 
-export function writeState(state: State): void {
-  const dir = dirname(STATE_PATH);
+export function writeState(state: State, gen?: string): void {
+  const path = statePath(gen);
+  const dir = dirname(path);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  const tmpPath = STATE_PATH + '.tmp';
+  const tmpPath = path + '.tmp';
   writeFileSync(tmpPath, JSON.stringify(state, null, 2), 'utf-8');
-  renameSync(tmpPath, STATE_PATH);
+  renameSync(tmpPath, path);
 }
 
 /**
@@ -207,11 +213,12 @@ export function pruneSessionTokens(tokens: Record<string, number>): Record<strin
   return Object.fromEntries(entries.slice(0, 10));
 }
 
-export function readSession(): Session {
-  if (!existsSync(SESSION_PATH)) {
+export function readSession(gen?: string): Session {
+  const path = sessionPath(gen);
+  if (!existsSync(path)) {
     return { ...DEFAULT_SESSION, agent_assignments: [], evolution_events: [], achievement_events: [] };
   }
-  const raw = readFileSync(SESSION_PATH, 'utf-8');
+  const raw = readFileSync(path, 'utf-8');
   const parsed = JSON.parse(raw) as Partial<Session>;
   return {
     ...DEFAULT_SESSION,
@@ -222,10 +229,11 @@ export function readSession(): Session {
   };
 }
 
-export function writeSession(session: Session): void {
-  const dir = dirname(SESSION_PATH);
+export function writeSession(session: Session, gen?: string): void {
+  const path = sessionPath(gen);
+  const dir = dirname(path);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  const tmpPath = SESSION_PATH + '.tmp';
+  const tmpPath = path + '.tmp';
   writeFileSync(tmpPath, JSON.stringify(session, null, 2), 'utf-8');
-  renameSync(tmpPath, SESSION_PATH);
+  renameSync(tmpPath, path);
 }

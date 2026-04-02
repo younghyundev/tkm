@@ -307,6 +307,7 @@ export interface BattleResult {
   xpReward: number;
   caught: boolean;
   typeMultiplier: number;
+  ballCost: number;
 }
 
 export interface HookInput {
@@ -318,4 +319,31 @@ export interface HookInput {
 export interface HookOutput {
   continue: boolean;
   system_message?: string;
+}
+
+// ── Multi-generation support ──
+
+export interface GlobalConfig {
+  active_generation: string;
+  language: 'ko' | 'en';
+}
+
+export interface GenerationData {
+  id: string;
+  name: string;
+  region_name: string;
+  pokemon_range: [number, number];
+  starters: string[];
+  order: number;
+}
+
+export interface GenerationsDB {
+  generations: Record<string, GenerationData>;
+  default_generation: string;
+}
+
+export interface SharedDB {
+  type_colors: Record<string, string>;
+  type_chart: Record<string, TypeMatchup>;
+  rarity_weights: RarityWeights;
 }

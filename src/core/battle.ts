@@ -7,6 +7,15 @@ import { levelToXp } from './xp.js';
 import { t } from '../i18n/index.js';
 import type { State, Config, BattleResult } from './types.js';
 
+/**
+ * Calculate Poké Ball cost based on catch_rate.
+ * Formula: ceil(e^(4.5 × (1 - catch_rate/255)))
+ * catch_rate 255 → 1 ball, catch_rate 3 → 82 balls
+ */
+export function getBallCost(catchRate: number): number {
+  return Math.max(1, Math.ceil(Math.exp(4.5 * (1 - catchRate / 255))));
+}
+
 function sigmoid(x: number): number {
   return 1 / (1 + Math.exp(-x));
 }
@@ -264,14 +273,16 @@ export function resolveBattle(
   // Mark pokemon as seen
   markSeen(state, wildName);
 
-  // Catch on victory (requires pokeball for uncaught pokemon)
+  // Catch on victory (requires pokeballs based on catch_rate)
   let caught = false;
+  let ballCost = 0;
   if (won) {
     const alreadyCaught = state.pokedex[wildName]?.caught ?? false;
     if (!alreadyCaught) {
-      const hasBall = getItemCount(state, 'pokeball') > 0;
-      if (hasBall) {
-        useItem(state, 'pokeball');
+      ballCost = getBallCost(wildData.catch_rate);
+      const hasBalls = getItemCount(state, 'pokeball') >= ballCost;
+      if (hasBalls) {
+        for (let i = 0; i < ballCost; i++) useItem(state, 'pokeball');
         caught = true;
         markCaught(state, wildName);
         state.catch_count++;
@@ -283,7 +294,7 @@ export function resolveBattle(
           state.pokemon[wildName] = { id: wildData.id, xp: catchXp, level: wildLevel, friendship: 0, ev: 0 };
         }
       }
-      // No ball: markSeen already called above, XP already awarded. No catch.
+      // Not enough balls: markSeen already called above, XP already awarded. No catch.
     }
   }
 
@@ -299,6 +310,7 @@ export function resolveBattle(
     xpReward: xpPerPokemon,
     caught,
     typeMultiplier,
+    ballCost,
   };
 }
 
@@ -311,6 +323,12 @@ export function formatBattleMessage(result: BattleResult): string {
     let msg = t('battle.win', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
     if (result.caught) {
       msg += t('battle.win_catch', { defender: defenderName });
+      if (result.ballCost > 1) {
+        msg += ` (🔴×${result.ballCost})`;
+      }
+    } else if (result.ballCost > 0 && !result.caught) {
+      // Won but couldn't catch — not enough balls
+      msg += ` [${t('battle.need_balls', { count: result.ballCost, fallback: `Need ${result.ballCost} balls to catch` })}]`;
     }
     return msg;
   }

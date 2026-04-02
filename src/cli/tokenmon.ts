@@ -2,8 +2,8 @@
 import * as readline from 'readline';
 import { readFileSync } from 'fs';
 import { readState, writeState } from '../core/state.js';
-import { readConfig, writeConfig, getDefaultConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName } from '../core/pokemon-data.js';
+import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/pokedex.js';
@@ -16,6 +16,7 @@ import { getEventsDB, getRegionsDB, getPokedexRewardsDB } from '../core/pokemon-
 import { getTypeMasterProgress } from '../core/pokedex-rewards.js';
 import { t, initLocale, getLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
+import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCache } from '../core/paths.js';
 import type { ExpGroup, EvolutionContext } from '../core/types.js';
 
 // ANSI color helpers
@@ -111,7 +112,7 @@ function cmdStarter(): void {
 
   if (config.starter_chosen) {
     warn(t('cli.starter.already_chosen'));
-    info(t('cli.starter.current_party', { party: config.party.map(getPokemonName).join(', ') }));
+    info(t('cli.starter.current_party', { party: config.party.map(p => getPokemonName(p)).join(', ') }));
     return;
   }
 
@@ -686,7 +687,7 @@ function cmdEvolve(pokemonArg?: string, targetArg?: string): void {
     bold(t('cli.evolve.ready_header'));
     for (const p of ready) {
       const opts = state.pokemon[p].evolution_options ?? [];
-      console.log(`  ${BOLD}${getPokemonName(p)}${RESET} → ${opts.map(getPokemonName).join(' / ')}`);
+      console.log(`  ${BOLD}${getPokemonName(p)}${RESET} → ${opts.map(o => getPokemonName(o)).join(' / ')}`);
     }
     console.log('');
     info(t('cli.evolve.usage_hint'));
@@ -1255,6 +1256,79 @@ function cmdPartySuggest(): void {
   }
 }
 
+function cmdGen(sub?: string, arg?: string): void {
+  const gensDB = getGenerationsDB();
+  const globalConfig = readGlobalConfig();
+  const activeGen = globalConfig.active_generation;
+
+  if (!sub || sub === 'status') {
+    bold(t('cli.gen.title', { fallback: '🎮 Generation' }));
+    console.log('');
+    const genData = gensDB.generations[activeGen];
+    if (genData) {
+      console.log(`  ${BOLD}${genData.name}${RESET} (${genData.region_name})`);
+      console.log(`  ${GRAY}ID: ${activeGen} | Pokémon: #${genData.pokemon_range[0]}-#${genData.pokemon_range[1]}${RESET}`);
+    }
+    console.log('');
+    return;
+  }
+
+  if (sub === 'list') {
+    bold(t('cli.gen.list_title', { fallback: '📋 Available Generations' }));
+    console.log('');
+    const sorted = Object.values(gensDB.generations).sort((a, b) => a.order - b.order);
+    for (const gen of sorted) {
+      const marker = gen.id === activeGen ? ` ${GREEN}← active${RESET}` : '';
+      const config = readConfig(gen.id);
+      const setupStatus = config.starter_chosen ? '' : ` ${YELLOW}(not set up)${RESET}`;
+      console.log(`  ${BOLD}${gen.name}${RESET} [${gen.id}] — ${gen.region_name}${marker}${setupStatus}`);
+    }
+    console.log('');
+    info(t('cli.gen.switch_hint', { fallback: 'Use: gen switch <id>' }));
+    return;
+  }
+
+  if (sub === 'switch') {
+    if (!arg) {
+      error(t('cli.gen.switch_usage', { fallback: 'Usage: gen switch <gen_id>' }));
+      info(t('cli.gen.switch_example', { fallback: 'Example: gen switch gen1' }));
+      return;
+    }
+    const targetGen = arg;
+    if (!gensDB.generations[targetGen]) {
+      error(t('cli.gen.not_found', { fallback: `Generation "${targetGen}" not found.` }));
+      const available = Object.keys(gensDB.generations).join(', ');
+      info(t('cli.gen.available', { fallback: `Available: ${available}` }));
+      return;
+    }
+    if (targetGen === activeGen) {
+      warn(t('cli.gen.already_active', { fallback: `Already on ${targetGen}.` }));
+      return;
+    }
+
+    // Switch generation
+    globalConfig.active_generation = targetGen;
+    writeGlobalConfig(globalConfig);
+    clearActiveGenerationCache();
+    setActiveGenerationCache(targetGen);
+    invalidateGenCache();
+
+    const genData = gensDB.generations[targetGen];
+    success(t('cli.gen.switched', { fallback: `Switched to ${genData.name} (${genData.region_name})` }));
+
+    // Check if this gen needs setup
+    const targetConfig = readConfig(targetGen);
+    if (!targetConfig.starter_chosen) {
+      console.log('');
+      warn(t('cli.gen.needs_setup', { fallback: 'This generation needs initial setup. Run /tkm:setup to choose your starter!' }));
+    }
+    return;
+  }
+
+  error(t('cli.gen.unknown_sub', { fallback: `Unknown subcommand: ${sub}` }));
+  info(t('cli.gen.usage', { fallback: 'Usage: gen [list|switch <id>|status]' }));
+}
+
 function cmdHelp(): void {
   bold(t('cli.help.title'));
   console.log('');
@@ -1376,6 +1450,9 @@ switch (command) {
     success(t('star.dismissed'));
     break;
   }
+  case 'gen':
+    cmdGen(args[1], args[2]);
+    break;
   case 'guide':
     cmdGuide(args[1]);
     break;

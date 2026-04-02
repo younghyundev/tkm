@@ -1,0 +1,156 @@
+{
+  "milestones": [
+    {
+      "id": "catch_10_reward",
+      "threshold": 10,
+      "reward_type": "pokeball",
+      "reward_value": 3,
+      "label": {
+        "en": "Catch 10 — 3 Poké Balls",
+        "ko": "10마리 포획 — 몬스터볼 3개"
+      }
+    },
+    {
+      "id": "catch_25_reward",
+      "threshold": 25,
+      "reward_type": "pokeball",
+      "reward_value": 5,
+      "label": {
+        "en": "Catch 25 — 5 Poké Balls",
+        "ko": "25마리 포획 — 몬스터볼 5개"
+      }
+    },
+    {
+      "id": "catch_50_reward",
+      "threshold": 50,
+      "reward_type": "xp_multiplier",
+      "reward_value": 1.1,
+      "legendary_bonus": "legendary_birds",
+      "label": {
+        "en": "Catch 50 — Articuno encounter!",
+        "ko": "50마리 포획 — 프리저 조우!"
+      }
+    },
+    {
+      "id": "catch_70_reward",
+      "threshold": 70,
+      "reward_type": "legendary_unlock",
+      "reward_value": "legendary_birds",
+      "legendary_bonus": "legendary_birds",
+      "label": {
+        "en": "Catch 70 — Zapdos encounter!",
+        "ko": "70마리 포획 — 썬더 조우!"
+      }
+    },
+    {
+      "id": "catch_90_reward",
+      "threshold": 90,
+      "reward_type": "legendary_unlock",
+      "reward_value": "legendary_birds",
+      "legendary_bonus": "legendary_birds",
+      "label": {
+        "en": "Catch 90 — Moltres encounter!",
+        "ko": "90마리 포획 — 파이어 조우!"
+      }
+    },
+    {
+      "id": "catch_120_reward",
+      "threshold": 120,
+      "reward_type": "legendary_unlock",
+      "reward_value": "mewtwo",
+      "label": {
+        "en": "Catch 120 — Mewtwo encounter!",
+        "ko": "120마리 포획 — 뮤츠 조우!"
+      }
+    },
+    {
+      "id": "catch_151_reward",
+      "threshold": 151,
+      "reward_type": "legendary_unlock",
+      "reward_value": "mew",
+      "label": {
+        "en": "Catch all 151 — Mew encounter!",
+        "ko": "151마리 포획 — 뮤 조우!"
+      }
+    }
+  ],
+  "legendary_groups": {
+    "legendary_birds": {
+      "label": {
+        "en": "Legendary Birds",
+        "ko": "전설의 새"
+      },
+      "description": {
+        "en": "The three legendary birds of Kanto",
+        "ko": "관동 지방의 전설의 새 3마리"
+      },
+      "options": [
+        "144",
+        "145",
+        "146"
+      ]
+    },
+    "mewtwo": {
+      "label": {
+        "en": "Mewtwo",
+        "ko": "뮤츠"
+      },
+      "description": {
+        "en": "The ultimate genetic Pokémon",
+        "ko": "궁극의 유전자 포켓몬"
+      },
+      "options": [
+        "150"
+      ]
+    },
+    "mew": {
+      "label": {
+        "en": "Mew",
+        "ko": "뮤"
+      },
+      "description": {
+        "en": "The mythical ancestor Pokémon",
+        "ko": "환상의 조상 포켓몬"
+      },
+      "options": [
+        "151"
+      ]
+    },
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Unlocked through type mastery",
+        "ko": "타입 마스터를 통해 해금"
+      },
+      "options": [
+        "150",
+        "151"
+      ]
+    }
+  },
+  "type_master": {
+    "xp_bonus": 0.1,
+    "legendary_unlock_threshold": 3,
+    "legendary_group": "special_legends",
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Master 3 types to unlock",
+        "ko": "3개 타입 마스터 달성 시 해금"
+      },
+      "options": [
+        "150",
+        "151"
+      ]
+    }
+  },
+  "chain_completion_reward": {
+    "pokeball_count": 1
+  }
+}

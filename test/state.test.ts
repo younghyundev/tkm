@@ -14,6 +14,7 @@ process.env.CLAUDE_PLUGIN_ROOT = join(TEST_DIR, '.claude', 'plugins', 'cache', '
 
 // Dynamic import after env setup
 const { readState, writeState, pruneSessionTokens, readSession, writeSession } = await import('../src/core/state.js');
+const { statePath } = await import('../src/core/paths.js');
 
 function freshDir(): void {
   rmSync(TEST_DIR, { recursive: true, force: true });
@@ -58,10 +59,11 @@ await test('atomic write uses tmp file (no partial writes)', () => {
   state.session_count = 1;
   writeState(state);
 
-  const tmpPath = join(TEST_DATA_DIR, 'state.json.tmp');
+  const actualPath = statePath();
+  const tmpPath = actualPath + '.tmp';
   assert.equal(existsSync(tmpPath), false);
 
-  const raw = readFileSync(join(TEST_DATA_DIR, 'state.json'), 'utf-8');
+  const raw = readFileSync(actualPath, 'utf-8');
   assert.doesNotThrow(() => JSON.parse(raw));
 });
 

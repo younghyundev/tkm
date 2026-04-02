@@ -58,7 +58,7 @@ export function checkMilestoneRewards(state: State, config: Config): MilestoneCl
         break;
       }
       case 'party_slot':
-        config.max_party_size = Math.min(config.max_party_size + (milestone.reward_value as number), 9);
+        config.max_party_size = Math.min(config.max_party_size + (milestone.reward_value as number), 6);
         break;
       case 'title':
         if (!state.titles.includes(milestone.reward_value as string)) {

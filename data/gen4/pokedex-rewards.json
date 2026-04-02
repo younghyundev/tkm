@@ -1,0 +1,72 @@
+{
+  "milestones": [
+    {
+      "id": "milestone_10",
+      "threshold": 10,
+      "reward_type": "pokeball",
+      "reward_value": 5,
+      "label": { "en": "Novice Collector — 10 caught", "ko": "초보 수집가 — 10마리 포획" }
+    },
+    {
+      "id": "milestone_30",
+      "threshold": 30,
+      "reward_type": "xp_multiplier",
+      "reward_value": 0.05,
+      "label": { "en": "Skilled Collector — 30 caught", "ko": "숙련 수집가 — 30마리 포획" }
+    },
+    {
+      "id": "milestone_50",
+      "threshold": 50,
+      "reward_type": "legendary_unlock",
+      "reward_value": "lake_trio",
+      "label": { "en": "Expert Collector — 50 caught", "ko": "전문 수집가 — 50마리 포획" }
+    },
+    {
+      "id": "milestone_80",
+      "threshold": 80,
+      "reward_type": "legendary_unlock",
+      "reward_value": "cover_legends",
+      "label": { "en": "Master Collector — 80 caught", "ko": "마스터 수집가 — 80마리 포획" }
+    },
+    {
+      "id": "milestone_90",
+      "threshold": 90,
+      "reward_type": "party_slot",
+      "reward_value": 1,
+      "label": { "en": "Grand Master — 90 caught", "ko": "그랜드 마스터 — 90마리 포획" }
+    },
+    {
+      "id": "milestone_complete",
+      "threshold": 98,
+      "reward_type": "title",
+      "reward_value": "pokedex_master",
+      "legendary_bonus": "487",
+      "label": { "en": "Pokédex Complete — all non-legendary caught (98)", "ko": "도감 완성 — 전설 제외 전부 포획 (98)" }
+    }
+  ],
+  "legendary_groups": {
+    "lake_trio": {
+      "label": { "en": "Lake Trio", "ko": "호수의 삼인방" },
+      "description": { "en": "The guardians of Sinnoh's three lakes", "ko": "신오지방 세 호수의 수호자" },
+      "options": ["480", "481", "482"]
+    },
+    "cover_legends": {
+      "label": { "en": "Cover Legends", "ko": "커버 전설" },
+      "description": { "en": "The deities of time and space", "ko": "시간과 공간의 신" },
+      "options": ["483", "484"]
+    }
+  },
+  "type_master": {
+    "xp_bonus": 1.2,
+    "legendary_unlock_threshold": 3,
+    "legendary_group": "special_legends",
+    "special_legends": {
+      "label": { "en": "Special Legends", "ko": "특별 전설" },
+      "description": { "en": "Unlocked by mastering 3 types", "ko": "3개 타입 마스터 달성 시 해금" },
+      "options": ["485", "486"]
+    }
+  },
+  "chain_completion_reward": {
+    "pokeball_count": 2
+  }
+}

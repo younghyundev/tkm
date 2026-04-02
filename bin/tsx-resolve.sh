@@ -7,6 +7,7 @@ if [ -x "$LOCAL_TSX" ]; then
 elif command -v tsx >/dev/null 2>&1; then
   exec tsx "$@"
 else
+  echo "⚠️ tsx not found. Run: npm install --prefix $CLAUDE_PLUGIN_ROOT"
   echo "⚠️ tsx not found. Run: npm install --prefix $CLAUDE_PLUGIN_ROOT" >&2
   echo '{"continue": true}'
   exit 0

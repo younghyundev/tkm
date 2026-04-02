@@ -1,49 +1,135 @@
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import { POKEMON_JSON_PATH, ACHIEVEMENTS_JSON_PATH, REGIONS_JSON_PATH, EVENTS_JSON_PATH, POKEDEX_REWARDS_JSON_PATH, I18N_DATA_DIR } from './paths.js';
-import type { PokemonDB, AchievementsDB, RegionsDB, EventsDB, PokedexRewardsDB } from './types.js';
+import {
+  pokemonJsonPath, achievementsJsonPath, regionsJsonPath,
+  pokedexRewardsJsonPath, i18nDataDir, getActiveGeneration,
+  EVENTS_JSON_PATH, SHARED_JSON_PATH,
+  GENERATIONS_JSON_PATH,
+  // Legacy compat
+  POKEMON_JSON_PATH, ACHIEVEMENTS_JSON_PATH, REGIONS_JSON_PATH,
+  POKEDEX_REWARDS_JSON_PATH, I18N_DATA_DIR,
+} from './paths.js';
+import type { PokemonDB, AchievementsDB, RegionsDB, EventsDB, PokedexRewardsDB, GenerationsDB, SharedDB } from './types.js';
 import { getLocale } from '../i18n/index.js';
 
-let _pokemonDB: PokemonDB | null = null;
-let _achievementsDB: AchievementsDB | null = null;
-let _regionsDB: RegionsDB | null = null;
+// ── Gen-keyed caches ──
+const _pokemonDBCache: Record<string, PokemonDB> = {};
+const _achievementsDBCache: Record<string, AchievementsDB> = {};
+const _regionsDBCache: Record<string, RegionsDB> = {};
+const _pokedexRewardsDBCache: Record<string, PokedexRewardsDB> = {};
+
+// Shared/global caches (not per-gen)
 let _eventsDB: EventsDB | null = null;
-let _pokedexRewardsDB: PokedexRewardsDB | null = null;
+let _generationsDB: GenerationsDB | null = null;
+let _sharedDB: SharedDB | null = null;
 
-export function getPokemonDB(): PokemonDB {
-  if (!_pokemonDB) {
-    _pokemonDB = JSON.parse(readFileSync(POKEMON_JSON_PATH, 'utf-8')) as PokemonDB;
-  }
-  return _pokemonDB;
+function loadJson<T>(path: string): T {
+  return JSON.parse(readFileSync(path, 'utf-8')) as T;
 }
 
-export function getAchievementsDB(): AchievementsDB {
-  if (!_achievementsDB) {
-    _achievementsDB = JSON.parse(readFileSync(ACHIEVEMENTS_JSON_PATH, 'utf-8')) as AchievementsDB;
-  }
-  return _achievementsDB;
+function resolveDataPath(perGenPath: string, legacyPath: string): string {
+  // Prefer per-gen path; fall back to legacy flat path for backward compat
+  return existsSync(perGenPath) ? perGenPath : legacyPath;
 }
 
-export function getRegionsDB(): RegionsDB {
-  if (!_regionsDB) {
-    _regionsDB = JSON.parse(readFileSync(REGIONS_JSON_PATH, 'utf-8')) as RegionsDB;
+export function getSharedDB(): SharedDB {
+  if (!_sharedDB) {
+    if (existsSync(SHARED_JSON_PATH)) {
+      _sharedDB = loadJson<SharedDB>(SHARED_JSON_PATH);
+    } else {
+      // Fall back: load from legacy pokemon.json which contains these fields
+      const legacyDB = loadJson<PokemonDB>(POKEMON_JSON_PATH);
+      _sharedDB = {
+        type_colors: legacyDB.type_colors,
+        type_chart: legacyDB.type_chart,
+        rarity_weights: legacyDB.rarity_weights,
+      };
+    }
   }
-  return _regionsDB;
+  return _sharedDB;
+}
+
+export function getGenerationsDB(): GenerationsDB {
+  if (!_generationsDB) {
+    if (existsSync(GENERATIONS_JSON_PATH)) {
+      _generationsDB = loadJson<GenerationsDB>(GENERATIONS_JSON_PATH);
+    } else {
+      // Default: gen4 only
+      _generationsDB = {
+        generations: {
+          gen4: {
+            id: 'gen4',
+            name: 'Generation IV',
+            region_name: 'Sinnoh',
+            pokemon_range: [280, 493],
+            starters: ['387', '390', '393'],
+            order: 4,
+          },
+        },
+        default_generation: 'gen4',
+      };
+    }
+  }
+  return _generationsDB;
+}
+
+export function getPokemonDB(gen?: string): PokemonDB {
+  const g = gen ?? getActiveGeneration();
+  if (!_pokemonDBCache[g]) {
+    const perGen = pokemonJsonPath(g);
+    const path = resolveDataPath(perGen, POKEMON_JSON_PATH);
+    const raw = loadJson<any>(path);
+    const shared = getSharedDB();
+    // Merge: per-gen pokemon data + shared type data
+    _pokemonDBCache[g] = {
+      pokemon: raw.pokemon,
+      starters: raw.starters ?? getGenerationsDB().generations[g]?.starters ?? [],
+      type_colors: raw.type_colors ?? shared.type_colors,
+      type_chart: raw.type_chart ?? shared.type_chart,
+      rarity_weights: raw.rarity_weights ?? shared.rarity_weights,
+    };
+  }
+  return _pokemonDBCache[g];
+}
+
+export function getAchievementsDB(gen?: string): AchievementsDB {
+  const g = gen ?? getActiveGeneration();
+  if (!_achievementsDBCache[g]) {
+    const perGen = achievementsJsonPath(g);
+    const path = resolveDataPath(perGen, ACHIEVEMENTS_JSON_PATH);
+    _achievementsDBCache[g] = loadJson<AchievementsDB>(path);
+  }
+  return _achievementsDBCache[g];
+}
+
+export function getRegionsDB(gen?: string): RegionsDB {
+  const g = gen ?? getActiveGeneration();
+  if (!_regionsDBCache[g]) {
+    const perGen = regionsJsonPath(g);
+    const path = resolveDataPath(perGen, REGIONS_JSON_PATH);
+    _regionsDBCache[g] = loadJson<RegionsDB>(path);
+  }
+  return _regionsDBCache[g];
 }
 
 export function getEventsDB(): EventsDB {
   if (!_eventsDB) {
-    _eventsDB = JSON.parse(readFileSync(EVENTS_JSON_PATH, 'utf-8')) as EventsDB;
+    _eventsDB = loadJson<EventsDB>(EVENTS_JSON_PATH);
   }
   return _eventsDB;
 }
 
-export function getPokedexRewardsDB(): PokedexRewardsDB {
-  if (!_pokedexRewardsDB) {
-    _pokedexRewardsDB = JSON.parse(readFileSync(POKEDEX_REWARDS_JSON_PATH, 'utf-8')) as PokedexRewardsDB;
+export function getPokedexRewardsDB(gen?: string): PokedexRewardsDB {
+  const g = gen ?? getActiveGeneration();
+  if (!_pokedexRewardsDBCache[g]) {
+    const perGen = pokedexRewardsJsonPath(g);
+    const path = resolveDataPath(perGen, POKEDEX_REWARDS_JSON_PATH);
+    _pokedexRewardsDBCache[g] = loadJson<PokedexRewardsDB>(path);
   }
-  return _pokedexRewardsDB;
+  return _pokedexRewardsDBCache[g];
 }
+
+// ── i18n helpers ──
 
 interface GameI18nData {
   pokemon: Record<string, string>;
@@ -52,19 +138,27 @@ interface GameI18nData {
   achievements: Record<string, { name: string; description: string; rarity_label: string }>;
 }
 
-let _gameI18n: Record<string, GameI18nData> = {};
+const _gameI18n: Record<string, GameI18nData> = {};
 
-export function getGameI18n(locale?: string): GameI18nData {
-  const loc = locale || getLocale();
-  if (!_gameI18n[loc]) {
-    const filePath = join(I18N_DATA_DIR, `${loc}.json`);
-    _gameI18n[loc] = JSON.parse(readFileSync(filePath, 'utf-8')) as GameI18nData;
-  }
-  return _gameI18n[loc];
+function i18nCacheKey(locale: string, gen: string): string {
+  return `${gen}:${locale}`;
 }
 
-export function getPokemonName(id: string | number): string {
-  const i18n = getGameI18n();
+export function getGameI18n(locale?: string, gen?: string): GameI18nData {
+  const loc = locale || getLocale();
+  const g = gen ?? getActiveGeneration();
+  const key = i18nCacheKey(loc, g);
+  if (!_gameI18n[key]) {
+    const perGen = join(i18nDataDir(g), `${loc}.json`);
+    const legacy = join(I18N_DATA_DIR, `${loc}.json`);
+    const path = resolveDataPath(perGen, legacy);
+    _gameI18n[key] = loadJson<GameI18nData>(path);
+  }
+  return _gameI18n[key];
+}
+
+export function getPokemonName(id: string | number, gen?: string): string {
+  const i18n = getGameI18n(undefined, gen);
   return i18n.pokemon[String(id)] || String(id);
 }
 
@@ -73,35 +167,35 @@ export function getTypeName(typeId: string): string {
   return i18n.types[typeId] || typeId;
 }
 
-export function getRegionName(id: string | number): string {
-  const i18n = getGameI18n();
+export function getRegionName(id: string | number, gen?: string): string {
+  const i18n = getGameI18n(undefined, gen);
   return i18n.regions[String(id)]?.name || String(id);
 }
 
-export function getRegionDescription(id: string | number): string {
-  const i18n = getGameI18n();
+export function getRegionDescription(id: string | number, gen?: string): string {
+  const i18n = getGameI18n(undefined, gen);
   return i18n.regions[String(id)]?.description || '';
 }
 
-export function getAchievementName(id: string): string {
-  const i18n = getGameI18n();
+export function getAchievementName(id: string, gen?: string): string {
+  const i18n = getGameI18n(undefined, gen);
   return i18n.achievements[id]?.name || id;
 }
 
-export function getAchievementDescription(id: string): string {
-  const i18n = getGameI18n();
+export function getAchievementDescription(id: string, gen?: string): string {
+  const i18n = getGameI18n(undefined, gen);
   return i18n.achievements[id]?.description || '';
 }
 
-export function getAchievementRarityLabel(id: string): string {
-  const i18n = getGameI18n();
+export function getAchievementRarityLabel(id: string, gen?: string): string {
+  const i18n = getGameI18n(undefined, gen);
   return i18n.achievements[id]?.rarity_label || '';
 }
 
 // Reverse lookup: name (any locale) → pokemon ID string
-export function pokemonIdByName(name: string): string | undefined {
+export function pokemonIdByName(name: string, gen?: string): string | undefined {
   for (const locale of ['ko', 'en']) {
-    const i18n = getGameI18n(locale);
+    const i18n = getGameI18n(locale, gen);
     for (const [id, pokeName] of Object.entries(i18n.pokemon)) {
       if (pokeName === name) return id;
     }
@@ -110,9 +204,9 @@ export function pokemonIdByName(name: string): string | undefined {
 }
 
 // Reverse lookup: region name (any locale) → region ID string
-export function regionIdByName(name: string): string | undefined {
+export function regionIdByName(name: string, gen?: string): string | undefined {
   for (const locale of ['ko', 'en']) {
-    const i18n = getGameI18n(locale);
+    const i18n = getGameI18n(locale, gen);
     for (const [id, region] of Object.entries(i18n.regions)) {
       if (region.name === name) return id;
     }
@@ -120,11 +214,30 @@ export function regionIdByName(name: string): string | undefined {
   return undefined;
 }
 
+// ── Cache management ──
+
+export function invalidateGenCache(gen?: string): void {
+  if (gen) {
+    delete _pokemonDBCache[gen];
+    delete _achievementsDBCache[gen];
+    delete _regionsDBCache[gen];
+    delete _pokedexRewardsDBCache[gen];
+    // Clear i18n entries for this gen
+    for (const key of Object.keys(_gameI18n)) {
+      if (key.startsWith(`${gen}:`)) delete _gameI18n[key];
+    }
+  } else {
+    _resetForTesting();
+  }
+}
+
 export function _resetForTesting(): void {
-  _pokemonDB = null;
-  _achievementsDB = null;
-  _regionsDB = null;
+  for (const key of Object.keys(_pokemonDBCache)) delete _pokemonDBCache[key];
+  for (const key of Object.keys(_achievementsDBCache)) delete _achievementsDBCache[key];
+  for (const key of Object.keys(_regionsDBCache)) delete _regionsDBCache[key];
+  for (const key of Object.keys(_pokedexRewardsDBCache)) delete _pokedexRewardsDBCache[key];
   _eventsDB = null;
-  _pokedexRewardsDB = null;
-  _gameI18n = {};
+  _generationsDB = null;
+  _sharedDB = null;
+  for (const key of Object.keys(_gameI18n)) delete _gameI18n[key];
 }

@@ -1,0 +1,21 @@
+{
+  "generations": {
+    "gen1": {
+      "id": "gen1",
+      "name": "Generation I",
+      "region_name": "Kanto",
+      "pokemon_range": [1, 151],
+      "starters": ["1", "4", "7"],
+      "order": 1
+    },
+    "gen4": {
+      "id": "gen4",
+      "name": "Generation IV",
+      "region_name": "Sinnoh",
+      "pokemon_range": [280, 493],
+      "starters": ["387", "390", "393"],
+      "order": 4
+    }
+  },
+  "default_generation": "gen4"
+}
