@@ -2,9 +2,9 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
 import { readConfig } from './core/config.js';
-import { getPokemonDB, getPokemonName, getRegionName } from './core/pokemon-data.js';
+import { getPokemonDB, getPokemonName, getRegionName, getGenerationsDB } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
-import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR } from './core/paths.js';
+import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, getActiveGeneration } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
 import { t, initLocale } from './i18n/index.js';
 import type { ExpGroup } from './core/types.js';
@@ -110,10 +110,14 @@ function main(): void {
   const infoMode = config.info_mode ?? 'ace_full';
 
   // Footer
+  const activeGen = getActiveGeneration();
+  const gensDB = getGenerationsDB();
+  const genData = gensDB.generations[activeGen];
+  const genLabel = genData ? genData.region_name : activeGen;
   const regionName = getRegionName(config.current_region ?? '1');
   const pokeballs = state.items?.pokeball ?? 0;
   const itemInfo = pokeballs > 0 ? ` 🔴 ${pokeballs}` : '';
-  const footer = `📍${regionName}${itemInfo}`;
+  const footer = `🎮${genLabel} 📍${regionName}${itemInfo}`;
 
   // Build per-pokemon data
   const pokeData: Array<{
