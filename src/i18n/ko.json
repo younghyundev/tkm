@@ -17,6 +17,7 @@
   "cli.status.stat_pokedex": "  도감: {caught}/{total} ({pct}%)",
   "cli.status.stat_pokeballs": "  🔴 몬스터볼: {count}개",
   "cli.status.stat_region": "  현재 지역: {region}",
+  "cli.status.stat_shiny_catches": "  ★이로치 포획: {count}종",
 
   "cli.starter.already_chosen": "이미 스타터를 선택했습니다.",
   "cli.starter.current_party": "현재 파티: {party}",
@@ -76,6 +77,7 @@
   "cli.pokedex.detail_evolves_cond": "  진화 조건: {cond}",
   "cli.pokedex.detail_first_seen": "  최초 발견: {date}",
   "cli.pokedex.detail_current_level": "  현재 레벨: Lv.{level} (XP: {xp})",
+  "cli.pokedex.shiny_caught": "  ★이로치 포획 완료",
   "cli.pokedex.list_title": "=== 포켓몬 도감 ===",
   "cli.pokedex.list_summary": "  발견: {seen}/{total} ({seenPct}%)  포획: {caught}/{total} ({caughtPct}%)",
   "cli.pokedex.filter": "  필터: {filter}",
@@ -339,6 +341,9 @@
   "battle.win_catch": "\n🎉 {defender:을/를} 포획했습니다! (tokenmon party add {defender})",
   "battle.need_balls": "— {defender}(은/는) 도망쳤다!",
   "battle.lose": "⚔️ vs 야생 {defender} (Lv.{level}) → 패배... (XP +{xp})",
+  "battle.shiny_appeared": "✦ 이로치 {pokemon:이/가} 나타났다!",
+  "battle.shiny_catch": "\n★ 이로치 포획 성공!",
+  "battle.shiny_escaped": "\n이로치 {pokemon:이/가} 도망쳤다...",
 
   "achievement.unlocked": "🏆 업적 달성: {name}! ",
   "achievement.unlocked_pokemon": "🏆 업적 달성: {name}! {pokemon:을/를} 얻었습니다!",

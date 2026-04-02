@@ -2,10 +2,11 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
 import { readConfig } from './core/config.js';
-import { getPokemonDB, getPokemonName, getRegionName, getGenerationsDB } from './core/pokemon-data.js';
+import { getPokemonDB, getPokemonName, getRegionName, getGenerationsDB, getDisplayName } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
 import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, getActiveGeneration } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
+import { shiftAnsiHue } from './sprites/shiny.js';
 import { t, initLocale } from './i18n/index.js';
 import type { ExpGroup } from './core/types.js';
 
@@ -31,12 +32,16 @@ function getEmoji(types: string[]): string {
   return TYPE_EMOJI[types?.[0]] ?? '⭐';
 }
 
-function loadSprite(pokemonId: number): string[] {
+function loadSprite(pokemonId: number, isShiny: boolean = false): string[] {
   const brailleFile = join(SPRITES_BRAILLE_DIR, `${pokemonId}.txt`);
   const terminalFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
   const file = existsSync(brailleFile) ? brailleFile : existsSync(terminalFile) ? terminalFile : null;
   if (!file) return [];
-  return readFileSync(file, 'utf-8').split('\n').filter(l => l.trim().length > 0);
+  const lines = readFileSync(file, 'utf-8').split('\n').filter(l => l.trim().length > 0);
+  if (isShiny && lines.length > 0) {
+    return lines.map(line => shiftAnsiHue(line));
+  }
+  return lines;
 }
 
 function visibleLength(s: string): number {
@@ -135,8 +140,9 @@ function main(): void {
     if (!pokemonName) continue;
     const pData = pokemonDB.pokemon[pokemonName];
     const assignment = session.agent_assignments.find(a => a.pokemon === pokemonName);
+    const nickname = state.pokemon[pokemonName]?.nickname;
     pokeData.push({
-      name: pokemonName,
+      name: getDisplayName(pokemonName, nickname),
       level: state.pokemon[pokemonName]?.level ?? 1,
       xp: state.pokemon[pokemonName]?.xp ?? 0,
       expGroup: pData?.exp_group ?? 'medium_fast',
@@ -155,7 +161,8 @@ function main(): void {
     for (let i = 0; i < pokeData.length; i++) {
       const p = pokeData[i];
       if (spriteMode === 'all' || i === 0) {
-        spriteEntries.push(loadSprite(p.pokemonId));
+        const isShinySprite = state.pokemon[p.name]?.shiny ?? false;
+        spriteEntries.push(loadSprite(p.pokemonId, isShinySprite));
       }
     }
 
@@ -198,7 +205,8 @@ function main(): void {
       ? (spriteMode === 'emoji_all' || (spriteMode === 'emoji_ace' && isAce)) ? `${emoji} ` : ''
       : '';
 
-    const displayName = getPokemonName(p.name);
+    const isShiny = state.pokemon[p.name]?.shiny ?? false;
+    const displayName = getPokemonName(p.name, undefined, isShiny);
     let info: string;
     switch (infoMode) {
       case 'all_full':

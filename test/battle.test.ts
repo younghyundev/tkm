@@ -3,8 +3,11 @@ import assert from 'node:assert/strict';
 import { makeState as _makeState, makeConfig as _makeConfig } from './helpers.js';
 import { calculateWinRate, calculateBattleXp, selectBattlePokemon, calculatePartyMultiplier, resolveBattle, formatBattleMessage } from '../src/core/battle.js';
 import { getTypeEffectiveness, getRawTypeMultiplier, applyTypeDampening } from '../src/core/type-chart.js';
+import { initLocale } from '../src/i18n/index.js';
 
 import type { State, Config } from '../src/core/types.js';
+
+initLocale('ko');
 
 function makeState(overrides: Partial<State> = {}): State {
   return _makeState({
@@ -427,6 +430,53 @@ describe('battle', () => {
         resolveBattle(state, config, { name: '396', level: 1, shiny: false });
       }
       assert.equal(state.pokemon['387'].ev, 252, 'EV should not exceed 252');
+    });
+  });
+
+  describe('shiny battle path', () => {
+    it('resolveBattle with shiny:true wild returns BattleResult.shiny === true', () => {
+      const state = makeState();
+      const config = makeConfig();
+      const result = resolveBattle(state, config, { name: '396', level: 5, shiny: true });
+      assert.ok(result !== null);
+      assert.equal(result!.shiny, true);
+    });
+
+    it('catch success + shiny:true records PokemonState.shiny === true', () => {
+      const state = makeState({
+        pokemon: { '387': { id: 387, xp: 500000, level: 80, friendship: 0, ev: 0 } },
+        items: { pokeball: 50 },
+      });
+      const config = makeConfig({ party: ['387'] });
+      let caughtShiny = false;
+      for (let i = 0; i < 100 && !caughtShiny; i++) {
+        const result = resolveBattle(state, config, { name: '396', level: 1, shiny: true });
+        if (result?.won && result?.caught) {
+          caughtShiny = true;
+          assert.equal(state.pokemon['396']?.shiny, true, 'PokemonState.shiny should be true after shiny catch');
+        }
+      }
+      assert.ok(caughtShiny, 'Should catch at least one shiny pokemon');
+    });
+
+    it('formatBattleMessage includes "✦" when shiny=true', () => {
+      const msg = formatBattleMessage({
+        attacker: '387', defender: '396', defenderLevel: 5,
+        winRate: 0.6, won: true, xpReward: 65, caught: true, typeMultiplier: 1.0,
+        ballCost: 0, shiny: true,
+      });
+      assert.ok(msg.includes('✦'), `expected "✦" in shiny message: ${msg}`);
+    });
+
+    it('formatBattleMessage with shiny=undefined (legacy BattleResult) does not crash and omits "✦"', () => {
+      const legacyResult = {
+        attacker: '387', defender: '396', defenderLevel: 5,
+        winRate: 0.6, won: true, xpReward: 65, caught: true, typeMultiplier: 1.0,
+        ballCost: 0,
+      } as any;
+      const msg = formatBattleMessage(legacyResult);
+      assert.equal(typeof msg, 'string');
+      assert.ok(!msg.includes('✦'), `"✦" should not appear when shiny is undefined: ${msg}`);
     });
   });
 });

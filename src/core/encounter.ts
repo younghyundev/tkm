@@ -1,8 +1,14 @@
 import { getPokemonDB, getRegionsDB, getEventsDB } from './pokemon-data.js';
 import { resolveBattle, formatBattleMessage } from './battle.js';
-import type { State, Config, EncounterResult, BattleResult, TimeEvent, DayEvent, StreakEvent, MilestoneEvent } from './types.js';
+import type { State, Config, EncounterResult, BattleResult, WildPokemon, TimeEvent, DayEvent, StreakEvent, MilestoneEvent } from './types.js';
 
 const BASE_ENCOUNTER_RATE = 0.15;
+
+export const SHINY_RATE = 1 / 512;
+
+export function rollShiny(): boolean {
+  return Math.random() < SHINY_RATE;
+}
 
 /**
  * Roll whether an encounter happens.
@@ -92,7 +98,7 @@ export function getActiveEvents(state: State): ActiveEvents {
  * Select a wild pokemon from the current region's pool, weighted by rarity.
  * Applies active event modifiers (type boosts, rare multiplier, streak guarantee).
  */
-export function selectWildPokemon(state: State, config: Config): { name: string; level: number } | null {
+export function selectWildPokemon(state: State, config: Config): WildPokemon | null {
   const pokemonDB = getPokemonDB();
   const regionsDB = getRegionsDB();
   const region = regionsDB.regions[config.current_region];
@@ -113,7 +119,7 @@ export function selectWildPokemon(state: State, config: Config): { name: string;
   if (state.legendary_pool.length > 0 && Math.random() < 0.02) {
     const legendaryPick = state.legendary_pool[Math.floor(Math.random() * state.legendary_pool.length)];
     const legendaryLevel = Math.max(50, maxLv + 5);
-    return { name: legendaryPick, level: legendaryLevel };
+    return { name: legendaryPick, level: legendaryLevel, shiny: rollShiny() };
   }
 
   // Streak guarantee: force rare-only pool
@@ -122,7 +128,7 @@ export function selectWildPokemon(state: State, config: Config): { name: string;
     if (rarePool.length > 0) {
       const pick = rarePool[Math.floor(Math.random() * rarePool.length)];
       const [minLv, maxLv] = region.level_range;
-      return { name: pick.name, level: rollWildLevel(pick.name, minLv, maxLv) };
+      return { name: pick.name, level: rollWildLevel(pick.name, minLv, maxLv), shiny: rollShiny() };
     }
   }
 
@@ -156,13 +162,13 @@ export function selectWildPokemon(state: State, config: Config): { name: string;
   for (const entry of weighted) {
     roll -= entry.weight;
     if (roll <= 0) {
-      return { name: entry.name, level: rollWildLevel(entry.name, minLv, maxLv) };
+      return { name: entry.name, level: rollWildLevel(entry.name, minLv, maxLv), shiny: rollShiny() };
     }
   }
 
   // Fallback
   const fallback = weighted[0];
-  return { name: fallback.name, level: rollWildLevel(fallback.name, minLv, maxLv) };
+  return { name: fallback.name, level: rollWildLevel(fallback.name, minLv, maxLv), shiny: rollShiny() };
 }
 
 /**
@@ -181,7 +187,7 @@ export function processEncounter(
   state.encounter_count++;
 
   // Resolve battle (handles seen/caught/XP internally)
-  return resolveBattle(state, config, { name: wild.name, level: wild.level, shiny: false });
+  return resolveBattle(state, config, wild);
 }
 
 // Re-export for stop hook

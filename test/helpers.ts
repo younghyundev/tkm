@@ -58,6 +58,9 @@ export function makeState(overrides: Partial<State> = {}): State {
     titles: [],
     completed_chains: [],
     star_dismissed: false,
+    shiny_encounter_count: 0,
+    shiny_catch_count: 0,
+    shiny_escaped_count: 0,
     ...overrides,
   };
 }

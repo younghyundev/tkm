@@ -3,6 +3,12 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { getPokemonName } from '../src/core/pokemon-data.js';
+import { initLocale } from '../src/i18n/index.js';
+import { setActiveGenerationCache } from '../src/core/paths.js';
+
+setActiveGenerationCache('gen4');
+initLocale('ko');
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '..');
@@ -246,6 +252,25 @@ describe('pokemon-data (M3a)', () => {
       for (const [name, p] of Object.entries(pokemon) as [string, any][]) {
         assert.ok(validGroups.includes(p.exp_group), `${name} has invalid exp_group: "${p.exp_group}"`);
       }
+    });
+  });
+
+  describe('getPokemonName shiny prefix', () => {
+    it('getPokemonName(id, undefined, true) includes "★" prefix', () => {
+      const name = getPokemonName('387', undefined, true);
+      assert.ok(name.startsWith('★'), `expected "★" prefix in: ${name}`);
+    });
+
+    it('getPokemonName(id, undefined, false) does not include "★" prefix', () => {
+      const name = getPokemonName('387', undefined, false);
+      assert.ok(!name.startsWith('★'), `unexpected "★" prefix in: ${name}`);
+    });
+
+    it('getPokemonName(id) without shiny parameter preserves existing behavior', () => {
+      const name = getPokemonName('387');
+      assert.ok(!name.startsWith('★'), `unexpected "★" prefix without shiny param in: ${name}`);
+      assert.equal(typeof name, 'string');
+      assert.ok(name.length > 0);
     });
   });
 });

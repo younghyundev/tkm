@@ -290,7 +290,7 @@ export function resolveBattle(
         }
         if (!state.pokemon[wild.name]) {
           const catchXp = levelToXp(wild.level, wildData.exp_group);
-          state.pokemon[wild.name] = { id: wildData.id, xp: catchXp, level: wild.level, friendship: 0, ev: 0 };
+          state.pokemon[wild.name] = { id: wildData.id, xp: catchXp, level: wild.level, friendship: 0, ev: 0, shiny: wild.shiny };
         }
       }
       // Not enough balls: markSeen already called above, XP already awarded. No catch.
@@ -310,6 +310,7 @@ export function resolveBattle(
     caught,
     typeMultiplier,
     ballCost,
+    shiny: wild.shiny,
   };
 }
 
@@ -317,7 +318,12 @@ export function resolveBattle(
  * Format battle result as notification message.
  */
 export function formatBattleMessage(result: BattleResult): string {
-  const defenderName = getPokemonName(result.defender);
+  const isShiny = result.shiny ?? false;
+  const defenderName = getPokemonName(result.defender, undefined, isShiny);
+  let prefix = '';
+  if (isShiny) {
+    prefix = t('battle.shiny_appeared', { pokemon: defenderName }) + '\n';
+  }
   if (result.won) {
     let msg = t('battle.win', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
     if (result.caught) {
@@ -325,12 +331,19 @@ export function formatBattleMessage(result: BattleResult): string {
       if (result.ballCost > 1) {
         msg += ` (🔴×${result.ballCost})`;
       }
+      if (isShiny) {
+        msg += t('battle.shiny_catch');
+      }
     } else if (result.ballCost > 0 && !result.caught) {
       // Won but couldn't catch — not enough balls
       msg += ` ${t('battle.need_balls', { defender: defenderName })}`;
     }
-    return msg;
+    return prefix + msg;
   }
 
-  return t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
+  let msg = t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
+  if (isShiny) {
+    msg += t('battle.shiny_escaped', { pokemon: defenderName });
+  }
+  return prefix + msg;
 }

@@ -61,6 +61,7 @@ export interface PokedexEntry {
   seen: boolean;
   caught: boolean;
   first_seen: string | null;
+  shiny_caught?: boolean;
 }
 
 export interface PokemonState {
@@ -69,6 +70,7 @@ export interface PokemonState {
   level: number;
   friendship: number;
   ev: number;
+  shiny?: boolean;
   nickname?: string;
   call_count?: number;
   evolution_ready?: boolean;
@@ -216,6 +218,9 @@ export interface State {
   titles: string[];
   completed_chains: string[];
   star_dismissed: boolean;
+  shiny_encounter_count: number;
+  shiny_catch_count: number;
+  shiny_escaped_count: number;
 }
 
 export interface Config {

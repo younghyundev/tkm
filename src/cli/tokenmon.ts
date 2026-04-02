@@ -4,7 +4,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { readState, writeState } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName } from '../core/pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName, resolveNameToId, getDisplayName } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/pokedex.js';
@@ -84,7 +84,11 @@ function cmdStatus(): void {
       const bar = xpBar(xp, level, expGroup);
       const evolInfo = evolvesAt != null ? t('cli.status.evolves_at', { level: evolvesAt }) : '';
 
-      console.log(`  ${BOLD}${getPokemonName(pokemon)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
+      const isShiny = state.pokemon[pokemon]?.shiny ?? false;
+      const nickname = state.pokemon[pokemon]?.nickname;
+      const displayName = getDisplayName(pokemon, nickname);
+      const shinyName = isShiny ? '★' + (nickname ? `${displayName} (${getPokemonName(pokemon)})` : displayName) : (nickname ? `${displayName} (${getPokemonName(pokemon)})` : displayName);
+      console.log(`  ${BOLD}${shinyName}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
       console.log(`  Lv.${level} [${GREEN}${bar}${RESET}] XP: ${xp}${evolInfo}`);
     }
   }
@@ -111,6 +115,11 @@ function cmdStatus(): void {
 
   // Region
   console.log(t('cli.status.stat_region', { region: getRegionName(config.current_region ?? '1') }));
+
+  // Shiny stats
+  if (state.shiny_catch_count > 0) {
+    console.log(t('cli.status.stat_shiny_catches', { count: state.shiny_catch_count }));
+  }
 }
 
 function cmdStarter(choiceArg?: string): void {
@@ -281,7 +290,9 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         const xp = state.pokemon[p]?.xp ?? 0;
         const expGroup: ExpGroup = pokemonDB.pokemon[p]?.exp_group ?? 'medium_fast';
         const bar = xpBar(xp, level, expGroup);
-        console.log(`  ${BOLD}${getPokemonName(p)}${RESET} Lv.${level} [${GREEN}${bar}${RESET}]`);
+        const nick = state.pokemon[p]?.nickname;
+        const label = nick ? `${nick} (${getPokemonName(p)})` : getPokemonName(p);
+        console.log(`  ${BOLD}${label}${RESET} Lv.${level} [${GREEN}${bar}${RESET}]`);
       }
       break;
     }
@@ -412,6 +423,10 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
     if (pData.evolves_at) console.log(`  ${t('cli.pokedex.detail_evolves_at', { level: pData.evolves_at })}`);
     if (pData.evolves_condition) console.log(`  ${t('cli.pokedex.detail_evolves_cond', { cond: pData.evolves_condition })}`);
     if (pdex?.first_seen) console.log(`  ${t('cli.pokedex.detail_first_seen', { date: pdex.first_seen })}`);
+    const shinyCaught = pdex?.shiny_caught ?? false;
+    if (shinyCaught) {
+      console.log(`  ${t('cli.pokedex.shiny_caught')}`);
+    }
 
     if (state.pokemon[pokemonName]) {
       const ps = state.pokemon[pokemonName];
@@ -536,6 +551,67 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
     const typeStr = pData.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
     const nameDisplay = pdex?.seen ? name : `${GRAY}???${RESET}`;
     console.log(`  ${icon} ${nameDisplay} ${typeStr} ${GRAY}${pData.rarity}${RESET}`);
+  }
+}
+
+const CALLS_PER_EV = 5;
+
+function cmdCall(nameOrId: string): void {
+  const id = resolveNameToId(nameOrId);
+  if (!id) {
+    error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
+    process.exit(1);
+  }
+  const result = withLock(() => {
+    const s = readState();
+    const p = s.pokemon[id];
+    if (!p) return null;
+    p.call_count = (p.call_count ?? 0) + 1;
+    let evGained = false;
+    if (p.call_count >= CALLS_PER_EV) {
+      p.ev = Math.min(252, (p.ev ?? 0) + 1);
+      p.call_count = 0;
+      evGained = true;
+    }
+    writeState(s);
+    return { ev: p.ev, call_count: p.call_count, evGained };
+  });
+  if (result === null) { error('포켓몬 데이터가 없습니다.'); process.exit(1); }
+  console.log(JSON.stringify(result));
+}
+
+function cmdNickname(nameOrId: string, nickname?: string): void {
+  const id = resolveNameToId(nameOrId);
+  if (!id) {
+    error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
+    process.exit(1);
+  }
+  const speciesName = getPokemonName(id);
+  const result = withLock(() => {
+    const s = readState();
+    if (!s.pokemon[id]) {
+      return null;
+    }
+    if (!nickname) {
+      return { current: s.pokemon[id].nickname };
+    }
+    s.pokemon[id].nickname = nickname;
+    writeState(s);
+    return { set: true };
+  });
+  if (result === null) {
+    error(`${speciesName}의 데이터가 없습니다.`);
+    process.exit(1);
+  }
+  if ('current' in result) {
+    const current = result.current;
+    if (current) {
+      info(`${speciesName}의 닉네임: ${BOLD}${current}${RESET}`);
+    } else {
+      info(`${speciesName}에게 아직 닉네임이 없습니다.`);
+    }
+  } else {
+    success(`${speciesName}의 닉네임을 '${BOLD}${nickname}${RESET}'(으)로 정했습니다!`);
   }
 }
 
@@ -1510,6 +1586,12 @@ switch (command) {
     execSync(`"${PLUGIN_ROOT}/bin/tsx-resolve.sh" "${PLUGIN_ROOT}/scripts/uninstall.ts"${uninstallArgs}`, { stdio: 'inherit' });
     break;
   }
+  case 'call':
+    cmdCall(args[1] ?? '');
+    break;
+  case 'nickname':
+    cmdNickname(args[1] ?? '', args.slice(2).join(' ') || undefined);
+    break;
   case 'reset':
     cmdReset(args.includes('--confirm'));
     break;
