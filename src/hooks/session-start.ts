@@ -27,6 +27,12 @@ function main(): void {
   const input = JSON.parse(readStdin()) as HookInput;
   const sessionId = input.session_id ?? '';
 
+  if (!sessionId) {
+    // No session_id — can't register binding or track session
+    console.log(JSON.stringify({ continue: true }));
+    return;
+  }
+
   // Resolve generation: use existing binding on reconnect, active gen for new sessions
   const existingGenMap = readSessionGenMap();
   const existingBinding = existingGenMap[sessionId]?.generation;
@@ -175,19 +181,7 @@ function main(): void {
 
   // Lock failed — skip gracefully (state not mutated)
   if (result === null) {
-    process.stderr.write(`tokenmon session-start: lock timeout, session ${sessionId} not registered\n`);
-    // Emergency: try to write JUST the session binding without the lock
-    // This is safe because session-gen-map is append-only for new sessions
-    try {
-      const emergencyMap = readSessionGenMap();
-      if (!emergencyMap[sessionId]) {
-        emergencyMap[sessionId] = { generation: gen, created: new Date().toISOString(), last_seen: new Date().toISOString() };
-        writeSessionGenMap(emergencyMap);
-        process.stderr.write(`tokenmon session-start: emergency binding written for session ${sessionId}\n`);
-      }
-    } catch {
-      process.stderr.write(`tokenmon session-start: emergency binding failed for session ${sessionId}\n`);
-    }
+    process.stderr.write(`tokenmon session-start: lock timeout, session ${sessionId} not registered. XP may not be tracked.\n`);
   }
 
   // Play cry async (fire and forget)

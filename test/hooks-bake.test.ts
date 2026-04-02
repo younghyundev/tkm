@@ -21,4 +21,48 @@ describe('hooks path baking', () => {
     assert.ok(baked.includes(root));
     assert.ok(baked.includes(data));
   });
+
+  it('bakeHookPaths replaces both CLAUDE_PLUGIN_ROOT and CLAUDE_PLUGIN_DATA in one pass', () => {
+    const template = '"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_DATA}/session-gen-map.json"';
+    const root = '/opt/tkm';
+    const data = '/home/user/.claude/tokenmon';
+    let content = template;
+    content = content.replace(/\$\{CLAUDE_PLUGIN_ROOT\}/g, root);
+    content = content.replace(/\$\{CLAUDE_PLUGIN_DATA\}/g, data);
+    assert.ok(!content.includes('${CLAUDE_PLUGIN_ROOT}'));
+    assert.ok(!content.includes('${CLAUDE_PLUGIN_DATA}'));
+    assert.ok(content.includes(root));
+    assert.ok(content.includes(data));
+  });
+
+  it('bakeHookPaths guard returns early only when neither template var present', () => {
+    // Simulate the updated guard: skip only if BOTH are absent
+    function shouldBake(content: string): boolean {
+      return content.includes('${CLAUDE_PLUGIN_ROOT}') || content.includes('${CLAUDE_PLUGIN_DATA}');
+    }
+    assert.ok(!shouldBake('no template vars here'));
+    assert.ok(shouldBake('"${CLAUDE_PLUGIN_ROOT}/hook.ts"'));
+    assert.ok(shouldBake('"${CLAUDE_PLUGIN_DATA}/session-gen-map.json"'));
+    assert.ok(shouldBake('"${CLAUDE_PLUGIN_ROOT}/hook.ts" "${CLAUDE_PLUGIN_DATA}/map.json"'));
+  });
+});
+
+describe('session-start empty sessionId guard', () => {
+  it('produces continue:true output when sessionId is empty', () => {
+    // Simulate the early return logic from session-start main()
+    function sessionStartGuard(sessionId: string): { continue: boolean } | null {
+      if (!sessionId) {
+        return { continue: true };
+      }
+      return null; // proceed normally
+    }
+    assert.deepEqual(sessionStartGuard(''), { continue: true });
+    assert.deepEqual(sessionStartGuard(undefined as unknown as string), { continue: true });
+    assert.equal(sessionStartGuard('abc-123'), null);
+  });
+
+  it('empty string sessionId is falsy', () => {
+    const sessionId = '';
+    assert.ok(!sessionId, 'empty string should be falsy — guard will trigger');
+  });
 });

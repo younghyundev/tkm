@@ -279,7 +279,7 @@ async function main(): Promise<void> {
     writeConfig(config);
 
     return 'done';
-  });
+  }, 2, 3000);
 
   // Lock failed — skip gracefully (state not mutated)
   if (result === null) {

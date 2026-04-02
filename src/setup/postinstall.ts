@@ -184,10 +184,11 @@ function bakeHookPaths(): void {
   if (!existsSync(hooksJsonPath)) return;
 
   let content = readFileSync(hooksJsonPath, 'utf-8');
-  // Only bake if template vars are present
-  if (!content.includes('${CLAUDE_PLUGIN_ROOT}')) return;
+  // Only bake if any template vars are present
+  if (!content.includes('${CLAUDE_PLUGIN_ROOT}') && !content.includes('${CLAUDE_PLUGIN_DATA}')) return;
 
   content = content.replace(/\$\{CLAUDE_PLUGIN_ROOT\}/g, PLUGIN_ROOT);
+  content = content.replace(/\$\{CLAUDE_PLUGIN_DATA\}/g, DATA_DIR);
   writeFileSync(hooksJsonPath, content, 'utf-8');
   console.log(`  ✓ hooks.json paths resolved to ${PLUGIN_ROOT}`);
 }
