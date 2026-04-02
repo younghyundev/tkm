@@ -1,46 +1,52 @@
 ---
-description: "Tokenmon 언어 전환. 한국어 ↔ 영어 토글. Korean: 언어, 영어, 한국어, language, 언어 변경"
+description: "Tokenmon language toggle. Switch between Korean and English. Korean: 언어, 영어, 한국어, 언어 변경, 언어 전환"
 ---
 
 # Tokenmon Language Toggle
 
-현재 언어를 확인하고 한국어 ↔ 영어로 전환합니다.
+Check the current language and interactively switch between Korean and English.
 
-## Step 1: 현재 언어 확인
+## Step 1: Read current language
 
-Bash로 현재 config를 읽어 language 값을 확인하세요:
+Read the current language setting from config:
 
 ```bash
-node -e "console.log(JSON.parse(require('fs').readFileSync(require('os').homedir()+'/.claude/tokenmon/config.json','utf8')).language ?? 'ko')"
+node -e "
+try {
+  const cfg = JSON.parse(require('fs').readFileSync(require('os').homedir()+'/.claude/tokenmon/config.json','utf8'));
+  console.log(cfg.language ?? 'ko');
+} catch { console.log('ko'); }
+"
 ```
 
-## Step 2: 언어 선택
+## Step 2: Confirm toggle
 
-현재 언어를 보여주고 AskUserQuestion으로 전환 여부를 묻습니다:
+Show the current language and ask the user whether to switch.
 
-- 현재 `ko`이면: "현재 **한국어** 모드입니다. 영어로 전환할까요?"
-- 현재 `en`이면: "Currently in **English** mode. Switch to Korean?"
+- If current is `ko`: "현재 **한국어** 모드입니다. 영어로 전환할까요?"
+- If current is `en`: "Currently in **English** mode. Switch to Korean?"
 
-선택지: [전환 / Switch] [유지 / Keep]
+Options: [Switch] [Keep]
 
-## Step 3: 언어 변경
+## Step 3a: Switch language
 
-전환을 선택한 경우:
+If the user chose **Switch**:
 
-현재가 `ko`이면 영어로:
+Switch from `ko` to `en`:
 ```bash
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set language en
 ```
 
-현재가 `en`이면 한국어로:
+Switch from `en` to `ko`:
 ```bash
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set language ko
 ```
 
-## Step 4: 결과 확인
-
-변경 후 status를 실행해 언어가 적용된 화면을 보여주세요:
-
+Then show the updated status:
 ```bash
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" status
 ```
+
+## Step 3b: Keep current language
+
+If the user chose **Keep**, inform them that the language remains unchanged and exit.
