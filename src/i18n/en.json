@@ -152,6 +152,7 @@
   "cli.notifications.clear_hint": "Use tokenmon notifications clear to dismiss all.",
 
   "cli.config.key_notifications": "  notifications_enabled - Show notifications true/false",
+  "cli.config.key_pp_enabled": "  pp_enabled           - Show PP (Substitute) meter true/false",
 
   "cli.help.cmd_evolve": "  evolve              List evolution-ready Pokemon",
   "cli.help.cmd_evolve_pokemon": "  evolve <name>       Evolve a Pokemon (branch selection)",
@@ -328,6 +329,7 @@
 
   "statusline.no_starter": "[Choose a starter: /tkm:tkm starter]",
   "statusline.party_empty": "[Party is empty]",
+  "statusline.pp_label": "Substitute",
 
   "setup.statusline.already_set": "  ✓ tokenmon statusLine already configured (skipped)",
   "setup.statusline.wrapper_updated": "  ✓ tokenmon wrapper updated to latest version",

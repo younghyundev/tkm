@@ -152,6 +152,7 @@
   "cli.notifications.clear_hint": "tokenmon notifications clear 로 알림을 모두 삭제할 수 있습니다.",
 
   "cli.config.key_notifications": "  notifications_enabled - 알림 표시 true/false",
+  "cli.config.key_pp_enabled": "  pp_enabled           - AI대타출동(PP) 표시 true/false",
 
   "cli.help.cmd_evolve": "  evolve              진화 대기 포켓몬 목록",
   "cli.help.cmd_evolve_pokemon": "  evolve <이름>       포켓몬 진화 (분기 선택)",
@@ -328,6 +329,7 @@
 
   "statusline.no_starter": "[스타터를 선택하세요: /tkm:tkm starter]",
   "statusline.party_empty": "[파티가 비어있습니다]",
+  "statusline.pp_label": "AI대타출동",
 
   "setup.statusline.already_set": "  ✓ tokenmon statusLine 이미 설정됨 (건너뜀)",
   "setup.statusline.wrapper_updated": "  ✓ tokenmon 래퍼 최신 버전으로 갱신됨",

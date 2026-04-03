@@ -242,6 +242,7 @@ export interface Config {
   info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level';
   tips_enabled: boolean;
   notifications_enabled: boolean;
+  pp_enabled: boolean;
   language: 'ko' | 'en';
 }
 
@@ -362,4 +363,27 @@ export interface SharedDB {
   type_colors: Record<string, string>;
   type_chart: Record<string, TypeMatchup>;
   rarity_weights: RarityWeights;
+}
+
+// ── Stdin data from Claude Code ──
+
+export interface RateLimitWindow {
+  used_percentage: number;
+  resets_at: number;
+}
+
+export interface StdinRateLimits {
+  five_hour?: RateLimitWindow;
+  seven_day?: RateLimitWindow;
+}
+
+export interface StdinContextWindow {
+  used_percentage: number;
+  remaining_percentage: number;
+  context_window_size: number;
+}
+
+export interface StdinData {
+  rate_limits?: StdinRateLimits;
+  context_window?: StdinContextWindow;
 }

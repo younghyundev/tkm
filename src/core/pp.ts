@@ -1,0 +1,25 @@
+import { t } from '../i18n/index.js';
+import type { StdinData } from './types.js';
+
+export function ppBar(stdinData: StdinData, lang: 'ko' | 'en', blocks: number = 6): string | null {
+  const fiveHour = stdinData.rate_limits?.five_hour;
+  if (!fiveHour) return null;
+
+  const remaining = Math.max(0, Math.min(100, 100 - fiveHour.used_percentage));
+  const filled = Math.min(blocks, Math.round(remaining / 100 * blocks));
+  const empty = blocks - filled;
+  const bar = '\u2588'.repeat(filled) + '\u2591'.repeat(empty);
+  const label = t('statusline.pp_label');
+
+  let timeStr = '';
+  if (fiveHour.resets_at) {
+    const nowSec = Math.floor(Date.now() / 1000);
+    const remainingSec = fiveHour.resets_at - nowSec;
+    if (remainingSec > 0) {
+      const hours = Math.ceil(remainingSec / 3600);
+      timeStr = ` (~${hours}h)`;
+    }
+  }
+
+  return `${label} [${bar}] ${remaining}%${timeStr}`;
+}
