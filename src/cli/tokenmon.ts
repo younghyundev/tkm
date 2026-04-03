@@ -1612,6 +1612,9 @@ switch (command) {
   case 'cheat':
     cmdCheat(args[1], args[2], args[3]);
     break;
+  case 'voice_tone':
+    cmdConfigSet('voice_tone', args[1]);
+    break;
   case 'help':
   case '--help':
   case '-h':
