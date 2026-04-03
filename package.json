@@ -1,6 +1,6 @@
 {
   "name": "tkm",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "포켓몬 기반 Claude Code 경험치 플러그인 (Gen 1 + Gen 4)",
   "type": "module",
   "bin": {
