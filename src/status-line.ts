@@ -132,7 +132,8 @@ function main(): void {
   const regionName = getRegionName(config.current_region ?? '1');
   const pokeballs = state.items?.pokeball ?? 0;
   const itemInfo = pokeballs > 0 ? ` 🔴 ${pokeballs}` : '';
-  const footer = `🎮${genRegion} ${genSuffix} 📍${regionName}${itemInfo}`;
+  const restInfo = state.rest_bonus ? ` 💤 ${state.rest_bonus.multiplier}×(${state.rest_bonus.turns_remaining})` : '';
+  const footer = `🎮${genRegion} ${genSuffix} 📍${regionName}${itemInfo}${restInfo}`;
 
   // Build per-pokemon data
   const pokeData: Array<{

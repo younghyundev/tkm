@@ -188,7 +188,7 @@
   "cli.lock_failed": "Failed to acquire lock. Please try again later.",
   "cli.lock_busy": "Another process is using the data. Please try again later.",
   "cli.config.help_renderer": "  renderer             - Sprite renderer (kitty/sixel/iterm2/braille)",
-  "cli.config.key_voice_tone": "  voice_tone           - Text voice classic/pokemon (default: pokemon)",
+  "cli.config.key_voice_tone": "  voice_tone           - Text voice claude/pokemon (default: pokemon)",
   "cli.config.allowed_values": "Allowed values for {key}: {values}",
   "cli.cheat.no_pokemon": "Pokemon {name} not found.",
   "cli.cheat.xp_added": "Added {amount} XP to {name} (total: {total})",
@@ -477,5 +477,8 @@
   "star.prompt": "Enjoying Tokenmon? Run tokenmon star to give us a GitHub star!",
   "star.success": "Thanks for starring Tokenmon!",
   "star.failed": "Failed to star. Make sure gh CLI is installed and authenticated.",
-  "star.dismissed": "Star prompt dismissed."
+  "star.dismissed": "Star prompt dismissed.",
+  "rest.activate": "💤 A good {hours}h rest boosted their condition! XP ×{mult} for {turns} turns",
+  "tip.rest_info": "💤 They say Pokémon get a condition boost when you take a break.",
+  "tip.rest_threshold": "💤 Resting 2+ hours is said to activate a rest bonus."
 }

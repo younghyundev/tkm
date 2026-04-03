@@ -189,6 +189,7 @@ export function processEncounter(
   config: Config,
   tier?: VolumeTier,
   commonState?: CommonState,
+  restMult: number = 1.0,
 ): BattleResult | null {
   if (!rollEncounter(state, config, tier, commonState)) return null;
 
@@ -198,7 +199,7 @@ export function processEncounter(
   state.encounter_count++;
 
   // Resolve battle (handles seen/caught/XP internally)
-  return resolveBattle(state, config, wild);
+  return resolveBattle(state, config, wild, restMult);
 }
 
 // Re-export for stop hook

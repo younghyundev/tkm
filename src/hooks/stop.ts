@@ -2,7 +2,7 @@ import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 import { readState, writeState, pruneSessionTokens, readSessionGenMap, writeSessionGenMap, readCommonState, writeCommonState } from '../core/state.js';
-import { readConfig, writeConfig, readGlobalConfig } from '../core/config.js';
+import { readConfig, writeConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
 import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
 import { checkEvolution, applyEvolution, addFriendship, FRIENDSHIP_PER_LEVELUP, FRIENDSHIP_PER_SESSION } from '../core/evolution.js';
@@ -17,6 +17,12 @@ import { getVolumeTier } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
 import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import { recordXp, recordBattle, recordCatch, recordEncounter, recordShinyEncounter, recordShinyCatch, recordShinyEscaped } from '../core/stats.js';
+
+function getTurnFloor(level: number): number {
+  if (level <= 10) return 3;
+  if (level <= 20) return 2;
+  return 0;
+}
 
 function readStdin(): string {
   try {
@@ -91,7 +97,13 @@ async function main(): Promise<void> {
 
   // Pre-lock: read config for early exit check (benign TOCTOU — worst case: enter lock unnecessarily)
   const configCheck = readConfig();
-  initLocale(configCheck.language ?? 'en', readGlobalConfig().voice_tone);
+  const globalConfig = readGlobalConfig();
+  // Migrate classic → claude (one-time)
+  if ((globalConfig.voice_tone as string) === 'classic') {
+    globalConfig.voice_tone = 'claude';
+    writeGlobalConfig(globalConfig);
+  }
+  initLocale(configCheck.language ?? 'en', globalConfig.voice_tone);
 
   if (configCheck.party.length === 0 || !sessionId) {
     playCry();
@@ -126,6 +138,9 @@ async function main(): Promise<void> {
     state.last_battle = null;
     state.last_tip = null;
 
+    // Read common state early (needed for last_turn_ts on all paths)
+    const commonState = readCommonState();
+
     // Delta tracking
     const isFirstStop = !(sessionId in state.last_session_tokens);
     const prevSessionTokens = state.last_session_tokens[sessionId] ?? 0;
@@ -136,16 +151,39 @@ async function main(): Promise<void> {
       state.last_session_tokens[sessionId] = totalTokens;
       const activeIds = new Set(Object.keys(readSessionGenMap()));
       state.last_session_tokens = pruneSessionTokens(state.last_session_tokens, activeIds);
+      commonState.last_turn_ts = Date.now();
+      writeCommonState(commonState);
       writeState(state);
       return 'first_stop';
     }
 
     if (deltaTokens <= 0) {
+      commonState.last_turn_ts = Date.now();
+      writeCommonState(commonState);
       return 'no_delta';
     }
 
-    // Read common state for cross-gen achievements and volume tier
-    const commonState = readCommonState();
+    // Rest bonus activation (before XP calc)
+    const now = Date.now();
+    const lastTurnTs = commonState.last_turn_ts ?? now;
+    const elapsed = now - lastTurnTs;
+    const TWO_HOURS = 2 * 60 * 60 * 1000;
+    const SIX_HOURS = 6 * 60 * 60 * 1000;
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+    let restBonusJustActivated = false;
+
+    if (!state.rest_bonus && elapsed >= TWO_HOURS) {
+      if (elapsed >= ONE_DAY) {
+        state.rest_bonus = { multiplier: 3.0, turns_remaining: 10 };
+      } else if (elapsed >= SIX_HOURS) {
+        state.rest_bonus = { multiplier: 2.0, turns_remaining: 5 };
+      } else {
+        state.rest_bonus = { multiplier: 1.5, turns_remaining: 3 };
+      }
+      restBonusJustActivated = true;
+    }
+
+    const restMult = state.rest_bonus?.multiplier ?? 1.0;
 
     // Volume tier based on tokens consumed this turn
     const tier = getVolumeTier(deltaTokens);
@@ -158,6 +196,7 @@ async function main(): Promise<void> {
     const xpPerPokemon = Math.max(1, xpTotal);
 
     const pokemonDB = getPokemonDB();
+    let totalXpGranted = 0;
 
     for (const pokemonName of config.party) {
       if (!pokemonName) continue;
@@ -177,7 +216,10 @@ async function main(): Promise<void> {
       const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
       const currentXp = state.pokemon[pokemonName].xp;
       const currentLevel = state.pokemon[pokemonName].level;
-      const newXp = currentXp + xpPerPokemon;
+      const floor = getTurnFloor(currentLevel);
+      const finalXp = Math.floor(Math.max(floor, xpPerPokemon) * restMult);
+      totalXpGranted += finalXp;
+      const newXp = currentXp + finalXp;
       const newLevel = xpToLevel(newXp, expGroup);
 
       // Update state
@@ -189,7 +231,7 @@ async function main(): Promise<void> {
 
       // Level-up notification + friendship
       if (newLevel > currentLevel) {
-        messages.push(t('hook.levelup', { pokemon: getPokemonName(pokemonName), from: currentLevel, to: newLevel, xp: xpPerPokemon }));
+        messages.push(t('hook.levelup', { pokemon: getPokemonName(pokemonName), from: currentLevel, to: newLevel, xp: finalXp }));
         addFriendship(state, pokemonName, FRIENDSHIP_PER_LEVELUP);
         playSfx('levelup');
       }
@@ -218,7 +260,7 @@ async function main(): Promise<void> {
     }
 
     // Record XP in stats (total XP earned across all party members)
-    recordXp(state, xpPerPokemon * config.party.length);
+    recordXp(state, totalXpGranted);
 
     // Update session tokens tracking & total
     state.last_session_tokens[sessionId] = totalTokens;
@@ -252,7 +294,7 @@ async function main(): Promise<void> {
 
     // Random encounter + battle (with volume tier and commonState)
     try {
-      const battleResult = processEncounter(state, config, tier, commonState);
+      const battleResult = processEncounter(state, config, tier, commonState, restMult);
       if (battleResult) {
         state.last_battle = battleResult;
         const battleMsg = formatEncounterMessage(battleResult);
@@ -308,11 +350,29 @@ async function main(): Promise<void> {
       if (achEvent.rewardPokemon) playSfx('gacha');
     }
 
-    // Show tip when no battle occurred
-    if (!state.last_battle && config.tips_enabled && getRandomTip) {
+    // Rest bonus activation tip (overrides random tip for this turn)
+    if (restBonusJustActivated && state.rest_bonus) {
+      const hours = Math.max(1, Math.floor(elapsed / (60 * 60 * 1000)));
+      state.last_tip = {
+        id: 'rest_activate',
+        text: t('rest.activate', { hours, turns: state.rest_bonus.turns_remaining, mult: state.rest_bonus.multiplier }),
+      };
+    } else if (!state.last_battle && config.tips_enabled && getRandomTip) {
+      // Show tip when no battle occurred
       const tip = getRandomTip(state, config);
       if (tip) state.last_tip = tip;
     }
+
+    // Rest bonus countdown (XP-granting turns only)
+    if (state.rest_bonus) {
+      state.rest_bonus.turns_remaining--;
+      if (state.rest_bonus.turns_remaining <= 0) {
+        delete state.rest_bonus;
+      }
+    }
+
+    // Update last_turn_ts on main XP path
+    commonState.last_turn_ts = Date.now();
 
     // Refresh last_seen to prevent pruning of active sessions
     const genMap = readSessionGenMap();

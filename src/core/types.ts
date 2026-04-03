@@ -222,6 +222,10 @@ export interface State {
   shiny_encounter_count: number;
   shiny_catch_count: number;
   shiny_escaped_count: number;
+  rest_bonus?: {
+    multiplier: number;
+    turns_remaining: number;
+  };
 }
 
 export interface Config {
@@ -340,7 +344,7 @@ export interface HookOutput {
 
 // ── Multi-generation support ──
 
-export type VoiceTone = 'classic' | 'pokemon';
+export type VoiceTone = 'claude' | 'pokemon';
 
 export interface GlobalConfig {
   active_generation: string;
@@ -396,4 +400,5 @@ export interface CommonState {
   evolution_count: number;
   error_count: number;
   permission_count: number;
+  last_turn_ts?: number;
 }

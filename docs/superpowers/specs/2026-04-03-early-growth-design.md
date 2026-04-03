@@ -87,21 +87,22 @@ Turn floor catches low-token turns, then rest bonus amplifies everything.
 
 ### State Changes
 
-**New fields in `State`:**
+**New field in `State` (per-gen):**
 
 ```typescript
-// In state.json (per-gen)
 rest_bonus?: {
   multiplier: number;    // 1.5, 2.0, or 3.0
   turns_remaining: number; // countdown
 }
 ```
 
-**New field in `State` (root):**
+**New field in `CommonState` (cross-gen, user-level):**
 
 ```typescript
 last_turn_ts?: number;  // Unix timestamp of last stop hook call
 ```
+
+Why CommonState: `last_turn_ts` tracks user activity, not per-gen progress. If stored per-gen, switching generations would create false rest bonuses on the destination gen.
 
 ### Turn Countdown
 
@@ -197,19 +198,11 @@ if (state.rest_bonus) {
 state.last_turn_ts = now;
 ```
 
-**File:** `src/status-line.ts`
+**Rest activation display:** On activation turn, stop.ts sets `state.last_tip = { id: 'rest_activate', text: t('rest.activate', ...) }`, which naturally slots into existing battle > tip priority in status-line.ts. No status-line.ts tip-slot changes needed.
+
+**File:** `src/status-line.ts` (footer only)
 
 ```typescript
-// Tip slot: rest activation message on first turn back, otherwise normal tip
-if (state.rest_bonus_activated) {
-  // First turn activation message (set by stop hook, cleared after display)
-  console.log(t('rest.activate', { turns: state.rest_bonus.turns_remaining, mult: state.rest_bonus.multiplier }));
-} else if (state.last_battle) {
-  // existing battle display
-} else if (state.last_tip) {
-  console.log(state.last_tip.text);
-}
-
 // Footer: append rest indicator when active
 // 🎮Sinnoh (Gen 4) 📍숲 🔴 3 💤 2×(5)
 const restInfo = state.rest_bonus

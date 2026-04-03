@@ -188,7 +188,7 @@
   "cli.lock_failed": "락 획득에 실패했다. 잠시 후 다시 시도하라.",
   "cli.lock_busy": "다른 프로세스가 데이터를 사용 중이다. 잠시 후 다시 시도하라.",
   "cli.config.help_renderer": "  renderer             - 스프라이트 렌더러 (kitty/sixel/iterm2/braille)",
-  "cli.config.key_voice_tone": "  voice_tone           - 텍스트 말투 classic/pokemon (기본: pokemon)",
+  "cli.config.key_voice_tone": "  voice_tone           - 텍스트 말투 claude/pokemon (기본: pokemon)",
   "cli.config.allowed_values": "{key}의 허용 값: {values}",
   "cli.cheat.no_pokemon": "{name} 포켓몬이 없다.",
   "cli.cheat.xp_added": "{name}에게 XP {amount} 추가 (총 {total})",
@@ -477,5 +477,8 @@
   "star.prompt": "Tokénmon을 즐기고 있다면... tokenmon star 로 GitHub 스타를 눌러 달라!",
   "star.success": "Tokénmon에 스타를 눌러 주었다! 고맙다!",
   "star.failed": "스타에 실패했다. gh CLI가 설치되어 있고 인증되었는지 확인하라.",
-  "star.dismissed": "스타 프롬프트를 비활성화했다."
+  "star.dismissed": "스타 프롬프트를 비활성화했다.",
+  "rest.activate": "💤 {hours}시간 푹 쉬었더니 컨디션이 좋아진 것 같다! 다음 {turns}턴 경험치 {mult}배",
+  "tip.rest_info": "💤 가끔 쉬어가면 포켓몬들의 컨디션이 올라간다는 소문이 있다.",
+  "tip.rest_threshold": "💤 2시간 이상 쉬면 휴식 보너스가 활성화된다고 한다."
 }

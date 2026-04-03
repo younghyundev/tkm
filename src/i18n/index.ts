@@ -3,12 +3,12 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 type Locale = 'ko' | 'en';
-type VoiceTone = 'classic' | 'pokemon';
+type VoiceTone = 'claude' | 'pokemon';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let currentLocale: Locale = 'en';
-let currentVoiceTone: VoiceTone = 'classic';
+let currentVoiceTone: VoiceTone = 'claude';
 let messages: Record<string, Record<string, string>> = {};
 let overlayMessages: Record<string, Record<string, string>> = {};
 let loaded = false;
@@ -27,7 +27,7 @@ function loadMessages(): void {
     }
 
     // Overlay messages (voice tone mode)
-    if (currentVoiceTone !== 'classic') {
+    if (currentVoiceTone !== 'claude') {
       const overlayPath = join(__dirname, `${locale}.${currentVoiceTone}.json`);
       if (existsSync(overlayPath)) {
         try {
@@ -44,7 +44,7 @@ function loadMessages(): void {
 
 export function initLocale(locale: Locale, voiceTone?: VoiceTone): void {
   currentLocale = locale;
-  currentVoiceTone = voiceTone ?? 'classic';
+  currentVoiceTone = voiceTone ?? 'claude';
   // Reset so next t() call reloads catalogs
   loaded = false;
   messages = {};
@@ -132,5 +132,5 @@ export function _resetForTesting(): void {
   overlayMessages = {};
   loaded = false;
   currentLocale = 'en';
-  currentVoiceTone = 'classic';
+  currentVoiceTone = 'claude';
 }

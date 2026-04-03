@@ -356,13 +356,13 @@ function cmdConfigSet(key: string, value: string): void {
 
   // voice_tone is stored in GlobalConfig, not per-gen Config
   if (key === 'voice_tone') {
-    const allowed = ['classic', 'pokemon'];
+    const allowed = ['claude', 'pokemon'];
     if (!allowed.includes(value)) {
       error(t('cli.config.allowed_values', { key, values: allowed.join(', ') }));
       process.exit(1);
     }
     const gc = readGlobalConfig();
-    gc.voice_tone = value as 'classic' | 'pokemon';
+    gc.voice_tone = value as 'claude' | 'pokemon';
     writeGlobalConfig(gc);
     initLocale(gc.language, gc.voice_tone);
     success(t('cli.config.set_success', { key, value }));

@@ -188,7 +188,7 @@
   "cli.lock_failed": "Failed to acquire lock. Please try again later.",
   "cli.lock_busy": "Another process is using the data. Please try again later.",
   "cli.config.help_renderer": "  renderer             - Sprite renderer (kitty/sixel/iterm2/braille)",
-  "cli.config.key_voice_tone": "  voice_tone           - Text style classic/pokemon (default: classic)",
+  "cli.config.key_voice_tone": "  voice_tone           - Text style claude/pokemon (default: claude)",
   "cli.config.allowed_values": "Allowed values for {key}: {values}",
   "cli.cheat.no_pokemon": "Pokémon {name} not found.",
   "cli.cheat.xp_added": "Added {amount} XP to {name} (total: {total})",
@@ -477,5 +477,8 @@
   "star.prompt": "⭐ Enjoying Tok\u00e9mon? Run tokenmon star to give us a GitHub star!",
   "star.success": "⭐ Thanks for starring Tok\u00e9mon! You're awesome!",
   "star.failed": "Failed to star. Make sure gh CLI is installed and authenticated.",
-  "star.dismissed": "Star prompt dismissed."
+  "star.dismissed": "Star prompt dismissed.",
+  "rest.activate": "💤 {hours}h rest bonus activated! XP ×{mult} for {turns} turns",
+  "tip.rest_info": "💤 Take a break sometimes for an XP bonus!",
+  "tip.rest_threshold": "💤 Rest for 2+ hours to activate rest bonus."
 }

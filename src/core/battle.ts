@@ -205,6 +205,7 @@ export function resolveBattle(
   state: State,
   config: Config,
   wild: WildPokemon,
+  restMult: number = 1.0,
 ): BattleResult | null {
   const db = getPokemonDB();
   const wildData = db.pokemon[wild.name];
@@ -246,8 +247,8 @@ export function resolveBattle(
   const xpBonus = Math.max(config.xp_bonus_multiplier, commonXpBonus + state.xp_bonus_multiplier);
   const typeMasterMult = getTypeMasterXpMultiplier(state, attackerData.types, wildData.types);
   const totalBattleXp = Math.floor(calculateBattleXp(wild.level, wildData.rarity, typeDisadvantage, xpBonus, won) * typeMasterMult);
-  // All party members receive the full XP (not divided)
-  const xpPerPokemon = Math.max(1, totalBattleXp);
+  // All party members receive the full XP (not divided), with rest bonus
+  const xpPerPokemon = Math.floor(Math.max(1, totalBattleXp) * restMult);
 
   // Update state
   state.battle_count++;

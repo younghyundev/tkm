@@ -199,5 +199,19 @@
     "template": "복잡한 작업일수록 강한 포켓몬이 나타날 확률이 높아진다는 소문이 있다.",
     "dynamic": false,
     "template_key": "tip.volume_rare"
+  },
+  {
+    "id": "rest_info",
+    "category": "rest",
+    "template": "💤 가끔 쉬어가면 경험치 보너스를 받을 수 있습니다!",
+    "dynamic": false,
+    "template_key": "tip.rest_info"
+  },
+  {
+    "id": "rest_threshold",
+    "category": "rest",
+    "template": "💤 2시간 이상 쉬면 휴식 보너스가 활성화됩니다.",
+    "dynamic": false,
+    "template_key": "tip.rest_threshold"
   }
 ]
