@@ -56,10 +56,19 @@ function main(): void {
 
     const config = readConfig();
 
-    // Common items and party_slot are applied at achievement unlock time
-    // and persisted in gen state/config — no re-application needed here.
-    // recalculateCommonEffects only recomputes cumulative tracking fields
-    // (encounter_rate_bonus, xp_bonus_multiplier) which are read fresh each stop.
+    // Materialize common rewards into gen config/state on first session of a gen only.
+    // Subsequent sessions already have these persisted. This handles new gen onboarding
+    // where config/state start at defaults and need common party_slot + items applied once.
+    if (!existingBinding && state.session_count === 0) {
+      if (commonState.max_party_size_bonus > 0) {
+        config.max_party_size = Math.min(6, config.max_party_size + commonState.max_party_size_bonus);
+      }
+      for (const [item, count] of Object.entries(commonState.items)) {
+        if (count > 0) {
+          state.items[item] = (state.items[item] ?? 0) + count;
+        }
+      }
+    }
     initLocale(config.language ?? 'en');
 
     // Re-resolve gen inside lock for new sessions (avoids stale gen if gen switch happened before lock)
