@@ -117,6 +117,22 @@ describe('applyEvolution', () => {
     assert.equal(state.pokemon['388'].ev, 100, 'EV should carry over on evolution');
   });
 
+  it('evolution carries over all extra state fields (nickname, call_count, ev)', () => {
+    const state = makeState({
+      pokemon: { '387': { id: 387, xp: 5000, level: 17, friendship: 50, ev: 80, nickname: '테스트이름', call_count: 12 } },
+      unlocked: ['387'],
+    });
+    const config = makeConfig({ party: ['387'] });
+
+    const evolution = checkEvolution('387', makeCtx({ oldLevel: 17, newLevel: 18 }))!;
+    applyEvolution(state, config, evolution, 5000);
+
+    assert.equal(state.pokemon['388'].nickname, '테스트이름', 'nickname should carry over');
+    assert.equal(state.pokemon['388'].call_count, 12, 'call_count should carry over');
+    assert.equal(state.pokemon['388'].ev, 80, 'ev should carry over');
+    assert.equal(state.pokemon['388'].friendship, 50, 'friendship should carry over');
+  });
+
   it('old pokemon remains in state.pokemon', () => {
     const state = makeState({
       pokemon: { '387': { id: 387, xp: 5000, level: 18, friendship: 0, ev: 0 } },
