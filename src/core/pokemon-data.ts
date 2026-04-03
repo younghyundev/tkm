@@ -3,7 +3,7 @@ import { join } from 'path';
 import {
   pokemonJsonPath, achievementsJsonPath, regionsJsonPath,
   pokedexRewardsJsonPath, i18nDataDir, getActiveGeneration,
-  commonAchievementsJsonPath,
+  commonAchievementsJsonPath, commonI18nDir,
   EVENTS_JSON_PATH, SHARED_JSON_PATH,
   GENERATIONS_JSON_PATH,
   // Legacy compat
@@ -169,7 +169,25 @@ export function getGameI18n(locale?: string, gen?: string): GameI18nData {
     const perGen = join(i18nDataDir(g), `${loc}.json`);
     const legacy = join(I18N_DATA_DIR, `${loc}.json`);
     const path = resolveDataPath(perGen, legacy, g);
-    _gameI18n[key] = loadJson<GameI18nData>(path);
+    const data = loadJson<GameI18nData>(path);
+
+    // Merge common i18n achievements (fallback for common achievement names)
+    const commonPath = join(commonI18nDir(), `${loc}.json`);
+    if (existsSync(commonPath)) {
+      try {
+        const commonI18n = loadJson<{ achievements: Record<string, string> }>(commonPath);
+        if (commonI18n.achievements) {
+          for (const [id, name] of Object.entries(commonI18n.achievements)) {
+            // Common i18n provides fallback — gen-specific wins if present
+            if (!data.achievements[id]) {
+              data.achievements[id] = { name } as any;
+            }
+          }
+        }
+      } catch { /* ignore common i18n errors */ }
+    }
+
+    _gameI18n[key] = data;
   }
   return _gameI18n[key];
 }

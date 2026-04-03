@@ -55,6 +55,18 @@ function main(): void {
     recalculateCommonEffects(commonState);
 
     const config = readConfig();
+
+    // Apply common rewards to gen state/config (#3: items, #4: party_slot)
+    // Items: merge common items into gen state (add missing, don't remove consumed)
+    for (const [item, count] of Object.entries(commonState.items)) {
+      if ((state.items[item] ?? 0) < count) {
+        state.items[item] = count;
+      }
+    }
+    // Party slot: apply common bonus to config
+    const baseMaxParty = 3; // default max_party_size before bonuses
+    const genPartyBonus = config.max_party_size - baseMaxParty;
+    config.max_party_size = Math.min(6, baseMaxParty + genPartyBonus + commonState.max_party_size_bonus);
     initLocale(config.language ?? 'en');
 
     // Re-resolve gen inside lock for new sessions (avoids stale gen if gen switch happened before lock)
@@ -92,9 +104,11 @@ function main(): void {
       }
     }
 
-    // Increment session_count
-    state.session_count += 1;
-    commonState.session_count += 1;
+    // Increment session_count (only for new sessions, not reconnects)
+    if (!existingBinding) {
+      state.session_count += 1;
+      commonState.session_count += 1;
+    }
     state.last_session_id = sessionId;
 
     // Update streak and reset weekly stats if needed
