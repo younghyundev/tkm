@@ -480,5 +480,13 @@
   "star.dismissed": "Star prompt dismissed.",
   "rest.activate": "💤 {hours}h rest bonus activated! XP ×{mult} for {turns} turns",
   "tip.rest_info": "💤 Take a break sometimes for an XP bonus!",
-  "tip.rest_threshold": "💤 Rest for 2+ hours to activate rest bonus."
+  "tip.rest_threshold": "💤 Rest for 2+ hours to activate rest bonus.",
+
+  "cli.lock_failed": "Failed to acquire lock. Please try again.",
+  "cli.call.not_found": "Pokemon not found: {name}",
+  "cli.nickname.not_found": "Pokemon not found: {name}",
+  "cli.nickname.too_long": "Nickname must be 7 characters or fewer.",
+  "cli.nickname.current": "{species}'s nickname: {nickname}",
+  "cli.nickname.none": "{species} doesn't have a nickname yet.",
+  "cli.nickname.set": "Set {species}'s nickname to '{nickname}'!"
 }

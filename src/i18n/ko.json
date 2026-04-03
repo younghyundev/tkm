@@ -480,5 +480,13 @@
   "star.dismissed": "스타 프롬프트를 비활성화했습니다.",
   "rest.activate": "💤 {hours}시간 휴식 보너스가 적용됩니다! 다음 {turns}턴 경험치 {mult}배",
   "tip.rest_info": "💤 가끔 쉬어가면 경험치 보너스를 받을 수 있습니다!",
-  "tip.rest_threshold": "💤 2시간 이상 쉬면 휴식 보너스가 활성화됩니다."
+  "tip.rest_threshold": "💤 2시간 이상 쉬면 휴식 보너스가 활성화됩니다.",
+
+  "cli.lock_failed": "잠금 획득에 실패했습니다. 다시 시도해주세요.",
+  "cli.call.not_found": "포켓몬을 찾을 수 없습니다: {name}",
+  "cli.nickname.not_found": "포켓몬을 찾을 수 없습니다: {name}",
+  "cli.nickname.too_long": "닉네임은 7글자 이하로 지어주세요.",
+  "cli.nickname.current": "{species}의 닉네임: {nickname}",
+  "cli.nickname.none": "{species}에게 아직 닉네임이 없습니다.",
+  "cli.nickname.set": "{species}의 닉네임을 '{nickname}'(으)로 정했습니다!"
 }

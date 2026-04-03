@@ -11,7 +11,7 @@ mkdirSync(RETRY_TEST_DIR, { recursive: true });
 process.env.CLAUDE_CONFIG_DIR = RETRY_TEST_DIR;
 process.env.CLAUDE_PLUGIN_ROOT = join(RETRY_TEST_DIR, '.claude', 'plugins', 'cache', 'tokenmon');
 
-const { withLockRetry } = await import('../src/core/lock.js');
+const { withLock, withLockRetry } = await import('../src/core/lock.js');
 const { LOCK_PATH } = await import('../src/core/paths.js');
 
 /**
@@ -195,23 +195,84 @@ describe('withLockRetry', () => {
       called = true;
       return 42;
     });
-    assert.equal(result, 42);
+    assert.equal(result.acquired, true);
+    assert.equal(result.acquired && result.value, 42);
     assert.ok(called, 'fn should have been called');
   });
 
   it('returns the value from fn', () => {
     const result = withLockRetry(() => 'hello');
-    assert.equal(result, 'hello');
+    assert.equal(result.acquired, true);
+    assert.equal(result.acquired && result.value, 'hello');
   });
 
-  it('returns null after all retries exhausted (lock held by live PID)', () => {
+  it('returns acquired:false after all retries exhausted (lock held by live PID)', () => {
     // Write a lock file with a live PID (current process) to simulate a held lock
     mkdirSync(join(RETRY_TEST_DIR, 'tokenmon'), { recursive: true });
     writeFileSync(LOCK_PATH, String(process.pid), { flag: 'w' });
 
-    // withLockRetry should fail to acquire and return null (use very short timeout)
+    // withLockRetry should fail to acquire (use very short timeout)
     const result = withLockRetry(() => 'should-not-run', 0, 10);
-    assert.equal(result, null);
+    assert.equal(result.acquired, false);
+  });
+});
+
+describe('LockResult discriminated union', () => {
+  afterEach(() => {
+    if (existsSync(LOCK_PATH)) unlinkSync(LOCK_PATH);
+  });
+
+  it('withLock returns { acquired: true, value } on success', () => {
+    const result = withLock(() => 'test-value');
+    assert.equal(result.acquired, true);
+    if (result.acquired) {
+      assert.equal(result.value, 'test-value');
+    }
+  });
+
+  it('withLock correctly wraps null return from callback (not confused with lock failure)', () => {
+    // This is the core fix — previously null from fn was indistinguishable from lock failure
+    const result = withLock(() => null);
+    assert.equal(result.acquired, true);
+    if (result.acquired) {
+      assert.equal(result.value, null);
+    }
+  });
+
+  it('withLock correctly wraps undefined return from callback', () => {
+    const result = withLock(() => undefined);
+    assert.equal(result.acquired, true);
+    if (result.acquired) {
+      assert.equal(result.value, undefined);
+    }
+  });
+
+  it('withLock returns { acquired: false } when lock is held', () => {
+    mkdirSync(join(RETRY_TEST_DIR, 'tokenmon'), { recursive: true });
+    writeFileSync(LOCK_PATH, String(process.pid), { flag: 'w' });
+    const result = withLock(() => 'should-not-run', 10);
+    assert.equal(result.acquired, false);
+    assert.equal('value' in result, false);
+  });
+
+  it('withLockRetry correctly wraps null return from callback', () => {
+    const result = withLockRetry(() => null);
+    assert.equal(result.acquired, true);
+    if (result.acquired) {
+      assert.equal(result.value, null);
+    }
+  });
+
+  it('withLock releases lock even when fn throws', () => {
+    try {
+      withLock(() => { throw new Error('boom'); });
+    } catch { /* expected */ }
+    // Lock should be released — next acquire should succeed
+    const result = withLock(() => 'after-error');
+    assert.equal(result.acquired, true);
+    if (result.acquired) {
+      assert.equal(result.value, 'after-error');
+    }
   });
 });
 

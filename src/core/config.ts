@@ -153,6 +153,11 @@ export function readConfig(gen?: string): Config {
   return migrateConfig(result, i18nDataDir(gen));
 }
 
+/**
+ * Write per-gen config and sync language to global config.
+ * @sideeffect Reads and writes global-config.json if language changed.
+ *             Must be called under the global lock when used in hooks.
+ */
 export function writeConfig(config: Config, gen?: string): void {
   const path = configPath(gen);
   const dir = dirname(path);

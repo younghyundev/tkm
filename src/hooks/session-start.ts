@@ -214,7 +214,7 @@ function main(): void {
   });
 
   // Lock failed — skip gracefully (state not mutated)
-  if (result === null) {
+  if (!result.acquired) {
     process.stderr.write(`tokenmon session-start: lock timeout, session ${sessionId} not registered. XP may not be tracked.\n`);
   }
 
@@ -234,7 +234,12 @@ function main(): void {
 
 try {
   main();
-} catch (err) {
+} catch (err: any) {
   process.stderr.write(`tokenmon session-start: ${err}\n`);
-  console.log(JSON.stringify({ continue: true }));
+  // Surface data loading errors to user
+  const output: any = { continue: true };
+  if (err.message) {
+    output.system_message = `⚠ tokenmon: ${err.message}`;
+  }
+  console.log(JSON.stringify(output));
 }

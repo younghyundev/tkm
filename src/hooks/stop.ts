@@ -83,8 +83,10 @@ async function main(): Promise<void> {
   if (resolvedGen !== null) {
     setActiveGenerationCache(resolvedGen);
   } else if (sessionId) {
-    // Session exists but no gen binding — fail closed, skip mutations
-    process.stderr.write(`tokenmon stop: no gen binding for session ${sessionId}, skipping XP to prevent cross-gen corruption\n`);
+    // No gen binding — could be a race with session-start or a genuine issue
+    // Fail closed: skip mutations to prevent cross-gen corruption
+    // Only warn if this looks like a real miss (not a brand-new session)
+    process.stderr.write(`tokenmon stop: no gen binding for session ${sessionId}, skipping XP\n`);
     playCry();
     console.log(JSON.stringify({ continue: true }));
     return;
@@ -98,11 +100,8 @@ async function main(): Promise<void> {
   // Pre-lock: read config for early exit check (benign TOCTOU — worst case: enter lock unnecessarily)
   const configCheck = readConfig();
   const globalConfig = readGlobalConfig();
-  // Migrate classic → claude (one-time)
-  if ((globalConfig.voice_tone as string) === 'classic') {
-    globalConfig.voice_tone = 'claude';
-    writeGlobalConfig(globalConfig);
-  }
+  const needsVoiceToneMigration = (globalConfig.voice_tone as string) === 'classic';
+  if (needsVoiceToneMigration) globalConfig.voice_tone = 'claude';
   initLocale(configCheck.language ?? 'en', globalConfig.voice_tone);
 
   if (configCheck.party.length === 0 || !sessionId) {
@@ -381,6 +380,13 @@ async function main(): Promise<void> {
       writeSessionGenMap(genMap);
     }
 
+    // Migrate classic → claude voice_tone under lock (one-time, deferred from pre-lock read)
+    if (needsVoiceToneMigration) {
+      const gc = readGlobalConfig();
+      gc.voice_tone = 'claude';
+      writeGlobalConfig(gc);
+    }
+
     writeState(state);
     writeConfig(config);
     writeCommonState(commonState);
@@ -389,14 +395,14 @@ async function main(): Promise<void> {
   }, 2, 3000);
 
   // Lock failed — skip gracefully (state not mutated)
-  if (result === null) {
+  if (!result.acquired) {
     process.stderr.write(`tokenmon stop: lock timeout after retries, session ${sessionId} XP may be lost\n`);
     playCry();
     console.log(JSON.stringify(output));
     return;
   }
 
-  if (result === 'first_stop' || result === 'no_delta') {
+  if (result.value === 'first_stop' || result.value === 'no_delta') {
     playCry();
     console.log(JSON.stringify(output));
     return;

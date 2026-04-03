@@ -174,10 +174,12 @@ export function migrateToCommonState(): void {
   // (commonStateExists() check in session-start prevents re-running migration)
   writeCommonState(commonState);
 
-  // Subtract common xp_bonus from each gen's xp_bonus_multiplier (safe: if this crashes,
-  // migration won't re-run because commonState already exists)
+  // Track migrated gens for crash recovery
+  const migratedGens: string[] = (commonState as any).migrated_gens ?? [];
+
   for (const { gen, xpBonusFromCommon } of genStates) {
     if (xpBonusFromCommon <= 0) continue;
+    if (migratedGens.includes(gen)) continue; // Already subtracted in a previous partial run
     let genState: ReturnType<typeof readState>;
     try {
       genState = readState(gen);
@@ -186,5 +188,8 @@ export function migrateToCommonState(): void {
     }
     genState.xp_bonus_multiplier = Math.max(0, genState.xp_bonus_multiplier - xpBonusFromCommon);
     writeState(genState, gen);
+    migratedGens.push(gen);
+    (commonState as any).migrated_gens = migratedGens;
+    writeCommonState(commonState); // Update marker after each gen
   }
 }

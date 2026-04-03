@@ -179,11 +179,8 @@ export function sessionPath(gen?: string, sessionId?: string): string {
 // ── Backward-compatible constants (resolve to active generation) ──
 // These are getters so they resolve lazily at access time.
 
-export const STATE_PATH = /* @__PURE__ */ (() => {
-  // For modules that import STATE_PATH at top level, provide a proxy
-  // that resolves on first use. Direct usage should prefer statePath().
-  return join(DATA_DIR, 'state.json');
-})();
+/** @deprecated Use statePath() instead. Legacy gen4 flat-file path. */
+export const LEGACY_STATE_PATH = join(DATA_DIR, 'state.json');
 
 export const CONFIG_PATH = join(DATA_DIR, 'config.json');
 export const SESSION_PATH = join(DATA_DIR, 'session.json');

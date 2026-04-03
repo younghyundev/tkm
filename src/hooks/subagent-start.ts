@@ -61,7 +61,7 @@ function main(): void {
     }
   });
 
-  if (lockResult === null) {
+  if (!lockResult.acquired) {
     process.stderr.write(`tokenmon subagent-start: lock acquisition failed, agent ${agentId} untracked\n`);
   }
 

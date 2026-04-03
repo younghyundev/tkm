@@ -81,18 +81,22 @@ export function getGenerationsDB(): GenerationsDB {
 export function getPokemonDB(gen?: string): PokemonDB {
   const g = gen ?? getActiveGeneration();
   if (!_pokemonDBCache[g]) {
-    const perGen = pokemonJsonPath(g);
-    const path = resolveDataPath(perGen, POKEMON_JSON_PATH, g);
-    const raw = loadJson<any>(path);
-    const shared = getSharedDB();
-    // Merge: per-gen pokemon data + shared type data
-    _pokemonDBCache[g] = {
-      pokemon: raw.pokemon,
-      starters: raw.starters ?? getGenerationsDB().generations[g]?.starters ?? [],
-      type_colors: raw.type_colors ?? shared.type_colors,
-      type_chart: raw.type_chart ?? shared.type_chart,
-      rarity_weights: raw.rarity_weights ?? shared.rarity_weights,
-    };
+    try {
+      const perGen = pokemonJsonPath(g);
+      const path = resolveDataPath(perGen, POKEMON_JSON_PATH, g);
+      const raw = loadJson<any>(path);
+      const shared = getSharedDB();
+      // Merge: per-gen pokemon data + shared type data
+      _pokemonDBCache[g] = {
+        pokemon: raw.pokemon,
+        starters: raw.starters ?? getGenerationsDB().generations[g]?.starters ?? [],
+        type_colors: raw.type_colors ?? shared.type_colors,
+        type_chart: raw.type_chart ?? shared.type_chart,
+        rarity_weights: raw.rarity_weights ?? shared.rarity_weights,
+      };
+    } catch (err: any) {
+      throw new Error(`Failed to load pokemon data for ${g}: ${err.message}`);
+    }
   }
   return _pokemonDBCache[g];
 }
@@ -100,11 +104,15 @@ export function getPokemonDB(gen?: string): PokemonDB {
 export function getAchievementsDB(gen?: string): AchievementsDB {
   const g = gen ?? getActiveGeneration();
   if (!_achievementsDBCache[g]) {
-    // Gen-specific achievements only — common achievements are handled separately
-    // by checkCommonAchievements() to prevent double-processing of effects
-    const perGen = achievementsJsonPath(g);
-    const genPath = resolveDataPath(perGen, ACHIEVEMENTS_JSON_PATH, g);
-    _achievementsDBCache[g] = loadJson<AchievementsDB>(genPath);
+    try {
+      // Gen-specific achievements only — common achievements are handled separately
+      // by checkCommonAchievements() to prevent double-processing of effects
+      const perGen = achievementsJsonPath(g);
+      const genPath = resolveDataPath(perGen, ACHIEVEMENTS_JSON_PATH, g);
+      _achievementsDBCache[g] = loadJson<AchievementsDB>(genPath);
+    } catch (err: any) {
+      throw new Error(`Failed to load achievements data for ${g}: ${err.message}`);
+    }
   }
   return _achievementsDBCache[g];
 }
@@ -122,9 +130,13 @@ export function getCommonAchievementsDB(): AchievementsDB {
 export function getRegionsDB(gen?: string): RegionsDB {
   const g = gen ?? getActiveGeneration();
   if (!_regionsDBCache[g]) {
-    const perGen = regionsJsonPath(g);
-    const path = resolveDataPath(perGen, REGIONS_JSON_PATH, g);
-    _regionsDBCache[g] = loadJson<RegionsDB>(path);
+    try {
+      const perGen = regionsJsonPath(g);
+      const path = resolveDataPath(perGen, REGIONS_JSON_PATH, g);
+      _regionsDBCache[g] = loadJson<RegionsDB>(path);
+    } catch (err: any) {
+      throw new Error(`Failed to load regions data for ${g}: ${err.message}`);
+    }
   }
   return _regionsDBCache[g];
 }
@@ -139,9 +151,13 @@ export function getEventsDB(): EventsDB {
 export function getPokedexRewardsDB(gen?: string): PokedexRewardsDB {
   const g = gen ?? getActiveGeneration();
   if (!_pokedexRewardsDBCache[g]) {
-    const perGen = pokedexRewardsJsonPath(g);
-    const path = resolveDataPath(perGen, POKEDEX_REWARDS_JSON_PATH, g);
-    _pokedexRewardsDBCache[g] = loadJson<PokedexRewardsDB>(path);
+    try {
+      const perGen = pokedexRewardsJsonPath(g);
+      const path = resolveDataPath(perGen, POKEDEX_REWARDS_JSON_PATH, g);
+      _pokedexRewardsDBCache[g] = loadJson<PokedexRewardsDB>(path);
+    } catch (err: any) {
+      throw new Error(`Failed to load pokedex rewards data for ${g}: ${err.message}`);
+    }
   }
   return _pokedexRewardsDBCache[g];
 }

@@ -184,7 +184,7 @@ function cmdStarter(choiceArg?: string): void {
     writeState(freshState);
   });
 
-  if (lockResult === null) {
+  if (!lockResult.acquired) {
     error(t('cli.lock_busy'));
     process.exit(1);
   }
@@ -219,8 +219,8 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         writeConfig(freshConfig);
         return 'ok';
       });
-      if (dispatchResult === null) { error(t('cli.lock_failed')); process.exit(1); }
-      if (dispatchResult === 'not_in_party') { error(t('cli.party.dispatch_not_in_party', { pokemon })); process.exit(1); }
+      if (!dispatchResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
+      if (dispatchResult.value === 'not_in_party') { error(t('cli.party.dispatch_not_in_party', { pokemon })); process.exit(1); }
       success(t('cli.party.dispatch_set', { pokemon }));
       break;
     }
@@ -250,7 +250,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
           writeConfig(freshConfig);
         }
       });
-      if (addResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+      if (!addResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
       success(t('cli.party.add_success', { pokemon }));
       break;
     }
@@ -269,7 +269,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         freshConfig.party = freshConfig.party.filter(p => p !== pokemon);
         writeConfig(freshConfig);
       });
-      if (removeResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+      if (!removeResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
       success(t('cli.party.remove_success', { pokemon }));
       break;
     }
@@ -405,7 +405,7 @@ function cmdConfigSet(key: string, value: string): void {
     }
     writeConfig(freshConfig);
   });
-  if (configResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!configResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
   success(t('cli.config.set_success', { key, value }));
 }
 
@@ -529,8 +529,8 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
       writeConfig(freshConfig);
       return { ok: true as const };
     });
-    if (moveResult === null) { error(t('cli.lock_failed')); process.exit(1); }
-    if (!moveResult.ok) { error(moveResult.error); process.exit(1); }
+    if (!moveResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
+    if (!moveResult.value.ok) { error(moveResult.value.error); process.exit(1); }
     success(t('cli.region.moved', { region: regionName }));
     return;
   }
@@ -591,9 +591,9 @@ function cmdCall(nameOrId: string): void {
     writeState(s);
     return { ev: p.ev, call_count: p.call_count, evGained };
   });
-  if (result === null) { error('잠금 획득에 실패했습니다. 다시 시도해주세요.'); process.exit(1); }
-  if ('error' in result) { error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`); process.exit(1); }
-  console.log(JSON.stringify(result));
+  if (!result.acquired) { error(t('cli.lock_failed')); process.exit(1); }
+  if ('error' in result.value) { error(t('cli.call.not_found', { name: nameOrId })); process.exit(1); }
+  console.log(JSON.stringify(result.value));
 }
 
 function cmdNickname(nameOrId: string, nickname?: string): void {
@@ -610,27 +610,27 @@ function cmdNickname(nameOrId: string, nickname?: string): void {
     writeState(s);
     return { set: true, speciesName: getPokemonName(id), nickname };
   });
-  if (result === null) {
-    error('잠금 획득에 실패했습니다. 다시 시도해주세요.');
+  if (!result.acquired) {
+    error(t('cli.lock_failed'));
     process.exit(1);
   }
-  if ('error' in result) {
-    if (result.error === 'too_long') {
-      error('닉네임은 7글자 이하로 지어주세요.');
+  if ('error' in result.value) {
+    if (result.value.error === 'too_long') {
+      error(t('cli.nickname.too_long'));
     } else {
-      error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
+      error(t('cli.nickname.not_found', { name: nameOrId }));
     }
     process.exit(1);
   }
-  if ('current' in result) {
-    const current = result.current;
+  if ('current' in result.value) {
+    const current = result.value.current;
     if (current) {
-      info(`${result.speciesName}의 닉네임: ${BOLD}${current}${RESET}`);
+      info(t('cli.nickname.current', { species: result.value.speciesName, nickname: `${BOLD}${current}${RESET}` }));
     } else {
-      info(`${result.speciesName}에게 아직 닉네임이 없습니다.`);
+      info(t('cli.nickname.none', { species: result.value.speciesName }));
     }
-  } else if ('set' in result) {
-    success(`${result.speciesName}의 닉네임을 '${BOLD}${result.nickname}${RESET}'(으)로 정했습니다!`);
+  } else if ('set' in result.value) {
+    success(t('cli.nickname.set', { species: result.value.speciesName, nickname: `${BOLD}${result.value.nickname}${RESET}` }));
   }
 }
 
@@ -682,7 +682,7 @@ function doReset(): void {
     };
     writeState(defaultState);
   });
-  if (resetResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!resetResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
   success(t('cli.reset.done'));
 }
 
@@ -775,11 +775,11 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
     }
   });
 
-  if (cheatResult === null) { error(t('cli.lock_failed')); process.exit(1); }
-  if (typeof cheatResult === 'string' && cheatResult === t('cli.cheat.no_pokemon', { name: arg1 })) {
-    error(cheatResult);
-  } else if (cheatResult) {
-    success(cheatResult);
+  if (!cheatResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
+  if (typeof cheatResult.value === 'string' && cheatResult.value === t('cli.cheat.no_pokemon', { name: arg1 })) {
+    error(cheatResult.value);
+  } else if (cheatResult.value) {
+    success(cheatResult.value);
   }
 }
 
@@ -901,16 +901,16 @@ function executeEvolve(pokemonName: string, targetName: string, _config: unknown
     return { ok: true as const, result };
   });
 
-  if (evolveResult === null) {
+  if (!evolveResult.acquired) {
     error(t('cli.lock_failed'));
     process.exit(1);
   }
-  if (!evolveResult.ok) {
+  if (!evolveResult.value.ok) {
     error(t('cli.evolve.failed'));
     return;
   }
 
-  const { result } = evolveResult;
+  const { result } = evolveResult.value;
   success(t('cli.evolve.success', { old: getPokemonName(result.oldPokemon), new: getPokemonName(result.newPokemon) }));
   playCry(result.newPokemon);
 }
@@ -924,7 +924,7 @@ function cmdNotifications(subcmd?: string): void {
       dismissAll(freshState);
       writeState(freshState);
     });
-    if (clearResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+    if (!clearResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
     success(t('cli.notifications.cleared'));
     return;
   }
@@ -1184,7 +1184,7 @@ function cmdLegendary(action?: string): void {
     writeConfig(c);
   });
 
-  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!lockResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
   success(t('cli.legendary.selected', { pokemon: getPokemonName(chosen) }));
   if (unchosen.length > 0) {
     info(t('cli.legendary.pool_added', { names: unchosen.map(id => getPokemonName(id)).join(', ') }));
@@ -1275,7 +1275,7 @@ function cmdPartySwap(slot: string, pokemon: string): void {
     writeState(state);
     success(t('cli.party.swap_success', { out: getPokemonName(outgoing), in: getPokemonName(targetId), slot: slotNum }));
   });
-  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!lockResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
 }
 
 function cmdPartyReorder(from: string, to: string): void {
@@ -1306,7 +1306,7 @@ function cmdPartyReorder(from: string, to: string): void {
     writeConfig(config);
     success(t('cli.party.reorder_success', { pokemon: getPokemonName(moved), from: fromIdx + 1, to: toIdx + 1 }));
   });
-  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!lockResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
 }
 
 function cmdPartySuggest(): void {
@@ -1437,24 +1437,32 @@ function cmdGen(sub?: string, arg?: string): void {
       return;
     }
 
-    // Switch generation
-    globalConfig.active_generation = targetGen;
-    writeGlobalConfig(globalConfig);
-    clearActiveGenerationCache();
-    setActiveGenerationCache(targetGen);
-    invalidateGenCache();
+    // Switch generation under lock
+    const switchResult = withLock(() => {
+      const freshGlobalConfig = readGlobalConfig();
+      freshGlobalConfig.active_generation = targetGen;
+      writeGlobalConfig(freshGlobalConfig);
+      clearActiveGenerationCache();
+      setActiveGenerationCache(targetGen);
+      invalidateGenCache();
 
-    // Reset region to 1 (regions are per-generation, IDs don't carry over)
-    const targetConfig = readConfig(targetGen);
-    if (targetConfig.current_region !== '1') {
-      targetConfig.current_region = '1';
-      writeConfig(targetConfig, targetGen);
+      // Reset region to 1 (regions are per-generation, IDs don't carry over)
+      const targetConfig = readConfig(targetGen);
+      if (targetConfig.current_region !== '1') {
+        targetConfig.current_region = '1';
+        writeConfig(targetConfig, targetGen);
+      }
+      return { starter_chosen: targetConfig.starter_chosen };
+    });
+    if (!switchResult.acquired) {
+      error(t('cli.lock_failed', { fallback: 'Failed to acquire lock. Please try again.' }));
+      return;
     }
 
     const genData = gensDB.generations[targetGen];
     success(t('cli.gen.switched', { fallback: `Switched to ${genData.name} (${genRegionName(genData.region_name)})` }));
     info(t('cli.gen.restart_hint', { fallback: 'Restart your session for the switch to take effect.' }));
-    if (!targetConfig.starter_chosen) {
+    if (!switchResult.value.starter_chosen) {
       console.log('');
       warn(t('cli.gen.needs_setup', { fallback: 'This generation needs initial setup. Run /tkm:tkm starter to choose your starter!' }));
     }
@@ -1582,7 +1590,7 @@ switch (command) {
       s.star_dismissed = true;
       writeState(s);
     });
-    if (dismissResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+    if (!dismissResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
     success(t('star.dismissed'));
     break;
   }

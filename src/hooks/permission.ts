@@ -63,7 +63,7 @@ function main(): void {
   });
 
   // Lock failed — skip gracefully
-  if (result === null) {
+  if (!result.acquired) {
     // no-op
   }
 

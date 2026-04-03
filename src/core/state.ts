@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from '
 import { dirname, join } from 'path';
 import { statePath, sessionPath, i18nDataDir, DATA_DIR, SESSION_GEN_MAP_PATH, COMMON_STATE_PATH } from './paths.js';
 // Legacy imports for backward compat during migration
-import { STATE_PATH, SESSION_PATH, I18N_DATA_DIR } from './paths.js';
+import { I18N_DATA_DIR } from './paths.js';
 import type { State, Session, PokemonState, PokedexEntry, Notification, Stats, LegendaryPending, SessionGenMap, CommonState } from './types.js';
 
 const DEFAULT_STATS: Stats = {

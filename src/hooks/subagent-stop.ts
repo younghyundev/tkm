@@ -46,7 +46,7 @@ function main(): void {
     }
   });
 
-  if (lockResult === null) {
+  if (!lockResult.acquired) {
     process.stderr.write(`tokenmon subagent-stop: lock acquisition failed, agent ${agentId} cleanup skipped\n`);
   }
 
