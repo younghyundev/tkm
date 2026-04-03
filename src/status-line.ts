@@ -37,11 +37,15 @@ function loadSprite(pokemonId: number, isShiny: boolean = false): string[] {
   const terminalFile = join(SPRITES_TERMINAL_DIR, `${pokemonId}.txt`);
   const file = existsSync(brailleFile) ? brailleFile : existsSync(terminalFile) ? terminalFile : null;
   if (!file) return [];
-  const lines = readFileSync(file, 'utf-8').split('\n').filter(l => l.trim().length > 0);
-  if (isShiny && lines.length > 0) {
-    return lines.map(line => shiftAnsiHue(line));
+  const lines = readFileSync(file, 'utf-8').split('\n');
+  // Remove only trailing empty string from file's final newline (preserve blank sprite rows)
+  if (lines.length > 0 && lines[lines.length - 1] === '') lines.pop();
+  // Replace regular spaces with braille blank (⠀ U+2800) so all chars have consistent font width
+  const brailleLines = lines.map(line => line.replace(/ /g, '\u2800'));
+  if (isShiny && brailleLines.length > 0) {
+    return brailleLines.map(line => shiftAnsiHue(line));
   }
-  return lines;
+  return brailleLines;
 }
 
 function visibleLength(s: string): number {
@@ -169,16 +173,24 @@ function main(): void {
 
     // Braille: row-by-row grid rendering
     const SPRITE_WIDTH = 20;
+    const isBlankLine = (line: string) => line.replace(/\x1b\[[^m]*m/g, '').replace(/[\s\u2800]/g, '').length === 0;
     const spritesPerRow = Math.max(1, Math.floor(termWidth / (SPRITE_WIDTH + 1)));
     for (let gi = 0; gi < spriteEntries.length; gi += spritesPerRow) {
       const group = spriteEntries.slice(gi, gi + spritesPerRow);
       const maxRows = Math.max(...group.map(s => s.length), 0);
-      for (let row = 0; row < maxRows; row++) {
+      // Adaptive vertical range: first/last row where any sprite has content
+      let firstRow = maxRows, lastRow = 0;
+      for (const s of group) {
+        for (let r = 0; r < s.length; r++) {
+          if (!isBlankLine(s[r])) { firstRow = Math.min(firstRow, r); lastRow = Math.max(lastRow, r); }
+        }
+      }
+      for (let row = firstRow; row <= lastRow; row++) {
         console.log(group.map(s => {
           const line = s[row] ?? '';
           const visibleLen = line.replace(/\x1b\[[^m]*m/g, '').length;
-          return visibleLen < SPRITE_WIDTH ? line + ' '.repeat(SPRITE_WIDTH - visibleLen) : line;
-        }).join(' '));
+          return visibleLen < SPRITE_WIDTH ? line + '\u2800'.repeat(SPRITE_WIDTH - visibleLen) : line;
+        }).join('\u2800'));
       }
     }
   }
