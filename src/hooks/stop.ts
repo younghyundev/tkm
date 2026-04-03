@@ -241,13 +241,6 @@ async function main(): Promise<void> {
       if (achEvent.rewardPokemon) playSfx('gacha');
     }
 
-    // Check common achievements
-    const commonAchEvents = checkCommonAchievements(commonState, config, state);
-    for (const achEvent of commonAchEvents) {
-      messages.push(formatAchievementMessage(achEvent));
-      if (achEvent.rewardPokemon) playSfx('gacha');
-    }
-
     // Sync pokedex from unlocked pokemon
     syncPokedexFromUnlocked(state);
 
@@ -306,6 +299,14 @@ async function main(): Promise<void> {
     commonState.battle_wins += (state.battle_wins ?? 0) - preBattleWins;
     commonState.catch_count += (state.catch_count ?? 0) - preCatchCount;
     commonState.evolution_count += (state.evolution_count ?? 0) - preEvolutionCount;
+
+    // Check common achievements AFTER counter sync so battle/catch-based achievements
+    // (battle_50, battle_wins_25, ten_catches etc.) unlock on the triggering turn
+    const commonAchEvents = checkCommonAchievements(commonState, config, state);
+    for (const achEvent of commonAchEvents) {
+      messages.push(formatAchievementMessage(achEvent));
+      if (achEvent.rewardPokemon) playSfx('gacha');
+    }
 
     // Show tip when no battle occurred
     if (!state.last_battle && config.tips_enabled && getRandomTip) {
