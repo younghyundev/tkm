@@ -52,6 +52,18 @@ describe('checkEvolution', () => {
   it('unknown pokemon returns null', () => {
     assert.equal(checkEvolution('없는포켓몬', makeCtx()), null);
   });
+
+  it('406 꼬몽울 evolves to 407 로즈레이드 via friendship (not skipping)', () => {
+    // Bug regression: stage 2 data caused 꼬몽울 to skip directly to 로즈레이드.
+    // After fix, 407 is stage 1 so the legacy line[stage+1] path resolves correctly.
+    const below = checkEvolution('406', makeCtx({ friendship: 219 }));
+    assert.equal(below, null);
+    const result = checkEvolution('406', makeCtx({ friendship: 220 }));
+    assert.notEqual(result, null);
+    assert.equal(result!.oldPokemon, '406');
+    assert.equal(result!.newPokemon, '407');
+    assert.equal(result!.newId, 407);
+  });
 });
 
 describe('addFriendship', () => {
