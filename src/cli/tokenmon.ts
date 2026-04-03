@@ -605,6 +605,7 @@ function cmdNickname(nameOrId: string, nickname?: string): void {
     if (!nickname) {
       return { current: s.pokemon[id].nickname, speciesName: getPokemonName(id) };
     }
+    if ([...nickname].length > 7) return { error: 'too_long' as const };
     s.pokemon[id].nickname = nickname;
     writeState(s);
     return { set: true, speciesName: getPokemonName(id), nickname };
@@ -614,7 +615,11 @@ function cmdNickname(nameOrId: string, nickname?: string): void {
     process.exit(1);
   }
   if ('error' in result) {
-    error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
+    if (result.error === 'too_long') {
+      error('닉네임은 7글자 이하로 지어주세요.');
+    } else {
+      error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
+    }
     process.exit(1);
   }
   if ('current' in result) {

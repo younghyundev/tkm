@@ -52,6 +52,18 @@ describe('checkEvolution', () => {
   it('unknown pokemon returns null', () => {
     assert.equal(checkEvolution('없는포켓몬', makeCtx()), null);
   });
+
+  it('406 꼬몽울 evolves to 407 로즈레이드 via friendship (not skipping)', () => {
+    // Bug regression: stage 2 data caused 꼬몽울 to skip directly to 로즈레이드.
+    // After fix, 407 is stage 1 so the legacy line[stage+1] path resolves correctly.
+    const below = checkEvolution('406', makeCtx({ friendship: 219 }));
+    assert.equal(below, null);
+    const result = checkEvolution('406', makeCtx({ friendship: 220 }));
+    assert.notEqual(result, null);
+    assert.equal(result!.oldPokemon, '406');
+    assert.equal(result!.newPokemon, '407');
+    assert.equal(result!.newId, 407);
+  });
 });
 
 describe('addFriendship', () => {
@@ -103,6 +115,22 @@ describe('applyEvolution', () => {
     applyEvolution(state, config, evolution, 5000);
 
     assert.equal(state.pokemon['388'].ev, 100, 'EV should carry over on evolution');
+  });
+
+  it('evolution carries over all extra state fields (nickname, call_count, ev)', () => {
+    const state = makeState({
+      pokemon: { '387': { id: 387, xp: 5000, level: 17, friendship: 50, ev: 80, nickname: '테스트이름', call_count: 12 } },
+      unlocked: ['387'],
+    });
+    const config = makeConfig({ party: ['387'] });
+
+    const evolution = checkEvolution('387', makeCtx({ oldLevel: 17, newLevel: 18 }))!;
+    applyEvolution(state, config, evolution, 5000);
+
+    assert.equal(state.pokemon['388'].nickname, '테스트이름', 'nickname should carry over');
+    assert.equal(state.pokemon['388'].call_count, 12, 'call_count should carry over');
+    assert.equal(state.pokemon['388'].ev, 80, 'ev should carry over');
+    assert.equal(state.pokemon['388'].friendship, 50, 'friendship should carry over');
   });
 
   it('old pokemon remains in state.pokemon', () => {
