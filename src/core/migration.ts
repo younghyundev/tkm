@@ -48,7 +48,8 @@ export function recalculateCommonEffects(commonState: CommonState): void {
   let encounter_rate_bonus = 0;
   let xp_bonus_multiplier = 0;
   let max_party_size_bonus = 0;
-  const newItems: Record<string, number> = {};
+  // Sum total item grants across all achieved common achievements
+  const totalItemGrants: Record<string, number> = {};
 
   for (const ach of achievements) {
     if (!commonState.achievements[ach.id]) continue;
@@ -64,12 +65,7 @@ export function recalculateCommonEffects(commonState: CommonState): void {
         const item = effect.item as string;
         const count = (effect.count as number) ?? 0;
         if (item && count > 0) {
-          // Only ADD missing items — don't remove already-consumed ones
-          if ((commonState.items[item] ?? 0) < count) {
-            newItems[item] = count;
-          } else {
-            newItems[item] = commonState.items[item];
-          }
+          totalItemGrants[item] = (totalItemGrants[item] ?? 0) + count;
         }
       }
     }
@@ -79,10 +75,11 @@ export function recalculateCommonEffects(commonState: CommonState): void {
   commonState.xp_bonus_multiplier = xp_bonus_multiplier;
   commonState.max_party_size_bonus = max_party_size_bonus;
 
-  // Merge new items (only add missing, preserve existing)
-  for (const [item, count] of Object.entries(newItems)) {
-    if (!(item in commonState.items)) {
-      commonState.items[item] = count;
+  // Ensure item floor: if current count is below total grants, top up
+  // (don't remove consumed items — only guarantee minimum from achievements)
+  for (const [item, grantTotal] of Object.entries(totalItemGrants)) {
+    if ((commonState.items[item] ?? 0) < grantTotal) {
+      commonState.items[item] = grantTotal;
     }
   }
 }
