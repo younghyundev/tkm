@@ -1601,9 +1601,29 @@ switch (command) {
   case '-h':
     cmdHelp();
     break;
-  default:
+  default: {
+    const query = args.join(' ');
+    const volumeKeywords = ['사용 토큰별 경험치 배율', '볼륨 배율', '토큰 배율', 'volume multiplier', 'token xp table', 'volume bonus'];
+    if (volumeKeywords.some(k => query.includes(k))) {
+      const locale = getLocale();
+      if (locale === 'ko') {
+        bold('[ 토큰 사용량별 보너스 ]');
+        console.log('  ~10,000 토큰   보통');
+        console.log('  ~40,000 토큰   경험치↑ 인카운터↑');
+        console.log('  ~100,000 토큰  경험치↑↑ 인카운터↑↑ 레어↑');
+        console.log('  100,000+ 토큰  경험치↑↑↑ 인카운터↑↑↑ 레어↑↑');
+      } else {
+        bold('[ Volume Bonus by Token Usage ]');
+        console.log('  ~10,000 tokens   Normal');
+        console.log('  ~40,000 tokens   XP↑ Encounter↑');
+        console.log('  ~100,000 tokens  XP↑↑ Encounter↑↑ Rare↑');
+        console.log('  100,000+ tokens  XP↑↑↑ Encounter↑↑↑ Rare↑↑');
+      }
+      break;
+    }
     error(t('cli.unknown_command', { command }));
     console.log('');
     cmdHelp();
     process.exit(1);
+  }
 }

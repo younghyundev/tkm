@@ -358,6 +358,14 @@
   "hook.evolution": "✨ {pokemon:이/가} {newPokemon}(으)로 진화했습니다!",
   "hook.party_join": "🎊 {pokemon:이/가} 파티에 합류했습니다!",
 
+  "tier.heated": "풀숲이 크게 흔들리고 있다...",
+  "tier.intense": "주변에 수상한 기운이 감돌고 있다...",
+  "tier.legendary": "공기 속에 강한 에너지가 차오른다!",
+
+  "tip.volume_xp": "한번에 많은 토큰을 사용하면 경험치를 더 많이 받을 수 있다고 한다.",
+  "tip.volume_encounter": "긴 작업을 하면 야생 포켓몬이 더 자주 나타나는 것 같다.",
+  "tip.volume_rare": "복잡한 작업일수록 강한 포켓몬이 나타날 확률이 높아진다는 소문이 있다.",
+
   "tip.battle_type_advantage": "💡 타입 상성으로 승률이 크게 변합니다! 약점을 노려보세요",
   "tip.battle_level_matters": "💡 레벨 차이가 클수록 승률이 급변합니다 (Lv.4 vs Lv.12 = ~17%)",
   "tip.battle_best_pokemon": "💡 전투 시 타입 상성이 가장 좋은 파티원이 자동 선택됩니다",

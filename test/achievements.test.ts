@@ -1,8 +1,29 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { checkAchievements, formatAchievementMessage } from '../src/core/achievements.js';
+import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../src/core/achievements.js';
+import { readCommonState } from '../src/core/state.js';
 import { makeState, makeConfig } from './helpers.js';
 import { initLocale } from '../src/i18n/index.js';
+import type { CommonState } from '../src/core/types.js';
+
+function makeCommonState(overrides: Partial<CommonState> = {}): CommonState {
+  return {
+    achievements: {},
+    encounter_rate_bonus: 0,
+    xp_bonus_multiplier: 0,
+    items: {},
+    max_party_size_bonus: 0,
+    session_count: 0,
+    total_tokens_consumed: 0,
+    battle_count: 0,
+    battle_wins: 0,
+    catch_count: 0,
+    evolution_count: 0,
+    error_count: 0,
+    permission_count: 0,
+    ...overrides,
+  };
+}
 
 initLocale('ko');
 
@@ -43,13 +64,14 @@ describe('checkAchievements', () => {
     assert.equal(ev!.rewardPokemon, '390');
   });
 
-  it('ten_sessions gives +20% XP bonus', () => {
+  it('ten_sessions gives +20% XP bonus (common achievement)', () => {
     const state = makeState({ session_count: 10 });
     const config = makeConfig();
-    checkAchievements(state, config);
+    const commonState = makeCommonState({ session_count: 10 });
+    checkCommonAchievements(commonState, config, state);
 
-    assert.ok(state.achievements['ten_sessions']);
-    assert.equal(state.xp_bonus_multiplier, 1.2);
+    assert.ok(commonState.achievements['ten_sessions']);
+    assert.equal(commonState.xp_bonus_multiplier, 0.2); // additive in commonState (base 0)
   });
 
   it('hundred_k_tokens rewards Shinx (403)', () => {
@@ -74,19 +96,21 @@ describe('checkAchievements', () => {
     assert.equal(state.pokemon['447'].id, 447);
   });
 
-  it('permission_master increases max_party_size', () => {
+  it('permission_master increases max_party_size (common achievement)', () => {
     const state = makeState({ permission_count: 50 });
     const config = makeConfig({ max_party_size: 5 });
-    checkAchievements(state, config);
+    const commonState = makeCommonState({ permission_count: 50 });
+    checkCommonAchievements(commonState, config, state);
 
-    assert.ok(state.achievements['permission_master']);
+    assert.ok(commonState.achievements['permission_master']);
     assert.equal(config.max_party_size, 6);
   });
 
-  it('permission_master caps at 6', () => {
+  it('permission_master caps at 6 (common achievement)', () => {
     const state = makeState({ permission_count: 50 });
     const config = makeConfig({ max_party_size: 6 });
-    checkAchievements(state, config);
+    const commonState = makeCommonState({ permission_count: 50 });
+    checkCommonAchievements(commonState, config, state);
 
     assert.equal(config.max_party_size, 6);
   });
@@ -94,15 +118,22 @@ describe('checkAchievements', () => {
   it('does not re-trigger already achieved', () => {
     const state = makeState({
       session_count: 10,
-      achievements: { first_session: true, ten_sessions: true },
+      achievements: { first_session: true },
     });
     const config = makeConfig();
     const events = checkAchievements(state, config);
 
-    assert.ok(!events.find(e => e.id === 'first_session'), 'should not re-trigger');
-    assert.ok(!events.find(e => e.id === 'ten_sessions'), 'should not re-trigger');
+    assert.ok(!events.find(e => e.id === 'first_session'), 'should not re-trigger gen-specific');
+
+    // Common achievement re-trigger check
+    const commonState = makeCommonState({
+      session_count: 10,
+      achievements: { ten_sessions: true },
+    });
+    const commonEvents = checkCommonAchievements(commonState, config, state);
+    assert.ok(!commonEvents.find(e => e.id === 'ten_sessions'), 'should not re-trigger common');
     // XP bonus should not be applied again
-    assert.equal(state.xp_bonus_multiplier, 1.0);
+    assert.equal(commonState.xp_bonus_multiplier, 0);
   });
 
   it('multiple achievements can trigger in one call', () => {

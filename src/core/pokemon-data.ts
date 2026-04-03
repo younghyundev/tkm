@@ -3,6 +3,7 @@ import { join } from 'path';
 import {
   pokemonJsonPath, achievementsJsonPath, regionsJsonPath,
   pokedexRewardsJsonPath, i18nDataDir, getActiveGeneration,
+  commonAchievementsJsonPath,
   EVENTS_JSON_PATH, SHARED_JSON_PATH,
   GENERATIONS_JSON_PATH,
   // Legacy compat
@@ -99,11 +100,23 @@ export function getPokemonDB(gen?: string): PokemonDB {
 export function getAchievementsDB(gen?: string): AchievementsDB {
   const g = gen ?? getActiveGeneration();
   if (!_achievementsDBCache[g]) {
+    // Gen-specific achievements only — common achievements are handled separately
+    // by checkCommonAchievements() to prevent double-processing of effects
     const perGen = achievementsJsonPath(g);
-    const path = resolveDataPath(perGen, ACHIEVEMENTS_JSON_PATH, g);
-    _achievementsDBCache[g] = loadJson<AchievementsDB>(path);
+    const genPath = resolveDataPath(perGen, ACHIEVEMENTS_JSON_PATH, g);
+    _achievementsDBCache[g] = loadJson<AchievementsDB>(genPath);
   }
   return _achievementsDBCache[g];
+}
+
+let _commonAchievementsCache: AchievementsDB | null = null;
+
+export function getCommonAchievementsDB(): AchievementsDB {
+  if (!_commonAchievementsCache) {
+    const path = commonAchievementsJsonPath();
+    _commonAchievementsCache = existsSync(path) ? loadJson<AchievementsDB>(path) : { achievements: [] };
+  }
+  return _commonAchievementsCache;
 }
 
 export function getRegionsDB(gen?: string): RegionsDB {
@@ -276,5 +289,6 @@ export function _resetForTesting(): void {
   _eventsDB = null;
   _generationsDB = null;
   _sharedDB = null;
+  _commonAchievementsCache = null;
   for (const key of Object.keys(_gameI18n)) delete _gameI18n[key];
 }

@@ -1,8 +1,9 @@
 import { readFileSync } from 'fs';
-import { readState, writeState, writeSession, readSession, readSessionGenMap, writeSessionGenMap, pruneSessionGenMap } from '../core/state.js';
+import { readState, writeState, writeSession, readSession, readSessionGenMap, writeSessionGenMap, pruneSessionGenMap, readCommonState, writeCommonState, commonStateExists } from '../core/state.js';
 import { readConfig, writeConfig } from '../core/config.js';
 import { getActiveGeneration, setActiveGenerationCache } from '../core/paths.js';
-import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
+import { checkAchievements, formatAchievementMessage, checkCommonAchievements } from '../core/achievements.js';
+import { migrateToCommonState, recalculateCommonEffects } from '../core/migration.js';
 import { refreshNotifications, getActiveNotifications, updateKnownRegions } from '../core/notifications.js';
 import { updateStreak, resetWeeklyStats } from '../core/stats.js';
 import { getActiveEvents } from '../core/encounter.js';
@@ -44,6 +45,15 @@ function main(): void {
 
   const result = withLockRetry(() => {
     const state = readState();
+
+    // Common state migration (first time only)
+    if (!commonStateExists()) {
+      migrateToCommonState();
+    }
+    // Consistency recalculation (every session start)
+    const commonState = readCommonState();
+    recalculateCommonEffects(commonState);
+
     const config = readConfig();
     initLocale(config.language ?? 'en');
 
@@ -84,6 +94,7 @@ function main(): void {
 
     // Increment session_count
     state.session_count += 1;
+    commonState.session_count += 1;
     state.last_session_id = sessionId;
 
     // Update streak and reset weekly stats if needed
@@ -175,6 +186,13 @@ function main(): void {
     if (state.session_count >= 5 && !state.star_dismissed) {
       messages.push(t('star.prompt'));
     }
+
+    // Check common achievements
+    const commonAchEvents = checkCommonAchievements(commonState, config, state);
+    for (const achEvent of commonAchEvents) {
+      messages.push(formatAchievementMessage(achEvent));
+    }
+    writeCommonState(commonState);
 
     writeState(state);
   });

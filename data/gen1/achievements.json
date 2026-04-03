@@ -8,39 +8,6 @@
       "rarity": 1
     },
     {
-      "id": "catch_10",
-      "trigger_type": "catch_count",
-      "trigger_value": 10,
-      "reward_pokemon": null,
-      "rarity": 1,
-      "reward_effects": [
-        {
-          "type": "party_slot",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "id": "catch_25",
-      "trigger_type": "catch_count",
-      "trigger_value": 25,
-      "reward_pokemon": null,
-      "rarity": 2
-    },
-    {
-      "id": "catch_50",
-      "trigger_type": "catch_count",
-      "trigger_value": 50,
-      "reward_pokemon": null,
-      "rarity": 2,
-      "reward_effects": [
-        {
-          "type": "party_slot",
-          "count": 1
-        }
-      ]
-    },
-    {
       "id": "catch_75",
       "trigger_type": "catch_count",
       "trigger_value": 75,
@@ -87,13 +54,6 @@
       "trigger_value": 1,
       "reward_pokemon": null,
       "rarity": 1
-    },
-    {
-      "id": "evolve_10",
-      "trigger_type": "evolution_count",
-      "trigger_value": 10,
-      "reward_pokemon": null,
-      "rarity": 2
     },
     {
       "id": "win_10",
@@ -160,11 +120,7 @@
       "reward_effects": [
         {
           "type": "require_pokemon",
-          "pokemon": [
-            "1",
-            "4",
-            "7"
-          ]
+          "pokemon": ["1", "4", "7"]
         }
       ]
     },
@@ -177,11 +133,7 @@
       "reward_effects": [
         {
           "type": "require_pokemon",
-          "pokemon": [
-            "134",
-            "135",
-            "136"
-          ]
+          "pokemon": ["134", "135", "136"]
         }
       ]
     }

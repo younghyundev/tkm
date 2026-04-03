@@ -1,6 +1,7 @@
 import { getPokemonDB, getRegionsDB, getEventsDB } from './pokemon-data.js';
 import { resolveBattle, formatBattleMessage } from './battle.js';
-import type { State, Config, EncounterResult, BattleResult, WildPokemon, TimeEvent, DayEvent, StreakEvent, MilestoneEvent } from './types.js';
+import { getLegendaryPoolMultiplier } from './volume-tier.js';
+import type { State, Config, EncounterResult, BattleResult, WildPokemon, TimeEvent, DayEvent, StreakEvent, MilestoneEvent, VolumeTier, CommonState } from './types.js';
 
 const BASE_ENCOUNTER_RATE = 0.15;
 
@@ -14,7 +15,7 @@ export function rollShiny(): boolean {
  * Roll whether an encounter happens.
  * Returns true if an encounter should occur.
  */
-export function rollEncounter(state: State, config: Config): boolean {
+export function rollEncounter(state: State, config: Config, tier?: VolumeTier, commonState?: CommonState): boolean {
   const regionsDB = getRegionsDB();
   const region = regionsDB.regions[config.current_region];
   if (!region) return false;
@@ -29,9 +30,15 @@ export function rollEncounter(state: State, config: Config): boolean {
 
   // Region level penalty
   const penalty = avgLevel < region.level_range[0] ? -0.05 : 0;
-  const rate = Math.max(0.05, Math.min(0.25, BASE_ENCOUNTER_RATE + penalty));
 
-  return Math.random() < rate;
+  // Achievement-based encounter rate bonus (from commonState)
+  const encounterBonus = commonState?.encounter_rate_bonus ?? 0;
+  const baseRate = Math.max(0.05, Math.min(0.30, BASE_ENCOUNTER_RATE + encounterBonus + penalty));
+
+  // Apply volume tier encounter multiplier
+  const finalRate = Math.min(1.0, baseRate * (tier?.encounterMultiplier ?? 1.0));
+
+  return Math.random() < finalRate;
 }
 
 /**
@@ -98,13 +105,14 @@ export function getActiveEvents(state: State): ActiveEvents {
  * Select a wild pokemon from the current region's pool, weighted by rarity.
  * Applies active event modifiers (type boosts, rare multiplier, streak guarantee).
  */
-export function selectWildPokemon(state: State, config: Config): WildPokemon | null {
+export function selectWildPokemon(state: State, config: Config, tier?: VolumeTier): WildPokemon | null {
   const pokemonDB = getPokemonDB();
   const regionsDB = getRegionsDB();
   const region = regionsDB.regions[config.current_region];
   if (!region) return null;
 
-  const weights = pokemonDB.rarity_weights;
+  // Use tier rarity weights if provided, otherwise default
+  const weights = tier?.rarityWeights ?? pokemonDB.rarity_weights;
   const pool = region.pokemon_pool
     .map(name => pokemonDB.pokemon[name])
     .filter(Boolean);
@@ -114,9 +122,10 @@ export function selectWildPokemon(state: State, config: Config): WildPokemon | n
   // Get active events
   const events = getActiveEvents(state);
 
-  // Legendary pool substitution (2% chance, checked before streak guarantee)
+  // Legendary pool substitution — scales with tier
   const [minLv, maxLv] = region.level_range;
-  if (state.legendary_pool.length > 0 && Math.random() < 0.02) {
+  const legendaryPoolChance = tier ? Math.min(1.0, 0.02 * getLegendaryPoolMultiplier(tier)) : 0.02;
+  if (state.legendary_pool.length > 0 && Math.random() < legendaryPoolChance) {
     const legendaryPick = state.legendary_pool[Math.floor(Math.random() * state.legendary_pool.length)];
     const legendaryLevel = Math.max(50, maxLv + 5);
     return { name: legendaryPick, level: legendaryLevel, shiny: rollShiny() };
@@ -178,10 +187,12 @@ export function selectWildPokemon(state: State, config: Config): WildPokemon | n
 export function processEncounter(
   state: State,
   config: Config,
+  tier?: VolumeTier,
+  commonState?: CommonState,
 ): BattleResult | null {
-  if (!rollEncounter(state, config)) return null;
+  if (!rollEncounter(state, config, tier, commonState)) return null;
 
-  const wild = selectWildPokemon(state, config);
+  const wild = selectWildPokemon(state, config, tier);
   if (!wild) return null;
 
   state.encounter_count++;

@@ -178,5 +178,26 @@
     "template": "🔴 이미 포획한 포켓몬과의 전투에서는 몬스터볼이 소비되지 않습니다",
     "dynamic": false,
     "template_key": "tip.item_ball_strategy"
+  },
+  {
+    "id": "volume_xp",
+    "category": "xp",
+    "template": "한번에 많은 토큰을 사용하면 경험치를 더 많이 받을 수 있다고 한다.",
+    "dynamic": false,
+    "template_key": "tip.volume_xp"
+  },
+  {
+    "id": "volume_encounter",
+    "category": "battle",
+    "template": "긴 작업을 하면 야생 포켓몬이 더 자주 나타나는 것 같다.",
+    "dynamic": false,
+    "template_key": "tip.volume_encounter"
+  },
+  {
+    "id": "volume_rare",
+    "category": "battle",
+    "template": "복잡한 작업일수록 강한 포켓몬이 나타날 확률이 높아진다는 소문이 있다.",
+    "dynamic": false,
+    "template_key": "tip.volume_rare"
   }
 ]

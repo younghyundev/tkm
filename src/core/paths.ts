@@ -11,6 +11,7 @@ export const DATA_DIR = join(CLAUDE_DIR, 'tokenmon');
 export const GLOBAL_CONFIG_PATH = join(DATA_DIR, 'global-config.json');
 export const LOCK_PATH = join(DATA_DIR, 'tokenmon.lock');
 export const SESSION_GEN_MAP_PATH = join(DATA_DIR, 'session-gen-map.json');
+export const COMMON_STATE_PATH = join(DATA_DIR, 'common_state.json');
 
 // Plugin root (where the npm package is installed)
 export const PLUGIN_ROOT = process.env.CLAUDE_PLUGIN_ROOT ?? join(import.meta.dirname, '..', '..');
@@ -124,6 +125,14 @@ export function pokedexRewardsJsonPath(gen?: string): string {
 
 export function i18nDataDir(gen?: string): string {
   return join(genDataDir(gen), 'i18n');
+}
+
+export function commonAchievementsJsonPath(): string {
+  return join(PLUGIN_ROOT, 'data', 'common', 'achievements.json');
+}
+
+export function commonI18nDir(): string {
+  return join(PLUGIN_ROOT, 'data', 'common', 'i18n');
 }
 
 // ── Per-generation user data paths ──

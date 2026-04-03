@@ -195,6 +195,7 @@ export interface State {
   evolution_count: number;
   last_session_id: string | null;
   xp_bonus_multiplier: number;
+  encounter_rate_bonus?: number;
   last_session_tokens: Record<string, number>;
   pokedex: Record<string, PokedexEntry>;
   encounter_count: number;
@@ -362,4 +363,34 @@ export interface SharedDB {
   type_colors: Record<string, string>;
   type_chart: Record<string, TypeMatchup>;
   rarity_weights: RarityWeights;
+}
+
+// ── Volume Tier System ──
+
+export type VolumeTierName = 'normal' | 'heated' | 'intense' | 'legendary';
+
+export interface VolumeTier {
+  name: VolumeTierName;
+  minTokens: number;
+  xpMultiplier: number;
+  encounterMultiplier: number;
+  rarityWeights: RarityWeights;
+}
+
+// ── Common State (shared across all generations) ──
+
+export interface CommonState {
+  achievements: Record<string, boolean>;
+  encounter_rate_bonus: number;
+  xp_bonus_multiplier: number;
+  items: Record<string, number>;
+  max_party_size_bonus: number;
+  session_count: number;
+  total_tokens_consumed: number;
+  battle_count: number;
+  battle_wins: number;
+  catch_count: number;
+  evolution_count: number;
+  error_count: number;
+  permission_count: number;
 }

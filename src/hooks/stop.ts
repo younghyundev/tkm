@@ -1,18 +1,19 @@
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { readState, writeState, pruneSessionTokens, readSessionGenMap, writeSessionGenMap } from '../core/state.js';
+import { readState, writeState, pruneSessionTokens, readSessionGenMap, writeSessionGenMap, readCommonState, writeCommonState } from '../core/state.js';
 import { readConfig, writeConfig } from '../core/config.js';
 import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
 import { checkEvolution, applyEvolution, addFriendship, FRIENDSHIP_PER_LEVELUP, FRIENDSHIP_PER_SESSION } from '../core/evolution.js';
-import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
+import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { t, initLocale } from '../i18n/index.js';
 import type { HookInput, HookOutput, ExpGroup } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
 import { playSfx } from '../audio/play-sfx.js';
 import { syncPokedexFromUnlocked, markShinyCaught } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
+import { getVolumeTier } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
 import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import { recordXp, recordBattle, recordCatch, recordEncounter, recordShinyEncounter, recordShinyCatch, recordShinyEscaped } from '../core/stats.js';
@@ -143,10 +144,16 @@ async function main(): Promise<void> {
       return 'no_delta';
     }
 
-    // Calculate XP
+    // Read common state for cross-gen achievements and volume tier
+    const commonState = readCommonState();
+
+    // Volume tier based on tokens consumed this turn
+    const tier = getVolumeTier(deltaTokens);
+
+    // Calculate XP — common + gen xp_bonus, then tier multiplier
     const tokensPerXp = Math.max(1, config.tokens_per_xp);
-    const xpBonus = Math.max(config.xp_bonus_multiplier, state.xp_bonus_multiplier);
-    const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus));
+    const xpBonus = Math.max(config.xp_bonus_multiplier, commonState.xp_bonus_multiplier + state.xp_bonus_multiplier);
+    const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus * tier.xpMultiplier));
     // All party members receive the full XP (not divided)
     const xpPerPokemon = Math.max(1, xpTotal);
 
@@ -203,7 +210,7 @@ async function main(): Promise<void> {
         playSfx('gacha');
 
         // Check first_evolution achievement immediately
-        const achEvents = checkAchievements(state, config);
+        const achEvents = checkAchievements(state, config, commonState);
         for (const achEvent of achEvents) {
           messages.push(formatAchievementMessage(achEvent));
         }
@@ -219,9 +226,24 @@ async function main(): Promise<void> {
     state.last_session_tokens = pruneSessionTokens(state.last_session_tokens, activeIds);
     state.total_tokens_consumed += deltaTokens;
 
-    // Check token-based achievements
-    const achEvents = checkAchievements(state, config);
+    // Sync common trigger counters
+    commonState.total_tokens_consumed += deltaTokens;
+
+    // Tier notification message (flavor text only, no numbers)
+    if (tier.name !== 'normal') {
+      messages.push(t(`tier.${tier.name}`));
+    }
+
+    // Check gen-specific achievements (pass commonState for cross-state encounter_rate_bonus writes)
+    const achEvents = checkAchievements(state, config, commonState);
     for (const achEvent of achEvents) {
+      messages.push(formatAchievementMessage(achEvent));
+      if (achEvent.rewardPokemon) playSfx('gacha');
+    }
+
+    // Check common achievements
+    const commonAchEvents = checkCommonAchievements(commonState, config, state);
+    for (const achEvent of commonAchEvents) {
       messages.push(formatAchievementMessage(achEvent));
       if (achEvent.rewardPokemon) playSfx('gacha');
     }
@@ -229,9 +251,15 @@ async function main(): Promise<void> {
     // Sync pokedex from unlocked pokemon
     syncPokedexFromUnlocked(state);
 
-    // Random encounter + battle
+    // Snapshot counters before encounter for delta-based common sync
+    const preBattleCount = state.battle_count ?? 0;
+    const preBattleWins = state.battle_wins ?? 0;
+    const preCatchCount = state.catch_count ?? 0;
+    const preEvolutionCount = state.evolution_count ?? 0;
+
+    // Random encounter + battle (with volume tier and commonState)
     try {
-      const battleResult = processEncounter(state, config);
+      const battleResult = processEncounter(state, config, tier, commonState);
       if (battleResult) {
         state.last_battle = battleResult;
         const battleMsg = formatEncounterMessage(battleResult);
@@ -273,6 +301,12 @@ async function main(): Promise<void> {
       process.stderr.write(`tokenmon encounter error: ${err}\n`);
     }
 
+    // Post-encounter counter sync to commonState (delta-based, not Math.max)
+    commonState.battle_count += (state.battle_count ?? 0) - preBattleCount;
+    commonState.battle_wins += (state.battle_wins ?? 0) - preBattleWins;
+    commonState.catch_count += (state.catch_count ?? 0) - preCatchCount;
+    commonState.evolution_count += (state.evolution_count ?? 0) - preEvolutionCount;
+
     // Show tip when no battle occurred
     if (!state.last_battle && config.tips_enabled && getRandomTip) {
       const tip = getRandomTip(state, config);
@@ -288,6 +322,7 @@ async function main(): Promise<void> {
 
     writeState(state);
     writeConfig(config);
+    writeCommonState(commonState);
 
     return 'done';
   }, 2, 3000);

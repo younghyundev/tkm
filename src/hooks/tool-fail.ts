@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
-import { readState, writeState } from '../core/state.js';
+import { readState, writeState, readCommonState, writeCommonState } from '../core/state.js';
 import { readConfig } from '../core/config.js';
-import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
+import { checkAchievements, formatAchievementMessage, checkCommonAchievements } from '../core/achievements.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
@@ -39,17 +39,25 @@ function main(): void {
   const result = withLock(() => {
     const state = readState();
     const config = readConfig();
+    const commonState = readCommonState();
     initLocale(config.language ?? 'en');
 
-    // Increment error_count
+    // Increment error_count (delta-based: +1 per hook call)
     state.error_count += 1;
+    commonState.error_count += 1;
 
     // Check achievements (first_error)
-    const achEvents = checkAchievements(state, config);
+    const achEvents = checkAchievements(state, config, commonState);
     for (const achEvent of achEvents) {
       messages.push(formatAchievementMessage(achEvent));
     }
 
+    const commonAchEvents = checkCommonAchievements(commonState, config, state);
+    for (const achEvent of commonAchEvents) {
+      messages.push(formatAchievementMessage(achEvent));
+    }
+
+    writeCommonState(commonState);
     writeState(state);
   });
 

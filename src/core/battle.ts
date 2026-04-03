@@ -5,6 +5,7 @@ import { rollItemDrop, getItemCount, useItem } from './items.js';
 import { getTypeMasterXpMultiplier } from './pokedex-rewards.js';
 import { levelToXp } from './xp.js';
 import { t } from '../i18n/index.js';
+import { readCommonState } from './state.js';
 import type { State, Config, BattleResult, WildPokemon } from './types.js';
 
 /**
@@ -241,7 +242,8 @@ export function resolveBattle(
   const typeDisadvantage = typeMultiplier < 1.0;
 
   // Calculate XP (with type master 1.2x bonus)
-  const xpBonus = Math.max(config.xp_bonus_multiplier, state.xp_bonus_multiplier);
+  const commonXpBonus = readCommonState().xp_bonus_multiplier;
+  const xpBonus = Math.max(config.xp_bonus_multiplier, commonXpBonus + state.xp_bonus_multiplier);
   const typeMasterMult = getTypeMasterXpMultiplier(state, attackerData.types, wildData.types);
   const totalBattleXp = Math.floor(calculateBattleXp(wild.level, wildData.rarity, typeDisadvantage, xpBonus, won) * typeMasterMult);
   // All party members receive the full XP (not divided)

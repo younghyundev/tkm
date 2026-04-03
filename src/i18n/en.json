@@ -358,6 +358,14 @@
   "hook.evolution": "✨ {pokemon} evolved into {newPokemon}!",
   "hook.party_join": "🎊 {pokemon} joined the party!",
 
+  "tier.heated": "The tall grass is rustling intensely...",
+  "tier.intense": "Something seems to be lurking nearby...",
+  "tier.legendary": "The air is crackling with powerful energy!",
+
+  "tip.volume_xp": "Using more tokens at once seems to yield more experience points.",
+  "tip.volume_encounter": "Wild Pokémon appear more often during longer tasks.",
+  "tip.volume_rare": "There are rumors that stronger Pokémon appear during complex tasks.",
+
   "tip.battle_type_advantage": "💡 Type matchups greatly affect win rate! Target weaknesses.",
   "tip.battle_level_matters": "💡 Large level gaps sharply shift win rate (Lv.4 vs Lv.12 = ~17%).",
   "tip.battle_best_pokemon": "💡 The party member with the best type matchup is chosen automatically.",
