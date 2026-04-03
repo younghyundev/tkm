@@ -6,6 +6,7 @@ import type { Config, GlobalConfig } from './types.js';
 const DEFAULT_GLOBAL_CONFIG: GlobalConfig = {
   active_generation: 'gen4',
   language: 'en',
+  voice_tone: 'classic',
 };
 
 const DEFAULT_CONFIG: Config = {

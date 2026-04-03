@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
-import { readConfig } from './core/config.js';
+import { readConfig, readGlobalConfig } from './core/config.js';
 import { getPokemonDB, getPokemonName, getRegionName, getGenerationsDB, getDisplayName } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
 import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, getActiveGeneration } from './core/paths.js';
@@ -95,7 +95,7 @@ function wrapPrint(parts: string[], maxWidth: number): void {
 
 function main(): void {
   const config = readConfig();
-  initLocale(config.language ?? 'en');
+  initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
   if (!config.starter_chosen) {
     console.log(t('statusline.no_starter'));

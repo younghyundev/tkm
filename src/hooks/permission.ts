@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { readState, writeState, readCommonState, writeCommonState } from '../core/state.js';
-import { readConfig, writeConfig } from '../core/config.js';
+import { readConfig, writeConfig, readGlobalConfig } from '../core/config.js';
 import { checkAchievements, formatAchievementMessage, checkCommonAchievements } from '../core/achievements.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale } from '../i18n/index.js';
@@ -40,7 +40,7 @@ function main(): void {
     const state = readState();
     const config = readConfig();
     const commonState = readCommonState();
-    initLocale(config.language ?? 'en');
+    initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
     // Increment permission_count (delta-based: +1 per hook call)
     state.permission_count += 1;

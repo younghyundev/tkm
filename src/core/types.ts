@@ -340,9 +340,12 @@ export interface HookOutput {
 
 // ── Multi-generation support ──
 
+export type VoiceTone = 'classic' | 'pokemon';
+
 export interface GlobalConfig {
   active_generation: string;
   language: 'ko' | 'en';
+  voice_tone: VoiceTone;
 }
 
 export interface GenerationData {

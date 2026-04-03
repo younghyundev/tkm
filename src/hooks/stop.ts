@@ -2,7 +2,7 @@ import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 import { readState, writeState, pruneSessionTokens, readSessionGenMap, writeSessionGenMap, readCommonState, writeCommonState } from '../core/state.js';
-import { readConfig, writeConfig } from '../core/config.js';
+import { readConfig, writeConfig, readGlobalConfig } from '../core/config.js';
 import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
 import { checkEvolution, applyEvolution, addFriendship, FRIENDSHIP_PER_LEVELUP, FRIENDSHIP_PER_SESSION } from '../core/evolution.js';
@@ -91,7 +91,7 @@ async function main(): Promise<void> {
 
   // Pre-lock: read config for early exit check (benign TOCTOU — worst case: enter lock unnecessarily)
   const configCheck = readConfig();
-  initLocale(configCheck.language ?? 'en');
+  initLocale(configCheck.language ?? 'en', readGlobalConfig().voice_tone);
 
   if (configCheck.party.length === 0 || !sessionId) {
     playCry();

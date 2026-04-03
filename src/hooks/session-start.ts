@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { readState, writeState, writeSession, readSession, readSessionGenMap, writeSessionGenMap, pruneSessionGenMap, readCommonState, writeCommonState, commonStateExists } from '../core/state.js';
-import { readConfig, writeConfig } from '../core/config.js';
+import { readConfig, writeConfig, readGlobalConfig } from '../core/config.js';
 import { getActiveGeneration, setActiveGenerationCache } from '../core/paths.js';
 import { checkAchievements, formatAchievementMessage, checkCommonAchievements } from '../core/achievements.js';
 import { migrateToCommonState, recalculateCommonEffects } from '../core/migration.js';
@@ -69,7 +69,7 @@ function main(): void {
         }
       }
     }
-    initLocale(config.language ?? 'en');
+    initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
     // Re-resolve gen inside lock for new sessions (avoids stale gen if gen switch happened before lock)
     if (!existingBinding) {
