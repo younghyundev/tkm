@@ -1,0 +1,187 @@
+{
+  "regions": {
+    "1": {
+      "id": 1,
+      "level_range": [
+        1,
+        15
+      ],
+      "pokemon_pool": [
+        "651",
+        "652",
+        "654",
+        "655",
+        "657",
+        "658",
+        "659",
+        "660",
+        "661",
+        "662",
+        "663",
+        "664",
+        "665",
+        "666",
+        "667",
+        "668",
+        "672",
+        "673"
+      ],
+      "unlock_condition": null
+    },
+    "2": {
+      "id": 2,
+      "level_range": [
+        8,
+        22
+      ],
+      "pokemon_pool": [
+        "669",
+        "670",
+        "671",
+        "676",
+        "677",
+        "678"
+      ],
+      "unlock_condition": {
+        "type": "pokedex_seen",
+        "value": 5
+      }
+    },
+    "3": {
+      "id": 3,
+      "level_range": [
+        15,
+        30
+      ],
+      "pokemon_pool": [
+        "679",
+        "680",
+        "681",
+        "688",
+        "689",
+        "690",
+        "691",
+        "692",
+        "693",
+        "694",
+        "695"
+      ],
+      "unlock_condition": {
+        "type": "pokedex_seen",
+        "value": 10
+      }
+    },
+    "4": {
+      "id": 4,
+      "level_range": [
+        20,
+        35
+      ],
+      "pokemon_pool": [
+        "674",
+        "675",
+        "686",
+        "687",
+        "696",
+        "697",
+        "698",
+        "699",
+        "701"
+      ],
+      "unlock_condition": {
+        "type": "pokedex_caught",
+        "value": 8
+      }
+    },
+    "5": {
+      "id": 5,
+      "level_range": [
+        25,
+        40
+      ],
+      "pokemon_pool": [
+        "682",
+        "683",
+        "684",
+        "685",
+        "702",
+        "703",
+        "704",
+        "705",
+        "706"
+      ],
+      "unlock_condition": {
+        "type": "pokedex_caught",
+        "value": 15
+      }
+    },
+    "6": {
+      "id": 6,
+      "level_range": [
+        30,
+        45
+      ],
+      "pokemon_pool": [
+        "707",
+        "708",
+        "709",
+        "710",
+        "711",
+        "712",
+        "713",
+        "714",
+        "715"
+      ],
+      "unlock_condition": {
+        "type": "pokedex_caught",
+        "value": 22
+      }
+    },
+    "7": {
+      "id": 7,
+      "level_range": [
+        35,
+        55
+      ],
+      "pokemon_pool": [
+        "700"
+      ],
+      "unlock_condition": {
+        "type": "pokedex_caught",
+        "value": 30
+      }
+    },
+    "8": {
+      "id": 8,
+      "level_range": [
+        40,
+        65
+      ],
+      "pokemon_pool": [],
+      "unlock_condition": {
+        "type": "pokedex_caught",
+        "value": 40
+      }
+    },
+    "9": {
+      "id": 9,
+      "level_range": [
+        50,
+        100
+      ],
+      "pokemon_pool": [
+        "716",
+        "717",
+        "718",
+        "719",
+        "720",
+        "721"
+      ],
+      "unlock_condition": {
+        "type": "pokedex_caught",
+        "value": 55
+      }
+    }
+  },
+  "default_region": "1"
+}

@@ -477,7 +477,7 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
       : `${GRAY}○${RESET}`;
     const typeStr = entry.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
     const nameDisplay = entry.status === 'unknown' ? `${GRAY}???${RESET}` : entry.name;
-    console.log(`  ${icon} #${String(entry.id).padStart(3, '0')} ${nameDisplay.padEnd(8)} ${typeStr} ${GRAY}${entry.rarity}${RESET}`);
+    console.log(`  ${icon} #${String(entry.id).padStart(4, '0')} ${nameDisplay.padEnd(8)} ${typeStr} ${GRAY}${entry.rarity}${RESET}`);
   }
 
   // Show type master progress when --type filter is used or list is unfiltered

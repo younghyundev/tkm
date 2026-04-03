@@ -1,0 +1,304 @@
+{
+  "pokemon": {
+    "252": "Treecko",
+    "253": "Grovyle",
+    "254": "Sceptile",
+    "255": "Torchic",
+    "256": "Combusken",
+    "257": "Blaziken",
+    "258": "Mudkip",
+    "259": "Marshtomp",
+    "260": "Swampert",
+    "261": "Poochyena",
+    "262": "Mightyena",
+    "263": "Zigzagoon",
+    "264": "Linoone",
+    "265": "Wurmple",
+    "266": "Silcoon",
+    "267": "Beautifly",
+    "268": "Cascoon",
+    "269": "Dustox",
+    "270": "Lotad",
+    "271": "Lombre",
+    "272": "Ludicolo",
+    "273": "Seedot",
+    "274": "Nuzleaf",
+    "275": "Shiftry",
+    "276": "Taillow",
+    "277": "Swellow",
+    "278": "Wingull",
+    "279": "Pelipper",
+    "280": "Ralts",
+    "281": "Kirlia",
+    "282": "Gardevoir",
+    "283": "Surskit",
+    "284": "Masquerain",
+    "285": "Shroomish",
+    "286": "Breloom",
+    "287": "Slakoth",
+    "288": "Vigoroth",
+    "289": "Slaking",
+    "290": "Nincada",
+    "291": "Ninjask",
+    "292": "Shedinja",
+    "293": "Whismur",
+    "294": "Loudred",
+    "295": "Exploud",
+    "296": "Makuhita",
+    "297": "Hariyama",
+    "298": "Azurill",
+    "299": "Nosepass",
+    "300": "Skitty",
+    "301": "Delcatty",
+    "302": "Sableye",
+    "303": "Mawile",
+    "304": "Aron",
+    "305": "Lairon",
+    "306": "Aggron",
+    "307": "Meditite",
+    "308": "Medicham",
+    "309": "Electrike",
+    "310": "Manectric",
+    "311": "Plusle",
+    "312": "Minun",
+    "313": "Volbeat",
+    "314": "Illumise",
+    "315": "Roselia",
+    "316": "Gulpin",
+    "317": "Swalot",
+    "318": "Carvanha",
+    "319": "Sharpedo",
+    "320": "Wailmer",
+    "321": "Wailord",
+    "322": "Numel",
+    "323": "Camerupt",
+    "324": "Torkoal",
+    "325": "Spoink",
+    "326": "Grumpig",
+    "327": "Spinda",
+    "328": "Trapinch",
+    "329": "Vibrava",
+    "330": "Flygon",
+    "331": "Cacnea",
+    "332": "Cacturne",
+    "333": "Swablu",
+    "334": "Altaria",
+    "335": "Zangoose",
+    "336": "Seviper",
+    "337": "Lunatone",
+    "338": "Solrock",
+    "339": "Barboach",
+    "340": "Whiscash",
+    "341": "Corphish",
+    "342": "Crawdaunt",
+    "343": "Baltoy",
+    "344": "Claydol",
+    "345": "Lileep",
+    "346": "Cradily",
+    "347": "Anorith",
+    "348": "Armaldo",
+    "349": "Feebas",
+    "350": "Milotic",
+    "351": "Castform",
+    "352": "Kecleon",
+    "353": "Shuppet",
+    "354": "Banette",
+    "355": "Duskull",
+    "356": "Dusclops",
+    "357": "Tropius",
+    "358": "Chimecho",
+    "359": "Absol",
+    "360": "Wynaut",
+    "361": "Snorunt",
+    "362": "Glalie",
+    "363": "Spheal",
+    "364": "Sealeo",
+    "365": "Walrein",
+    "366": "Clamperl",
+    "367": "Huntail",
+    "368": "Gorebyss",
+    "369": "Relicanth",
+    "370": "Luvdisc",
+    "371": "Bagon",
+    "372": "Shelgon",
+    "373": "Salamence",
+    "374": "Beldum",
+    "375": "Metang",
+    "376": "Metagross",
+    "377": "Regirock",
+    "378": "Regice",
+    "379": "Registeel",
+    "380": "Latias",
+    "381": "Latios",
+    "382": "Kyogre",
+    "383": "Groudon",
+    "384": "Rayquaza",
+    "385": "Jirachi",
+    "386": "Deoxys"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fire",
+    "water": "Water",
+    "electric": "Electric",
+    "grass": "Grass",
+    "ice": "Ice",
+    "fighting": "Fighting",
+    "poison": "Poison",
+    "ground": "Ground",
+    "flying": "Flying",
+    "psychic": "Psychic",
+    "bug": "Bug",
+    "rock": "Rock",
+    "ghost": "Ghost",
+    "dragon": "Dragon",
+    "dark": "Dark",
+    "steel": "Steel",
+    "fairy": "Fairy"
+  },
+  "regions": {
+    "1": {
+      "name": "Littleroot Town",
+      "description": "Where your Hoenn journey begins"
+    },
+    "2": {
+      "name": "Rustboro City",
+      "description": "The stone-carved city of nature and science"
+    },
+    "3": {
+      "name": "Dewford Town",
+      "description": "A tiny island in the middle of the sea"
+    },
+    "4": {
+      "name": "Slateport City",
+      "description": "A port city full of energy and people"
+    },
+    "5": {
+      "name": "Mauville City",
+      "description": "A city of electric energy and neon lights"
+    },
+    "6": {
+      "name": "Fortree City",
+      "description": "A city of treetops and aerial Pokémon"
+    },
+    "7": {
+      "name": "Lilycove City",
+      "description": "Where the land ends and the sea begins"
+    },
+    "8": {
+      "name": "Mossdeep City",
+      "description": "A serene island city by the deep sea"
+    },
+    "9": {
+      "name": "Ever Grande City",
+      "description": "The ultimate challenge of the Hoenn League"
+    }
+  },
+  "achievements": {
+    "first_catch": {
+      "name": "First Catch",
+      "description": "Catch your first wild Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_10": {
+      "name": "Stone Badge",
+      "description": "Catch 10 Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_25": {
+      "name": "Knuckle Badge",
+      "description": "Catch 25 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_50": {
+      "name": "Dynamo Badge",
+      "description": "Catch 50 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_75": {
+      "name": "Heat Badge",
+      "description": "Catch 75 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_100": {
+      "name": "Balance Badge",
+      "description": "Catch 100 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_120": {
+      "name": "Feather Badge",
+      "description": "Catch 120 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_130": {
+      "name": "Mind Badge",
+      "description": "Catch 130 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_135": {
+      "name": "Rain Badge",
+      "description": "Complete the Hoenn Pokédex! Deoxys awaits!",
+      "rarity_label": "Legendary"
+    },
+    "first_evolution": {
+      "name": "First Evolution",
+      "description": "Evolve a Pokémon for the first time",
+      "rarity_label": "Common"
+    },
+    "evolve_10": {
+      "name": "Evolution Expert",
+      "description": "Evolve 10 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "win_10": {
+      "name": "Rising Trainer",
+      "description": "Win 10 battles",
+      "rarity_label": "Common"
+    },
+    "win_50": {
+      "name": "Battle Veteran",
+      "description": "Win 50 battles",
+      "rarity_label": "Uncommon"
+    },
+    "win_100": {
+      "name": "Battle Master",
+      "description": "Win 100 battles",
+      "rarity_label": "Rare"
+    },
+    "level_50": {
+      "name": "Power Trainer",
+      "description": "Reach level 50 with any Pokémon",
+      "rarity_label": "Rare"
+    },
+    "level_100": {
+      "name": "Champion",
+      "description": "Reach level 100 with any Pokémon",
+      "rarity_label": "Epic"
+    },
+    "streak_7": {
+      "name": "Weekly Warrior",
+      "description": "Maintain a 7-day streak",
+      "rarity_label": "Uncommon"
+    },
+    "streak_30": {
+      "name": "Monthly Master",
+      "description": "Maintain a 30-day streak",
+      "rarity_label": "Rare"
+    },
+    "all_types": {
+      "name": "Type Collector",
+      "description": "Catch at least one Pokémon of every type",
+      "rarity_label": "Rare"
+    },
+    "all_starters": {
+      "name": "Norman's Pride",
+      "description": "Obtain all three Hoenn starters",
+      "rarity_label": "Uncommon"
+    },
+    "regi_trio": {
+      "name": "Ancient Guardians",
+      "description": "Obtain all three Regi Pokémon",
+      "rarity_label": "Rare"
+    }
+  }
+}

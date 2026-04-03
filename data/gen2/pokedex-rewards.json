@@ -1,0 +1,149 @@
+{
+  "milestones": [
+    {
+      "id": "catch_10_reward",
+      "threshold": 10,
+      "reward_type": "pokeball",
+      "reward_value": 3,
+      "label": {
+        "en": "Catch 10 — 3 Poké Balls",
+        "ko": "10마리 포획 — 몬스터볼 3개"
+      }
+    },
+    {
+      "id": "catch_25_reward",
+      "threshold": 25,
+      "reward_type": "pokeball",
+      "reward_value": 5,
+      "label": {
+        "en": "Catch 25 — 5 Poké Balls",
+        "ko": "25마리 포획 — 몬스터볼 5개"
+      }
+    },
+    {
+      "id": "catch_50_reward",
+      "threshold": 50,
+      "reward_type": "xp_multiplier",
+      "reward_value": 1.1,
+      "legendary_bonus": "legendary_beasts",
+      "label": {
+        "en": "Catch 50 — Raikou encounter!",
+        "ko": "50마리 포획 — 라이코 조우!"
+      }
+    },
+    {
+      "id": "catch_70_reward",
+      "threshold": 70,
+      "reward_type": "legendary_unlock",
+      "reward_value": "legendary_beasts",
+      "legendary_bonus": "legendary_beasts",
+      "label": {
+        "en": "Catch 70 — Entei encounter!",
+        "ko": "70마리 포획 — 앤테이 조우!"
+      }
+    },
+    {
+      "id": "catch_90_reward",
+      "threshold": 90,
+      "reward_type": "legendary_unlock",
+      "reward_value": "legendary_beasts",
+      "legendary_bonus": "legendary_beasts",
+      "label": {
+        "en": "Catch 90 — Suicune encounter!",
+        "ko": "90마리 포획 — 스이쿤 조우!"
+      }
+    },
+    {
+      "id": "catch_100_reward",
+      "threshold": 100,
+      "reward_type": "legendary_unlock",
+      "reward_value": "tower_duo",
+      "label": {
+        "en": "Catch all 100 — Ho-Oh & Lugia!",
+        "ko": "100마리 포획 — 칠색조 & 루기아!"
+      }
+    }
+  ],
+  "legendary_groups": {
+    "legendary_beasts": {
+      "label": {
+        "en": "Legendary Beasts",
+        "ko": "전설의 개"
+      },
+      "description": {
+        "en": "The three legendary beasts of Johto",
+        "ko": "성도 지방의 전설의 개 3마리"
+      },
+      "options": [
+        "243",
+        "244",
+        "245"
+      ]
+    },
+    "tower_duo": {
+      "label": {
+        "en": "Tower Duo",
+        "ko": "탑 듀오"
+      },
+      "description": {
+        "en": "The guardian legendaries of the towers",
+        "ko": "탑을 지키는 전설의 포켓몬"
+      },
+      "options": [
+        "249",
+        "250"
+      ]
+    },
+    "celebi": {
+      "label": {
+        "en": "Celebi",
+        "ko": "세레비"
+      },
+      "description": {
+        "en": "The mythical time-traveling Pokémon",
+        "ko": "환상의 시간여행 포켓몬"
+      },
+      "options": [
+        "251"
+      ]
+    },
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Unlocked through type mastery",
+        "ko": "타입 마스터를 통해 해금"
+      },
+      "options": [
+        "249",
+        "250",
+        "251"
+      ]
+    }
+  },
+  "type_master": {
+    "xp_bonus": 1.2,
+    "legendary_unlock_threshold": 3,
+    "legendary_group": "special_legends",
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Master 3 types to unlock",
+        "ko": "3개 타입 마스터 달성 시 해금"
+      },
+      "options": [
+        "249",
+        "250",
+        "251"
+      ]
+    }
+  },
+  "chain_completion_reward": {
+    "pokeball_count": 1
+  }
+}

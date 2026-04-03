@@ -1,0 +1,186 @@
+{
+  "milestones": [
+    {
+      "id": "catch_10_reward",
+      "threshold": 10,
+      "reward_type": "pokeball",
+      "reward_value": 3,
+      "label": {
+        "en": "Catch 10 — 3 Poké Balls",
+        "ko": "10마리 포획 — 몬스터볼 3개"
+      }
+    },
+    {
+      "id": "catch_20_reward",
+      "threshold": 20,
+      "reward_type": "pokeball",
+      "reward_value": 5,
+      "label": {
+        "en": "Catch 20 — 5 Poké Balls",
+        "ko": "20마리 포획 — 몬스터볼 5개"
+      }
+    },
+    {
+      "id": "catch_35_reward",
+      "threshold": 35,
+      "reward_type": "xp_multiplier",
+      "reward_value": 1.1,
+      "legendary_bonus": "tapus",
+      "label": {
+        "en": "Catch 35 — Tapu encounter!",
+        "ko": "35마리 포획 — 카푸 조우!"
+      }
+    },
+    {
+      "id": "catch_50_reward",
+      "threshold": 50,
+      "reward_type": "legendary_unlock",
+      "reward_value": "tapus",
+      "label": {
+        "en": "Catch 50 — Tapu encounter!",
+        "ko": "50마리 포획 — 카푸 조우!"
+      }
+    },
+    {
+      "id": "catch_65_reward",
+      "threshold": 65,
+      "reward_type": "legendary_unlock",
+      "reward_value": "light_trio",
+      "label": {
+        "en": "Catch 65 — Light Trio!",
+        "ko": "65마리 포획 — 빛 트리오 조우!"
+      }
+    },
+    {
+      "id": "catch_80_reward",
+      "threshold": 80,
+      "reward_type": "legendary_unlock",
+      "reward_value": "ultra_beasts",
+      "label": {
+        "en": "Catch 80 — Ultra Beasts!",
+        "ko": "80마리 포획 — 울트라비스트!"
+      }
+    },
+    {
+      "id": "catch_88_reward",
+      "threshold": 88,
+      "reward_type": "legendary_unlock",
+      "reward_value": "mythicals",
+      "label": {
+        "en": "Catch all 88 — Mythicals!",
+        "ko": "88마리 포획 — 환상의 포켓몬!"
+      }
+    }
+  ],
+  "legendary_groups": {
+    "tapus": {
+      "label": {
+        "en": "Guardian Deities",
+        "ko": "수호신"
+      },
+      "description": {
+        "en": "The four guardian deities of Alola",
+        "ko": "알로라의 네 수호신"
+      },
+      "options": [
+        "785",
+        "786",
+        "787",
+        "788"
+      ]
+    },
+    "light_trio": {
+      "label": {
+        "en": "Light Trio",
+        "ko": "빛 트리오"
+      },
+      "description": {
+        "en": "The emissaries of the sun and moon",
+        "ko": "태양과 달의 사자"
+      },
+      "options": [
+        "791",
+        "792",
+        "800"
+      ]
+    },
+    "ultra_beasts": {
+      "label": {
+        "en": "Ultra Beasts",
+        "ko": "울트라비스트"
+      },
+      "description": {
+        "en": "Mysterious creatures from Ultra Space",
+        "ko": "울트라스페이스의 신비한 존재"
+      },
+      "options": [
+        "793",
+        "794",
+        "795",
+        "796",
+        "797",
+        "798",
+        "799",
+        "803",
+        "804",
+        "805",
+        "806"
+      ]
+    },
+    "mythicals": {
+      "label": {
+        "en": "Alola Mythicals",
+        "ko": "알로라 환상"
+      },
+      "description": {
+        "en": "The mythical Pokémon of Alola",
+        "ko": "알로라 지방의 환상 포켓몬"
+      },
+      "options": [
+        "801",
+        "802",
+        "807",
+        "808",
+        "809"
+      ]
+    },
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Unlocked through type mastery",
+        "ko": "타입 마스터를 통해 해금"
+      },
+      "options": [
+        "791",
+        "792",
+        "800"
+      ]
+    }
+  },
+  "type_master": {
+    "xp_bonus": 1.2,
+    "legendary_unlock_threshold": 3,
+    "legendary_group": "special_legends",
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Master 3 types to unlock",
+        "ko": "3개 타입 마스터 달성 시 해금"
+      },
+      "options": [
+        "791",
+        "792",
+        "800"
+      ]
+    }
+  },
+  "chain_completion_reward": {
+    "pokeball_count": 1
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "pokemon": {
+    "152": "Chikorita",
+    "153": "Bayleef",
+    "154": "Meganium",
+    "155": "Cyndaquil",
+    "156": "Quilava",
+    "157": "Typhlosion",
+    "158": "Totodile",
+    "159": "Croconaw",
+    "160": "Feraligatr",
+    "161": "Sentret",
+    "162": "Furret",
+    "163": "Hoothoot",
+    "164": "Noctowl",
+    "165": "Ledyba",
+    "166": "Ledian",
+    "167": "Spinarak",
+    "168": "Ariados",
+    "169": "Crobat",
+    "170": "Chinchou",
+    "171": "Lanturn",
+    "172": "Pichu",
+    "173": "Cleffa",
+    "174": "Igglybuff",
+    "175": "Togepi",
+    "176": "Togetic",
+    "177": "Natu",
+    "178": "Xatu",
+    "179": "Mareep",
+    "180": "Flaaffy",
+    "181": "Ampharos",
+    "182": "Bellossom",
+    "183": "Marill",
+    "184": "Azumarill",
+    "185": "Sudowoodo",
+    "186": "Politoed",
+    "187": "Hoppip",
+    "188": "Skiploom",
+    "189": "Jumpluff",
+    "190": "Aipom",
+    "191": "Sunkern",
+    "192": "Sunflora",
+    "193": "Yanma",
+    "194": "Wooper",
+    "195": "Quagsire",
+    "196": "Espeon",
+    "197": "Umbreon",
+    "198": "Murkrow",
+    "199": "Slowking",
+    "200": "Misdreavus",
+    "201": "Unown",
+    "202": "Wobbuffet",
+    "203": "Girafarig",
+    "204": "Pineco",
+    "205": "Forretress",
+    "206": "Dunsparce",
+    "207": "Gligar",
+    "208": "Steelix",
+    "209": "Snubbull",
+    "210": "Granbull",
+    "211": "Qwilfish",
+    "212": "Scizor",
+    "213": "Shuckle",
+    "214": "Heracross",
+    "215": "Sneasel",
+    "216": "Teddiursa",
+    "217": "Ursaring",
+    "218": "Slugma",
+    "219": "Magcargo",
+    "220": "Swinub",
+    "221": "Piloswine",
+    "222": "Corsola",
+    "223": "Remoraid",
+    "224": "Octillery",
+    "225": "Delibird",
+    "226": "Mantine",
+    "227": "Skarmory",
+    "228": "Houndour",
+    "229": "Houndoom",
+    "230": "Kingdra",
+    "231": "Phanpy",
+    "232": "Donphan",
+    "233": "Porygon2",
+    "234": "Stantler",
+    "235": "Smeargle",
+    "236": "Tyrogue",
+    "237": "Hitmontop",
+    "238": "Smoochum",
+    "239": "Elekid",
+    "240": "Magby",
+    "241": "Miltank",
+    "242": "Blissey",
+    "243": "Raikou",
+    "244": "Entei",
+    "245": "Suicune",
+    "246": "Larvitar",
+    "247": "Pupitar",
+    "248": "Tyranitar",
+    "249": "Lugia",
+    "250": "Ho-Oh",
+    "251": "Celebi"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fire",
+    "water": "Water",
+    "electric": "Electric",
+    "grass": "Grass",
+    "ice": "Ice",
+    "fighting": "Fighting",
+    "poison": "Poison",
+    "ground": "Ground",
+    "flying": "Flying",
+    "psychic": "Psychic",
+    "bug": "Bug",
+    "rock": "Rock",
+    "ghost": "Ghost",
+    "dragon": "Dragon",
+    "dark": "Dark",
+    "steel": "Steel",
+    "fairy": "Fairy"
+  },
+  "regions": {
+    "1": {
+      "name": "New Bark Town",
+      "description": "The town where winds of a new beginning blow"
+    },
+    "2": {
+      "name": "Violet City",
+      "description": "The city of nostalgic scents"
+    },
+    "3": {
+      "name": "Azalea Town",
+      "description": "A town that works in harmony with Pokémon"
+    },
+    "4": {
+      "name": "Goldenrod City",
+      "description": "A happening city that never sleeps"
+    },
+    "5": {
+      "name": "Ecruteak City",
+      "description": "A historical city where the past meets the present"
+    },
+    "6": {
+      "name": "Olivine City",
+      "description": "A port city with a famous lighthouse"
+    },
+    "7": {
+      "name": "Mahogany Town",
+      "description": "Home of the lake of enrage"
+    },
+    "8": {
+      "name": "Blackthorn City",
+      "description": "A quiet city nestled among the mountains"
+    },
+    "9": {
+      "name": "Mt. Silver",
+      "description": "The ultimate challenge at the edge of Johto"
+    }
+  },
+  "achievements": {
+    "first_catch": {
+      "name": "First Catch",
+      "description": "Catch your first wild Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_10": {
+      "name": "Zephyr Badge",
+      "description": "Catch 10 Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_25": {
+      "name": "Hive Badge",
+      "description": "Catch 25 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_50": {
+      "name": "Plain Badge",
+      "description": "Catch 50 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_75": {
+      "name": "Fog Badge",
+      "description": "Catch 75 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_100": {
+      "name": "Storm Badge",
+      "description": "Complete the Johto Pokédex!",
+      "rarity_label": "Legendary"
+    },
+    "first_evolution": {
+      "name": "First Evolution",
+      "description": "Evolve a Pokémon for the first time",
+      "rarity_label": "Common"
+    },
+    "evolve_10": {
+      "name": "Evolution Expert",
+      "description": "Evolve 10 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "win_10": {
+      "name": "Rising Trainer",
+      "description": "Win 10 battles",
+      "rarity_label": "Common"
+    },
+    "win_50": {
+      "name": "Battle Veteran",
+      "description": "Win 50 battles",
+      "rarity_label": "Uncommon"
+    },
+    "win_100": {
+      "name": "Battle Master",
+      "description": "Win 100 battles",
+      "rarity_label": "Rare"
+    },
+    "level_50": {
+      "name": "Power Trainer",
+      "description": "Reach level 50 with any Pokémon",
+      "rarity_label": "Rare"
+    },
+    "level_100": {
+      "name": "Champion",
+      "description": "Reach level 100 with any Pokémon",
+      "rarity_label": "Epic"
+    },
+    "streak_7": {
+      "name": "Weekly Warrior",
+      "description": "Maintain a 7-day streak",
+      "rarity_label": "Uncommon"
+    },
+    "streak_30": {
+      "name": "Monthly Master",
+      "description": "Maintain a 30-day streak",
+      "rarity_label": "Rare"
+    },
+    "all_types": {
+      "name": "Type Collector",
+      "description": "Catch at least one Pokémon of every type",
+      "rarity_label": "Rare"
+    },
+    "all_starters": {
+      "name": "Professor Elm's Pride",
+      "description": "Obtain all three Johto starters",
+      "rarity_label": "Uncommon"
+    },
+    "eevee_duo": {
+      "name": "Eevee Duo",
+      "description": "Obtain both Espeon and Umbreon",
+      "rarity_label": "Rare"
+    }
+  }
+}
