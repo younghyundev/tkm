@@ -1,7 +1,7 @@
 {
   "name": "tkm",
   "metadata": {
-    "description": "Gen 4 Pokemon XP gamification plugin for Claude Code"
+    "description": "Claude Code Pokémon gamification plugin with token-to-XP progression and a Braille-first status line"
   },
   "owner": {
     "name": "Sangwon Lee"
@@ -10,11 +10,26 @@
     {
       "name": "tkm",
       "source": "./",
-      "description": "Gen 4 Pokemon XP gamification for Claude Code -- catch, train, and evolve Sinnoh Pokemon as you code",
+      "description": "Spend tokens, train Pokémon, and turn Claude Code sessions into a progression loop with party growth, encounters, achievements, and a Braille-first status line",
       "version": "0.4.0-rc.0",
       "category": "productivity",
-      "tags": ["gamification", "pokemon", "xp", "level-up"],
-      "keywords": ["pokemon", "gamification", "xp", "level", "sinnoh", "gen4"]
+      "tags": [
+        "gamification",
+        "pokemon",
+        "productivity",
+        "status-line",
+        "progression"
+      ],
+      "keywords": [
+        "pokemon",
+        "claude-code",
+        "gamification",
+        "productivity",
+        "xp",
+        "progression",
+        "status-line",
+        "braille"
+      ]
     }
   ]
 }

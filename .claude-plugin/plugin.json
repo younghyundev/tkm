@@ -1,12 +1,21 @@
 {
   "name": "tkm",
-  "description": "Pokemon XP gamification for Claude Code (Gen 1 + Gen 4) | 포켓몬 기반 Claude Code 경험치 플러그인",
+  "description": "Claude Code Pokémon gamification plugin with token-to-XP progression, party growth, and a Braille-first status line",
   "version": "0.4.0-rc.0",
   "author": {
     "name": "Sangwon Lee"
   },
   "repository": "https://github.com/ThunderConch/tkm",
-  "keywords": ["pokemon", "gamification", "xp", "level"],
+  "keywords": [
+    "pokemon",
+    "claude-code",
+    "gamification",
+    "productivity",
+    "xp",
+    "progression",
+    "status-line",
+    "braille"
+  ],
   "statusLine": {
     "type": "command",
     "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/status-line.ts\""
