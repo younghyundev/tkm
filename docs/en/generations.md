@@ -1,6 +1,6 @@
 # Tokénmon Generations
 
-[← Back to README](../../README.md)
+[← Commands](commands.md) · [Next: Display Modes →](display-modes.md)
 
 ## Multi-generation support
 

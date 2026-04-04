@@ -1,6 +1,6 @@
 # Gameplay Systems
 
-[← Back to README](../../README.md)
+[← Overview](overview.md) · [Next: Commands →](commands.md)
 
 ## XP & Leveling
 

@@ -1,6 +1,6 @@
 # Tokénmon 개요
 
-[← README로 돌아가기](../../README.ko.md)
+[← README로 돌아가기](../../README.ko.md) · [다음: 게임플레이 시스템 →](systems.md)
 
 ## 핵심 루프
 

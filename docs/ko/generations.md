@@ -1,6 +1,6 @@
 # Tokénmon 세대
 
-[← README로 돌아가기](../../README.ko.md)
+[← 명령어](commands.md) · [다음: 표시 모드 →](display-modes.md)
 
 ## 다세대 지원
 

@@ -1,6 +1,6 @@
 # Tokénmon Commands
 
-[← Back to README](../../README.md)
+[← Gameplay Systems](systems.md) · [Next: Generations →](generations.md)
 
 ## Setup and status
 

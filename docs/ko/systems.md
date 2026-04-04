@@ -1,6 +1,6 @@
 # 게임플레이 시스템
 
-[← README로 돌아가기](../../README.ko.md)
+[← 개요](overview.md) · [다음: 명령어 →](commands.md)
 
 ## XP와 레벨링
 

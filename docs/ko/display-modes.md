@@ -1,6 +1,6 @@
 # Tokénmon 표시 모드
 
-[← README로 돌아가기](../../README.ko.md)
+[← 세대](generations.md) · [README로 돌아가기](../../README.ko.md)
 
 ## 권장 모드
 

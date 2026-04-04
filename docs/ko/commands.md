@@ -1,6 +1,6 @@
 # Tokénmon 명령어
 
-[← README로 돌아가기](../../README.ko.md)
+[← 게임플레이 시스템](systems.md) · [다음: 세대 →](generations.md)
 
 ## 설정과 상태
 

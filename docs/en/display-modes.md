@@ -1,6 +1,6 @@
 # Tokénmon Display Modes
 
-[← Back to README](../../README.md)
+[← Generations](generations.md) · [Back to README](../../README.md)
 
 ## Recommended mode
 
