@@ -189,7 +189,7 @@ async function main(): Promise<void> {
 
     // Calculate XP — common + gen xp_bonus, then tier multiplier
     const tokensPerXp = Math.max(1, config.tokens_per_xp);
-    const xpBonus = Math.max(config.xp_bonus_multiplier, commonState.xp_bonus_multiplier + state.xp_bonus_multiplier);
+    const xpBonus = config.xp_bonus_multiplier + (state.xp_bonus_multiplier - 1.0) + commonState.xp_bonus_multiplier;
     const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus * tier.xpMultiplier));
     // All party members receive the full XP (not divided)
     const xpPerPokemon = Math.max(1, xpTotal);
