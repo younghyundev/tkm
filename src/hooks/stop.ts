@@ -132,6 +132,7 @@ async function main(): Promise<void> {
   const result = withLockRetry(() => {
     const config = readConfig();
     const state = readState();
+    const genMap = readSessionGenMap();
 
     // Clear previous battle/tip result (only show for one turn)
     state.last_battle = null;
@@ -148,7 +149,7 @@ async function main(): Promise<void> {
     if (isFirstStop) {
       // First stop in this session: record baseline, no XP yet
       state.last_session_tokens[sessionId] = totalTokens;
-      const activeIds = new Set(Object.keys(readSessionGenMap()));
+      const activeIds = new Set(Object.keys(genMap));
       state.last_session_tokens = pruneSessionTokens(state.last_session_tokens, activeIds);
       commonState.last_turn_ts = Date.now();
       writeCommonState(commonState);
@@ -263,7 +264,7 @@ async function main(): Promise<void> {
 
     // Update session tokens tracking & total
     state.last_session_tokens[sessionId] = totalTokens;
-    const activeIds = new Set(Object.keys(readSessionGenMap()));
+    const activeIds = new Set(Object.keys(genMap));
     state.last_session_tokens = pruneSessionTokens(state.last_session_tokens, activeIds);
     state.total_tokens_consumed += deltaTokens;
 
@@ -375,7 +376,6 @@ async function main(): Promise<void> {
     commonState.last_turn_ts = Date.now();
 
     // Refresh last_seen to prevent pruning of active sessions
-    const genMap = readSessionGenMap();
     if (genMap[sessionId]) {
       genMap[sessionId].last_seen = new Date().toISOString();
       writeSessionGenMap(genMap);
