@@ -51,6 +51,10 @@ Tokénmon turns everyday Claude Code usage into a visible progression loop. Your
 - [Docs Index](docs/README.md)
 - [한국어 README](README.ko.md)
 
+## Fair Warning
+
+There might be bugs. But you can literally ask Claude to fix them — it built most of this anyway.
+
 ## Development
 
 Built with TypeScript and the Claude Code plugin system.
