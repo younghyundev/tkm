@@ -26,12 +26,16 @@ const COUNTER_FIELDS = [
 
 type CounterField = typeof COUNTER_FIELDS[number];
 
+let _commonAchievementsCache: Achievement[] | null = null;
+
 function loadCommonAchievements(): Achievement[] {
+  if (_commonAchievementsCache) return _commonAchievementsCache;
   const path = commonAchievementsJsonPath();
   if (!existsSync(path)) return [];
   try {
     const db = JSON.parse(readFileSync(path, 'utf-8')) as AchievementsDB;
-    return db.achievements ?? [];
+    _commonAchievementsCache = db.achievements ?? [];
+    return _commonAchievementsCache;
   } catch {
     return [];
   }
