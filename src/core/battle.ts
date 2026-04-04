@@ -244,7 +244,7 @@ export function resolveBattle(
 
   // Calculate XP (with type master 1.2x bonus)
   const commonXpBonus = readCommonState().xp_bonus_multiplier;
-  const xpBonus = config.xp_bonus_multiplier + (state.xp_bonus_multiplier - 1.0) + commonXpBonus;
+  const xpBonus = config.xp_bonus_multiplier + Math.max(0, state.xp_bonus_multiplier - 1.0) + commonXpBonus;
   const typeMasterMult = getTypeMasterXpMultiplier(state, attackerData.types, wildData.types);
   const totalBattleXp = Math.floor(calculateBattleXp(wild.level, wildData.rarity, typeDisadvantage, xpBonus, won) * typeMasterMult);
   // All party members receive the full XP (not divided), with rest bonus
