@@ -14,6 +14,10 @@ A Claude Code gamification plugin that turns token spend into a Pokémon trainin
 
 Tokénmon turns everyday Claude Code usage into a visible progression loop. Your sessions feed XP, your party grows over time, and the status line keeps the loop in view while you work.
 
+<div align="center">
+  <img src="docs/assets/screenshot.png" alt="Tokénmon status line with Braille party sprites" width="740">
+</div>
+
 ## Core Features
 
 - Braille-first status line for broad terminal compatibility
