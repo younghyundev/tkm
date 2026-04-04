@@ -340,6 +340,7 @@
 
   "battle.win": "⚔️ Defeated wild {defender}! (Lv.{level}, XP +{xp})",
   "battle.win_catch": "\nGotcha! {defender} was caught! (tokenmon party add {defender})",
+  "battle.win_catch_no_hint": "\nGotcha! {defender} was caught!",
   "battle.need_balls": "-- {defender} fled...",
   "battle.lose": "⚔️ Lost to wild {defender}... (Lv.{level}, XP +{xp})",
   "battle.shiny_appeared": "✦ A shiny {pokemon} appeared!?",

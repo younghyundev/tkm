@@ -323,6 +323,7 @@ export interface BattleResult {
   typeMultiplier: number;
   ballCost: number;
   shiny?: boolean;
+  partyFull?: boolean;
 }
 
 export interface WildPokemon {

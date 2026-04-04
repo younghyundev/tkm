@@ -340,6 +340,7 @@
 
   "battle.win": "⚔️ 야생의 {defender}을(를) 쓰러뜨렸다! (Lv.{level}, XP +{xp})",
   "battle.win_catch": "\n야호! {defender:을/를} 잡았다! (tokenmon party add {defender})",
+  "battle.win_catch_no_hint": "\n야호! {defender:을/를} 잡았다!",
   "battle.need_balls": "— {defender}이(가) 도망쳤다...",
   "battle.lose": "⚔️ 야생의 {defender}에게 졌다... (Lv.{level}, XP +{xp})",
   "battle.shiny_appeared": "✦ 색이 다른 {pokemon:이/가} 나타났다!?",

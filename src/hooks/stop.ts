@@ -323,6 +323,7 @@ async function main(): Promise<void> {
             messages.push(t('hook.party_join', { pokemon: getPokemonName(battleResult.defender) }));
           }
         }
+        battleResult.partyFull = config.party.length >= config.max_party_size;
 
         if (battleResult.won) {
           playSfx('victory');

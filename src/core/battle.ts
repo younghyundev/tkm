@@ -336,7 +336,11 @@ export function formatBattleMessage(result: BattleResult): string {
   if (result.won) {
     let msg = t('battle.win', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
     if (result.caught) {
-      msg += t('battle.win_catch', { defender: defenderName });
+      if (result.partyFull) {
+        msg += t('battle.win_catch_no_hint', { defender: defenderName });
+      } else {
+        msg += t('battle.win_catch', { defender: defenderName });
+      }
       if (result.ballCost > 1) {
         msg += ` (🔴×${result.ballCost})`;
       }
