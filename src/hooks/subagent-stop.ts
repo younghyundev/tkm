@@ -1,9 +1,12 @@
 import { readFileSync } from 'fs';
-import { readSession, writeSession } from '../core/state.js';
+import { readSession, writeSession, readState, writeState } from '../core/state.js';
 import { withLock } from '../core/lock.js';
 import { getSessionGeneration, setActiveGenerationCache } from '../core/paths.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 import { playCry } from '../audio/play-cry.js';
+import { readConfig, readGlobalConfig } from '../core/config.js';
+import { addItem, randInt } from '../core/items.js';
+import { initLocale, t } from '../i18n/index.js';
 
 function readStdin(): string {
   try {
@@ -35,6 +38,7 @@ function main(): void {
   }
 
   let removedPokemon: string | null = null;
+  let ballMessage: string | null = null;
 
   const lockResult = withLock(() => {
     const session = readSession(undefined, sessionId || undefined);
@@ -44,6 +48,16 @@ function main(): void {
     if (removed) {
       removedPokemon = removed.pokemon;
     }
+
+    // Action-based ball drop: 100% chance, 3~5 balls
+    const state = readState();
+    const config = readConfig();
+    const globalConfig = readGlobalConfig();
+    initLocale(config.language ?? 'en', globalConfig.voice_tone);
+    const count = randInt(3, 5);
+    addItem(state, 'pokeball', count);
+    writeState(state);
+    ballMessage = t('item_drop.subagent', { n: count });
   });
 
   if (!lockResult.acquired) {
@@ -54,7 +68,11 @@ function main(): void {
     playCry(removedPokemon);
   }
 
-  console.log('{"continue": true}');
+  const output: HookOutput = { continue: true };
+  if (ballMessage) {
+    output.system_message = ballMessage;
+  }
+  console.log(JSON.stringify(output));
 }
 
 try {
