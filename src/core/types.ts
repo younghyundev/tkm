@@ -209,6 +209,8 @@ export interface State {
   cheat_log: Array<{ timestamp: string; command: string }>;
   last_battle: BattleResult | null;
   last_tip: { id: string; text: string } | null;
+  last_drop: string | null;
+  last_achievement: string | null;
   notifications: Notification[];
   dismissed_notifications: string[];
   last_known_regions: number;

@@ -196,10 +196,17 @@ function main(): void {
     }
   }
 
-  // === Battle result / Tip line ===
+  // === Achievement line (independent, always shown if present) ===
+  if (state.last_achievement) {
+    console.log(state.last_achievement);
+  }
+
+  // === Battle result / Drop / Tip line ===
   if (state.last_battle) {
     const battleMsg = formatBattleMessage(state.last_battle);
     if (battleMsg) console.log(battleMsg);
+  } else if (state.last_drop) {
+    console.log(state.last_drop);
   } else if (state.last_tip) {
     console.log(state.last_tip.text);
   }

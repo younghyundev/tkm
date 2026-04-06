@@ -45,6 +45,8 @@ const DEFAULT_STATE: State = {
   cheat_log: [],
   last_battle: null,
   last_tip: null,
+  last_drop: null,
+  last_achievement: null,
   notifications: [],
   dismissed_notifications: [],
   last_known_regions: 1,

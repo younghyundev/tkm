@@ -130,6 +130,7 @@ async function main(): Promise<void> {
 
   // All state mutations under global lock
   const messages: string[] = [];
+  const achievementMessages: string[] = [];
 
   const result = withLockRetry(() => {
     const config = readConfig();
@@ -255,7 +256,9 @@ async function main(): Promise<void> {
         // Check first_evolution achievement immediately
         const achEvents = checkAchievements(state, config, commonState);
         for (const achEvent of achEvents) {
-          messages.push(formatAchievementMessage(achEvent));
+          const msg = formatAchievementMessage(achEvent);
+          messages.push(msg);
+          achievementMessages.push(msg);
         }
       }
     }
@@ -278,9 +281,11 @@ async function main(): Promise<void> {
     }
 
     // Check gen-specific achievements (pass commonState for cross-state encounter_rate_bonus writes)
-    const achEvents = checkAchievements(state, config, commonState);
-    for (const achEvent of achEvents) {
-      messages.push(formatAchievementMessage(achEvent));
+    const achEvents2 = checkAchievements(state, config, commonState);
+    for (const achEvent of achEvents2) {
+      const msg = formatAchievementMessage(achEvent);
+      messages.push(msg);
+      achievementMessages.push(msg);
       if (achEvent.rewardPokemon) playSfx('gacha');
     }
 
@@ -348,7 +353,9 @@ async function main(): Promise<void> {
     // (battle_50, battle_wins_25, ten_catches etc.) unlock on the triggering turn
     const commonAchEvents = checkCommonAchievements(commonState, config, state);
     for (const achEvent of commonAchEvents) {
-      messages.push(formatAchievementMessage(achEvent));
+      const msg = formatAchievementMessage(achEvent);
+      messages.push(msg);
+      achievementMessages.push(msg);
       if (achEvent.rewardPokemon) playSfx('gacha');
     }
 
@@ -366,6 +373,7 @@ async function main(): Promise<void> {
     }
 
     // Non-battle turn ball drop: 20% chance, 1~5 balls (region-specific message)
+    state.last_drop = null;
     if (!state.last_battle && Math.random() < 0.20) {
       const dropCount = randInt(1, 5);
       addItem(state, 'pokeball', dropCount);
@@ -374,6 +382,7 @@ async function main(): Promise<void> {
       const dropMsg = regionMsg
         ? `${regionMsg} 🔴×${dropCount}`
         : t('item_drop.generic', { n: dropCount });
+      state.last_drop = dropMsg;
       messages.push(dropMsg);
     }
 
@@ -401,6 +410,8 @@ async function main(): Promise<void> {
       gc.voice_tone = 'claude';
       writeGlobalConfig(gc);
     }
+
+    state.last_achievement = achievementMessages.length > 0 ? achievementMessages.join('\n') : null;
 
     writeState(state);
     writeConfig(config);
