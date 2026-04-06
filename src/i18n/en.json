@@ -394,6 +394,11 @@
   "tip.item_achievement_balls": "🔴 Achievement rewards can give you large batches of Poké Balls (up to 10!).",
   "tip.item_ball_strategy": "🔴 Battling already-caught Pokemon does not consume a Poké Ball.",
 
+  "item_drop.tool": "You found a Poké Ball during your adventure! Obtained {n} Poké Ball(s)!",
+  "item_drop.subagent": "Your companion brought back Poké Balls! Obtained {n} Poké Ball(s)!",
+  "item_drop.session_end": "Received {n} Poké Ball(s) as today's adventure reward!",
+  "item_drop.generic": "Found {n} Poké Ball(s)!",
+
   "cli.dashboard.region": "Region: {region} (Lv.{min}-{max})",
   "cli.dashboard.streak": "Day streak: {days} (best: {best})",
   "cli.dashboard.pokedex": "Pokedex: {caught}/{total} ({pct}%)",

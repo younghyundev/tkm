@@ -394,6 +394,11 @@
   "tip.item_achievement_balls": "🔴 업적 보상으로 몬스터볼을 대량 획득할 수 있습니다 (최대 10개!)",
   "tip.item_ball_strategy": "🔴 이미 포획한 포켓몬과의 전투에서는 몬스터볼이 소비되지 않습니다",
 
+  "item_drop.tool": "모험 도중 몬스터볼을 발견했습니다! 몬스터볼 {n}개를 손에 넣었습니다!",
+  "item_drop.subagent": "동료가 몬스터볼을 가지고 돌아왔습니다! 몬스터볼 {n}개를 손에 넣었습니다!",
+  "item_drop.session_end": "오늘의 모험 보수로 몬스터볼 {n}개를 받았습니다!",
+  "item_drop.generic": "몬스터볼 {n}개를 주웠습니다!",
+
   "cli.dashboard.region": "지역: {region} (Lv.{min}-{max})",
   "cli.dashboard.streak": "연속 출석: {days}일 (최고: {best})",
   "cli.dashboard.pokedex": "도감: {caught}/{total} ({pct}%)",
