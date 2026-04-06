@@ -1,7 +1,6 @@
-import { t } from '../i18n/index.js';
 import type { StdinData } from './types.js';
 
-export function ppBar(stdinData: StdinData, lang: 'ko' | 'en', blocks: number = 6): string | null {
+export function ppBar(stdinData: StdinData, blocks: number = 6): string | null {
   const fiveHour = stdinData.rate_limits?.five_hour;
   if (!fiveHour) return null;
 
@@ -9,7 +8,6 @@ export function ppBar(stdinData: StdinData, lang: 'ko' | 'en', blocks: number = 
   const filled = Math.min(blocks, Math.round(remaining / 100 * blocks));
   const empty = blocks - filled;
   const bar = '\u2588'.repeat(filled) + '\u2591'.repeat(empty);
-  const label = t('statusline.pp_label');
 
   let timeStr = '';
   if (fiveHour.resets_at) {
@@ -21,5 +19,5 @@ export function ppBar(stdinData: StdinData, lang: 'ko' | 'en', blocks: number = 
     }
   }
 
-  return `${label} [${bar}] ${remaining}%${timeStr}`;
+  return `🔋[${bar}] ${remaining}%${timeStr}`;
 }

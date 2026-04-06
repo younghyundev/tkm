@@ -244,7 +244,7 @@ function main(): void {
   }
 
   if (config.pp_enabled && stdinData) {
-    const pp = ppBar(stdinData, lang);
+    const pp = ppBar(stdinData);
     if (pp) infoParts.push(pp);
   }
 

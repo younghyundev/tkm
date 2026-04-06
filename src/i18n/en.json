@@ -329,7 +329,7 @@
 
   "statusline.no_starter": "[Choose a starter: /tkm:tkm starter]",
   "statusline.party_empty": "[Party is empty]",
-  "statusline.pp_label": "Substitute",
+  "statusline.pp_label": "🔋",
 
   "setup.statusline.already_set": "  ✓ tokenmon statusLine already configured (skipped)",
   "setup.statusline.wrapper_updated": "  ✓ tokenmon wrapper updated to latest version",

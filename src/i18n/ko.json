@@ -329,7 +329,7 @@
 
   "statusline.no_starter": "[스타터를 선택하세요: /tkm:tkm starter]",
   "statusline.party_empty": "[파티가 비어있습니다]",
-  "statusline.pp_label": "AI대타출동",
+  "statusline.pp_label": "🔋",
 
   "setup.statusline.already_set": "  ✓ tokenmon statusLine 이미 설정됨 (건너뜀)",
   "setup.statusline.wrapper_updated": "  ✓ tokenmon 래퍼 최신 버전으로 갱신됨",
