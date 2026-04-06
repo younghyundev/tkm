@@ -1,0 +1,2126 @@
+{
+  "gen1": {
+    "1": {
+      "claude": {
+        "ko": [
+          "풀숲 사이에서 무언가 빛나는 것이 발견되었습니다. 몬스터볼이었습니다!",
+          "마을 어귀의 좁은 길을 걷다가 몬스터볼을 발견하였습니다!",
+          "벌레 포켓몬들 사이에서 굴러다니는 몬스터볼을 발견하였습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball glinting among the tall grass!",
+          "A Poké Ball was sitting on the dirt path near town.",
+          "You spotted a Poké Ball hidden beneath some rustling leaves!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "풀숲 속에서 몬스터볼이 반짝이고 있었다!",
+          "마을 근처 오솔길에서 몬스터볼을 주웠다!",
+          "캐터피가 지나간 자리에 몬스터볼이 떨어져 있었다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the tall grass!",
+          "Picked up a Poké Ball near the town path!",
+          "A Poké Ball was left behind where Caterpie passed!"
+        ]
+      }
+    },
+    "2": {
+      "claude": {
+        "ko": [
+          "모래땅 동굴 입구 근처에서 몬스터볼을 발견하였습니다!",
+          "스피어의 둥지 옆 바위 틈에서 몬스터볼이 나왔습니다!",
+          "주뱃이 날아다니는 동굴 안에서 몬스터볼을 발견하였습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball wedged between rocks near the cave entrance!",
+          "A Poké Ball was hidden in the sandy ground by Spearow's nest.",
+          "You discovered a Poké Ball deep in the bat-filled cave!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "동굴 바위틈에서 몬스터볼을 발견했다!",
+          "모래사막 길목에 몬스터볼이 떨어져 있었다!",
+          "주뱃이 잠든 동굴 깊숙이서 몬스터볼을 주웠다!"
+        ],
+        "en": [
+          "Found a Poké Ball stuck between cave rocks!",
+          "Spotted a Poké Ball on the sandy desert trail!",
+          "Grabbed a Poké Ball deep in the Zubat-filled cave!"
+        ]
+      }
+    },
+    "3": {
+      "claude": {
+        "ko": [
+          "호숫가 풀밭에서 몬스터볼을 발견하였습니다!",
+          "강물이 흐르는 수로 옆에 몬스터볼이 놓여 있었습니다!",
+          "낚시꾼이 지나간 자리에서 몬스터볼을 찾았습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball resting at the water's edge!",
+          "A Poké Ball was half-submerged by the riverbank.",
+          "You picked up a Poké Ball near where anglers gather!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "물가 갈대숲 사이에서 몬스터볼을 발견했다!",
+          "강가에 몬스터볼이 떠내려와 있었다!",
+          "호수 근처 낚시 포인트에서 몬스터볼을 주웠다!"
+        ],
+        "en": [
+          "Found a Poké Ball among the lakeside reeds!",
+          "A Poké Ball washed up along the river!",
+          "Picked up a Poké Ball at the fishing spot!"
+        ]
+      }
+    },
+    "4": {
+      "claude": {
+        "ko": [
+          "발전소 근처 전기가 튀는 지면에서 몬스터볼이 발견되었습니다!",
+          "마그네마이트가 부유하는 발전소 내부에서 몬스터볼을 찾았습니다!",
+          "찌릿찌릿한 전기 냄새 속에서 몬스터볼을 발견하였습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball sparking with static near the power plant!",
+          "A Poké Ball was tucked behind humming machinery inside the plant.",
+          "You grabbed a Poké Ball amid the electric haze!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "발전소 바닥에 몬스터볼이 굴러다니고 있었다!",
+          "피카츄가 뛰어다니던 자리에 몬스터볼이 떨어져 있었다!",
+          "전기 지대에서 몬스터볼을 발견했다!"
+        ],
+        "en": [
+          "A Poké Ball was rolling around the power plant floor!",
+          "Found a Poké Ball where Pikachu had been running!",
+          "Spotted a Poké Ball in the electric zone!"
+        ]
+      }
+    },
+    "5": {
+      "claude": {
+        "ko": [
+          "도시 뒷골목 어두운 곳에서 몬스터볼을 발견하였습니다!",
+          "실험실 부근 잡초 사이에 몬스터볼이 숨겨져 있었습니다!",
+          "냄새왕 근처 쓰레기더미 옆에서 몬스터볼을 찾았습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in a dim city back alley!",
+          "A Poké Ball was hidden in weeds near the lab.",
+          "You spotted a Poké Ball by a dumpster in a grimy corner!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "뒷골목 그늘진 곳에서 몬스터볼을 주웠다!",
+          "냄새왕이 배회하는 곳 근처에서 몬스터볼을 발견했다!",
+          "이상한 연기 냄새 속에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Grabbed a Poké Ball from a shady alley corner!",
+          "Found a Poké Ball near where Koffing drifts!",
+          "Spotted a Poké Ball through the hazy smog!"
+        ]
+      }
+    },
+    "6": {
+      "claude": {
+        "ko": [
+          "사파리존 넓은 초원에서 몬스터볼을 발견하였습니다!",
+          "탕구리와 켄타로스가 뛰어다니는 광야에서 몬스터볼을 찾았습니다!",
+          "럭키가 느긋하게 걷고 있던 풀밭에서 몬스터볼을 발견하였습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball out on the open safari plains!",
+          "A Poké Ball was lying in the wild grasslands where Tauros roam.",
+          "You spotted a Poké Ball on the path where Chansey wanders!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "사파리존 초원에서 몬스터볼을 발견했다!",
+          "켄타로스가 질주하던 길목에 몬스터볼이 있었다!",
+          "럭키가 놀던 풀밭에서 몬스터볼을 주웠다!"
+        ],
+        "en": [
+          "Found a Poké Ball on the safari plains!",
+          "Picked up a Poké Ball on the trail Tauros charges through!",
+          "Grabbed a Poké Ball from the field where Chansey plays!"
+        ]
+      }
+    },
+    "7": {
+      "claude": {
+        "ko": [
+          "화석 발굴지의 먼지 속에서 몬스터볼을 발견하였습니다!",
+          "잠만보가 드러누운 길 옆에서 몬스터볼을 찾았습니다!",
+          "라프라스가 헤엄치는 지하 수로에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball buried in fossil excavation dust!",
+          "A Poké Ball was resting beside where Snorlax had napped.",
+          "You discovered a Poké Ball floating in the underground waterway!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "화석 발굴지에서 몬스터볼을 캐냈다!",
+          "잠만보가 누워 있던 자리 옆에서 몬스터볼을 발견했다!",
+          "지하 수로에서 몬스터볼이 떠내려왔다!"
+        ],
+        "en": [
+          "Dug up a Poké Ball at the fossil site!",
+          "Found a Poké Ball right next to Snorlax's nap spot!",
+          "A Poké Ball floated down the underground waterway!"
+        ]
+      }
+    },
+    "8": {
+      "claude": {
+        "ko": [
+          "해안가 파도 속에서 몬스터볼이 밀려왔습니다!",
+          "갸라도스가 노니는 바다 근처에서 몬스터볼을 발견하였습니다!",
+          "뜨거운 화산재 옆 해변에서 몬스터볼을 찾았습니다!"
+        ],
+        "en": [
+          "A Poké Ball washed ashore on the coast!",
+          "You found a Poké Ball near the sea where Gyarados lurks.",
+          "A Poké Ball lay on the beach beside volcanic ash!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "해안에 파도가 밀어온 몬스터볼을 주웠다!",
+          "갸라도스가 도는 바다 가에서 몬스터볼을 발견했다!",
+          "해변 뜨거운 모래 위에 몬스터볼이 있었다!"
+        ],
+        "en": [
+          "The waves washed up a Poké Ball on shore!",
+          "Found a Poké Ball where Gyarados patrols!",
+          "A Poké Ball sat on the hot sandy beach!"
+        ]
+      }
+    },
+    "9": {
+      "claude": {
+        "ko": [
+          "뮤츠가 있다는 전설의 동굴 어귀에서 몬스터볼을 발견하였습니다!",
+          "드래곤의 서식지로 이어지는 길목에서 몬스터볼을 찾았습니다!",
+          "전설 포켓몬의 기운이 감도는 곳에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball at the entrance to the legendary cave!",
+          "A Poké Ball lay on the path leading to the dragon's lair.",
+          "You discovered a Poké Ball where legendary energy lingers!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "전설의 동굴 입구에서 몬스터볼을 발견했다!",
+          "드래곤 서식지로 가는 길에서 몬스터볼을 주웠다!",
+          "뮤의 기척이 느껴지는 곳에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball at the mouth of the legendary cave!",
+          "Grabbed a Poké Ball on the road to the dragon's den!",
+          "Picked up a Poké Ball where Mew's presence is felt!"
+        ]
+      }
+    }
+  },
+  "gen2": {
+    "1": {
+      "claude": {
+        "ko": [
+          "우는새와 치코리타가 뛰어노는 풀밭에서 몬스터볼을 발견하였습니다!",
+          "새벽의 신도시 근처 숲길에서 몬스터볼을 찾았습니다!",
+          "레디바가 날아다니는 풀숲 사이에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the meadow where Hoothoot calls at dusk!",
+          "A Poké Ball was on the forest trail near New Bark Town.",
+          "You spotted a Poké Ball among the grass where Ledyba flutter!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "신도시 근처 풀밭에서 몬스터볼을 주웠다!",
+          "우는새가 울던 숲길에서 몬스터볼을 발견했다!",
+          "레디바가 날던 새벽 풀숲에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Picked up a Poké Ball in the meadow near New Bark!",
+          "Found a Poké Ball on the trail where Hoothoot cries!",
+          "Grabbed a Poké Ball in the dawn grass where Ledyba fly!"
+        ]
+      }
+    },
+    "2": {
+      "claude": {
+        "ko": [
+          "전기 양이 뛰어다니는 초원에서 몬스터볼을 발견하였습니다!",
+          "해피너스 풀꽃이 피어있는 길가에서 몬스터볼을 찾았습니다!",
+          "점보야자가 흔들리는 숲 근처에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on the plains where Mareep graze!",
+          "A Poké Ball was resting beside a flowering roadside shrub.",
+          "You spotted a Poké Ball near the swaying Jumpluff grove!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "전기 양이 풀을 뜯던 초원에서 몬스터볼을 발견했다!",
+          "꽃 피는 길가에 몬스터볼이 놓여 있었다!",
+          "점보야자 씨앗이 날리는 곳에서 몬스터볼을 주웠다!"
+        ],
+        "en": [
+          "Found a Poké Ball where Mareep were grazing!",
+          "A Poké Ball was sitting by the flowering roadside!",
+          "Grabbed a Poké Ball where Jumpluff seeds drift!"
+        ]
+      }
+    },
+    "3": {
+      "claude": {
+        "ko": [
+          "물가 습지대에서 왕구리가 뛰어다니는 사이 몬스터볼을 찾았습니다!",
+          "초목이 우거진 습한 숲길에서 몬스터볼을 발견하였습니다!",
+          "강변 갈대밭 속에서 몬스터볼이 발견되었습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the wetlands where Quagsire splashes!",
+          "A Poké Ball was tucked along a humid, overgrown forest path.",
+          "You discovered a Poké Ball hidden in the riverside reeds!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "습지에서 왕구리와 함께 몬스터볼을 찾았다!",
+          "축축한 숲길 한켠에서 몬스터볼을 주웠다!",
+          "강가 갈대밭에 몬스터볼이 숨어 있었다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the swamp with Quagsire!",
+          "Picked up a Poké Ball along the damp forest trail!",
+          "A Poké Ball was hiding in the riverside reeds!"
+        ]
+      }
+    },
+    "4": {
+      "claude": {
+        "ko": [
+          "국립공원의 넓은 잔디밭에서 몬스터볼을 발견하였습니다!",
+          "해피너스가 뛰어다니는 공원 길에서 몬스터볼을 찾았습니다!",
+          "나옹이 낮잠 자던 공원 벤치 근처에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on the wide lawn of the National Park!",
+          "A Poké Ball was on the park path where Miltank roams.",
+          "You spotted a Poké Ball near the bench where Aipom naps!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "국립공원 잔디밭에서 몬스터볼을 발견했다!",
+          "공원 산책로에 몬스터볼이 굴러다니고 있었다!",
+          "국립공원 벤치 근처에서 몬스터볼을 주웠다!"
+        ],
+        "en": [
+          "Found a Poké Ball on the National Park lawn!",
+          "A Poké Ball was rolling on the park path!",
+          "Grabbed a Poké Ball near the park bench!"
+        ]
+      }
+    },
+    "5": {
+      "claude": {
+        "ko": [
+          "야간에 붉은 탑 근처에서 혼령처럼 나타난 몬스터볼을 발견하였습니다!",
+          "어두운 밤 수상한 기운이 감도는 곳에서 몬스터볼을 찾았습니다!",
+          "얼루기가 서성이는 그늘진 길목에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball that appeared like a ghost near the Burned Tower!",
+          "A Poké Ball lay in a shadowy spot thick with strange energy.",
+          "You spotted a Poké Ball where Unown-like shapes drift at night!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "야간 탑 주변에서 몬스터볼을 발견했다!",
+          "어두운 밤길 그늘에서 몬스터볼을 주웠다!",
+          "얼루기가 서성이던 곳에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the tower at night!",
+          "Grabbed a Poké Ball from the shadowy night path!",
+          "Spotted a Poké Ball where Unown wanders!"
+        ]
+      }
+    },
+    "6": {
+      "claude": {
+        "ko": [
+          "얼음 바다 근처 해안에서 몬스터볼을 발견하였습니다!",
+          "꼬지모와 왕수레기가 노니는 차가운 바닷가에서 몬스터볼을 찾았습니다!",
+          "겨울 바다 파도가 밀어온 몬스터볼을 발견하였습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on the icy coastal shore!",
+          "A Poké Ball was resting on the cold beach where Delibird hops.",
+          "The winter sea waves washed up a Poké Ball!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "차가운 해안에서 몬스터볼을 발견했다!",
+          "꼬지모가 뛰어다니는 차가운 바닷가에서 몬스터볼을 주웠다!",
+          "겨울 파도가 밀어온 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on the cold shoreline!",
+          "Grabbed a Poké Ball from the icy beach where Delibird hops!",
+          "The winter waves brought a Poké Ball ashore!"
+        ]
+      }
+    },
+    "7": {
+      "claude": {
+        "ko": [
+          "눈덮인 산꼭대기 근처에서 몬스터볼을 발견하였습니다!",
+          "얼음 동굴을 지나는 길목에서 몬스터볼을 찾았습니다!",
+          "냉기가 감도는 설산 오솔길에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the snow-covered summit!",
+          "A Poké Ball was on the path through the ice cave.",
+          "You discovered a Poké Ball on the frosty mountain trail!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "설산 꼭대기 근처에서 몬스터볼을 발견했다!",
+          "얼음 동굴 통로에서 몬스터볼을 주웠다!",
+          "눈 쌓인 산길에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the snowy mountain peak!",
+          "Picked up a Poké Ball in the ice cave passage!",
+          "Spotted a Poké Ball on the snow-covered trail!"
+        ]
+      }
+    },
+    "8": {
+      "claude": {
+        "ko": [
+          "마그카르고가 기어다니는 용암 지대에서 몬스터볼을 찾았습니다!",
+          "화산 가스가 피어오르는 곳에서 몬스터볼을 발견하였습니다!",
+          "불꽃이 피어오르는 협곡 바닥에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the lava zone where Magcargo crawls!",
+          "A Poké Ball lay where volcanic gas billows up.",
+          "You spotted a Poké Ball at the base of a flame-filled ravine!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "마그카르고가 기어다니는 용암 지대에서 몬스터볼을 발견했다!",
+          "화산 가스 속에서 몬스터볼을 주웠다!",
+          "불꽃 협곡 바닥에 몬스터볼이 있었다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the lava field where Magcargo crawls!",
+          "Grabbed a Poké Ball through the volcanic gas!",
+          "A Poké Ball sat at the bottom of the flame ravine!"
+        ]
+      }
+    },
+    "9": {
+      "claude": {
+        "ko": [
+          "세레비가 깃든 신성한 숲에서 몬스터볼을 발견하였습니다!",
+          "전설의 개 포켓몬이 달렸던 길목에서 몬스터볼을 찾았습니다!",
+          "루기아와 칠색조의 힘이 깃든 곳에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the sacred forest where Celebi dwells!",
+          "A Poké Ball was left on the path the legendary beasts once crossed.",
+          "You discovered a Poké Ball where Lugia and Ho-Oh's power lingers!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "세레비의 신성한 숲에서 몬스터볼을 발견했다!",
+          "전설의 개들이 달리던 길에서 몬스터볼을 주웠다!",
+          "루기아의 힘이 서린 곳에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in Celebi's sacred forest!",
+          "Grabbed a Poké Ball on the trail the legendary beasts ran!",
+          "Spotted a Poké Ball where Lugia's power remains!"
+        ]
+      }
+    }
+  },
+  "gen3": {
+    "1": {
+      "claude": {
+        "ko": [
+          "히든베이스 근처 풀숲에서 몬스터볼을 발견하였습니다!",
+          "이슬비 내리는 숲길에서 몬스터볼을 찾았습니다!",
+          "거품내뿜기가 날아다니는 풀밭에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the tall grass near a Secret Base!",
+          "A Poké Ball was on the forest trail in the light drizzle.",
+          "You spotted a Poké Ball in the meadow where Wurmple crawls!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "히든베이스 근처 풀밭에서 몬스터볼을 발견했다!",
+          "이슬비 내리는 숲길에서 몬스터볼을 주웠다!",
+          "거품내뿜기가 기어다니는 풀숲에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the grass near the Secret Base!",
+          "Grabbed a Poké Ball on the misty forest trail!",
+          "Spotted a Poké Ball where Wurmple wriggles!"
+        ]
+      }
+    },
+    "2": {
+      "claude": {
+        "ko": [
+          "불꽃 지대의 건조한 땅에서 몬스터볼을 발견하였습니다!",
+          "눈설왕이 서식하는 설원 근처에서 몬스터볼을 찾았습니다!",
+          "날씨를 바꾸는 포켓몬들이 사는 지역에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on the parched ground of the fire zone!",
+          "A Poké Ball was near the snowy fields where Snorunt dwell.",
+          "You found a Poké Ball in a region where weather shifts constantly!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "건조한 불꽃 지대에서 몬스터볼을 발견했다!",
+          "눈설왕이 사는 설원 근처에서 몬스터볼을 주웠다!",
+          "날씨가 수시로 바뀌는 곳에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on the dry fire terrain!",
+          "Grabbed a Poké Ball near the snowfields where Snorunt live!",
+          "Spotted a Poké Ball where the weather keeps changing!"
+        ]
+      }
+    },
+    "3": {
+      "claude": {
+        "ko": [
+          "어두운 동굴 바위틈에서 몬스터볼이 발견되었습니다!",
+          "강철처럼 딱딱한 지형에서 몬스터볼을 찾았습니다!",
+          "화석이 묻혀있는 지층에서 몬스터볼을 발견하였습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball wedged in cave rocks!",
+          "A Poké Ball was on the hard iron-like terrain.",
+          "You discovered a Poké Ball in the fossil-bearing rock strata!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "동굴 바위틈에서 몬스터볼을 발견했다!",
+          "강철 지형에서 몬스터볼을 주웠다!",
+          "화석 지층에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the cave rocks!",
+          "Grabbed a Poké Ball on the iron terrain!",
+          "Discovered a Poké Ball in the fossil strata!"
+        ]
+      }
+    },
+    "4": {
+      "claude": {
+        "ko": [
+          "바닷속 산호 사이에서 몬스터볼을 발견하였습니다!",
+          "가재군이 집게를 흔드는 해안에서 몬스터볼을 찾았습니다!",
+          "파도가 치는 서핑 지점에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball among underwater coral!",
+          "A Poké Ball was on the shore where Corphish waves its claws.",
+          "You grabbed a Poké Ball at the surf break!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "산호 사이에서 몬스터볼을 발견했다!",
+          "가재군이 집게 흔들던 해안에서 몬스터볼을 주웠다!",
+          "파도치는 서핑 포인트에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball among the coral!",
+          "Grabbed a Poké Ball on Corphish's shore!",
+          "Spotted a Poké Ball at the surf spot!"
+        ]
+      }
+    },
+    "5": {
+      "claude": {
+        "ko": [
+          "마그마 단과 아쿠아 단이 충돌한 지역에서 몬스터볼을 발견하였습니다!",
+          "폭풍우가 몰아치는 바다 위에서 몬스터볼을 찾았습니다!",
+          "강력한 전기 포켓몬이 서식하는 지역에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball where Team Magma and Aqua clashed!",
+          "A Poké Ball was floating on the stormy sea.",
+          "You spotted a Poké Ball in the zone of powerful electric Pokémon!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "두 악단이 싸운 자리에서 몬스터볼을 발견했다!",
+          "폭풍우 바다에서 몬스터볼이 떠내려왔다!",
+          "강한 전기 기운이 흐르는 곳에서 몬스터볼을 주웠다!"
+        ],
+        "en": [
+          "Found a Poké Ball where the two teams clashed!",
+          "A Poké Ball drifted in from the stormy sea!",
+          "Grabbed a Poké Ball from the strong electric zone!"
+        ]
+      }
+    },
+    "6": {
+      "claude": {
+        "ko": [
+          "고대 유적 탑 근처에서 몬스터볼을 발견하였습니다!",
+          "달맞이 포켓몬이 날아다니는 사막에서 몬스터볼을 찾았습니다!",
+          "유적 앞 모래사막에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the ancient ruin tower!",
+          "A Poké Ball was in the desert where Lunatone soars.",
+          "You discovered a Poké Ball in the sandy desert before the ruins!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "고대 유적 근처에서 몬스터볼을 발견했다!",
+          "달맞이가 날던 사막에서 몬스터볼을 주웠다!",
+          "유적 앞 모래사막에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the ancient ruins!",
+          "Grabbed a Poké Ball in the desert where Lunatone drifts!",
+          "Spotted a Poké Ball in the sandy ruins approach!"
+        ]
+      }
+    },
+    "7": {
+      "claude": {
+        "ko": [
+          "화산 분화구 근처에서 몬스터볼을 발견하였습니다!",
+          "캠프파이어가 지나간 자리처럼 뜨거운 곳에서 몬스터볼을 찾았습니다!",
+          "폭발의 기운이 감도는 화산 지대에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the volcanic crater!",
+          "A Poké Ball was in a scorched patch that felt like a campfire's remains.",
+          "You spotted a Poké Ball in the explosive volcanic zone!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "화산 분화구 근처에서 몬스터볼을 발견했다!",
+          "뜨거운 화산 지대에서 몬스터볼을 주웠다!",
+          "폭발 기운 가득한 곳에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the volcanic crater!",
+          "Grabbed a Poké Ball in the scorching lava zone!",
+          "Spotted a Poké Ball in the explosive terrain!"
+        ]
+      }
+    },
+    "8": {
+      "claude": {
+        "ko": [
+          "심해 동굴 입구 근처에서 몬스터볼을 발견하였습니다!",
+          "진주조개가 잠든 해저에서 몬스터볼을 찾았습니다!",
+          "심해의 차가운 물결 속에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the deep sea cave entrance!",
+          "A Poké Ball was resting on the ocean floor beside sleeping Clamperl.",
+          "You discovered a Poké Ball in the cold deep-sea currents!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "심해 동굴 입구에서 몬스터볼을 발견했다!",
+          "해저에 잠든 진주조개 옆에서 몬스터볼을 주웠다!",
+          "차가운 심해 물결에서 몬스터볼이 나왔다!"
+        ],
+        "en": [
+          "Found a Poké Ball at the deep cave entrance!",
+          "Grabbed a Poké Ball beside sleeping Clamperl on the seafloor!",
+          "A Poké Ball emerged from the cold deep-sea current!"
+        ]
+      }
+    },
+    "9": {
+      "claude": {
+        "ko": [
+          "전설의 포켓몬 그란돈과 카이오가의 흔적이 남은 곳에서 몬스터볼을 발견하였습니다!",
+          "레쿠쟈가 날아다닌다는 하늘 기둥 근처에서 몬스터볼을 찾았습니다!",
+          "대지와 바다의 힘이 교차하는 곳에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball where Groudon and Kyogre once clashed!",
+          "A Poké Ball was near the Sky Pillar where Rayquaza soars.",
+          "You discovered a Poké Ball where land and sea powers converge!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "그란돈과 카이오가의 흔적이 있는 곳에서 몬스터볼을 발견했다!",
+          "레쿠쟈가 날아다니는 하늘 기둥 근처에서 몬스터볼을 주웠다!",
+          "대지와 바다의 힘이 만나는 곳에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball where Groudon and Kyogre clashed!",
+          "Grabbed a Poké Ball near Rayquaza's Sky Pillar!",
+          "Spotted a Poké Ball where land and sea meet!"
+        ]
+      }
+    }
+  },
+  "gen4": {
+    "1": {
+      "claude": {
+        "ko": [
+          "무쪼록과 꼬링의 소리가 들리는 마을 숲길에서 몬스터볼을 발견하였습니다!",
+          "이른 아침 시노하의 고요한 숲에서 몬스터볼을 찾았습니다!",
+          "새 포켓몬들이 지저귀는 숲 입구에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on the village forest path where Starly chirps!",
+          "A Poké Ball was in the quiet early-morning forest near Twinleaf.",
+          "You spotted a Poké Ball at the forest edge filled with birdsong!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "무쪼록이 지저귀는 숲길에서 몬스터볼을 발견했다!",
+          "이른 아침 시노하 숲에서 몬스터볼을 주웠다!",
+          "숲 입구에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on Starly's forest path!",
+          "Grabbed a Poké Ball in the Twinleaf morning forest!",
+          "Spotted a Poké Ball at the forest entrance!"
+        ]
+      }
+    },
+    "2": {
+      "claude": {
+        "ko": [
+          "꿀 바른 나무 근처에서 몬스터볼을 발견하였습니다!",
+          "꽃향기 가득한 숲속 공터에서 몬스터볼을 찾았습니다!",
+          "로즈레이드가 피어있는 화원 옆에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near a honey-smeared tree!",
+          "A Poké Ball was in a flowery forest clearing.",
+          "You spotted a Poké Ball by the garden where Roserade blooms!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "꿀 바른 나무 근처에서 몬스터볼을 발견했다!",
+          "꽃향기 숲 공터에서 몬스터볼을 주웠다!",
+          "로즈레이드 화원 옆에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball by the honey tree!",
+          "Grabbed a Poké Ball in the flower-filled clearing!",
+          "Spotted a Poké Ball by Roserade's garden!"
+        ]
+      }
+    },
+    "3": {
+      "claude": {
+        "ko": [
+          "코토이 호수 근처 물가에서 몬스터볼을 발견하였습니다!",
+          "방어치가 물속에서 솟구치는 곳 가까이서 몬스터볼을 찾았습니다!",
+          "봄비가 내리는 호수가에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball at the water's edge near Koito Lake!",
+          "A Poké Ball was where Buizel leaps out of the water.",
+          "You discovered a Poké Ball on the lakeshore in spring rain!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "호수 물가에서 몬스터볼을 발견했다!",
+          "방어치가 뛰어오르는 근처에서 몬스터볼을 주웠다!",
+          "봄비 내리는 호숫가에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball at the lakeside!",
+          "Grabbed a Poké Ball near leaping Buizel!",
+          "Spotted a Poké Ball on the rainy lakeshore!"
+        ]
+      }
+    },
+    "4": {
+      "claude": {
+        "ko": [
+          "화석이 발견된 광산 깊은 곳에서 몬스터볼을 찾았습니다!",
+          "람파르드가 돌진하는 광산 지하에서 몬스터볼을 발견하였습니다!",
+          "고대 지층이 겹겹이 쌓인 광산에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball deep in the fossil mine!",
+          "A Poké Ball was in the underground where Rampardos charges.",
+          "You discovered a Poké Ball in layers of ancient rock strata!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "광산 깊은 곳에서 몬스터볼을 발견했다!",
+          "람파르드가 돌진하는 지하에서 몬스터볼을 주웠다!",
+          "고대 지층 광산에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball deep in the mine!",
+          "Grabbed a Poké Ball where Rampardos charges underground!",
+          "Spotted a Poké Ball in the ancient rock strata!"
+        ]
+      }
+    },
+    "5": {
+      "claude": {
+        "ko": [
+          "전기가 흐르는 발전소 근처에서 몬스터볼을 발견하였습니다!",
+          "럭시오가 포효하는 전기 지대에서 몬스터볼을 찾았습니다!",
+          "로트옴이 숨어있는 전자기기 근처에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the buzzing power plant!",
+          "A Poké Ball was in the electric zone where Luxio roars.",
+          "You spotted a Poké Ball near gadgets where Rotom hides!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "발전소 근처에서 몬스터볼을 발견했다!",
+          "럭시오가 포효하는 전기 지대에서 몬스터볼을 주웠다!",
+          "로트옴이 숨은 기계 근처에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the power plant!",
+          "Grabbed a Poké Ball in Luxio's electric zone!",
+          "Spotted a Poké Ball by the machines where Rotom lurks!"
+        ]
+      }
+    },
+    "6": {
+      "claude": {
+        "ko": [
+          "눈 쌓인 산길에서 유키메노코가 춤추는 곳 근처의 몬스터볼을 발견하였습니다!",
+          "얼음 동굴을 지나는 눈보라 속에서 몬스터볼을 찾았습니다!",
+          "풀마루가 뒹구는 설원에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near where Froslass dances on the snowy mountain!",
+          "A Poké Ball was in the blizzard passing through the ice cave.",
+          "You spotted a Poké Ball in the snowfield where Mamoswine rolls!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "설산에서 유키메노코가 춤추는 근처에서 몬스터볼을 발견했다!",
+          "눈보라 속 얼음 동굴에서 몬스터볼을 주웠다!",
+          "풀마루가 뒹구는 설원에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball where Froslass dances on the snow mountain!",
+          "Grabbed a Poké Ball in the blizzard ice cave!",
+          "Spotted a Poké Ball in the snowfield where Mamoswine charges!"
+        ]
+      }
+    },
+    "7": {
+      "claude": {
+        "ko": [
+          "불꽃 원숭이의 불꽃이 타오르는 산에서 몬스터볼을 발견하였습니다!",
+          "히드런이 용암을 내뿜는 곳 근처에서 몬스터볼을 찾았습니다!",
+          "화산 분화구 아래에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on the volcano mountain where Infernape's flame burns!",
+          "A Poké Ball was near where Heatran spews lava.",
+          "You discovered a Poké Ball beneath the volcanic crater!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "불꽃 원숭이의 불꽃이 타오르는 산에서 몬스터볼을 발견했다!",
+          "히드런 근처 용암 지대에서 몬스터볼을 주웠다!",
+          "화산 분화구 아래에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on the volcano where Infernape's fire blazes!",
+          "Grabbed a Poké Ball in the lava zone near Heatran!",
+          "Spotted a Poké Ball beneath the volcanic crater!"
+        ]
+      }
+    },
+    "8": {
+      "claude": {
+        "ko": [
+          "유령 포켓몬들이 서성이는 낡은 탑에서 몬스터볼을 발견하였습니다!",
+          "기라티나의 기척이 느껴지는 역경계에서 몬스터볼을 찾았습니다!",
+          "환영처럼 나타난 몬스터볼을 낡은 유적에서 발견하였습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the crumbling tower haunted by ghost Pokémon!",
+          "A Poké Ball was in the Distortion World where Giratina's presence lingers.",
+          "A Poké Ball appeared like an illusion in the old ruins!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "유령이 서성이는 낡은 탑에서 몬스터볼을 발견했다!",
+          "기라티나 역경계에서 몬스터볼을 주웠다!",
+          "유적에서 환영처럼 나타난 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the ghost-haunted old tower!",
+          "Grabbed a Poké Ball in Giratina's Distortion World!",
+          "A Poké Ball appeared like an illusion in the ruins!"
+        ]
+      }
+    },
+    "9": {
+      "claude": {
+        "ko": [
+          "창공이와 디아루가의 힘이 교차하는 곳에서 몬스터볼을 발견하였습니다!",
+          "전설의 포켓몬들이 잠든 챔피언 로드에서 몬스터볼을 찾았습니다!",
+          "시공간을 초월하는 기운이 감도는 곳에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball where Palkia and Dialga's powers cross!",
+          "A Poké Ball was on the Champion Road where legendaries slumber.",
+          "You spotted a Poké Ball where space-time energies swirl!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "창공이와 디아루가의 힘이 교차하는 곳에서 몬스터볼을 발견했다!",
+          "챔피언 로드에서 몬스터볼을 주웠다!",
+          "시공간 에너지가 소용돌이치는 곳에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball where Palkia and Dialga's powers meet!",
+          "Grabbed a Poké Ball on the Champion Road!",
+          "Spotted a Poké Ball where space-time swirls!"
+        ]
+      }
+    }
+  },
+  "gen5": {
+    "1": {
+      "claude": {
+        "ko": [
+          "히드마와 미루핀이 노니는 연못가에서 몬스터볼을 발견하였습니다!",
+          "깜부기가 날아다니는 마을 근처 숲에서 몬스터볼을 찾았습니다!",
+          "돌살이가 뛰어다니는 초원에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball at the pond where Tympole swims!",
+          "A Poké Ball was in the forest near town where Pidove flutters.",
+          "You spotted a Poké Ball in the meadow where Drilbur burrows!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "히드마가 헤엄치는 연못가에서 몬스터볼을 발견했다!",
+          "깜부기가 날던 마을 숲에서 몬스터볼을 주웠다!",
+          "돌살이가 뛰어다니는 초원에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball at the pond where Tympole swims!",
+          "Grabbed a Poké Ball in the town forest where Pidove flies!",
+          "Spotted a Poké Ball in the meadow where Drilbur burrows!"
+        ]
+      }
+    },
+    "2": {
+      "claude": {
+        "ko": [
+          "나리야숲 울창한 수풀 속에서 몬스터볼을 발견하였습니다!",
+          "불꽃원숭이가 불꽃을 토하는 숲에서 몬스터볼을 찾았습니다!",
+          "물대포가 콸콸 흐르는 강변에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball deep in the lush Pinwheel Forest!",
+          "A Poké Ball was in the forest where Pansear breathes fire.",
+          "You spotted a Poké Ball by the rushing riverside!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "나리야숲 깊은 곳에서 몬스터볼을 발견했다!",
+          "불꽃원숭이가 뛰어다니는 숲에서 몬스터볼을 주웠다!",
+          "콸콸 흐르는 강변에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball deep in Pinwheel Forest!",
+          "Grabbed a Poké Ball where Pansear runs!",
+          "Spotted a Poké Ball by the rushing river!"
+        ]
+      }
+    },
+    "3": {
+      "claude": {
+        "ko": [
+          "풀 덮인 다리 아래 물가에서 몬스터볼을 발견하였습니다!",
+          "물거미가 물 위를 걷는 연꽃 호수에서 몬스터볼을 찾았습니다!",
+          "잎사귀가 수면을 덮은 늪지에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball below the grassy bridge by the water!",
+          "A Poké Ball was in the lotus lake where Surskit skims the surface.",
+          "You discovered a Poké Ball in the leaf-covered swamp!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "풀 덮인 다리 아래에서 몬스터볼을 발견했다!",
+          "연꽃 호수에서 물거미와 함께 몬스터볼을 주웠다!",
+          "잎사귀 덮인 늪지에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball under the grassy bridge!",
+          "Grabbed a Poké Ball in the lotus lake with Surskit!",
+          "Spotted a Poké Ball in the leaf-covered swamp!"
+        ]
+      }
+    },
+    "4": {
+      "claude": {
+        "ko": [
+          "사막 유적 깊은 곳에서 모래바람과 함께 몬스터볼이 나왔습니다!",
+          "악어왕이 모래를 헤치는 사막 한가운데서 몬스터볼을 발견하였습니다!",
+          "고대 사원 폐허에서 몬스터볼을 찾았습니다!"
+        ],
+        "en": [
+          "A sandstorm swept out a Poké Ball from the deep desert ruins!",
+          "You found a Poké Ball in the desert where Krookodile churns the sand.",
+          "You discovered a Poké Ball in the rubble of an ancient temple!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "모래바람 속 사막 유적에서 몬스터볼을 발견했다!",
+          "악어왕이 모래 헤치는 사막에서 몬스터볼을 주웠다!",
+          "고대 사원 폐허에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the desert ruins through the sandstorm!",
+          "Grabbed a Poké Ball in the sand where Krookodile digs!",
+          "Spotted a Poké Ball in the ancient temple ruins!"
+        ]
+      }
+    },
+    "5": {
+      "claude": {
+        "ko": [
+          "죽음의 산 동굴 입구에서 몬스터볼을 발견하였습니다!",
+          "유령 포켓몬들이 서성이는 오래된 탑에서 몬스터볼을 찾았습니다!",
+          "어둠 속에서 데스캄을 지나쳐 몬스터볼을 발견하였습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball at the entrance of the eerie mountain cave!",
+          "A Poké Ball was in the old tower haunted by ghost Pokémon.",
+          "You spotted a Poké Ball in the dark, passing by Cofagrigus!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "죽음의 산 동굴 입구에서 몬스터볼을 발견했다!",
+          "유령이 떠돌던 오래된 탑에서 몬스터볼을 주웠다!",
+          "데스캄을 지나쳐 어둠 속에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball at the eerie cave entrance!",
+          "Grabbed a Poké Ball from the ghost-haunted tower!",
+          "Spotted a Poké Ball in the dark past Cofagrigus!"
+        ]
+      }
+    },
+    "6": {
+      "claude": {
+        "ko": [
+          "눈보라가 몰아치는 냉동 동굴에서 몬스터볼을 발견하였습니다!",
+          "얼음 지대에서 반짝이는 몬스터볼을 찾았습니다!",
+          "설빙산 기슭에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the blizzard-swept ice cave!",
+          "A Poké Ball was glinting in the frozen zone.",
+          "You spotted a Poké Ball at the foot of the icy mountain!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "눈보라 냉동 동굴에서 몬스터볼을 발견했다!",
+          "얼음 지대에서 반짝이는 몬스터볼을 주웠다!",
+          "설빙산 기슭에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the blizzard ice cave!",
+          "Grabbed a Poké Ball glinting in the frozen zone!",
+          "Spotted a Poké Ball at the icy mountain base!"
+        ]
+      }
+    },
+    "7": {
+      "claude": {
+        "ko": [
+          "용의 나선 동굴에서 드래곤 포켓몬의 울음소리와 함께 몬스터볼이 나왔습니다!",
+          "디노 차지가 돌진하는 곳 근처에서 몬스터볼을 발견하였습니다!",
+          "드래곤 에너지가 맴도는 동굴 깊숙이에서 몬스터볼을 찾았습니다!"
+        ],
+        "en": [
+          "A dragon's roar echoed as you found a Poké Ball in the spiral cave!",
+          "You found a Poké Ball near where Druddigon charges.",
+          "You discovered a Poké Ball deep in the cave thick with dragon energy!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "용의 나선 동굴에서 몬스터볼을 발견했다!",
+          "디노차지 근처에서 몬스터볼을 주웠다!",
+          "드래곤 에너지 가득한 동굴에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the Dragon Spiral Cave!",
+          "Grabbed a Poké Ball near Druddigon's territory!",
+          "Spotted a Poké Ball deep in the dragon-energy cave!"
+        ]
+      }
+    },
+    "8": {
+      "claude": {
+        "ko": [
+          "불꽃과 비가 교차하는 칠흑의 신전 근처에서 몬스터볼을 발견하였습니다!",
+          "렉쿠자가 날아다니는 하늘에서 떨어진 몬스터볼을 발견하였습니다!",
+          "불타는 지형과 얼어붙은 지형이 맞닿은 곳에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the dark shrine where fire and rain clash!",
+          "A Poké Ball fell from the sky where Braviary soars.",
+          "You spotted a Poké Ball where scorched and frozen terrain meet!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "불꽃과 비가 교차하는 신전 근처에서 몬스터볼을 발견했다!",
+          "하늘에서 떨어진 몬스터볼을 주웠다!",
+          "불과 얼음 지형 경계에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the shrine where fire and rain clash!",
+          "Grabbed a Poké Ball that fell from the sky!",
+          "Spotted a Poké Ball at the fire-ice terrain border!"
+        ]
+      }
+    },
+    "9": {
+      "claude": {
+        "ko": [
+          "제크로무와 레시라무의 힘이 교차하는 곳에서 몬스터볼을 발견하였습니다!",
+          "블랙/화이트 시티 근처 챔피언 로드에서 몬스터볼을 찾았습니다!",
+          "승리의 로드 끝자락에서 빛나는 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball where Zekrom and Reshiram's powers clash!",
+          "A Poké Ball was on the Champion Road near Black/White City.",
+          "You spotted a gleaming Poké Ball at the end of Victory Road!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "제크로무와 레시라무의 힘이 교차하는 곳에서 몬스터볼을 발견했다!",
+          "챔피언 로드에서 몬스터볼을 주웠다!",
+          "승리의 로드 끝에서 빛나는 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball where Zekrom and Reshiram meet!",
+          "Grabbed a Poké Ball on the Champion Road!",
+          "Spotted a gleaming Poké Ball at Victory Road's end!"
+        ]
+      }
+    }
+  },
+  "gen6": {
+    "1": {
+      "claude": {
+        "ko": [
+          "파르나 숲길 첫걸음에서 몬스터볼을 발견하였습니다!",
+          "산양꼬의 밍밍한 울음이 들리는 초원에서 몬스터볼을 찾았습니다!",
+          "새벽의 칼로스 마을 근처 풀숲에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on your first steps into the Kalos forest path!",
+          "A Poké Ball was in the meadow where Fletchling's call echoes.",
+          "You spotted a Poké Ball in the dawn grass near a Kalos village!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "파르나 숲길 첫걸음에서 몬스터볼을 발견했다!",
+          "산양꼬 울음 들리는 초원에서 몬스터볼을 주웠다!",
+          "칼로스 마을 근처 새벽 풀숲에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on the first Kalos forest path!",
+          "Grabbed a Poké Ball in the meadow where Fletchling calls!",
+          "Spotted a Poké Ball in the Kalos dawn grass!"
+        ]
+      }
+    },
+    "2": {
+      "claude": {
+        "ko": [
+          "화려한 향기 꽃밭에서 몬스터볼을 발견하였습니다!",
+          "꽃향기 포켓몬들이 춤추는 정원에서 몬스터볼을 찾았습니다!",
+          "들꽃이 만발한 들판에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in a flower field with sweet fragrance!",
+          "A Poké Ball was in the garden where Flabébé dance.",
+          "You spotted a Poké Ball in a field of blooming wildflowers!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "향기 꽃밭에서 몬스터볼을 발견했다!",
+          "플라베베가 춤추는 정원에서 몬스터볼을 주웠다!",
+          "들꽃 만발한 들판에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the fragrant flower field!",
+          "Grabbed a Poké Ball in the garden where Flabébé dances!",
+          "Spotted a Poké Ball in the blooming wildflower meadow!"
+        ]
+      }
+    },
+    "3": {
+      "claude": {
+        "ko": [
+          "해안 절벽 근처 염수 동굴에서 몬스터볼을 발견하였습니다!",
+          "독가시게가 서식하는 해안 동굴에서 몬스터볼을 찾았습니다!",
+          "파도치는 절벽 아래에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the salt-spray cave near the coastal cliffs!",
+          "A Poké Ball was in the sea cave where Clawitzer dwells.",
+          "You spotted a Poké Ball at the base of wave-battered cliffs!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "해안 절벽 염수 동굴에서 몬스터볼을 발견했다!",
+          "독가시게 서식지 해안 동굴에서 몬스터볼을 주웠다!",
+          "파도치는 절벽 아래에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the coastal salt cave!",
+          "Grabbed a Poké Ball in Clawitzer's sea cave!",
+          "Spotted a Poké Ball beneath the wave-battered cliffs!"
+        ]
+      }
+    },
+    "4": {
+      "claude": {
+        "ko": [
+          "화석 연구소 근처 암석 지대에서 몬스터볼을 발견하였습니다!",
+          "공룡 포켓몬들이 뛰어다니는 바위 협곡에서 몬스터볼을 찾았습니다!",
+          "암석 지형 사이 좁은 길에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the rocky terrain near the fossil lab!",
+          "A Poké Ball was in the rocky canyon where dinosaur Pokémon roam.",
+          "You spotted a Poké Ball on the narrow path between rock formations!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "화석 연구소 근처 바위 지대에서 몬스터볼을 발견했다!",
+          "공룡 포켓몬 협곡에서 몬스터볼을 주웠다!",
+          "바위 협곡 좁은 길에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the rocky terrain near the fossil lab!",
+          "Grabbed a Poké Ball in the dino-Pokémon canyon!",
+          "Spotted a Poké Ball on the narrow rocky path!"
+        ]
+      }
+    },
+    "5": {
+      "claude": {
+        "ko": [
+          "향기로운 정원 미로에서 몬스터볼을 발견하였습니다!",
+          "아로마향 포켓몬들이 노니는 정원에서 몬스터볼을 찾았습니다!",
+          "달콤한 향기가 가득한 꽃밭 미로에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the fragrant garden maze!",
+          "A Poké Ball was in the garden where aroma Pokémon play.",
+          "You spotted a Poké Ball in the sweet-scented flower maze!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "향기 정원 미로에서 몬스터볼을 발견했다!",
+          "아로마 포켓몬들이 노는 정원에서 몬스터볼을 주웠다!",
+          "달콤한 꽃밭 미로에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the fragrant garden maze!",
+          "Grabbed a Poké Ball in the aroma Pokémon garden!",
+          "Spotted a Poké Ball in the sweet-scented flower maze!"
+        ]
+      }
+    },
+    "6": {
+      "claude": {
+        "ko": [
+          "눈 덮인 숲 속 얼음 나무들 사이에서 몬스터볼을 발견하였습니다!",
+          "눈설왕이 눈을 내리게 하는 숲에서 몬스터볼을 찾았습니다!",
+          "서리가 내린 나무숲 오솔길에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball between frost-covered trees in the snowy forest!",
+          "A Poké Ball was in the forest where Abomasnow brings the snow.",
+          "You spotted a Poké Ball on the frosty forest path!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "눈 덮인 숲 얼음 나무들 사이에서 몬스터볼을 발견했다!",
+          "눈설왕이 눈 내리게 하는 숲에서 몬스터볼을 주웠다!",
+          "서리 내린 숲길에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball between icy trees in the snowy forest!",
+          "Grabbed a Poké Ball in Abomasnow's snowy forest!",
+          "Spotted a Poké Ball on the frost-covered forest trail!"
+        ]
+      }
+    },
+    "7": {
+      "claude": {
+        "ko": [
+          "실바디가 서성이는 신비한 수풀에서 몬스터볼을 발견하였습니다!",
+          "포케모 포켓몬의 기운이 감도는 고목 숲에서 몬스터볼을 찾았습니다!",
+          "고대 나무들이 우거진 숲 심부에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the mystical grove where Sylveon wanders!",
+          "A Poké Ball was in the ancient forest thick with Fairy energy.",
+          "You discovered a Poké Ball deep in the heart of old-growth trees!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "실바디가 서성이는 신비한 수풀에서 몬스터볼을 발견했다!",
+          "페어리 기운 가득한 고목 숲에서 몬스터볼을 주웠다!",
+          "고대 나무숲 심부에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the mystical grove where Sylveon wanders!",
+          "Grabbed a Poké Ball in the Fairy-energy ancient forest!",
+          "Spotted a Poké Ball deep in the old-growth forest!"
+        ]
+      }
+    },
+    "8": {
+      "claude": {
+        "ko": [
+          "비어있는 공간에서 홀로 빛나는 몬스터볼을 발견하였습니다!",
+          "칼로스 챔피언 로드의 어두운 길목에서 몬스터볼을 찾았습니다!",
+          "강렬한 기운이 감도는 최종 관문 앞에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a lone Poké Ball gleaming in an empty space!",
+          "A Poké Ball was on a dark stretch of the Kalos Champion Road.",
+          "You spotted a Poké Ball before the final gate, thick with energy!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "빈 공간에서 홀로 빛나는 몬스터볼을 발견했다!",
+          "칼로스 챔피언 로드 어두운 길에서 몬스터볼을 주웠다!",
+          "최종 관문 앞에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a lone glowing Poké Ball in an empty space!",
+          "Grabbed a Poké Ball on the dark Kalos Champion Road!",
+          "Spotted a Poké Ball before the final gate!"
+        ]
+      }
+    },
+    "9": {
+      "claude": {
+        "ko": [
+          "이벨탈과 제르네아스의 전설이 깃든 성에서 몬스터볼을 발견하였습니다!",
+          "지가르데가 잠든 동굴 깊숙이에서 몬스터볼을 찾았습니다!",
+          "전설의 힘이 가득한 칼로스의 심장부에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the castle where Xerneas and Yveltal's legend lives!",
+          "A Poké Ball was deep in the cave where Zygarde sleeps.",
+          "You discovered a Poké Ball in Kalos's legendary heartland!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "이벨탈과 제르네아스의 전설이 깃든 성에서 몬스터볼을 발견했다!",
+          "지가르데가 잠든 동굴에서 몬스터볼을 주웠다!",
+          "칼로스 전설의 심장부에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the castle where Xerneas and Yveltal's legend dwells!",
+          "Grabbed a Poké Ball from Zygarde's sleeping cave!",
+          "Spotted a Poké Ball in Kalos's legendary heartland!"
+        ]
+      }
+    }
+  },
+  "gen7": {
+    "1": {
+      "claude": {
+        "ko": [
+          "알로라의 따뜻한 해변가에서 몬스터볼을 발견하였습니다!",
+          "야자 나무 그늘 아래 모래사장에서 몬스터볼을 찾았습니다!",
+          "파도가 찰랑이는 열대 해안에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on Alola's warm sandy beach!",
+          "A Poké Ball was in the sand beneath a palm tree's shade.",
+          "You spotted a Poké Ball on the tropical coast where waves lap!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "알로라 해변에서 몬스터볼을 발견했다!",
+          "야자 나무 그늘 모래사장에서 몬스터볼을 주웠다!",
+          "열대 해안 파도 속에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on Alola's sandy beach!",
+          "Grabbed a Poké Ball in the sand under a palm tree!",
+          "Spotted a Poké Ball in the tropical coast waves!"
+        ]
+      }
+    },
+    "2": {
+      "claude": {
+        "ko": [
+          "격렬한 이쪽저쪽 시험의 현장인 섬에서 몬스터볼을 발견하였습니다!",
+          "가이오가와 루기아가 노니는 바다 근처에서 몬스터볼을 찾았습니다!",
+          "암모뇨가 서식하는 해안 바위틈에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on the island where the island challenge takes place!",
+          "A Poké Ball was near the sea where Wishiwashi schools swim.",
+          "You spotted a Poké Ball in the coastal rocks where Mareanie hides!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "섬 시험 현장에서 몬스터볼을 발견했다!",
+          "위시와시 군어 바다 근처에서 몬스터볼을 주웠다!",
+          "암모뇨가 숨은 해안 바위틈에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on the island challenge site!",
+          "Grabbed a Poké Ball near the Wishiwashi schooling sea!",
+          "Spotted a Poké Ball in rocks where Mareanie hides!"
+        ]
+      }
+    },
+    "3": {
+      "claude": {
+        "ko": [
+          "독초 포켓몬들이 우거진 열대 밀림에서 몬스터볼을 발견하였습니다!",
+          "촉수가 뻗어있는 밀림 속에서 몬스터볼을 찾았습니다!",
+          "알로라의 울창한 열대 우림에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the tropical jungle thick with Poison Pokémon!",
+          "A Poké Ball was in the jungle where tendrils reach everywhere.",
+          "You discovered a Poké Ball in Alola's lush tropical rainforest!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "독초 포켓몬 가득한 열대 밀림에서 몬스터볼을 발견했다!",
+          "촉수 뻗은 밀림 속에서 몬스터볼을 주웠다!",
+          "알로라 열대 우림에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the poison-Pokémon tropical jungle!",
+          "Grabbed a Poké Ball in the tendril-filled jungle!",
+          "Spotted a Poké Ball in Alola's lush rainforest!"
+        ]
+      }
+    },
+    "4": {
+      "claude": {
+        "ko": [
+          "불꽃이 타오르는 화산 지대에서 몬스터볼을 발견하였습니다!",
+          "투리나프가 굴러다니는 용암 지대에서 몬스터볼을 찾았습니다!",
+          "붉은 마그마가 흐르는 화산 기슭에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the blazing volcanic zone!",
+          "A Poké Ball was in the lava field where Turtonator rolls.",
+          "You spotted a Poké Ball at the base of the volcano in flowing magma!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "불꽃 화산 지대에서 몬스터볼을 발견했다!",
+          "투리나프가 굴러다니는 용암 지대에서 몬스터볼을 주웠다!",
+          "붉은 마그마 화산 기슭에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the blazing volcanic zone!",
+          "Grabbed a Poké Ball in the lava field where Turtonator rolls!",
+          "Spotted a Poké Ball at the magma-filled volcano base!"
+        ]
+      }
+    },
+    "5": {
+      "claude": {
+        "ko": [
+          "모래 언덕 위에서 몬스터볼을 발견하였습니다!",
+          "피그노치가 모래를 뿌리는 지역에서 몬스터볼을 찾았습니다!",
+          "알로라 사막 건조한 지형에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball atop a sandy dune!",
+          "A Poké Ball was in the area where Sandygast flings sand.",
+          "You spotted a Poké Ball on the dry terrain of Alola's desert!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "모래 언덕 위에서 몬스터볼을 발견했다!",
+          "피그노치가 모래 뿌리는 지역에서 몬스터볼을 주웠다!",
+          "알로라 사막 건조한 지형에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball atop a sandy dune!",
+          "Grabbed a Poké Ball where Sandygast flings sand!",
+          "Spotted a Poké Ball on Alola's dry desert terrain!"
+        ]
+      }
+    },
+    "6": {
+      "claude": {
+        "ko": [
+          "카푸 포켓몬의 신전 근처에서 몬스터볼을 발견하였습니다!",
+          "드래패트가 날아다니는 격투 도장 근처에서 몬스터볼을 찾았습니다!",
+          "투쟁심이 타오르는 격투 지대에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the Tapu Pokémon's shrine!",
+          "A Poké Ball was near the fighting dojo where Hawlucha soars.",
+          "You spotted a Poké Ball in the battle-spirit-filled fighting zone!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "카푸 신전 근처에서 몬스터볼을 발견했다!",
+          "드래패트가 날던 격투 도장 근처에서 몬스터볼을 주웠다!",
+          "격투 지대에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the Tapu shrine!",
+          "Grabbed a Poké Ball near the fighting dojo where Hawlucha soars!",
+          "Spotted a Poké Ball in the fighting zone!"
+        ]
+      }
+    },
+    "7": {
+      "claude": {
+        "ko": [
+          "울트라 홀 입구에서 기묘한 에너지와 함께 몬스터볼이 나왔습니다!",
+          "네크로즈마의 그림자가 드리워진 곳에서 몬스터볼을 발견하였습니다!",
+          "차원 균열 근처에서 몬스터볼을 찾았습니다!"
+        ],
+        "en": [
+          "A strange energy swirled as you found a Poké Ball near the Ultra Wormhole!",
+          "You found a Poké Ball where Necrozma's shadow falls.",
+          "You spotted a Poké Ball near the dimensional rift!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "울트라 홀 입구에서 몬스터볼을 발견했다!",
+          "네크로즈마의 그림자 속에서 몬스터볼을 주웠다!",
+          "차원 균열 근처에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the Ultra Wormhole entrance!",
+          "Grabbed a Poké Ball in Necrozma's shadow!",
+          "Spotted a Poké Ball near the dimensional rift!"
+        ]
+      }
+    },
+    "8": {
+      "claude": {
+        "ko": [
+          "알로라의 최후 시련을 앞둔 신성한 산에서 몬스터볼을 발견하였습니다!",
+          "루나아라와 솔가레오가 지키는 제단 근처에서 몬스터볼을 찾았습니다!",
+          "성스러운 빛이 내리쬐는 산 정상 근처에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on the sacred mountain before Alola's final trial!",
+          "A Poké Ball was near the altar guarded by Lunala and Solgaleo.",
+          "You spotted a Poké Ball near the summit bathed in sacred light!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "최후 시련 앞둔 신성한 산에서 몬스터볼을 발견했다!",
+          "루나아라와 솔가레오의 제단 근처에서 몬스터볼을 주웠다!",
+          "성스러운 빛이 내리쬐는 산 정상에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on the sacred mountain before the final trial!",
+          "Grabbed a Poké Ball near Lunala and Solgaleo's altar!",
+          "Spotted a Poké Ball near the summit in sacred light!"
+        ]
+      }
+    },
+    "9": {
+      "claude": {
+        "ko": [
+          "울트라 네크로즈마가 날아다니던 하늘에서 몬스터볼이 떨어졌습니다!",
+          "알로라 챔피언 로드 끝자락에서 몬스터볼을 발견하였습니다!",
+          "전설의 포켓몬들이 잠든 신성한 공간에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "A Poké Ball fell from the sky where Ultra Necrozma once flew!",
+          "You found a Poké Ball at the far end of Alola's Champion Road.",
+          "You spotted a Poké Ball in the sacred space where legendaries sleep!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "울트라 네크로즈마가 날던 하늘에서 몬스터볼이 떨어졌다!",
+          "알로라 챔피언 로드 끝에서 몬스터볼을 주웠다!",
+          "전설의 성역에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "A Poké Ball fell from where Ultra Necrozma flew!",
+          "Grabbed a Poké Ball at Alola's Champion Road end!",
+          "Spotted a Poké Ball in the legendary sanctuary!"
+        ]
+      }
+    }
+  },
+  "gen8": {
+    "1": {
+      "claude": {
+        "ko": [
+          "가라르의 광활한 초원에서 양부기 무리 사이에서 몬스터볼을 발견하였습니다!",
+          "산처럼 큰 울가모스가 서식하는 숲 근처에서 몬스터볼을 찾았습니다!",
+          "와일드 에리어 입구 풀밭에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball among Wooloo flocks on Galar's vast plains!",
+          "A Poké Ball was near the forest where Gossifleur drifts.",
+          "You spotted a Poké Ball in the grass at the Wild Area entrance!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "가라르 초원 양부기 무리 사이에서 몬스터볼을 발견했다!",
+          "솜솜코가 떠다니는 숲 근처에서 몬스터볼을 주웠다!",
+          "와일드 에리어 입구 풀밭에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball among Wooloo flocks on Galar's plains!",
+          "Grabbed a Poké Ball near the forest where Gossifleur drifts!",
+          "Spotted a Poké Ball in the grass at the Wild Area entrance!"
+        ]
+      }
+    },
+    "2": {
+      "claude": {
+        "ko": [
+          "가라르 광산 지하에서 몬스터볼을 발견하였습니다!",
+          "코알라가 돌아다니는 탄광 깊은 곳에서 몬스터볼을 찾았습니다!",
+          "광석 포켓몬들이 반짝이는 동굴에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball underground in the Galar mine!",
+          "A Poké Ball was deep in the coal mine where Rolycoly rolls.",
+          "You spotted a Poké Ball in the cave where ore Pokémon glitter!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "가라르 광산 지하에서 몬스터볼을 발견했다!",
+          "코알가가 굴러다니는 탄광에서 몬스터볼을 주웠다!",
+          "광석 포켓몬이 빛나는 동굴에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball underground in the Galar mine!",
+          "Grabbed a Poké Ball in the coal mine where Rolycoly rolls!",
+          "Spotted a Poké Ball in the glittering ore-Pokémon cave!"
+        ]
+      }
+    },
+    "3": {
+      "claude": {
+        "ko": [
+          "사과나무 과수원 근처에서 몬스터볼을 발견하였습니다!",
+          "사과마번이 날아다니는 사과밭에서 몬스터볼을 찾았습니다!",
+          "달콤한 사과 향기 속에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the apple orchard!",
+          "A Poké Ball was in the apple field where Applin drifts.",
+          "You spotted a Poké Ball in the sweet scent of apple blossoms!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "사과 과수원 근처에서 몬스터볼을 발견했다!",
+          "사과마번이 날던 사과밭에서 몬스터볼을 주웠다!",
+          "달콤한 사과 향기 속에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the apple orchard!",
+          "Grabbed a Poké Ball in the apple field where Applin drifts!",
+          "Spotted a Poké Ball in the sweet apple blossom scent!"
+        ]
+      }
+    },
+    "4": {
+      "claude": {
+        "ko": [
+          "찻주전자처럼 뜨거운 온천 근처에서 몬스터볼을 발견하였습니다!",
+          "빌리지판과 독케일이 노니는 갯벌에서 몬스터볼을 찾았습니다!",
+          "독과 불꽃 기운이 섞인 습지에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the scorching hot springs!",
+          "A Poké Ball was in the tidal flats where Toxapex and Cursola dwell.",
+          "You spotted a Poké Ball in the swamp mixed with poison and fire energy!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "뜨거운 온천 근처에서 몬스터볼을 발견했다!",
+          "독케일이 노니는 갯벌에서 몬스터볼을 주웠다!",
+          "독과 불꽃이 섞인 습지에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the hot springs!",
+          "Grabbed a Poké Ball in the tidal flats where Cursola dwells!",
+          "Spotted a Poké Ball in the poison-fire swamp!"
+        ]
+      }
+    },
+    "5": {
+      "claude": {
+        "ko": [
+          "어두운 영혼의 묘지에서 몬스터볼을 발견하였습니다!",
+          "유령 포켓몬들이 떠도는 고성에서 몬스터볼을 찾았습니다!",
+          "스피릿툼이 떠돌아다니는 폐허에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the eerie spirit graveyard!",
+          "A Poké Ball was in the old castle haunted by ghost Pokémon.",
+          "You spotted a Poké Ball in the ruins where Sinistea drifts!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "영혼의 묘지에서 몬스터볼을 발견했다!",
+          "유령 포켓몬 떠도는 고성에서 몬스터볼을 주웠다!",
+          "스피릿툼이 떠도는 폐허에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the spirit graveyard!",
+          "Grabbed a Poké Ball in the ghost-haunted old castle!",
+          "Spotted a Poké Ball in the ruins where Sinistea drifts!"
+        ]
+      }
+    },
+    "6": {
+      "claude": {
+        "ko": [
+          "눈보라가 몰아치는 가라르 설원에서 몬스터볼을 발견하였습니다!",
+          "아르마루기가 거대한 몸을 이끌고 다니는 설원에서 몬스터볼을 찾았습니다!",
+          "얼음 결정이 반짝이는 동굴에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in Galar's blizzard-swept snowfields!",
+          "A Poké Ball was in the snowfield where Arctozolt lumbers.",
+          "You spotted a Poké Ball in the cave where ice crystals glitter!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "가라르 설원 눈보라 속에서 몬스터볼을 발견했다!",
+          "아르마루기가 다니는 설원에서 몬스터볼을 주웠다!",
+          "얼음 결정 빛나는 동굴에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in Galar's blizzard snowfields!",
+          "Grabbed a Poké Ball in the snowfield where Arctozolt lumbers!",
+          "Spotted a Poké Ball where ice crystals glitter in the cave!"
+        ]
+      }
+    },
+    "7": {
+      "claude": {
+        "ko": [
+          "드래곤포스가 맴도는 드래고나이트 협곡에서 몬스터볼을 발견하였습니다!",
+          "드래패트가 하늘을 가르는 협곡에서 몬스터볼을 찾았습니다!",
+          "강렬한 드래곤 에너지가 흐르는 곳에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the dragon-energy canyon!",
+          "A Poké Ball was in the canyon where Drakloak soars.",
+          "You spotted a Poké Ball where intense dragon energy flows!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "드래곤 에너지 협곡에서 몬스터볼을 발견했다!",
+          "드래패트가 날던 협곡에서 몬스터볼을 주웠다!",
+          "강렬한 드래곤 에너지 흐르는 곳에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the dragon-energy canyon!",
+          "Grabbed a Poké Ball in the canyon where Drakloak soars!",
+          "Spotted a Poké Ball where intense dragon energy flows!"
+        ]
+      }
+    },
+    "8": {
+      "claude": {
+        "ko": [
+          "영겁의 숲에서 포레우스와 칼라마네로가 서식하는 곳에서 몬스터볼을 발견하였습니다!",
+          "신성한 빛이 내리쬐는 왕수레기 땅에서 몬스터볼을 찾았습니다!",
+          "가라르의 신성한 성역에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the Eternal Forest where rare Pokémon dwell!",
+          "A Poké Ball lay in the sacred land bathed in holy light.",
+          "You discovered a Poké Ball in Galar's sacred sanctuary!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "영겁의 숲 희귀 포켓몬 서식지에서 몬스터볼을 발견했다!",
+          "신성한 빛 내리쬐는 왕수레기 땅에서 몬스터볼을 주웠다!",
+          "가라르 신성한 성역에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the Eternal Forest with rare Pokémon!",
+          "Grabbed a Poké Ball in the sacred land of holy light!",
+          "Spotted a Poké Ball in Galar's sacred sanctuary!"
+        ]
+      }
+    },
+    "9": {
+      "claude": {
+        "ko": [
+          "자시안과 자마젠타가 수호하는 땅에서 몬스터볼을 발견하였습니다!",
+          "무한다이맥스의 에너지가 맴도는 곳에서 몬스터볼을 찾았습니다!",
+          "가라르 챔피언십 결전지 근처에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the land guarded by Zacian and Zamazenta!",
+          "A Poké Ball was where Eternamax energy swirls.",
+          "You spotted a Poké Ball near the Galar Championship arena!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "자시안과 자마젠타의 수호 땅에서 몬스터볼을 발견했다!",
+          "무한다이맥스 에너지 맴도는 곳에서 몬스터볼을 주웠다!",
+          "가라르 챔피언십 결전지 근처에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the land of Zacian and Zamazenta!",
+          "Grabbed a Poké Ball where Eternamax energy swirls!",
+          "Spotted a Poké Ball near the Galar Championship arena!"
+        ]
+      }
+    }
+  },
+  "gen9": {
+    "1": {
+      "claude": {
+        "ko": [
+          "팔데아의 광활한 초원에서 몬스터볼을 발견하였습니다!",
+          "레체다와 마스카나가 날아다니는 언덕에서 몬스터볼을 찾았습니다!",
+          "새벽 팔데아 들판 풀숲에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on Paldea's vast open plains!",
+          "A Poké Ball was on the hill where Lechonk and Smoliv roam.",
+          "You spotted a Poké Ball in the dawn grass of Paldea's fields!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "팔데아 광활한 초원에서 몬스터볼을 발견했다!",
+          "레체다와 마스카나가 날던 언덕에서 몬스터볼을 주웠다!",
+          "팔데아 새벽 들판에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on Paldea's vast plains!",
+          "Grabbed a Poké Ball on the hill where Lechonk and Smoliv roam!",
+          "Spotted a Poké Ball in Paldea's dawn meadow!"
+        ]
+      }
+    },
+    "2": {
+      "claude": {
+        "ko": [
+          "올리브나무 과수원 근처에서 몬스터볼을 발견하였습니다!",
+          "마스카나가 기름을 뿜는 올리브밭에서 몬스터볼을 찾았습니다!",
+          "지중해 풍경의 팔데아 언덕에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball near the olive grove!",
+          "A Poké Ball was in the olive grove where Smoliv dribbles oil.",
+          "You spotted a Poké Ball on the Mediterranean-feel Paldean hillside!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "올리브 과수원 근처에서 몬스터볼을 발견했다!",
+          "마스카나가 기름 뿜는 올리브밭에서 몬스터볼을 주웠다!",
+          "팔데아 지중해 언덕에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball near the olive grove!",
+          "Grabbed a Poké Ball in the olive grove where Smoliv drips!",
+          "Spotted a Poké Ball on Paldea's Mediterranean hillside!"
+        ]
+      }
+    },
+    "3": {
+      "claude": {
+        "ko": [
+          "파도가 높은 팔데아 해안 절벽에서 몬스터볼을 발견하였습니다!",
+          "아카이 갈매기가 나는 해안 마을 근처에서 몬스터볼을 찾았습니다!",
+          "파도치는 팔데아 바닷가에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball on the wave-battered coastal cliffs of Paldea!",
+          "A Poké Ball was near the seaside town where Squawkabilly squawks.",
+          "You spotted a Poké Ball on the rough shores of Paldea!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "팔데아 해안 절벽에서 몬스터볼을 발견했다!",
+          "해안 마을 근처에서 몬스터볼을 주웠다!",
+          "팔데아 거친 바닷가에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball on Paldea's coastal cliffs!",
+          "Grabbed a Poké Ball near the seaside town!",
+          "Spotted a Poké Ball on Paldea's rough shores!"
+        ]
+      }
+    },
+    "4": {
+      "claude": {
+        "ko": [
+          "팔데아 사막의 건조한 모래바람 속에서 몬스터볼을 발견하였습니다!",
+          "소금 사막을 걷다가 반짝이는 몬스터볼을 찾았습니다!",
+          "선인장 그늘 아래서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the dry sandstorms of Paldea's desert!",
+          "A Poké Ball was glinting in the salt desert.",
+          "You spotted a Poké Ball resting in the shade of a cactus!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "팔데아 사막 모래바람 속에서 몬스터볼을 발견했다!",
+          "소금 사막에서 반짝이는 몬스터볼을 주웠다!",
+          "선인장 그늘 아래서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in Paldea's desert sandstorm!",
+          "Grabbed a Poké Ball glinting in the salt desert!",
+          "Spotted a Poké Ball in the cactus shade!"
+        ]
+      }
+    },
+    "5": {
+      "claude": {
+        "ko": [
+          "팔데아의 광활한 평야 한가운데서 몬스터볼을 발견하였습니다!",
+          "강물이 굽이치는 계곡 아래에서 몬스터볼을 찾았습니다!",
+          "초원과 호수가 만나는 팔데아 내륙에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the middle of Paldea's open plains!",
+          "A Poké Ball was at the base of a winding river valley.",
+          "You spotted a Poké Ball where Paldea's plains meet the lake!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "팔데아 광활한 평야 한가운데서 몬스터볼을 발견했다!",
+          "강물 굽이치는 계곡 아래에서 몬스터볼을 주웠다!",
+          "초원과 호수가 만나는 팔데아 내륙에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the middle of Paldea's open plains!",
+          "Grabbed a Poké Ball at the winding river valley base!",
+          "Spotted a Poké Ball where Paldea's plains and lake meet!"
+        ]
+      }
+    },
+    "6": {
+      "claude": {
+        "ko": [
+          "눈 쌓인 팔데아 산맥에서 몬스터볼을 발견하였습니다!",
+          "차가운 산바람 속에서 몬스터볼을 찾았습니다!",
+          "설산 등반로 근처에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the snow-capped Paldean mountain range!",
+          "A Poké Ball was in the cold mountain breeze.",
+          "You spotted a Poké Ball near the snowy mountain climbing route!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "팔데아 설산에서 몬스터볼을 발견했다!",
+          "차가운 산바람 속에서 몬스터볼을 주웠다!",
+          "설산 등반로 근처에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in Paldea's snowy mountains!",
+          "Grabbed a Poké Ball in the cold mountain wind!",
+          "Spotted a Poké Ball near the snowy mountain trail!"
+        ]
+      }
+    },
+    "7": {
+      "claude": {
+        "ko": [
+          "어두운 폐광 동굴 깊은 곳에서 몬스터볼을 발견하였습니다!",
+          "팔데아 동굴 지하에서 반짝이는 몬스터볼을 찾았습니다!",
+          "바위 기둥이 늘어선 동굴 속에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball deep in the dark abandoned mine!",
+          "A Poké Ball was glinting underground in Paldea's cave system.",
+          "You spotted a Poké Ball among rock pillars deep in the cave!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "팔데아 폐광 동굴에서 몬스터볼을 발견했다!",
+          "지하 동굴에서 반짝이는 몬스터볼을 주웠다!",
+          "바위 기둥 동굴 속에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball deep in Paldea's abandoned mine!",
+          "Grabbed a Poké Ball glinting in the underground cave!",
+          "Spotted a Poké Ball among the cave's rock pillars!"
+        ]
+      }
+    },
+    "8": {
+      "claude": {
+        "ko": [
+          "지각 변동이 일어난 팔데아 심부에서 몬스터볼을 발견하였습니다!",
+          "고대의 역사가 잠든 신전에서 몬스터볼을 찾았습니다!",
+          "팔데아 아랫세계에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball deep in Paldea's tectonic-shift zone!",
+          "A Poké Ball was in the ancient temple where history slumbers.",
+          "You spotted a Poké Ball in Paldea's underworld!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "팔데아 심부 지각 변동 지역에서 몬스터볼을 발견했다!",
+          "고대 역사 잠든 신전에서 몬스터볼을 주웠다!",
+          "팔데아 아랫세계에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in Paldea's tectonic zone!",
+          "Grabbed a Poké Ball in the ancient history temple!",
+          "Spotted a Poké Ball in Paldea's underworld!"
+        ]
+      }
+    },
+    "9": {
+      "claude": {
+        "ko": [
+          "코라이돈과 미라이돈이 깨어난 심부 성역에서 몬스터볼을 발견하였습니다!",
+          "팔데아의 전설이 깃든 최심부에서 몬스터볼을 찾았습니다!",
+          "빛과 어둠의 힘이 교차하는 곳에서 몬스터볼이 나왔습니다!"
+        ],
+        "en": [
+          "You found a Poké Ball in the deep sanctuary where Koraidon and Miraidon awoke!",
+          "A Poké Ball was in Paldea's innermost legendary depths.",
+          "You discovered a Poké Ball where light and dark powers converge!"
+        ]
+      },
+      "pokemon": {
+        "ko": [
+          "코라이돈과 미라이돈이 깨어난 성역에서 몬스터볼을 발견했다!",
+          "팔데아 전설의 최심부에서 몬스터볼을 주웠다!",
+          "빛과 어둠이 교차하는 곳에서 몬스터볼을 찾았다!"
+        ],
+        "en": [
+          "Found a Poké Ball in the sanctuary where Koraidon and Miraidon awoke!",
+          "Grabbed a Poké Ball in Paldea's legendary depths!",
+          "Spotted a Poké Ball where light and dark converge!"
+        ]
+      }
+    }
+  }
+}
