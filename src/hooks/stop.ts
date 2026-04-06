@@ -14,6 +14,7 @@ import { playSfx } from '../audio/play-sfx.js';
 import { syncPokedexFromUnlocked, markShinyCaught } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
 import { addItem, randInt } from '../core/items.js';
+import { getRegionDropMessage } from '../core/region-messages.js';
 import { getVolumeTier } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
 import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
@@ -364,11 +365,16 @@ async function main(): Promise<void> {
       if (tip) state.last_tip = tip;
     }
 
-    // Non-battle turn ball drop: 20% chance, 1~5 balls
+    // Non-battle turn ball drop: 20% chance, 1~5 balls (region-specific message)
     if (!state.last_battle && Math.random() < 0.20) {
       const dropCount = randInt(1, 5);
       addItem(state, 'pokeball', dropCount);
-      messages.push(t('item_drop.generic', { n: dropCount }));
+      const gen = getActiveGeneration();
+      const regionMsg = getRegionDropMessage(gen, config.current_region, globalConfig.voice_tone as 'claude' | 'pokemon', (config.language ?? 'en') as 'ko' | 'en');
+      const dropMsg = regionMsg
+        ? `${regionMsg} 🔴×${dropCount}`
+        : t('item_drop.generic', { n: dropCount });
+      messages.push(dropMsg);
     }
 
     // Rest bonus countdown (XP-granting turns only)
