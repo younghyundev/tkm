@@ -119,6 +119,7 @@ export function checkTypeMasters(state: State): string[] {
     if (!alreadyPending && !alreadyClaimed) {
       const group = rewardsDB.type_master.special_legends;
       state.legendary_pending.push({ group: groupId, options: [...group.options] });
+      state.pokedex_milestones_claimed.push(`type_master_legendary:${groupId}`);
     }
   }
 
