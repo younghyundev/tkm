@@ -165,9 +165,9 @@ function main(): void {
       messages.push(t('rewards.type_master_legendary', { count: state.type_masters.length }));
     }
 
-    const chainCompletions = checkChainCompletion(state);
-    if (chainCompletions > 0) {
-      messages.push(t('rewards.chain_complete', { count: chainCompletions * 2 }));
+    const chainResult = checkChainCompletion(state);
+    if (chainResult.chains > 0) {
+      messages.push(t('rewards.chain_complete', { count: chainResult.ballsAwarded }));
     }
 
     // Refresh notifications and include active ones in output

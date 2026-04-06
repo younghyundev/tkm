@@ -67,6 +67,7 @@
     }
   },
   "chain_completion_reward": {
-    "pokeball_count": 2
+    "pokeball_min": 3,
+    "pokeball_max": 5
   }
 }

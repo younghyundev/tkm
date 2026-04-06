@@ -109,7 +109,8 @@ export interface PokedexRewardsDB {
     special_legends: LegendaryGroup;
   };
   chain_completion_reward: {
-    pokeball_count: number;
+    pokeball_min: number;
+    pokeball_max: number;
   };
 }
 

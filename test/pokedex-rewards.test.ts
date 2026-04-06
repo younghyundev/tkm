@@ -209,8 +209,8 @@ describe('pokedex-rewards', () => {
         },
       });
       const completions = checkChainCompletion(state);
-      assert.ok(completions >= 1);
-      assert.ok((state.items.pokeball ?? 0) >= 2);
+      assert.ok(completions.chains >= 1);
+      assert.ok((state.items.pokeball ?? 0) >= 3);
     });
 
     it('does not award for incomplete chain', () => {
@@ -222,7 +222,7 @@ describe('pokedex-rewards', () => {
         },
       });
       const completions = checkChainCompletion(state);
-      assert.equal(completions, 0);
+      assert.deepEqual(completions, { chains: 0, ballsAwarded: 0 });
     });
 
     it('is idempotent', () => {
