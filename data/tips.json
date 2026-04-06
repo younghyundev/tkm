@@ -146,7 +146,7 @@
   {
     "id": "item_ball_drop",
     "category": "item",
-    "template": "🔴 몬스터볼은 전투 승리 시 20%, 패배 시 5% 확률로 드랍됩니다",
+    "template": "🔴 몬스터볼은 전투 승리 시 30%, 패배 시 12% 확률로 드랍됩니다",
     "dynamic": false,
     "template_key": "tip.item_ball_drop"
   },
@@ -213,5 +213,33 @@
     "template": "💤 2시간 이상 쉬면 휴식 보너스가 활성화됩니다.",
     "dynamic": false,
     "template_key": "tip.rest_threshold"
+  },
+  {
+    "id": "item_tool_drop",
+    "category": "item",
+    "template": "🔴 도구를 사용하면 가끔 몬스터볼을 주울 수 있습니다!",
+    "dynamic": false,
+    "template_key": "tip.item_tool_drop"
+  },
+  {
+    "id": "item_subagent_drop",
+    "category": "item",
+    "template": "🔴 서브에이전트를 보내면 반드시 몬스터볼을 가져옵니다!",
+    "dynamic": false,
+    "template_key": "tip.item_subagent_drop"
+  },
+  {
+    "id": "item_session_bonus",
+    "category": "item",
+    "template": "🔴 세션이 끝나면 몬스터볼 보너스를 받을 수 있습니다!",
+    "dynamic": false,
+    "template_key": "tip.item_session_bonus"
+  },
+  {
+    "id": "item_field_drop",
+    "category": "item",
+    "template": "🔴 풀숲을 걷다 보면 몬스터볼이 떨어져 있을 때도 있습니다!",
+    "dynamic": false,
+    "template_key": "tip.item_field_drop"
   }
 ]
