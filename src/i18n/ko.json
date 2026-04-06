@@ -160,6 +160,7 @@
   "cli.help.cmd_notifications_clear": "  notifications clear 알림 모두 삭제",
 
   "notification.evolution_ready": "{pokemon:이/가} 진화 준비 완료! 실행: tokenmon evolve {pokemon}",
+  "statusline.evolution_ready": "✨ {pokemon:이/가} 진화 준비 완료! /tkm evolve {pokemon}",
   "notification.region_unlocked": "새로운 지역 {count}개 해금! 실행: tokenmon region list",
   "notification.achievement_near": "업적 \"{name}\" 달성률 {pct}%!",
 
@@ -189,6 +190,7 @@
   "cli.lock_failed": "락 획득 실패. 잠시 후 다시 시도하세요.",
   "cli.lock_busy": "다른 프로세스가 데이터를 사용 중입니다. 잠시 후 다시 시도하세요.",
   "cli.config.help_renderer": "  renderer             - 스프라이트 렌더러 (kitty/sixel/iterm2/braille)",
+  "cli.config.key_voice_tone": "  voice_tone           - 텍스트 말투 claude/pokemon (기본: claude)",
   "cli.config.allowed_values": "{key}의 허용 값: {values}",
   "cli.cheat.no_pokemon": "{name} 포켓몬이 없습니다.",
   "cli.cheat.xp_added": "{name}에게 XP {amount} 추가 (총 {total})",
@@ -341,6 +343,7 @@
 
   "battle.win": "⚔️ vs 야생 {defender} (Lv.{level}) → 승리! (XP +{xp})",
   "battle.win_catch": "\n🎉 {defender:을/를} 포획했습니다! (tokenmon party add {defender})",
+  "battle.win_catch_no_hint": "\n🎉 {defender:을/를} 포획했습니다!",
   "battle.need_balls": "— {defender}(은/는) 도망쳤다!",
   "battle.lose": "⚔️ vs 야생 {defender} (Lv.{level}) → 패배... (XP +{xp})",
   "battle.shiny_appeared": "✦ 이로치 {pokemon:이/가} 나타났다!",
@@ -359,6 +362,14 @@
   "hook.levelup": "⬆️ {pokemon} Lv.{from} → Lv.{to}! (XP: +{xp})",
   "hook.evolution": "✨ {pokemon:이/가} {newPokemon}(으)로 진화했습니다!",
   "hook.party_join": "🎊 {pokemon:이/가} 파티에 합류했습니다!",
+
+  "tier.heated": "풀숲이 크게 흔들리고 있다...",
+  "tier.intense": "주변에 수상한 기운이 감돌고 있다...",
+  "tier.legendary": "공기 속에 강한 에너지가 차오른다!",
+
+  "tip.volume_xp": "한번에 많은 토큰을 사용하면 경험치를 더 많이 받을 수 있다고 한다.",
+  "tip.volume_encounter": "긴 작업을 하면 야생 포켓몬이 더 자주 나타나는 것 같다.",
+  "tip.volume_rare": "복잡한 작업일수록 강한 포켓몬이 나타날 확률이 높아진다는 소문이 있다.",
 
   "tip.battle_type_advantage": "💡 타입 상성으로 승률이 크게 변합니다! 약점을 노려보세요",
   "tip.battle_level_matters": "💡 레벨 차이가 클수록 승률이 급변합니다 (Lv.4 vs Lv.12 = ~17%)",
@@ -380,11 +391,20 @@
   "tip.xp_achievement_bonus": "⭐ 업적 달성으로 영구 XP 보너스를 얻을 수 있습니다 (최대 +55%)",
   "tip.xp_weakest_member": "⭐ 파티에서 가장 약한 {pokemon} (Lv.{level})을 파견하면 빠르게 성장합니다",
   "tip.xp_evolution": "⭐ 진화 조건이 가까운 포켓몬이 있다면 XP를 집중해보세요",
-  "tip.item_ball_drop": "🔴 몬스터볼은 전투 승리 시 20%, 패배 시 5% 확률로 드랍됩니다",
+  "tip.item_tool_drop": "🔴 도구를 사용하면 가끔 몬스터볼을 주울 수 있습니다!",
+  "tip.item_subagent_drop": "🔴 서브에이전트를 보내면 반드시 몬스터볼을 가져옵니다!",
+  "tip.item_session_bonus": "🔴 세션이 끝나면 몬스터볼 보너스를 받을 수 있습니다!",
+  "tip.item_field_drop": "🔴 풀숲을 걷다 보면 몬스터볼이 떨어져 있을 때도 있습니다!",
+  "tip.item_ball_drop": "🔴 몬스터볼은 전투 승리 시 30%, 패배 시 12% 확률로 드랍됩니다",
   "tip.item_ball_catch": "🔴 몬스터볼이 있어야 야생 포켓몬을 포획할 수 있습니다",
   "tip.item_ball_count": "🔴 현재 몬스터볼: {count}개. 새로운 포켓몬을 만날 준비를 하세요!",
   "tip.item_achievement_balls": "🔴 업적 보상으로 몬스터볼을 대량 획득할 수 있습니다 (최대 10개!)",
   "tip.item_ball_strategy": "🔴 이미 포획한 포켓몬과의 전투에서는 몬스터볼이 소비되지 않습니다",
+
+  "item_drop.tool": "모험 도중 몬스터볼을 발견했습니다! 몬스터볼 {n}개를 손에 넣었습니다!",
+  "item_drop.subagent": "동료가 몬스터볼을 가지고 돌아왔습니다! 몬스터볼 {n}개를 손에 넣었습니다!",
+  "item_drop.session_end": "오늘의 모험 보수로 몬스터볼 {n}개를 받았습니다!",
+  "item_drop.generic": "몬스터볼 {n}개를 주웠습니다!",
 
   "cli.dashboard.region": "지역: {region} (Lv.{min}-{max})",
   "cli.dashboard.streak": "연속 출석: {days}일 (최고: {best})",
@@ -470,5 +490,16 @@
   "star.prompt": "⭐ Tok\u00e9mon 즐기고 계신가요? tokenmon star 로 GitHub 스타를 눌러주세요!",
   "star.success": "⭐ Tok\u00e9mon에 스타를 눌러주셔서 감사합니다!",
   "star.failed": "스타 실패. gh CLI가 설치되어 있고 인증되었는지 확인하세요.",
-  "star.dismissed": "스타 프롬프트를 비활성화했습니다."
+  "star.dismissed": "스타 프롬프트를 비활성화했습니다.",
+  "rest.activate": "💤 {hours}시간 휴식 보너스가 적용됩니다! 다음 {turns}턴 경험치 {mult}배",
+  "tip.rest_info": "💤 가끔 쉬어가면 경험치 보너스를 받을 수 있습니다!",
+  "tip.rest_threshold": "💤 2시간 이상 쉬면 휴식 보너스가 활성화됩니다.",
+
+  "cli.lock_failed": "잠금 획득에 실패했습니다. 다시 시도해주세요.",
+  "cli.call.not_found": "포켓몬을 찾을 수 없습니다: {name}",
+  "cli.nickname.not_found": "포켓몬을 찾을 수 없습니다: {name}",
+  "cli.nickname.too_long": "닉네임은 7글자 이하로 지어주세요.",
+  "cli.nickname.current": "{species}의 닉네임: {nickname}",
+  "cli.nickname.none": "{species}에게 아직 닉네임이 없습니다.",
+  "cli.nickname.set": "{species}의 닉네임을 '{nickname}'(으)로 정했습니다!"
 }

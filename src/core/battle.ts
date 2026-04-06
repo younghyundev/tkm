@@ -5,6 +5,7 @@ import { rollItemDrop, getItemCount, useItem } from './items.js';
 import { getTypeMasterXpMultiplier } from './pokedex-rewards.js';
 import { levelToXp } from './xp.js';
 import { t } from '../i18n/index.js';
+import { readCommonState } from './state.js';
 import type { State, Config, BattleResult, WildPokemon } from './types.js';
 
 /**
@@ -204,6 +205,7 @@ export function resolveBattle(
   state: State,
   config: Config,
   wild: WildPokemon,
+  restMult: number = 1.0,
 ): BattleResult | null {
   const db = getPokemonDB();
   const wildData = db.pokemon[wild.name];
@@ -241,11 +243,12 @@ export function resolveBattle(
   const typeDisadvantage = typeMultiplier < 1.0;
 
   // Calculate XP (with type master 1.2x bonus)
-  const xpBonus = Math.max(config.xp_bonus_multiplier, state.xp_bonus_multiplier);
+  const commonXpBonus = readCommonState().xp_bonus_multiplier;
+  const xpBonus = Math.max(config.xp_bonus_multiplier, commonXpBonus + state.xp_bonus_multiplier);
   const typeMasterMult = getTypeMasterXpMultiplier(state, attackerData.types, wildData.types);
   const totalBattleXp = Math.floor(calculateBattleXp(wild.level, wildData.rarity, typeDisadvantage, xpBonus, won) * typeMasterMult);
-  // All party members receive the full XP (not divided)
-  const xpPerPokemon = Math.max(1, totalBattleXp);
+  // All party members receive the full XP (not divided), with rest bonus
+  const xpPerPokemon = Math.floor(Math.max(1, totalBattleXp) * restMult);
 
   // Update state
   state.battle_count++;
@@ -304,7 +307,7 @@ export function resolveBattle(
   }
 
   // Item drop (after catch check — dropped balls are for next battle)
-  rollItemDrop(state, won);
+  const ballDrop = rollItemDrop(state, won);
 
   return {
     attacker,
@@ -316,6 +319,7 @@ export function resolveBattle(
     caught,
     typeMultiplier,
     ballCost,
+    ballDrop,
     shiny: wild.shiny,
   };
 }
@@ -333,7 +337,11 @@ export function formatBattleMessage(result: BattleResult): string {
   if (result.won) {
     let msg = t('battle.win', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
     if (result.caught) {
-      msg += t('battle.win_catch', { defender: defenderName });
+      if (result.partyFull) {
+        msg += t('battle.win_catch_no_hint', { defender: defenderName });
+      } else {
+        msg += t('battle.win_catch', { defender: defenderName });
+      }
       if (result.ballCost > 1) {
         msg += ` (🔴×${result.ballCost})`;
       }
@@ -344,12 +352,18 @@ export function formatBattleMessage(result: BattleResult): string {
       // Won but couldn't catch — not enough balls
       msg += ` ${t('battle.need_balls', { defender: defenderName })}`;
     }
+    if (result.ballDrop) {
+      msg += ` 🔴×${result.ballDrop}`;
+    }
     return prefix + msg;
   }
 
   let msg = t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
   if (isShiny) {
     msg += t('battle.shiny_escaped', { pokemon: defenderName });
+  }
+  if (result.ballDrop) {
+    msg += ` 🔴×${result.ballDrop}`;
   }
   return prefix + msg;
 }

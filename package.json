@@ -1,7 +1,7 @@
 {
   "name": "tkm",
-  "version": "0.2.4",
-  "description": "포켓몬 기반 Claude Code 경험치 플러그인 (Gen 1 + Gen 4)",
+  "version": "0.5.5",
+  "description": "Claude Code Pokémon gamification plugin with token-to-XP progression and a Braille-first status line",
   "type": "module",
   "bin": {
     "tokenmon": "./src/cli/tokenmon.ts"
@@ -27,7 +27,17 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ThunderConch/tokenmon.git"
+    "url": "https://github.com/ThunderConch/tkm.git"
   },
-  "homepage": "https://github.com/ThunderConch/tokenmon"
+  "homepage": "https://github.com/ThunderConch/tkm",
+  "keywords": [
+    "pokemon",
+    "claude-code",
+    "gamification",
+    "productivity",
+    "xp",
+    "progression",
+    "status-line",
+    "braille"
+  ]
 }

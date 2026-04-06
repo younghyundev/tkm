@@ -1,10 +1,64 @@
 import { spawn, execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
 import * as http from 'http';
-import { join } from 'path';
+import { join, relative } from 'path';
 import { readConfig } from '../core/config.js';
 import { getPokemonDB } from '../core/pokemon-data.js';
 import { CRIES_DIR, PLUGIN_ROOT } from '../core/paths.js';
+
+export interface RelayConfig {
+  host: string;
+  port: number;
+  /** Symlink name inside PEON_DIR that points to the local tokenmon sounds (e.g. 'tkm-sounds'). */
+  soundRoot: string;
+}
+
+let _lastRelayWarning = 0;
+
+/**
+ * Send a sound-play request to the peon-ping relay.
+ * The relay expects a path relative to its PEON_DIR.
+ * A symlink `PEON_DIR/<soundRoot>` → local tokenmon dir must exist on the relay host.
+ * Calls onError() if the relay request fails (timeout, connection refused, non-2xx).
+ */
+export function relaySound(
+  filePath: string, volume: number, relay: RelayConfig,
+  onError?: () => void,
+): void {
+  // Build relay-relative path: <soundRoot>/<relative-to-PLUGIN_ROOT>
+  let relayPath: string;
+  if (filePath.startsWith(PLUGIN_ROOT)) {
+    const rel = relative(PLUGIN_ROOT, filePath);
+    relayPath = relay.soundRoot ? `${relay.soundRoot}/${rel}` : rel;
+  } else {
+    // Prefix mismatch — send relative portion as best-effort
+    relayPath = relay.soundRoot ? `${relay.soundRoot}/${filePath.split('/').pop() ?? ''}` : filePath;
+  }
+
+  const warnAndFallback = () => {
+    const now = Date.now();
+    if (now - _lastRelayWarning > 30_000) {
+      _lastRelayWarning = now;
+      process.stderr.write(`[tokenmon] relay unreachable (${relay.host}:${relay.port}) — falling back to local audio\n`);
+    }
+    onError?.();
+  };
+
+  const encodedPath = encodeURIComponent(relayPath);
+  const req = http.get({
+    hostname: relay.host,
+    port: relay.port,
+    path: `/play?file=${encodedPath}`,
+    headers: { 'X-Volume': String(volume) },
+  }, (res) => {
+    if (res.statusCode && res.statusCode >= 400) {
+      warnAndFallback();
+    }
+    res.resume(); // drain response
+  });
+  req.on('error', () => warnAndFallback());
+  req.setTimeout(2000, () => { req.destroy(); warnAndFallback(); });
+}
 
 function isWSL2(): boolean {
   try {
@@ -34,7 +88,15 @@ function wslPath(linuxPath: string): string {
   }
 }
 
-export function playSound(filePath: string, volume: number): void {
+export function playSound(filePath: string, volume: number, relay?: RelayConfig): void {
+  if (relay) {
+    relaySound(filePath, volume, relay, () => {
+      // Fallback: attempt local playback on relay failure
+      playSound(filePath, volume);
+    });
+    return;
+  }
+
   if (isWSL2()) {
     const ps = findPowerShell();
     if (ps) {
@@ -107,7 +169,10 @@ export function playCry(pokemonName?: string): void {
 
   if (!cryFile) return;
 
-  playSound(cryFile, config.volume);
+  const relay = config.relay_audio
+    ? { host: config.relay_host, port: config.peon_ping_port, soundRoot: config.relay_sound_root }
+    : undefined;
+  playSound(cryFile, config.volume, relay);
 
   // Peon-ping integration
   if (config.peon_ping_integration) {

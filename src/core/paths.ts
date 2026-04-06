@@ -11,6 +11,7 @@ export const DATA_DIR = join(CLAUDE_DIR, 'tokenmon');
 export const GLOBAL_CONFIG_PATH = join(DATA_DIR, 'global-config.json');
 export const LOCK_PATH = join(DATA_DIR, 'tokenmon.lock');
 export const SESSION_GEN_MAP_PATH = join(DATA_DIR, 'session-gen-map.json');
+export const COMMON_STATE_PATH = join(DATA_DIR, 'common_state.json');
 
 // Plugin root (where the npm package is installed)
 export const PLUGIN_ROOT = process.env.CLAUDE_PLUGIN_ROOT ?? join(import.meta.dirname, '..', '..');
@@ -126,6 +127,14 @@ export function i18nDataDir(gen?: string): string {
   return join(genDataDir(gen), 'i18n');
 }
 
+export function commonAchievementsJsonPath(): string {
+  return join(PLUGIN_ROOT, 'data', 'common', 'achievements.json');
+}
+
+export function commonI18nDir(): string {
+  return join(PLUGIN_ROOT, 'data', 'common', 'i18n');
+}
+
 // ── Per-generation user data paths ──
 
 export function genUserDir(gen?: string): string {
@@ -170,11 +179,8 @@ export function sessionPath(gen?: string, sessionId?: string): string {
 // ── Backward-compatible constants (resolve to active generation) ──
 // These are getters so they resolve lazily at access time.
 
-export const STATE_PATH = /* @__PURE__ */ (() => {
-  // For modules that import STATE_PATH at top level, provide a proxy
-  // that resolves on first use. Direct usage should prefer statePath().
-  return join(DATA_DIR, 'state.json');
-})();
+/** @deprecated Use statePath() instead. Legacy gen4 flat-file path. */
+export const LEGACY_STATE_PATH = join(DATA_DIR, 'state.json');
 
 export const CONFIG_PATH = join(DATA_DIR, 'config.json');
 export const SESSION_PATH = join(DATA_DIR, 'session.json');

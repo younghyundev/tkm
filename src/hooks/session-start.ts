@@ -1,13 +1,15 @@
 import { readFileSync } from 'fs';
-import { readState, writeState, writeSession, readSession, readSessionGenMap, writeSessionGenMap, pruneSessionGenMap } from '../core/state.js';
-import { readConfig, writeConfig } from '../core/config.js';
+import { readState, writeState, writeSession, readSession, readSessionGenMap, writeSessionGenMap, pruneSessionGenMap, readCommonState, writeCommonState, commonStateExists } from '../core/state.js';
+import { readConfig, writeConfig, readGlobalConfig } from '../core/config.js';
 import { getActiveGeneration, setActiveGenerationCache } from '../core/paths.js';
-import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
+import { checkAchievements, formatAchievementMessage, checkCommonAchievements } from '../core/achievements.js';
+import { migrateToCommonState, recalculateCommonEffects } from '../core/migration.js';
 import { refreshNotifications, getActiveNotifications, updateKnownRegions } from '../core/notifications.js';
 import { updateStreak, resetWeeklyStats } from '../core/stats.js';
 import { getActiveEvents } from '../core/encounter.js';
 import { checkMilestoneRewards, checkTypeMasters, checkChainCompletion } from '../core/pokedex-rewards.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
+import { addItem, randInt } from '../core/items.js';
 import { getPokemonName } from '../core/pokemon-data.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale, t } from '../i18n/index.js';
@@ -44,8 +46,31 @@ function main(): void {
 
   const result = withLockRetry(() => {
     const state = readState();
+
+    // Common state migration (first time only)
+    if (!commonStateExists()) {
+      migrateToCommonState();
+    }
+    // Consistency recalculation (every session start)
+    const commonState = readCommonState();
+    recalculateCommonEffects(commonState);
+
     const config = readConfig();
-    initLocale(config.language ?? 'en');
+
+    // Materialize common rewards into gen config/state on first session of a gen only.
+    // Subsequent sessions already have these persisted. This handles new gen onboarding
+    // where config/state start at defaults and need common party_slot + items applied once.
+    if (!existingBinding && state.session_count === 0) {
+      if (commonState.max_party_size_bonus > 0) {
+        config.max_party_size = Math.min(6, config.max_party_size + commonState.max_party_size_bonus);
+      }
+      for (const [item, count] of Object.entries(commonState.items)) {
+        if (count > 0) {
+          state.items[item] = (state.items[item] ?? 0) + count;
+        }
+      }
+    }
+    initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
     // Re-resolve gen inside lock for new sessions (avoids stale gen if gen switch happened before lock)
     if (!existingBinding) {
@@ -82,8 +107,18 @@ function main(): void {
       }
     }
 
-    // Increment session_count
-    state.session_count += 1;
+    // Increment session_count (only for new sessions, not reconnects)
+    if (!existingBinding) {
+      state.session_count += 1;
+      commonState.session_count += 1;
+
+      // New session ball bonus: random 0~10 balls
+      const sessionBalls = randInt(0, 10);
+      if (sessionBalls > 0) {
+        addItem(state, 'pokeball', sessionBalls);
+        messages.push(t('item_drop.session_end', { n: sessionBalls }));
+      }
+    }
     state.last_session_id = sessionId;
 
     // Update streak and reset weekly stats if needed
@@ -138,9 +173,9 @@ function main(): void {
       messages.push(t('rewards.type_master_legendary', { count: state.type_masters.length }));
     }
 
-    const chainCompletions = checkChainCompletion(state);
-    if (chainCompletions > 0) {
-      messages.push(t('rewards.chain_complete', { count: chainCompletions * 2 }));
+    const chainResult = checkChainCompletion(state);
+    if (chainResult.chains > 0) {
+      messages.push(t('rewards.chain_complete', { count: chainResult.ballsAwarded }));
     }
 
     // Refresh notifications and include active ones in output
@@ -176,11 +211,18 @@ function main(): void {
       messages.push(t('star.prompt'));
     }
 
+    // Check common achievements
+    const commonAchEvents = checkCommonAchievements(commonState, config, state);
+    for (const achEvent of commonAchEvents) {
+      messages.push(formatAchievementMessage(achEvent));
+    }
+    writeCommonState(commonState);
+
     writeState(state);
   });
 
   // Lock failed — skip gracefully (state not mutated)
-  if (result === null) {
+  if (!result.acquired) {
     process.stderr.write(`tokenmon session-start: lock timeout, session ${sessionId} not registered. XP may not be tracked.\n`);
   }
 
@@ -200,7 +242,12 @@ function main(): void {
 
 try {
   main();
-} catch (err) {
+} catch (err: any) {
   process.stderr.write(`tokenmon session-start: ${err}\n`);
-  console.log(JSON.stringify({ continue: true }));
+  // Surface data loading errors to user
+  const output: any = { continue: true };
+  if (err.message) {
+    output.system_message = `⚠ tokenmon: ${err.message}`;
+  }
+  console.log(JSON.stringify(output));
 }

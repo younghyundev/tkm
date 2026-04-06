@@ -72,17 +72,20 @@ function releaseGlobalLock(): void {
   try { unlinkSync(LOCK_PATH); } catch { /* ignore */ }
 }
 
+export type LockResult<T> = { acquired: true; value: T } | { acquired: false };
+
 /**
  * Execute fn under the global tokenmon lock.
- * Returns fn's result on success, or null if lock acquisition fails.
+ * Returns a discriminated union: { acquired: true, value: T } on success,
+ * or { acquired: false } if lock acquisition fails.
  *
- * Hooks: check for null return and skip gracefully.
- * CLI: check for null return and display an error message.
+ * Hooks: check !result.acquired and skip gracefully.
+ * CLI: check !result.acquired and display an error message.
  */
-export function withLock<T>(fn: () => T, timeoutMs: number = 5000): T | null {
-  if (!acquireGlobalLock(timeoutMs)) return null;
+export function withLock<T>(fn: () => T, timeoutMs: number = 5000): LockResult<T> {
+  if (!acquireGlobalLock(timeoutMs)) return { acquired: false };
   try {
-    return fn();
+    return { acquired: true, value: fn() };
   } finally {
     releaseGlobalLock();
   }
@@ -90,15 +93,16 @@ export function withLock<T>(fn: () => T, timeoutMs: number = 5000): T | null {
 
 /**
  * Execute fn under lock with retries.
- * Returns fn's result on success, or null after all retries exhausted.
+ * Returns a discriminated union: { acquired: true, value: T } on success,
+ * or { acquired: false } after all retries exhausted.
  */
-export function withLockRetry<T>(fn: () => T, retries: number = 1, timeoutMs: number = 3000): T | null {
+export function withLockRetry<T>(fn: () => T, retries: number = 1, timeoutMs: number = 3000): LockResult<T> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     const result = withLock(fn, timeoutMs);
-    if (result !== null) return result;
+    if (result.acquired) return result;
     if (attempt < retries) {
       Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 500);
     }
   }
-  return null;
+  return { acquired: false };
 }

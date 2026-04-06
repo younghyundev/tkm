@@ -18,7 +18,7 @@ If the user already specified a Pokémon and nickname (e.g. "불꽃숭이한테 
 
 Otherwise, use **AskUserQuestion** to ask:
 1. Which Pokémon to name (from the party list)
-2. What nickname to give
+2. What nickname to give (max 7 characters)
 
 ## Step 3: Set the nickname
 

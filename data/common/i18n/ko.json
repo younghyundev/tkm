@@ -1,0 +1,19 @@
+{
+  "achievements": {
+    "first_battle_win": "첫 승리",
+    "ten_sessions": "10회 세션",
+    "ten_catches": "포획 10종",
+    "battle_50": "배틀 50회",
+    "pokedex_50": "포획 50종",
+    "battle_wins_25": "25승 달성",
+    "pokedex_25": "포획 25종",
+    "fifty_sessions": "50회 세션",
+    "hundred_sessions": "100회 세션",
+    "evolution_10": "진화 10회",
+    "error_50": "에러 50회",
+    "permission_master": "퍼미션 마스터",
+    "one_million_tokens": "100만 토큰",
+    "two_million_tokens": "200만 토큰",
+    "five_million_tokens": "500만 토큰"
+  }
+}

@@ -1,13 +1,14 @@
-import { getPokemonDB, getAchievementsDB, getAchievementName, getPokemonName } from './pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getCommonAchievementsDB, getAchievementName, getPokemonName } from './pokemon-data.js';
 import { markCaught } from './pokedex.js';
+import { levelToXp } from './xp.js';
 import { t } from '../i18n/index.js';
-import type { State, Config, AchievementEvent } from './types.js';
+import type { State, Config, AchievementEvent, CommonState } from './types.js';
 
 /**
  * Check all achievements against current state.
  * Returns list of newly unlocked achievements.
  */
-export function checkAchievements(state: State, config: Config): AchievementEvent[] {
+export function checkAchievements(state: State, config: Config, commonState?: CommonState): AchievementEvent[] {
   const db = getAchievementsDB();
   const pokemonDB = getPokemonDB();
   const events: AchievementEvent[] = [];
@@ -59,14 +60,28 @@ export function checkAchievements(state: State, config: Config): AchievementEven
         state.unlocked.push(rewardName);
         const pData = pokemonDB.pokemon[rewardName];
         if (pData && !state.pokemon[rewardName]) {
-          state.pokemon[rewardName] = { id: pData.id, xp: 0, level: 1, friendship: 0, ev: 0 };
+          let level: number;
+          if (pData.rarity === 'legendary' || pData.rarity === 'mythical') {
+            level = 50;
+          } else {
+            const partyLevels = (config.party ?? []).map((name: string) => state.pokemon[name]?.level ?? 0).filter((l: number) => l > 0);
+            level = partyLevels.length > 0 ? Math.round(partyLevels.reduce((a, b) => a + b, 0) / partyLevels.length) : 1;
+          }
+          const xp = levelToXp(level, pData.exp_group);
+          state.pokemon[rewardName] = { id: pData.id, xp, level, friendship: 0, ev: 0 };
         }
         markCaught(state, rewardName);
         event.rewardPokemon = rewardName;
       }
     }
 
-    applyAchievementEffects(ach.id, state, config);
+    applyAchievementEffects(ach.id, state, config, commonState);
+
+    // For dual-existence IDs (e.g. hundred_k_tokens in both common and gen4),
+    // also mark commonState so recalculateCommonEffects includes their effects on restart
+    if (commonState && !commonState.achievements[ach.id]) {
+      commonState.achievements[ach.id] = true;
+    }
 
     events.push(event);
   }
@@ -74,7 +89,7 @@ export function checkAchievements(state: State, config: Config): AchievementEven
   return events;
 }
 
-function applyAchievementEffects(achievementId: string, state: State, config: Config): void {
+function applyAchievementEffects(achievementId: string, state: State, config: Config, commonState?: CommonState): void {
   const db = getAchievementsDB();
   const ach = db.achievements.find(a => a.id === achievementId);
 
@@ -94,7 +109,101 @@ function applyAchievementEffects(achievementId: string, state: State, config: Co
         case 'unlock_legendary':
           // Flag-only effect — no direct state change needed
           break;
+        case 'encounter_rate_bonus':
+          // Cross-state write: encounter_rate_bonus always goes to commonState
+          if (commonState) {
+            commonState.encounter_rate_bonus += (effect.value ?? 0);
+          }
+          break;
       }
+    }
+  }
+}
+
+/**
+ * Check common achievements against commonState trigger counters.
+ * Returns list of newly unlocked common achievements.
+ */
+export function checkCommonAchievements(commonState: CommonState, config: Config, state: State): AchievementEvent[] {
+  const db = getCommonAchievementsDB();
+  const pokemonDB = getPokemonDB();
+  const events: AchievementEvent[] = [];
+
+  for (const ach of db.achievements) {
+    if (commonState.achievements[ach.id]) continue;
+    // Skip if gen-specific checkAchievements already processed this ID
+    // (dual-existence IDs like hundred_k_tokens exist in both common and gen4)
+    if (state.achievements[ach.id]) continue;
+
+    let triggered = false;
+    switch (ach.trigger_type) {
+      case 'session_count':
+        triggered = commonState.session_count >= ach.trigger_value;
+        break;
+      case 'error_count':
+        triggered = commonState.error_count >= ach.trigger_value;
+        break;
+      case 'evolution_count':
+        triggered = commonState.evolution_count >= ach.trigger_value;
+        break;
+      case 'total_tokens':
+        triggered = commonState.total_tokens_consumed >= ach.trigger_value;
+        break;
+      case 'permission_count':
+        triggered = commonState.permission_count >= ach.trigger_value;
+        break;
+      case 'battle_wins':
+        triggered = commonState.battle_wins >= ach.trigger_value;
+        break;
+      case 'battle_count':
+        triggered = commonState.battle_count >= ach.trigger_value;
+        break;
+      case 'catch_count':
+        triggered = commonState.catch_count >= ach.trigger_value;
+        break;
+    }
+
+    if (!triggered) continue;
+
+    commonState.achievements[ach.id] = true;
+
+    const event: AchievementEvent = {
+      id: ach.id,
+      name: getAchievementName(ach.id),
+    };
+
+    // Apply effects to commonState
+    applyCommonAchievementEffects(ach, commonState, config);
+
+    events.push(event);
+  }
+
+  return events;
+}
+
+function applyCommonAchievementEffects(
+  ach: { reward_effects?: Array<{ type: string; item?: string; count?: number; value?: number }> },
+  commonState: CommonState,
+  config: Config,
+): void {
+  if (!ach.reward_effects) return;
+  for (const effect of ach.reward_effects) {
+    switch (effect.type) {
+      case 'encounter_rate_bonus':
+        commonState.encounter_rate_bonus += (effect.value ?? 0);
+        break;
+      case 'xp_bonus':
+        commonState.xp_bonus_multiplier += (effect.value ?? 0);
+        break;
+      case 'party_slot':
+        commonState.max_party_size_bonus += (effect.count ?? 0);
+        config.max_party_size = Math.min(6, config.max_party_size + (effect.count ?? 1));
+        break;
+      case 'add_item':
+        commonState.items[effect.item as string] = (commonState.items[effect.item as string] ?? 0) + (effect.count ?? 1);
+        break;
+      case 'unlock_legendary':
+        break;
     }
   }
 }

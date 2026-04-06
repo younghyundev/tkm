@@ -109,7 +109,8 @@ export interface PokedexRewardsDB {
     special_legends: LegendaryGroup;
   };
   chain_completion_reward: {
-    pokeball_count: number;
+    pokeball_min: number;
+    pokeball_max: number;
   };
 }
 
@@ -185,6 +186,7 @@ export interface EvolutionContext {
 
 export interface State {
   state_version?: number;
+  migrated_version?: string;
   pokemon: Record<string, PokemonState>;
   unlocked: string[];
   achievements: Record<string, boolean>;
@@ -195,6 +197,7 @@ export interface State {
   evolution_count: number;
   last_session_id: string | null;
   xp_bonus_multiplier: number;
+  encounter_rate_bonus?: number;
   last_session_tokens: Record<string, number>;
   pokedex: Record<string, PokedexEntry>;
   encounter_count: number;
@@ -206,6 +209,8 @@ export interface State {
   cheat_log: Array<{ timestamp: string; command: string }>;
   last_battle: BattleResult | null;
   last_tip: { id: string; text: string } | null;
+  last_drop: string | null;
+  last_achievement: string | null;
   notifications: Notification[];
   dismissed_notifications: string[];
   last_known_regions: number;
@@ -221,6 +226,10 @@ export interface State {
   shiny_encounter_count: number;
   shiny_catch_count: number;
   shiny_escaped_count: number;
+  rest_bonus?: {
+    multiplier: number;
+    turns_remaining: number;
+  };
 }
 
 export interface Config {
@@ -235,6 +244,12 @@ export interface Config {
   max_party_size: number;
   peon_ping_integration: boolean;
   peon_ping_port: number;
+  /** Send audio to a peon-ping relay instead of playing locally. Independent of peon_ping_integration. */
+  relay_audio: boolean;
+  /** Relay server hostname. Shares peon_ping_port. */
+  relay_host: string;
+  /** Local PLUGIN_ROOT on the relay host, used to translate remote file paths. */
+  relay_sound_root: string;
   current_region: string;
   default_dispatch: string | null;
   sprite_mode: 'all' | 'ace_only' | 'emoji_all' | 'emoji_ace';
@@ -318,7 +333,9 @@ export interface BattleResult {
   caught: boolean;
   typeMultiplier: number;
   ballCost: number;
+  ballDrop?: number;
   shiny?: boolean;
+  partyFull?: boolean;
 }
 
 export interface WildPokemon {
@@ -340,9 +357,12 @@ export interface HookOutput {
 
 // ── Multi-generation support ──
 
+export type VoiceTone = 'claude' | 'pokemon';
+
 export interface GlobalConfig {
   active_generation: string;
   language: 'ko' | 'en';
+  voice_tone: VoiceTone;
 }
 
 export interface GenerationData {
@@ -363,6 +383,37 @@ export interface SharedDB {
   type_colors: Record<string, string>;
   type_chart: Record<string, TypeMatchup>;
   rarity_weights: RarityWeights;
+}
+
+// ── Volume Tier System ──
+
+export type VolumeTierName = 'normal' | 'heated' | 'intense' | 'legendary';
+
+export interface VolumeTier {
+  name: VolumeTierName;
+  minTokens: number;
+  xpMultiplier: number;
+  encounterMultiplier: number;
+  rarityWeights: RarityWeights;
+}
+
+// ── Common State (shared across all generations) ──
+
+export interface CommonState {
+  achievements: Record<string, boolean>;
+  encounter_rate_bonus: number;
+  xp_bonus_multiplier: number;
+  items: Record<string, number>;
+  max_party_size_bonus: number;
+  session_count: number;
+  total_tokens_consumed: number;
+  battle_count: number;
+  battle_wins: number;
+  catch_count: number;
+  evolution_count: number;
+  error_count: number;
+  permission_count: number;
+  last_turn_ts?: number;
 }
 
 // ── Stdin data from Claude Code ──

@@ -220,17 +220,16 @@ export function applyEvolution(
   evolution: EvolutionResult,
   currentXp: number,
 ): void {
-  const friendship = state.pokemon[evolution.oldPokemon]?.friendship ?? 0;
-  const ev = state.pokemon[evolution.oldPokemon]?.ev ?? 0;
+  const old = state.pokemon[evolution.oldPokemon];
 
-  // Add evolved pokemon to state.
+  // Add evolved pokemon to state, carrying over all existing fields (nickname, ev, friendship, etc.)
+  // then overriding only what changes on evolution.
   // Note: old form is intentionally kept in state.pokemon for collection/pokedex tracking.
   state.pokemon[evolution.newPokemon] = {
+    ...old,
     id: evolution.newId,
     xp: currentXp,
     level: evolution.level,
-    friendship,
-    ev,
   };
 
   // Add to unlocked if not already there

@@ -1,0 +1,325 @@
+{
+  "pokemon": {
+    "494": "Victini",
+    "495": "Snivy",
+    "496": "Servine",
+    "497": "Serperior",
+    "498": "Tepig",
+    "499": "Pignite",
+    "500": "Emboar",
+    "501": "Oshawott",
+    "502": "Dewott",
+    "503": "Samurott",
+    "504": "Patrat",
+    "505": "Watchog",
+    "506": "Lillipup",
+    "507": "Herdier",
+    "508": "Stoutland",
+    "509": "Purrloin",
+    "510": "Liepard",
+    "511": "Pansage",
+    "512": "Simisage",
+    "513": "Pansear",
+    "514": "Simisear",
+    "515": "Panpour",
+    "516": "Simipour",
+    "517": "Munna",
+    "518": "Musharna",
+    "519": "Pidove",
+    "520": "Tranquill",
+    "521": "Unfezant",
+    "522": "Blitzle",
+    "523": "Zebstrika",
+    "524": "Roggenrola",
+    "525": "Boldore",
+    "526": "Gigalith",
+    "527": "Woobat",
+    "528": "Swoobat",
+    "529": "Drilbur",
+    "530": "Excadrill",
+    "531": "Audino",
+    "532": "Timburr",
+    "533": "Gurdurr",
+    "534": "Conkeldurr",
+    "535": "Tympole",
+    "536": "Palpitoad",
+    "537": "Seismitoad",
+    "538": "Throh",
+    "539": "Sawk",
+    "540": "Sewaddle",
+    "541": "Swadloon",
+    "542": "Leavanny",
+    "543": "Venipede",
+    "544": "Whirlipede",
+    "545": "Scolipede",
+    "546": "Cottonee",
+    "547": "Whimsicott",
+    "548": "Petilil",
+    "549": "Lilligant",
+    "550": "Basculin",
+    "551": "Sandile",
+    "552": "Krokorok",
+    "553": "Krookodile",
+    "554": "Darumaka",
+    "555": "Darmanitan",
+    "556": "Maractus",
+    "557": "Dwebble",
+    "558": "Crustle",
+    "559": "Scraggy",
+    "560": "Scrafty",
+    "561": "Sigilyph",
+    "562": "Yamask",
+    "563": "Cofagrigus",
+    "564": "Tirtouga",
+    "565": "Carracosta",
+    "566": "Archen",
+    "567": "Archeops",
+    "568": "Trubbish",
+    "569": "Garbodor",
+    "570": "Zorua",
+    "571": "Zoroark",
+    "572": "Minccino",
+    "573": "Cinccino",
+    "574": "Gothita",
+    "575": "Gothorita",
+    "576": "Gothitelle",
+    "577": "Solosis",
+    "578": "Duosion",
+    "579": "Reuniclus",
+    "580": "Ducklett",
+    "581": "Swanna",
+    "582": "Vanillite",
+    "583": "Vanillish",
+    "584": "Vanilluxe",
+    "585": "Deerling",
+    "586": "Sawsbuck",
+    "587": "Emolga",
+    "588": "Karrablast",
+    "589": "Escavalier",
+    "590": "Foongus",
+    "591": "Amoonguss",
+    "592": "Frillish",
+    "593": "Jellicent",
+    "594": "Alomomola",
+    "595": "Joltik",
+    "596": "Galvantula",
+    "597": "Ferroseed",
+    "598": "Ferrothorn",
+    "599": "Klink",
+    "600": "Klang",
+    "601": "Klinklang",
+    "602": "Tynamo",
+    "603": "Eelektrik",
+    "604": "Eelektross",
+    "605": "Elgyem",
+    "606": "Beheeyem",
+    "607": "Litwick",
+    "608": "Lampent",
+    "609": "Chandelure",
+    "610": "Axew",
+    "611": "Fraxure",
+    "612": "Haxorus",
+    "613": "Cubchoo",
+    "614": "Beartic",
+    "615": "Cryogonal",
+    "616": "Shelmet",
+    "617": "Accelgor",
+    "618": "Stunfisk",
+    "619": "Mienfoo",
+    "620": "Mienshao",
+    "621": "Druddigon",
+    "622": "Golett",
+    "623": "Golurk",
+    "624": "Pawniard",
+    "625": "Bisharp",
+    "626": "Bouffalant",
+    "627": "Rufflet",
+    "628": "Braviary",
+    "629": "Vullaby",
+    "630": "Mandibuzz",
+    "631": "Heatmor",
+    "632": "Durant",
+    "633": "Deino",
+    "634": "Zweilous",
+    "635": "Hydreigon",
+    "636": "Larvesta",
+    "637": "Volcarona",
+    "638": "Cobalion",
+    "639": "Terrakion",
+    "640": "Virizion",
+    "641": "Tornadus",
+    "642": "Thundurus",
+    "643": "Reshiram",
+    "644": "Zekrom",
+    "645": "Landorus",
+    "646": "Kyurem",
+    "647": "Keldeo",
+    "648": "Meloetta",
+    "649": "Genesect"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fire",
+    "water": "Water",
+    "electric": "Electric",
+    "grass": "Grass",
+    "ice": "Ice",
+    "fighting": "Fighting",
+    "poison": "Poison",
+    "ground": "Ground",
+    "flying": "Flying",
+    "psychic": "Psychic",
+    "bug": "Bug",
+    "rock": "Rock",
+    "ghost": "Ghost",
+    "dragon": "Dragon",
+    "dark": "Dark",
+    "steel": "Steel",
+    "fairy": "Fairy"
+  },
+  "regions": {
+    "1": {
+      "name": "Nuvema Town",
+      "description": "A rural town whose sea breezes give pokémon energy"
+    },
+    "2": {
+      "name": "Striaton City",
+      "description": "Three brothers guard this vibrant city"
+    },
+    "3": {
+      "name": "Nacrene City",
+      "description": "A city of art and ancient fossils"
+    },
+    "4": {
+      "name": "Castelia City",
+      "description": "A massive metropolis of towering skyscrapers"
+    },
+    "5": {
+      "name": "Nimbasa City",
+      "description": "An entertainment city of bright lights and energy"
+    },
+    "6": {
+      "name": "Driftveil City",
+      "description": "A port city where commerce flows like the wind"
+    },
+    "7": {
+      "name": "Mistralton City",
+      "description": "A city where cargo planes take off into the sky"
+    },
+    "8": {
+      "name": "Icirrus City",
+      "description": "A frozen city near the Dragonspiral Tower"
+    },
+    "9": {
+      "name": "Opelucid City",
+      "description": "A city where the past and future collide"
+    }
+  },
+  "achievements": {
+    "first_catch": {
+      "name": "First Catch",
+      "description": "Catch your first wild Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_10": {
+      "name": "Trio Badge",
+      "description": "Catch 10 Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_25": {
+      "name": "Basic Badge",
+      "description": "Catch 25 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_50": {
+      "name": "Insect Badge",
+      "description": "Catch 50 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_75": {
+      "name": "Bolt Badge",
+      "description": "Catch 75 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_100": {
+      "name": "Quake Badge",
+      "description": "Catch 100 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_120": {
+      "name": "Jet Badge",
+      "description": "Catch 120 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_140": {
+      "name": "Freeze Badge",
+      "description": "Catch 140 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_156": {
+      "name": "Legend Badge",
+      "description": "Complete the Unova Pokédex!",
+      "rarity_label": "Legendary"
+    },
+    "first_evolution": {
+      "name": "First Evolution",
+      "description": "Evolve a Pokémon for the first time",
+      "rarity_label": "Common"
+    },
+    "evolve_10": {
+      "name": "Evolution Expert",
+      "description": "Evolve 10 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "win_10": {
+      "name": "Rising Trainer",
+      "description": "Win 10 battles",
+      "rarity_label": "Common"
+    },
+    "win_50": {
+      "name": "Battle Veteran",
+      "description": "Win 50 battles",
+      "rarity_label": "Uncommon"
+    },
+    "win_100": {
+      "name": "Battle Master",
+      "description": "Win 100 battles",
+      "rarity_label": "Rare"
+    },
+    "level_50": {
+      "name": "Power Trainer",
+      "description": "Reach level 50 with any Pokémon",
+      "rarity_label": "Rare"
+    },
+    "level_100": {
+      "name": "Champion",
+      "description": "Reach level 100 with any Pokémon",
+      "rarity_label": "Epic"
+    },
+    "streak_7": {
+      "name": "Weekly Warrior",
+      "description": "Maintain a 7-day streak",
+      "rarity_label": "Uncommon"
+    },
+    "streak_30": {
+      "name": "Monthly Master",
+      "description": "Maintain a 30-day streak",
+      "rarity_label": "Rare"
+    },
+    "all_types": {
+      "name": "Type Collector",
+      "description": "Catch at least one Pokémon of every type",
+      "rarity_label": "Rare"
+    },
+    "all_starters": {
+      "name": "Juniper's Pride",
+      "description": "Obtain all three Unova starters",
+      "rarity_label": "Uncommon"
+    },
+    "sword_trio": {
+      "name": "Swords of Justice",
+      "description": "Obtain Cobalion, Terrakion, and Virizion",
+      "rarity_label": "Rare"
+    }
+  }
+}

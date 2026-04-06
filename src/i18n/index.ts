@@ -1,13 +1,16 @@
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 type Locale = 'ko' | 'en';
+type VoiceTone = 'claude' | 'pokemon';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let currentLocale: Locale = 'en';
+let currentVoiceTone: VoiceTone = 'claude';
 let messages: Record<string, Record<string, string>> = {};
+let overlayMessages: Record<string, Record<string, string>> = {};
 let loaded = false;
 
 function loadMessages(): void {
@@ -15,21 +18,37 @@ function loadMessages(): void {
   loaded = true;
 
   for (const locale of ['ko', 'en'] as Locale[]) {
+    // Base messages (classic mode)
     const filePath = join(__dirname, `${locale}.json`);
     try {
       messages[locale] = JSON.parse(readFileSync(filePath, 'utf-8')) as Record<string, string>;
     } catch {
-      // File doesn't exist yet — start with empty catalog
       messages[locale] = {};
+    }
+
+    // Overlay messages (voice tone mode)
+    if (currentVoiceTone !== 'claude') {
+      const overlayPath = join(__dirname, `${locale}.${currentVoiceTone}.json`);
+      if (existsSync(overlayPath)) {
+        try {
+          overlayMessages[locale] = JSON.parse(readFileSync(overlayPath, 'utf-8')) as Record<string, string>;
+        } catch {
+          overlayMessages[locale] = {};
+        }
+      } else {
+        overlayMessages[locale] = {};
+      }
     }
   }
 }
 
-export function initLocale(locale: Locale): void {
+export function initLocale(locale: Locale, voiceTone?: VoiceTone): void {
   currentLocale = locale;
+  currentVoiceTone = voiceTone ?? 'claude';
   // Reset so next t() call reloads catalogs
   loaded = false;
   messages = {};
+  overlayMessages = {};
 }
 
 export function setLocale(locale: Locale): void {
@@ -76,15 +95,25 @@ function interpolate(template: string, vars: Record<string, string | number>): s
 export function t(key: string, vars?: Record<string, string | number>): string {
   loadMessages();
 
-  // 1. Try current locale
-  let template = messages[currentLocale]?.[key];
+  // 1. Try overlay (voice tone mode) for current locale
+  let template = overlayMessages[currentLocale]?.[key];
 
-  // 2. Fallback to English
+  // 2. Try overlay for English fallback
+  if (template === undefined && currentLocale !== 'en') {
+    template = overlayMessages['en']?.[key];
+  }
+
+  // 3. Try base messages for current locale
+  if (template === undefined) {
+    template = messages[currentLocale]?.[key];
+  }
+
+  // 4. Fallback to English base
   if (template === undefined && currentLocale !== 'en') {
     template = messages['en']?.[key];
   }
 
-  // 3. Fallback to key itself
+  // 5. Fallback to key itself
   if (template === undefined) {
     return key;
   }
@@ -100,6 +129,8 @@ export function t(key: string, vars?: Record<string, string | number>): string {
 /** Reset internal state — for use in tests only. */
 export function _resetForTesting(): void {
   messages = {};
+  overlayMessages = {};
   loaded = false;
   currentLocale = 'en';
+  currentVoiceTone = 'claude';
 }

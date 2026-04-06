@@ -6,6 +6,7 @@ import type { Config, GlobalConfig } from './types.js';
 const DEFAULT_GLOBAL_CONFIG: GlobalConfig = {
   active_generation: 'gen4',
   language: 'en',
+  voice_tone: 'claude',
 };
 
 const DEFAULT_CONFIG: Config = {
@@ -20,6 +21,9 @@ const DEFAULT_CONFIG: Config = {
   max_party_size: 3,
   peon_ping_integration: false,
   peon_ping_port: 19998,
+  relay_audio: false,
+  relay_host: 'localhost',
+  relay_sound_root: '',
   current_region: '1',
   default_dispatch: null,
   sprite_mode: 'all',
@@ -153,6 +157,11 @@ export function readConfig(gen?: string): Config {
   return migrateConfig(result, i18nDataDir(gen));
 }
 
+/**
+ * Write per-gen config and sync language to global config.
+ * @sideeffect Reads and writes global-config.json if language changed.
+ *             Must be called under the global lock when used in hooks.
+ */
 export function writeConfig(config: Config, gen?: string): void {
   const path = configPath(gen);
   const dir = dirname(path);

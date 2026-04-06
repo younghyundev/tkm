@@ -1,0 +1,236 @@
+{
+  "pokemon": {
+    "650": "Chespin",
+    "651": "Quilladin",
+    "652": "Chesnaught",
+    "653": "Fennekin",
+    "654": "Braixen",
+    "655": "Delphox",
+    "656": "Froakie",
+    "657": "Frogadier",
+    "658": "Greninja",
+    "659": "Bunnelby",
+    "660": "Diggersby",
+    "661": "Fletchling",
+    "662": "Fletchinder",
+    "663": "Talonflame",
+    "664": "Scatterbug",
+    "665": "Spewpa",
+    "666": "Vivillon",
+    "667": "Litleo",
+    "668": "Pyroar",
+    "669": "Flabébé",
+    "670": "Floette",
+    "671": "Florges",
+    "672": "Skiddo",
+    "673": "Gogoat",
+    "674": "Pancham",
+    "675": "Pangoro",
+    "676": "Furfrou",
+    "677": "Espurr",
+    "678": "Meowstic",
+    "679": "Honedge",
+    "680": "Doublade",
+    "681": "Aegislash",
+    "682": "Spritzee",
+    "683": "Aromatisse",
+    "684": "Swirlix",
+    "685": "Slurpuff",
+    "686": "Inkay",
+    "687": "Malamar",
+    "688": "Binacle",
+    "689": "Barbaracle",
+    "690": "Skrelp",
+    "691": "Dragalge",
+    "692": "Clauncher",
+    "693": "Clawitzer",
+    "694": "Helioptile",
+    "695": "Heliolisk",
+    "696": "Tyrunt",
+    "697": "Tyrantrum",
+    "698": "Amaura",
+    "699": "Aurorus",
+    "700": "Sylveon",
+    "701": "Hawlucha",
+    "702": "Dedenne",
+    "703": "Carbink",
+    "704": "Goomy",
+    "705": "Sliggoo",
+    "706": "Goodra",
+    "707": "Klefki",
+    "708": "Phantump",
+    "709": "Trevenant",
+    "710": "Pumpkaboo",
+    "711": "Gourgeist",
+    "712": "Bergmite",
+    "713": "Avalugg",
+    "714": "Noibat",
+    "715": "Noivern",
+    "716": "Xerneas",
+    "717": "Yveltal",
+    "718": "Zygarde",
+    "719": "Diancie",
+    "720": "Hoopa",
+    "721": "Volcanion"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fire",
+    "water": "Water",
+    "electric": "Electric",
+    "grass": "Grass",
+    "ice": "Ice",
+    "fighting": "Fighting",
+    "poison": "Poison",
+    "ground": "Ground",
+    "flying": "Flying",
+    "psychic": "Psychic",
+    "bug": "Bug",
+    "rock": "Rock",
+    "ghost": "Ghost",
+    "dragon": "Dragon",
+    "dark": "Dark",
+    "steel": "Steel",
+    "fairy": "Fairy"
+  },
+  "regions": {
+    "1": {
+      "name": "Vaniville Town",
+      "description": "A Pokemon adventure begins in this Pokemon-friendly town"
+    },
+    "2": {
+      "name": "Santalune City",
+      "description": "A fragrant city enveloped in flowers"
+    },
+    "3": {
+      "name": "Cyllage City",
+      "description": "A city nestled between the cliffs and the sea"
+    },
+    "4": {
+      "name": "Shalour City",
+      "description": "A city of ancient secrets and mega evolution"
+    },
+    "5": {
+      "name": "Coumarine City",
+      "description": "A seaside city with a bustling marketplace"
+    },
+    "6": {
+      "name": "Lumiose City",
+      "description": "The dazzling City of Light and center of Kalos"
+    },
+    "7": {
+      "name": "Laverre City",
+      "description": "A fairy-tale city overflowing with nature"
+    },
+    "8": {
+      "name": "Anistar City",
+      "description": "A mysterious city with a sundial of cosmic origin"
+    },
+    "9": {
+      "name": "Snowbelle City",
+      "description": "A frozen city in the depths of the Kalos wilderness"
+    }
+  },
+  "achievements": {
+    "first_catch": {
+      "name": "First Catch",
+      "description": "Catch your first wild Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_10": {
+      "name": "Bug Badge",
+      "description": "Catch 10 Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_20": {
+      "name": "Cliff Badge",
+      "description": "Catch 20 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_30": {
+      "name": "Rumble Badge",
+      "description": "Catch 30 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_40": {
+      "name": "Plant Badge",
+      "description": "Catch 40 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_50": {
+      "name": "Voltage Badge",
+      "description": "Catch 50 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_60": {
+      "name": "Fairy Badge",
+      "description": "Catch 60 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_72": {
+      "name": "Iceberg Badge",
+      "description": "Complete the Kalos Pokédex!",
+      "rarity_label": "Legendary"
+    },
+    "first_evolution": {
+      "name": "First Evolution",
+      "description": "Evolve a Pokémon for the first time",
+      "rarity_label": "Common"
+    },
+    "evolve_10": {
+      "name": "Evolution Expert",
+      "description": "Evolve 10 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "win_10": {
+      "name": "Rising Trainer",
+      "description": "Win 10 battles",
+      "rarity_label": "Common"
+    },
+    "win_50": {
+      "name": "Battle Veteran",
+      "description": "Win 50 battles",
+      "rarity_label": "Uncommon"
+    },
+    "win_100": {
+      "name": "Battle Master",
+      "description": "Win 100 battles",
+      "rarity_label": "Rare"
+    },
+    "level_50": {
+      "name": "Power Trainer",
+      "description": "Reach level 50 with any Pokémon",
+      "rarity_label": "Rare"
+    },
+    "level_100": {
+      "name": "Champion",
+      "description": "Reach level 100 with any Pokémon",
+      "rarity_label": "Epic"
+    },
+    "streak_7": {
+      "name": "Weekly Warrior",
+      "description": "Maintain a 7-day streak",
+      "rarity_label": "Uncommon"
+    },
+    "streak_30": {
+      "name": "Monthly Master",
+      "description": "Maintain a 30-day streak",
+      "rarity_label": "Rare"
+    },
+    "all_types": {
+      "name": "Type Collector",
+      "description": "Catch at least one Pokémon of every type",
+      "rarity_label": "Rare"
+    },
+    "all_starters": {
+      "name": "Sycamore's Pride",
+      "description": "Obtain all three Kalos starters",
+      "rarity_label": "Uncommon"
+    },
+    "fossil_duo": {
+      "name": "Fossil Duo",
+      "description": "Obtain both Tyrunt and Amaura",
+      "rarity_label": "Rare"
+    }
+  }
+}

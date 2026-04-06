@@ -184,7 +184,7 @@ function cmdStarter(choiceArg?: string): void {
     writeState(freshState);
   });
 
-  if (lockResult === null) {
+  if (!lockResult.acquired) {
     error(t('cli.lock_busy'));
     process.exit(1);
   }
@@ -219,8 +219,8 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         writeConfig(freshConfig);
         return 'ok';
       });
-      if (dispatchResult === null) { error(t('cli.lock_failed')); process.exit(1); }
-      if (dispatchResult === 'not_in_party') { error(t('cli.party.dispatch_not_in_party', { pokemon })); process.exit(1); }
+      if (!dispatchResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
+      if (dispatchResult.value === 'not_in_party') { error(t('cli.party.dispatch_not_in_party', { pokemon })); process.exit(1); }
       success(t('cli.party.dispatch_set', { pokemon }));
       break;
     }
@@ -250,7 +250,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
           writeConfig(freshConfig);
         }
       });
-      if (addResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+      if (!addResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
       success(t('cli.party.add_success', { pokemon }));
       break;
     }
@@ -269,7 +269,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
         freshConfig.party = freshConfig.party.filter(p => p !== pokemon);
         writeConfig(freshConfig);
       });
-      if (removeResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+      if (!removeResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
       success(t('cli.party.remove_success', { pokemon }));
       break;
     }
@@ -346,18 +346,37 @@ function cmdConfigSet(key: string, value: string): void {
     console.log(t('cli.config.key_cry_enabled'));
     console.log(t('cli.config.key_max_party'));
     console.log(t('cli.config.key_peon_ping'));
+    console.log('  relay_audio          boolean  Route audio to peon-ping relay (remote environments)');
+    console.log('  relay_host           string   Relay server host (default: localhost)');
+    console.log('  relay_sound_root     string   Symlink name in PEON_DIR for tokenmon sounds');
     console.log(t('cli.config.key_tips_enabled'));
     console.log(t('cli.config.key_notifications'));
     console.log(t('cli.config.key_pp_enabled'));
     console.log(t('cli.config.help_renderer'));
+    console.log(t('cli.config.key_voice_tone'));
 
     process.exit(1);
+  }
+
+  // voice_tone is stored in GlobalConfig, not per-gen Config
+  if (key === 'voice_tone') {
+    const allowed = ['claude', 'pokemon'];
+    if (!allowed.includes(value)) {
+      error(t('cli.config.allowed_values', { key, values: allowed.join(', ') }));
+      process.exit(1);
+    }
+    const gc = readGlobalConfig();
+    gc.voice_tone = value as 'claude' | 'pokemon';
+    writeGlobalConfig(gc);
+    initLocale(gc.language, gc.voice_tone);
+    success(t('cli.config.set_success', { key, value }));
+    return;
   }
 
   const config = readConfig();
   const numericKeys = ['tokens_per_xp', 'max_party_size', 'peon_ping_port'];
   const floatKeys = ['volume', 'xp_bonus_multiplier'];
-  const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration', 'tips_enabled', 'notifications_enabled', 'pp_enabled'];
+  const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration', 'relay_audio', 'tips_enabled', 'notifications_enabled', 'pp_enabled'];
   const stringEnumKeys: Record<string, string[]> = {
     sprite_mode: ['all', 'ace_only', 'emoji_all', 'emoji_ace'],
     info_mode:   ['ace_full', 'name_level', 'all_full', 'ace_level'],
@@ -390,7 +409,7 @@ function cmdConfigSet(key: string, value: string): void {
     }
     writeConfig(freshConfig);
   });
-  if (configResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!configResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
   success(t('cli.config.set_success', { key, value }));
 }
 
@@ -462,7 +481,7 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
       : `${GRAY}○${RESET}`;
     const typeStr = entry.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
     const nameDisplay = entry.status === 'unknown' ? `${GRAY}???${RESET}` : entry.name;
-    console.log(`  ${icon} #${String(entry.id).padStart(3, '0')} ${nameDisplay.padEnd(8)} ${typeStr} ${GRAY}${entry.rarity}${RESET}`);
+    console.log(`  ${icon} #${String(entry.id).padStart(4, '0')} ${nameDisplay.padEnd(8)} ${typeStr} ${GRAY}${entry.rarity}${RESET}`);
   }
 
   // Show type master progress when --type filter is used or list is unfiltered
@@ -514,8 +533,8 @@ function cmdRegion(subcmd?: string, regionName?: string): void {
       writeConfig(freshConfig);
       return { ok: true as const };
     });
-    if (moveResult === null) { error(t('cli.lock_failed')); process.exit(1); }
-    if (!moveResult.ok) { error(moveResult.error); process.exit(1); }
+    if (!moveResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
+    if (!moveResult.value.ok) { error(moveResult.value.error); process.exit(1); }
     success(t('cli.region.moved', { region: regionName }));
     return;
   }
@@ -576,9 +595,9 @@ function cmdCall(nameOrId: string): void {
     writeState(s);
     return { ev: p.ev, call_count: p.call_count, evGained };
   });
-  if (result === null) { error('잠금 획득에 실패했습니다. 다시 시도해주세요.'); process.exit(1); }
-  if ('error' in result) { error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`); process.exit(1); }
-  console.log(JSON.stringify(result));
+  if (!result.acquired) { error(t('cli.lock_failed')); process.exit(1); }
+  if ('error' in result.value) { error(t('cli.call.not_found', { name: nameOrId })); process.exit(1); }
+  console.log(JSON.stringify(result.value));
 }
 
 function cmdNickname(nameOrId: string, nickname?: string): void {
@@ -590,27 +609,32 @@ function cmdNickname(nameOrId: string, nickname?: string): void {
     if (!nickname) {
       return { current: s.pokemon[id].nickname, speciesName: getPokemonName(id) };
     }
+    if ([...nickname].length > 7) return { error: 'too_long' as const };
     s.pokemon[id].nickname = nickname;
     writeState(s);
     return { set: true, speciesName: getPokemonName(id), nickname };
   });
-  if (result === null) {
-    error('잠금 획득에 실패했습니다. 다시 시도해주세요.');
+  if (!result.acquired) {
+    error(t('cli.lock_failed'));
     process.exit(1);
   }
-  if ('error' in result) {
-    error(`포켓몬을 찾을 수 없습니다: ${nameOrId}`);
-    process.exit(1);
-  }
-  if ('current' in result) {
-    const current = result.current;
-    if (current) {
-      info(`${result.speciesName}의 닉네임: ${BOLD}${current}${RESET}`);
+  if ('error' in result.value) {
+    if (result.value.error === 'too_long') {
+      error(t('cli.nickname.too_long'));
     } else {
-      info(`${result.speciesName}에게 아직 닉네임이 없습니다.`);
+      error(t('cli.nickname.not_found', { name: nameOrId }));
     }
-  } else if ('set' in result) {
-    success(`${result.speciesName}의 닉네임을 '${BOLD}${result.nickname}${RESET}'(으)로 정했습니다!`);
+    process.exit(1);
+  }
+  if ('current' in result.value) {
+    const current = result.value.current;
+    if (current) {
+      info(t('cli.nickname.current', { species: result.value.speciesName, nickname: `${BOLD}${current}${RESET}` }));
+    } else {
+      info(t('cli.nickname.none', { species: result.value.speciesName }));
+    }
+  } else if ('set' in result.value) {
+    success(t('cli.nickname.set', { species: result.value.speciesName, nickname: `${BOLD}${result.value.nickname}${RESET}` }));
   }
 }
 
@@ -662,7 +686,7 @@ function doReset(): void {
     };
     writeState(defaultState);
   });
-  if (resetResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!resetResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
   success(t('cli.reset.done'));
 }
 
@@ -755,11 +779,11 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
     }
   });
 
-  if (cheatResult === null) { error(t('cli.lock_failed')); process.exit(1); }
-  if (typeof cheatResult === 'string' && cheatResult === t('cli.cheat.no_pokemon', { name: arg1 })) {
-    error(cheatResult);
-  } else if (cheatResult) {
-    success(cheatResult);
+  if (!cheatResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
+  if (typeof cheatResult.value === 'string' && cheatResult.value === t('cli.cheat.no_pokemon', { name: arg1 })) {
+    error(cheatResult.value);
+  } else if (cheatResult.value) {
+    success(cheatResult.value);
   }
 }
 
@@ -881,16 +905,16 @@ function executeEvolve(pokemonName: string, targetName: string, _config: unknown
     return { ok: true as const, result };
   });
 
-  if (evolveResult === null) {
+  if (!evolveResult.acquired) {
     error(t('cli.lock_failed'));
     process.exit(1);
   }
-  if (!evolveResult.ok) {
+  if (!evolveResult.value.ok) {
     error(t('cli.evolve.failed'));
     return;
   }
 
-  const { result } = evolveResult;
+  const { result } = evolveResult.value;
   success(t('cli.evolve.success', { old: getPokemonName(result.oldPokemon), new: getPokemonName(result.newPokemon) }));
   playCry(result.newPokemon);
 }
@@ -904,7 +928,7 @@ function cmdNotifications(subcmd?: string): void {
       dismissAll(freshState);
       writeState(freshState);
     });
-    if (clearResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+    if (!clearResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
     success(t('cli.notifications.cleared'));
     return;
   }
@@ -1164,7 +1188,7 @@ function cmdLegendary(action?: string): void {
     writeConfig(c);
   });
 
-  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!lockResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
   success(t('cli.legendary.selected', { pokemon: getPokemonName(chosen) }));
   if (unchosen.length > 0) {
     info(t('cli.legendary.pool_added', { names: unchosen.map(id => getPokemonName(id)).join(', ') }));
@@ -1255,7 +1279,7 @@ function cmdPartySwap(slot: string, pokemon: string): void {
     writeState(state);
     success(t('cli.party.swap_success', { out: getPokemonName(outgoing), in: getPokemonName(targetId), slot: slotNum }));
   });
-  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!lockResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
 }
 
 function cmdPartyReorder(from: string, to: string): void {
@@ -1286,7 +1310,7 @@ function cmdPartyReorder(from: string, to: string): void {
     writeConfig(config);
     success(t('cli.party.reorder_success', { pokemon: getPokemonName(moved), from: fromIdx + 1, to: toIdx + 1 }));
   });
-  if (lockResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+  if (!lockResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
 }
 
 function cmdPartySuggest(): void {
@@ -1417,24 +1441,32 @@ function cmdGen(sub?: string, arg?: string): void {
       return;
     }
 
-    // Switch generation
-    globalConfig.active_generation = targetGen;
-    writeGlobalConfig(globalConfig);
-    clearActiveGenerationCache();
-    setActiveGenerationCache(targetGen);
-    invalidateGenCache();
+    // Switch generation under lock
+    const switchResult = withLock(() => {
+      const freshGlobalConfig = readGlobalConfig();
+      freshGlobalConfig.active_generation = targetGen;
+      writeGlobalConfig(freshGlobalConfig);
+      clearActiveGenerationCache();
+      setActiveGenerationCache(targetGen);
+      invalidateGenCache();
 
-    // Reset region to 1 (regions are per-generation, IDs don't carry over)
-    const targetConfig = readConfig(targetGen);
-    if (targetConfig.current_region !== '1') {
-      targetConfig.current_region = '1';
-      writeConfig(targetConfig, targetGen);
+      // Reset region to 1 (regions are per-generation, IDs don't carry over)
+      const targetConfig = readConfig(targetGen);
+      if (targetConfig.current_region !== '1') {
+        targetConfig.current_region = '1';
+        writeConfig(targetConfig, targetGen);
+      }
+      return { starter_chosen: targetConfig.starter_chosen };
+    });
+    if (!switchResult.acquired) {
+      error(t('cli.lock_failed', { fallback: 'Failed to acquire lock. Please try again.' }));
+      return;
     }
 
     const genData = gensDB.generations[targetGen];
     success(t('cli.gen.switched', { fallback: `Switched to ${genData.name} (${genRegionName(genData.region_name)})` }));
     info(t('cli.gen.restart_hint', { fallback: 'Restart your session for the switch to take effect.' }));
-    if (!targetConfig.starter_chosen) {
+    if (!switchResult.value.starter_chosen) {
       console.log('');
       warn(t('cli.gen.needs_setup', { fallback: 'This generation needs initial setup. Run /tkm:tkm starter to choose your starter!' }));
     }
@@ -1498,7 +1530,7 @@ const args = process.argv.slice(2);
 const command = args[0] ?? 'help';
 
 // Initialize locale from config before any i18n usage
-initLocale(readConfig().language ?? 'ko');
+initLocale(readConfig().language ?? 'ko', readGlobalConfig().voice_tone);
 
 switch (command) {
   case 'status':
@@ -1562,7 +1594,7 @@ switch (command) {
       s.star_dismissed = true;
       writeState(s);
     });
-    if (dismissResult === null) { error(t('cli.lock_failed')); process.exit(1); }
+    if (!dismissResult.acquired) { error(t('cli.lock_failed')); process.exit(1); }
     success(t('star.dismissed'));
     break;
   }
@@ -1597,14 +1629,37 @@ switch (command) {
   case 'cheat':
     cmdCheat(args[1], args[2], args[3]);
     break;
+  case 'voice_tone':
+    cmdConfigSet('voice_tone', args[1]);
+    break;
   case 'help':
   case '--help':
   case '-h':
     cmdHelp();
     break;
-  default:
+  default: {
+    const query = args.join(' ');
+    const volumeKeywords = ['사용 토큰별 경험치 배율', '볼륨 배율', '토큰 배율', 'volume multiplier', 'token xp table', 'volume bonus'];
+    if (volumeKeywords.some(k => query.includes(k))) {
+      const locale = getLocale();
+      if (locale === 'ko') {
+        bold('[ 토큰 사용량별 보너스 ]');
+        console.log('  ~10,000 토큰   보통');
+        console.log('  ~40,000 토큰   경험치↑ 인카운터↑');
+        console.log('  ~100,000 토큰  경험치↑↑ 인카운터↑↑ 레어↑');
+        console.log('  100,000+ 토큰  경험치↑↑↑ 인카운터↑↑↑ 레어↑↑');
+      } else {
+        bold('[ Volume Bonus by Token Usage ]');
+        console.log('  ~10,000 tokens   Normal');
+        console.log('  ~40,000 tokens   XP↑ Encounter↑');
+        console.log('  ~100,000 tokens  XP↑↑ Encounter↑↑ Rare↑');
+        console.log('  100,000+ tokens  XP↑↑↑ Encounter↑↑↑ Rare↑↑');
+      }
+      break;
+    }
     error(t('cli.unknown_command', { command }));
     console.log('');
     cmdHelp();
     process.exit(1);
+  }
 }

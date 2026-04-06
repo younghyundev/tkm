@@ -160,6 +160,7 @@
   "cli.help.cmd_notifications_clear": "  notifications clear Clear all notifications",
 
   "notification.evolution_ready": "{pokemon} is ready to evolve! Run: tokenmon evolve {pokemon}",
+  "statusline.evolution_ready": "✨ {pokemon} is ready to evolve! /tkm evolve {pokemon}",
   "notification.region_unlocked": "{count} new region(s) unlocked! Run: tokenmon region list",
   "notification.achievement_near": "Achievement \"{name}\" is {pct}% complete!",
 
@@ -189,6 +190,7 @@
   "cli.lock_failed": "Failed to acquire lock. Please try again later.",
   "cli.lock_busy": "Another process is using the data. Please try again later.",
   "cli.config.help_renderer": "  renderer             - Sprite renderer (kitty/sixel/iterm2/braille)",
+  "cli.config.key_voice_tone": "  voice_tone           - Text style claude/pokemon (default: claude)",
   "cli.config.allowed_values": "Allowed values for {key}: {values}",
   "cli.cheat.no_pokemon": "Pokémon {name} not found.",
   "cli.cheat.xp_added": "Added {amount} XP to {name} (total: {total})",
@@ -341,6 +343,7 @@
 
   "battle.win": "⚔️ vs wild {defender} (Lv.{level}) → Win! (XP +{xp})",
   "battle.win_catch": "\n🎉 Caught {defender}! (tokenmon party add {defender})",
+  "battle.win_catch_no_hint": "\n🎉 Caught {defender}!",
   "battle.need_balls": "— {defender} fled!",
   "battle.lose": "⚔️ vs wild {defender} (Lv.{level}) → Defeat... (XP +{xp})",
   "battle.shiny_appeared": "✦ A shiny {pokemon} appeared!",
@@ -359,6 +362,14 @@
   "hook.levelup": "⬆️ {pokemon} Lv.{from} → Lv.{to}! (XP: +{xp})",
   "hook.evolution": "✨ {pokemon} evolved into {newPokemon}!",
   "hook.party_join": "🎊 {pokemon} joined the party!",
+
+  "tier.heated": "The tall grass is rustling intensely...",
+  "tier.intense": "Something seems to be lurking nearby...",
+  "tier.legendary": "The air is crackling with powerful energy!",
+
+  "tip.volume_xp": "Using more tokens at once seems to yield more experience points.",
+  "tip.volume_encounter": "Wild Pokémon appear more often during longer tasks.",
+  "tip.volume_rare": "There are rumors that stronger Pokémon appear during complex tasks.",
 
   "tip.battle_type_advantage": "💡 Type matchups greatly affect win rate! Target weaknesses.",
   "tip.battle_level_matters": "💡 Large level gaps sharply shift win rate (Lv.4 vs Lv.12 = ~17%).",
@@ -380,11 +391,20 @@
   "tip.xp_achievement_bonus": "⭐ Unlock permanent XP bonuses through achievements (up to +55%).",
   "tip.xp_weakest_member": "⭐ Dispatch your weakest party member {pokemon} (Lv.{level}) for faster growth.",
   "tip.xp_evolution": "⭐ If a Pokemon is close to evolving, focus XP on it.",
-  "tip.item_ball_drop": "🔴 Poké Balls drop 20% on battle win and 5% on battle loss.",
+  "tip.item_tool_drop": "🔴 Using tools sometimes lets you find Poké Balls!",
+  "tip.item_subagent_drop": "🔴 Subagents always bring back Poké Balls!",
+  "tip.item_session_bonus": "🔴 You get bonus Poké Balls when a session ends!",
+  "tip.item_field_drop": "🔴 Sometimes Poké Balls are just lying around in the field!",
+  "tip.item_ball_drop": "🔴 Poké Balls drop at 30% on victory, 12% on loss",
   "tip.item_ball_catch": "🔴 You need a Poké Ball to catch wild Pokemon.",
   "tip.item_ball_count": "🔴 Current Poké Balls: {count}. Get ready for new encounters!",
   "tip.item_achievement_balls": "🔴 Achievement rewards can give you large batches of Poké Balls (up to 10!).",
   "tip.item_ball_strategy": "🔴 Battling already-caught Pokemon does not consume a Poké Ball.",
+
+  "item_drop.tool": "You found a Poké Ball during your adventure! Obtained {n} Poké Ball(s)!",
+  "item_drop.subagent": "Your companion brought back Poké Balls! Obtained {n} Poké Ball(s)!",
+  "item_drop.session_end": "Received {n} Poké Ball(s) as today's adventure reward!",
+  "item_drop.generic": "Found {n} Poké Ball(s)!",
 
   "cli.dashboard.region": "Region: {region} (Lv.{min}-{max})",
   "cli.dashboard.streak": "Day streak: {days} (best: {best})",
@@ -470,5 +490,16 @@
   "star.prompt": "⭐ Enjoying Tok\u00e9mon? Run tokenmon star to give us a GitHub star!",
   "star.success": "⭐ Thanks for starring Tok\u00e9mon! You're awesome!",
   "star.failed": "Failed to star. Make sure gh CLI is installed and authenticated.",
-  "star.dismissed": "Star prompt dismissed."
+  "star.dismissed": "Star prompt dismissed.",
+  "rest.activate": "💤 {hours}h rest bonus activated! XP ×{mult} for {turns} turns",
+  "tip.rest_info": "💤 Take a break sometimes for an XP bonus!",
+  "tip.rest_threshold": "💤 Rest for 2+ hours to activate rest bonus.",
+
+  "cli.lock_failed": "Failed to acquire lock. Please try again.",
+  "cli.call.not_found": "Pokemon not found: {name}",
+  "cli.nickname.not_found": "Pokemon not found: {name}",
+  "cli.nickname.too_long": "Nickname must be 7 characters or fewer.",
+  "cli.nickname.current": "{species}'s nickname: {nickname}",
+  "cli.nickname.none": "{species} doesn't have a nickname yet.",
+  "cli.nickname.set": "Set {species}'s nickname to '{nickname}'!"
 }

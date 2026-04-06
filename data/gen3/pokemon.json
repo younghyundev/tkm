@@ -1,0 +1,3435 @@
+{
+  "pokemon": {
+    "252": {
+      "id": 252,
+      "name": "252",
+      "types": [
+        "grass"
+      ],
+      "stage": 0,
+      "line": [
+        "252",
+        "253",
+        "254"
+      ],
+      "evolves_at": 16,
+      "unlock": "starter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 40,
+        "attack": 45,
+        "defense": 35,
+        "speed": 70
+      },
+      "catch_rate": 45,
+      "evolves_to": "253"
+    },
+    "253": {
+      "id": 253,
+      "name": "253",
+      "types": [
+        "grass"
+      ],
+      "stage": 1,
+      "line": [
+        "252",
+        "253",
+        "254"
+      ],
+      "evolves_at": 36,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 50,
+        "attack": 65,
+        "defense": 45,
+        "speed": 95
+      },
+      "catch_rate": 45,
+      "evolves_to": "254"
+    },
+    "254": {
+      "id": 254,
+      "name": "254",
+      "types": [
+        "grass"
+      ],
+      "stage": 2,
+      "line": [
+        "252",
+        "253",
+        "254"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "1",
+      "base_stats": {
+        "hp": 70,
+        "attack": 85,
+        "defense": 65,
+        "speed": 120
+      },
+      "catch_rate": 45
+    },
+    "255": {
+      "id": 255,
+      "name": "255",
+      "types": [
+        "fire"
+      ],
+      "stage": 0,
+      "line": [
+        "255",
+        "256",
+        "257"
+      ],
+      "evolves_at": 16,
+      "unlock": "starter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 45,
+        "attack": 60,
+        "defense": 40,
+        "speed": 45
+      },
+      "catch_rate": 45,
+      "evolves_to": "256"
+    },
+    "256": {
+      "id": 256,
+      "name": "256",
+      "types": [
+        "fire",
+        "fighting"
+      ],
+      "stage": 1,
+      "line": [
+        "255",
+        "256",
+        "257"
+      ],
+      "evolves_at": 36,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 60,
+        "attack": 85,
+        "defense": 60,
+        "speed": 55
+      },
+      "catch_rate": 45,
+      "evolves_to": "257"
+    },
+    "257": {
+      "id": 257,
+      "name": "257",
+      "types": [
+        "fire",
+        "fighting"
+      ],
+      "stage": 2,
+      "line": [
+        "255",
+        "256",
+        "257"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "1",
+      "base_stats": {
+        "hp": 80,
+        "attack": 120,
+        "defense": 70,
+        "speed": 80
+      },
+      "catch_rate": 45
+    },
+    "258": {
+      "id": 258,
+      "name": "258",
+      "types": [
+        "water"
+      ],
+      "stage": 0,
+      "line": [
+        "258",
+        "259",
+        "260"
+      ],
+      "evolves_at": 16,
+      "unlock": "starter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 50,
+        "attack": 70,
+        "defense": 50,
+        "speed": 40
+      },
+      "catch_rate": 45,
+      "evolves_to": "259"
+    },
+    "259": {
+      "id": 259,
+      "name": "259",
+      "types": [
+        "water",
+        "ground"
+      ],
+      "stage": 1,
+      "line": [
+        "258",
+        "259",
+        "260"
+      ],
+      "evolves_at": 36,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 70,
+        "attack": 85,
+        "defense": 70,
+        "speed": 50
+      },
+      "catch_rate": 45,
+      "evolves_to": "260"
+    },
+    "260": {
+      "id": 260,
+      "name": "260",
+      "types": [
+        "water",
+        "ground"
+      ],
+      "stage": 2,
+      "line": [
+        "258",
+        "259",
+        "260"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "1",
+      "base_stats": {
+        "hp": 100,
+        "attack": 110,
+        "defense": 90,
+        "speed": 60
+      },
+      "catch_rate": 45
+    },
+    "261": {
+      "id": 261,
+      "name": "261",
+      "types": [
+        "dark"
+      ],
+      "stage": 0,
+      "line": [
+        "261",
+        "262"
+      ],
+      "evolves_at": 18,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 35,
+        "attack": 55,
+        "defense": 35,
+        "speed": 35
+      },
+      "catch_rate": 255,
+      "evolves_to": "262"
+    },
+    "262": {
+      "id": 262,
+      "name": "262",
+      "types": [
+        "dark"
+      ],
+      "stage": 1,
+      "line": [
+        "261",
+        "262"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 70,
+        "attack": 90,
+        "defense": 70,
+        "speed": 70
+      },
+      "catch_rate": 127
+    },
+    "263": {
+      "id": 263,
+      "name": "263",
+      "types": [
+        "normal"
+      ],
+      "stage": 0,
+      "line": [
+        "263",
+        "264"
+      ],
+      "evolves_at": 20,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 38,
+        "attack": 30,
+        "defense": 41,
+        "speed": 60
+      },
+      "catch_rate": 255,
+      "evolves_to": "264"
+    },
+    "264": {
+      "id": 264,
+      "name": "264",
+      "types": [
+        "normal"
+      ],
+      "stage": 1,
+      "line": [
+        "263",
+        "264"
+      ],
+      "evolves_at": 35,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 78,
+        "attack": 70,
+        "defense": 61,
+        "speed": 100
+      },
+      "catch_rate": 90
+    },
+    "265": {
+      "id": 265,
+      "name": "265",
+      "types": [
+        "bug"
+      ],
+      "stage": 0,
+      "line": [
+        "265",
+        "266",
+        "267",
+        "268",
+        "269"
+      ],
+      "evolves_at": 7,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 45,
+        "attack": 45,
+        "defense": 35,
+        "speed": 20
+      },
+      "catch_rate": 255,
+      "evolves_to": [
+        {
+          "name": "266",
+          "condition": "level:7"
+        },
+        {
+          "name": "268",
+          "condition": "level:7"
+        }
+      ]
+    },
+    "266": {
+      "id": 266,
+      "name": "266",
+      "types": [
+        "bug"
+      ],
+      "stage": 1,
+      "line": [
+        "265",
+        "266",
+        "267",
+        "268",
+        "269"
+      ],
+      "evolves_at": 10,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 50,
+        "attack": 35,
+        "defense": 55,
+        "speed": 15
+      },
+      "catch_rate": 120,
+      "evolves_to": "267"
+    },
+    "267": {
+      "id": 267,
+      "name": "267",
+      "types": [
+        "bug",
+        "flying"
+      ],
+      "stage": 2,
+      "line": [
+        "265",
+        "266",
+        "267",
+        "268",
+        "269"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "rare",
+      "region": "1",
+      "base_stats": {
+        "hp": 60,
+        "attack": 70,
+        "defense": 50,
+        "speed": 65
+      },
+      "catch_rate": 45
+    },
+    "268": {
+      "id": 268,
+      "name": "268",
+      "types": [
+        "bug"
+      ],
+      "stage": 3,
+      "line": [
+        "265",
+        "266",
+        "267",
+        "268",
+        "269"
+      ],
+      "evolves_at": 10,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "rare",
+      "region": "1",
+      "base_stats": {
+        "hp": 50,
+        "attack": 35,
+        "defense": 55,
+        "speed": 15
+      },
+      "catch_rate": 120,
+      "evolves_to": "269"
+    },
+    "269": {
+      "id": 269,
+      "name": "269",
+      "types": [
+        "bug",
+        "poison"
+      ],
+      "stage": 4,
+      "line": [
+        "265",
+        "266",
+        "267",
+        "268",
+        "269"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "rare",
+      "region": "1",
+      "base_stats": {
+        "hp": 60,
+        "attack": 50,
+        "defense": 70,
+        "speed": 65
+      },
+      "catch_rate": 45
+    },
+    "270": {
+      "id": 270,
+      "name": "270",
+      "types": [
+        "water",
+        "grass"
+      ],
+      "stage": 0,
+      "line": [
+        "270",
+        "271",
+        "272"
+      ],
+      "evolves_at": 14,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 40,
+        "attack": 30,
+        "defense": 30,
+        "speed": 30
+      },
+      "catch_rate": 255,
+      "evolves_to": "271"
+    },
+    "271": {
+      "id": 271,
+      "name": "271",
+      "types": [
+        "water",
+        "grass"
+      ],
+      "stage": 1,
+      "line": [
+        "270",
+        "271",
+        "272"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 60,
+        "attack": 50,
+        "defense": 50,
+        "speed": 50
+      },
+      "catch_rate": 120,
+      "evolves_condition": "item:water-stone",
+      "evolves_to": "272"
+    },
+    "272": {
+      "id": 272,
+      "name": "272",
+      "types": [
+        "water",
+        "grass"
+      ],
+      "stage": 2,
+      "line": [
+        "270",
+        "271",
+        "272"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "1",
+      "base_stats": {
+        "hp": 80,
+        "attack": 70,
+        "defense": 70,
+        "speed": 70
+      },
+      "catch_rate": 45
+    },
+    "273": {
+      "id": 273,
+      "name": "273",
+      "types": [
+        "grass"
+      ],
+      "stage": 0,
+      "line": [
+        "273",
+        "274",
+        "275"
+      ],
+      "evolves_at": 14,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 40,
+        "attack": 40,
+        "defense": 50,
+        "speed": 30
+      },
+      "catch_rate": 255,
+      "evolves_to": "274"
+    },
+    "274": {
+      "id": 274,
+      "name": "274",
+      "types": [
+        "grass",
+        "dark"
+      ],
+      "stage": 1,
+      "line": [
+        "273",
+        "274",
+        "275"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 70,
+        "attack": 70,
+        "defense": 40,
+        "speed": 60
+      },
+      "catch_rate": 120,
+      "evolves_condition": "item:leaf-stone",
+      "evolves_to": "275"
+    },
+    "275": {
+      "id": 275,
+      "name": "275",
+      "types": [
+        "grass",
+        "dark"
+      ],
+      "stage": 2,
+      "line": [
+        "273",
+        "274",
+        "275"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "1",
+      "base_stats": {
+        "hp": 90,
+        "attack": 100,
+        "defense": 60,
+        "speed": 80
+      },
+      "catch_rate": 45
+    },
+    "276": {
+      "id": 276,
+      "name": "276",
+      "types": [
+        "normal",
+        "flying"
+      ],
+      "stage": 0,
+      "line": [
+        "276",
+        "277"
+      ],
+      "evolves_at": 22,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 40,
+        "attack": 55,
+        "defense": 30,
+        "speed": 85
+      },
+      "catch_rate": 200,
+      "evolves_to": "277"
+    },
+    "277": {
+      "id": 277,
+      "name": "277",
+      "types": [
+        "normal",
+        "flying"
+      ],
+      "stage": 1,
+      "line": [
+        "276",
+        "277"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 60,
+        "attack": 85,
+        "defense": 60,
+        "speed": 125
+      },
+      "catch_rate": 45
+    },
+    "278": {
+      "id": 278,
+      "name": "278",
+      "types": [
+        "water",
+        "flying"
+      ],
+      "stage": 0,
+      "line": [
+        "278",
+        "279"
+      ],
+      "evolves_at": 25,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 40,
+        "attack": 30,
+        "defense": 30,
+        "speed": 85
+      },
+      "catch_rate": 190,
+      "evolves_to": "279"
+    },
+    "279": {
+      "id": 279,
+      "name": "279",
+      "types": [
+        "water",
+        "flying"
+      ],
+      "stage": 1,
+      "line": [
+        "278",
+        "279"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 60,
+        "attack": 50,
+        "defense": 100,
+        "speed": 65
+      },
+      "catch_rate": 45
+    },
+    "280": {
+      "id": 280,
+      "name": "280",
+      "types": [
+        "psychic",
+        "fairy"
+      ],
+      "stage": 0,
+      "line": [
+        "280",
+        "281",
+        "282"
+      ],
+      "evolves_at": 20,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "common",
+      "region": "1",
+      "base_stats": {
+        "hp": 28,
+        "attack": 25,
+        "defense": 25,
+        "speed": 40
+      },
+      "catch_rate": 235,
+      "evolves_to": "281"
+    },
+    "281": {
+      "id": 281,
+      "name": "281",
+      "types": [
+        "psychic",
+        "fairy"
+      ],
+      "stage": 1,
+      "line": [
+        "280",
+        "281",
+        "282"
+      ],
+      "evolves_at": 30,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "uncommon",
+      "region": "1",
+      "base_stats": {
+        "hp": 38,
+        "attack": 35,
+        "defense": 35,
+        "speed": 50
+      },
+      "catch_rate": 120,
+      "evolves_to": "282"
+    },
+    "282": {
+      "id": 282,
+      "name": "282",
+      "types": [
+        "psychic",
+        "fairy"
+      ],
+      "stage": 2,
+      "line": [
+        "280",
+        "281",
+        "282"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "rare",
+      "region": "1",
+      "base_stats": {
+        "hp": 68,
+        "attack": 65,
+        "defense": 65,
+        "speed": 80
+      },
+      "catch_rate": 45
+    },
+    "283": {
+      "id": 283,
+      "name": "283",
+      "types": [
+        "bug",
+        "water"
+      ],
+      "stage": 0,
+      "line": [
+        "283",
+        "284"
+      ],
+      "evolves_at": 22,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "4",
+      "base_stats": {
+        "hp": 40,
+        "attack": 30,
+        "defense": 32,
+        "speed": 65
+      },
+      "catch_rate": 200,
+      "evolves_to": "284"
+    },
+    "284": {
+      "id": 284,
+      "name": "284",
+      "types": [
+        "bug",
+        "flying"
+      ],
+      "stage": 1,
+      "line": [
+        "283",
+        "284"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 70,
+        "attack": 60,
+        "defense": 62,
+        "speed": 80
+      },
+      "catch_rate": 75
+    },
+    "285": {
+      "id": 285,
+      "name": "285",
+      "types": [
+        "grass"
+      ],
+      "stage": 0,
+      "line": [
+        "285",
+        "286"
+      ],
+      "evolves_at": 23,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "2",
+      "base_stats": {
+        "hp": 60,
+        "attack": 40,
+        "defense": 60,
+        "speed": 35
+      },
+      "catch_rate": 255,
+      "evolves_to": "286"
+    },
+    "286": {
+      "id": 286,
+      "name": "286",
+      "types": [
+        "grass",
+        "fighting"
+      ],
+      "stage": 1,
+      "line": [
+        "285",
+        "286"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 60,
+        "attack": 130,
+        "defense": 80,
+        "speed": 70
+      },
+      "catch_rate": 90
+    },
+    "287": {
+      "id": 287,
+      "name": "287",
+      "types": [
+        "normal"
+      ],
+      "stage": 0,
+      "line": [
+        "287",
+        "288",
+        "289"
+      ],
+      "evolves_at": 18,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "common",
+      "region": "2",
+      "base_stats": {
+        "hp": 60,
+        "attack": 60,
+        "defense": 60,
+        "speed": 30
+      },
+      "catch_rate": 255,
+      "evolves_to": "288"
+    },
+    "288": {
+      "id": 288,
+      "name": "288",
+      "types": [
+        "normal"
+      ],
+      "stage": 1,
+      "line": [
+        "287",
+        "288",
+        "289"
+      ],
+      "evolves_at": 36,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 80,
+        "attack": 80,
+        "defense": 80,
+        "speed": 90
+      },
+      "catch_rate": 120,
+      "evolves_to": "289"
+    },
+    "289": {
+      "id": 289,
+      "name": "289",
+      "types": [
+        "normal"
+      ],
+      "stage": 2,
+      "line": [
+        "287",
+        "288",
+        "289"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "rare",
+      "region": "2",
+      "base_stats": {
+        "hp": 150,
+        "attack": 160,
+        "defense": 100,
+        "speed": 100
+      },
+      "catch_rate": 45
+    },
+    "290": {
+      "id": 290,
+      "name": "290",
+      "types": [
+        "bug",
+        "ground"
+      ],
+      "stage": 0,
+      "line": [
+        "290",
+        "291",
+        "292"
+      ],
+      "evolves_at": 20,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "2",
+      "base_stats": {
+        "hp": 31,
+        "attack": 45,
+        "defense": 90,
+        "speed": 40
+      },
+      "catch_rate": 255,
+      "evolves_to": [
+        {
+          "name": "291",
+          "condition": "level:20"
+        },
+        {
+          "name": "292",
+          "condition": "special"
+        }
+      ]
+    },
+    "291": {
+      "id": 291,
+      "name": "291",
+      "types": [
+        "bug",
+        "flying"
+      ],
+      "stage": 1,
+      "line": [
+        "290",
+        "291",
+        "292"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 61,
+        "attack": 90,
+        "defense": 45,
+        "speed": 160
+      },
+      "catch_rate": 120
+    },
+    "292": {
+      "id": 292,
+      "name": "292",
+      "types": [
+        "bug",
+        "ghost"
+      ],
+      "stage": 2,
+      "line": [
+        "290",
+        "291",
+        "292"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "2",
+      "base_stats": {
+        "hp": 1,
+        "attack": 90,
+        "defense": 45,
+        "speed": 40
+      },
+      "catch_rate": 45
+    },
+    "293": {
+      "id": 293,
+      "name": "293",
+      "types": [
+        "normal"
+      ],
+      "stage": 0,
+      "line": [
+        "293",
+        "294",
+        "295"
+      ],
+      "evolves_at": 20,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "2",
+      "base_stats": {
+        "hp": 64,
+        "attack": 51,
+        "defense": 23,
+        "speed": 28
+      },
+      "catch_rate": 190,
+      "evolves_to": "294"
+    },
+    "294": {
+      "id": 294,
+      "name": "294",
+      "types": [
+        "normal"
+      ],
+      "stage": 1,
+      "line": [
+        "293",
+        "294",
+        "295"
+      ],
+      "evolves_at": 40,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 84,
+        "attack": 71,
+        "defense": 43,
+        "speed": 48
+      },
+      "catch_rate": 120,
+      "evolves_to": "295"
+    },
+    "295": {
+      "id": 295,
+      "name": "295",
+      "types": [
+        "normal"
+      ],
+      "stage": 2,
+      "line": [
+        "293",
+        "294",
+        "295"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "2",
+      "base_stats": {
+        "hp": 104,
+        "attack": 91,
+        "defense": 63,
+        "speed": 68
+      },
+      "catch_rate": 45
+    },
+    "296": {
+      "id": 296,
+      "name": "296",
+      "types": [
+        "fighting"
+      ],
+      "stage": 0,
+      "line": [
+        "296",
+        "297"
+      ],
+      "evolves_at": 24,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "2",
+      "base_stats": {
+        "hp": 72,
+        "attack": 60,
+        "defense": 30,
+        "speed": 25
+      },
+      "catch_rate": 180,
+      "evolves_to": "297"
+    },
+    "297": {
+      "id": 297,
+      "name": "297",
+      "types": [
+        "fighting"
+      ],
+      "stage": 1,
+      "line": [
+        "296",
+        "297"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 144,
+        "attack": 120,
+        "defense": 60,
+        "speed": 50
+      },
+      "catch_rate": 200
+    },
+    "298": {
+      "id": 298,
+      "name": "298",
+      "types": [
+        "normal",
+        "fairy"
+      ],
+      "stage": 0,
+      "line": [
+        "298"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "common",
+      "region": "2",
+      "base_stats": {
+        "hp": 50,
+        "attack": 20,
+        "defense": 40,
+        "speed": 20
+      },
+      "catch_rate": 150,
+      "evolves_condition": "friendship"
+    },
+    "299": {
+      "id": 299,
+      "name": "299",
+      "types": [
+        "rock"
+      ],
+      "stage": 0,
+      "line": [
+        "299"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 30,
+        "attack": 45,
+        "defense": 135,
+        "speed": 30
+      },
+      "catch_rate": 255,
+      "evolves_condition": "special"
+    },
+    "300": {
+      "id": 300,
+      "name": "300",
+      "types": [
+        "normal"
+      ],
+      "stage": 0,
+      "line": [
+        "300",
+        "301"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "common",
+      "region": "2",
+      "base_stats": {
+        "hp": 50,
+        "attack": 45,
+        "defense": 45,
+        "speed": 50
+      },
+      "catch_rate": 255,
+      "evolves_condition": "item:moon-stone",
+      "evolves_to": "301"
+    },
+    "301": {
+      "id": 301,
+      "name": "301",
+      "types": [
+        "normal"
+      ],
+      "stage": 1,
+      "line": [
+        "300",
+        "301"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "fast",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 70,
+        "attack": 65,
+        "defense": 65,
+        "speed": 90
+      },
+      "catch_rate": 60
+    },
+    "302": {
+      "id": 302,
+      "name": "302",
+      "types": [
+        "dark",
+        "ghost"
+      ],
+      "stage": 0,
+      "line": [
+        "302"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "3",
+      "base_stats": {
+        "hp": 50,
+        "attack": 75,
+        "defense": 75,
+        "speed": 50
+      },
+      "catch_rate": 45
+    },
+    "303": {
+      "id": 303,
+      "name": "303",
+      "types": [
+        "steel",
+        "fairy"
+      ],
+      "stage": 0,
+      "line": [
+        "303"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "uncommon",
+      "region": "3",
+      "base_stats": {
+        "hp": 50,
+        "attack": 85,
+        "defense": 85,
+        "speed": 50
+      },
+      "catch_rate": 45
+    },
+    "304": {
+      "id": 304,
+      "name": "304",
+      "types": [
+        "steel",
+        "rock"
+      ],
+      "stage": 0,
+      "line": [
+        "304",
+        "305",
+        "306"
+      ],
+      "evolves_at": 32,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "common",
+      "region": "3",
+      "base_stats": {
+        "hp": 50,
+        "attack": 70,
+        "defense": 100,
+        "speed": 30
+      },
+      "catch_rate": 180,
+      "evolves_to": "305"
+    },
+    "305": {
+      "id": 305,
+      "name": "305",
+      "types": [
+        "steel",
+        "rock"
+      ],
+      "stage": 1,
+      "line": [
+        "304",
+        "305",
+        "306"
+      ],
+      "evolves_at": 42,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "uncommon",
+      "region": "3",
+      "base_stats": {
+        "hp": 60,
+        "attack": 90,
+        "defense": 140,
+        "speed": 40
+      },
+      "catch_rate": 90,
+      "evolves_to": "306"
+    },
+    "306": {
+      "id": 306,
+      "name": "306",
+      "types": [
+        "steel",
+        "rock"
+      ],
+      "stage": 2,
+      "line": [
+        "304",
+        "305",
+        "306"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "rare",
+      "region": "3",
+      "base_stats": {
+        "hp": 70,
+        "attack": 110,
+        "defense": 180,
+        "speed": 50
+      },
+      "catch_rate": 45
+    },
+    "307": {
+      "id": 307,
+      "name": "307",
+      "types": [
+        "fighting",
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "307",
+        "308"
+      ],
+      "evolves_at": 37,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "3",
+      "base_stats": {
+        "hp": 30,
+        "attack": 40,
+        "defense": 55,
+        "speed": 60
+      },
+      "catch_rate": 180,
+      "evolves_to": "308"
+    },
+    "308": {
+      "id": 308,
+      "name": "308",
+      "types": [
+        "fighting",
+        "psychic"
+      ],
+      "stage": 1,
+      "line": [
+        "307",
+        "308"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "3",
+      "base_stats": {
+        "hp": 60,
+        "attack": 60,
+        "defense": 75,
+        "speed": 80
+      },
+      "catch_rate": 90
+    },
+    "309": {
+      "id": 309,
+      "name": "309",
+      "types": [
+        "electric"
+      ],
+      "stage": 0,
+      "line": [
+        "309",
+        "310"
+      ],
+      "evolves_at": 26,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "common",
+      "region": "4",
+      "base_stats": {
+        "hp": 40,
+        "attack": 45,
+        "defense": 40,
+        "speed": 65
+      },
+      "catch_rate": 120,
+      "evolves_to": "310"
+    },
+    "310": {
+      "id": 310,
+      "name": "310",
+      "types": [
+        "electric"
+      ],
+      "stage": 1,
+      "line": [
+        "309",
+        "310"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "uncommon",
+      "region": "5",
+      "base_stats": {
+        "hp": 70,
+        "attack": 75,
+        "defense": 60,
+        "speed": 105
+      },
+      "catch_rate": 45
+    },
+    "311": {
+      "id": 311,
+      "name": "311",
+      "types": [
+        "electric"
+      ],
+      "stage": 0,
+      "line": [
+        "311"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "4",
+      "base_stats": {
+        "hp": 60,
+        "attack": 50,
+        "defense": 40,
+        "speed": 95
+      },
+      "catch_rate": 200
+    },
+    "312": {
+      "id": 312,
+      "name": "312",
+      "types": [
+        "electric"
+      ],
+      "stage": 0,
+      "line": [
+        "312"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "4",
+      "base_stats": {
+        "hp": 60,
+        "attack": 40,
+        "defense": 50,
+        "speed": 95
+      },
+      "catch_rate": 200
+    },
+    "313": {
+      "id": 313,
+      "name": "313",
+      "types": [
+        "bug"
+      ],
+      "stage": 0,
+      "line": [
+        "313"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "5",
+      "base_stats": {
+        "hp": 65,
+        "attack": 73,
+        "defense": 75,
+        "speed": 85
+      },
+      "catch_rate": 150
+    },
+    "314": {
+      "id": 314,
+      "name": "314",
+      "types": [
+        "bug"
+      ],
+      "stage": 0,
+      "line": [
+        "314"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "5",
+      "base_stats": {
+        "hp": 65,
+        "attack": 47,
+        "defense": 75,
+        "speed": 85
+      },
+      "catch_rate": 150
+    },
+    "315": {
+      "id": 315,
+      "name": "315",
+      "types": [
+        "grass",
+        "poison"
+      ],
+      "stage": 1,
+      "line": [
+        "315"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "5",
+      "base_stats": {
+        "hp": 50,
+        "attack": 60,
+        "defense": 45,
+        "speed": 65
+      },
+      "catch_rate": 150,
+      "evolves_condition": "item:shiny-stone"
+    },
+    "316": {
+      "id": 316,
+      "name": "316",
+      "types": [
+        "poison"
+      ],
+      "stage": 0,
+      "line": [
+        "316",
+        "317"
+      ],
+      "evolves_at": 26,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "4",
+      "base_stats": {
+        "hp": 70,
+        "attack": 43,
+        "defense": 53,
+        "speed": 40
+      },
+      "catch_rate": 225,
+      "evolves_to": "317"
+    },
+    "317": {
+      "id": 317,
+      "name": "317",
+      "types": [
+        "poison"
+      ],
+      "stage": 1,
+      "line": [
+        "316",
+        "317"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "4",
+      "base_stats": {
+        "hp": 100,
+        "attack": 73,
+        "defense": 83,
+        "speed": 55
+      },
+      "catch_rate": 75
+    },
+    "318": {
+      "id": 318,
+      "name": "318",
+      "types": [
+        "water",
+        "dark"
+      ],
+      "stage": 0,
+      "line": [
+        "318",
+        "319"
+      ],
+      "evolves_at": 30,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "common",
+      "region": "4",
+      "base_stats": {
+        "hp": 45,
+        "attack": 90,
+        "defense": 20,
+        "speed": 65
+      },
+      "catch_rate": 225,
+      "evolves_to": "319"
+    },
+    "319": {
+      "id": 319,
+      "name": "319",
+      "types": [
+        "water",
+        "dark"
+      ],
+      "stage": 1,
+      "line": [
+        "318",
+        "319"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "uncommon",
+      "region": "4",
+      "base_stats": {
+        "hp": 70,
+        "attack": 120,
+        "defense": 40,
+        "speed": 95
+      },
+      "catch_rate": 60
+    },
+    "320": {
+      "id": 320,
+      "name": "320",
+      "types": [
+        "water"
+      ],
+      "stage": 0,
+      "line": [
+        "320",
+        "321"
+      ],
+      "evolves_at": 40,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "5",
+      "base_stats": {
+        "hp": 130,
+        "attack": 70,
+        "defense": 35,
+        "speed": 60
+      },
+      "catch_rate": 125,
+      "evolves_to": "321"
+    },
+    "321": {
+      "id": 321,
+      "name": "321",
+      "types": [
+        "water"
+      ],
+      "stage": 1,
+      "line": [
+        "320",
+        "321"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "8",
+      "base_stats": {
+        "hp": 170,
+        "attack": 90,
+        "defense": 45,
+        "speed": 60
+      },
+      "catch_rate": 60
+    },
+    "322": {
+      "id": 322,
+      "name": "322",
+      "types": [
+        "fire",
+        "ground"
+      ],
+      "stage": 0,
+      "line": [
+        "322",
+        "323"
+      ],
+      "evolves_at": 33,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "4",
+      "base_stats": {
+        "hp": 60,
+        "attack": 60,
+        "defense": 40,
+        "speed": 35
+      },
+      "catch_rate": 255,
+      "evolves_to": "323"
+    },
+    "323": {
+      "id": 323,
+      "name": "323",
+      "types": [
+        "fire",
+        "ground"
+      ],
+      "stage": 1,
+      "line": [
+        "322",
+        "323"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "7",
+      "base_stats": {
+        "hp": 70,
+        "attack": 100,
+        "defense": 70,
+        "speed": 40
+      },
+      "catch_rate": 150
+    },
+    "324": {
+      "id": 324,
+      "name": "324",
+      "types": [
+        "fire"
+      ],
+      "stage": 0,
+      "line": [
+        "324"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "7",
+      "base_stats": {
+        "hp": 70,
+        "attack": 85,
+        "defense": 140,
+        "speed": 20
+      },
+      "catch_rate": 90
+    },
+    "325": {
+      "id": 325,
+      "name": "325",
+      "types": [
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "325",
+        "326"
+      ],
+      "evolves_at": 32,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "common",
+      "region": "4",
+      "base_stats": {
+        "hp": 60,
+        "attack": 25,
+        "defense": 35,
+        "speed": 60
+      },
+      "catch_rate": 255,
+      "evolves_to": "326"
+    },
+    "326": {
+      "id": 326,
+      "name": "326",
+      "types": [
+        "psychic"
+      ],
+      "stage": 1,
+      "line": [
+        "325",
+        "326"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "fast",
+      "rarity": "uncommon",
+      "region": "4",
+      "base_stats": {
+        "hp": 80,
+        "attack": 45,
+        "defense": 65,
+        "speed": 80
+      },
+      "catch_rate": 60
+    },
+    "327": {
+      "id": 327,
+      "name": "327",
+      "types": [
+        "normal"
+      ],
+      "stage": 0,
+      "line": [
+        "327"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "uncommon",
+      "region": "7",
+      "base_stats": {
+        "hp": 60,
+        "attack": 60,
+        "defense": 60,
+        "speed": 60
+      },
+      "catch_rate": 255
+    },
+    "328": {
+      "id": 328,
+      "name": "328",
+      "types": [
+        "ground"
+      ],
+      "stage": 0,
+      "line": [
+        "328",
+        "329",
+        "330"
+      ],
+      "evolves_at": 35,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "6",
+      "base_stats": {
+        "hp": 45,
+        "attack": 100,
+        "defense": 45,
+        "speed": 10
+      },
+      "catch_rate": 255,
+      "evolves_to": "329"
+    },
+    "329": {
+      "id": 329,
+      "name": "329",
+      "types": [
+        "ground",
+        "dragon"
+      ],
+      "stage": 1,
+      "line": [
+        "328",
+        "329",
+        "330"
+      ],
+      "evolves_at": 45,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 50,
+        "attack": 70,
+        "defense": 50,
+        "speed": 70
+      },
+      "catch_rate": 120,
+      "evolves_to": "330"
+    },
+    "330": {
+      "id": 330,
+      "name": "330",
+      "types": [
+        "ground",
+        "dragon"
+      ],
+      "stage": 2,
+      "line": [
+        "328",
+        "329",
+        "330"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "6",
+      "base_stats": {
+        "hp": 80,
+        "attack": 100,
+        "defense": 80,
+        "speed": 100
+      },
+      "catch_rate": 45
+    },
+    "331": {
+      "id": 331,
+      "name": "331",
+      "types": [
+        "grass"
+      ],
+      "stage": 0,
+      "line": [
+        "331",
+        "332"
+      ],
+      "evolves_at": 32,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "2",
+      "base_stats": {
+        "hp": 50,
+        "attack": 85,
+        "defense": 40,
+        "speed": 35
+      },
+      "catch_rate": 190,
+      "evolves_to": "332"
+    },
+    "332": {
+      "id": 332,
+      "name": "332",
+      "types": [
+        "grass",
+        "dark"
+      ],
+      "stage": 1,
+      "line": [
+        "331",
+        "332"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "7",
+      "base_stats": {
+        "hp": 70,
+        "attack": 115,
+        "defense": 60,
+        "speed": 55
+      },
+      "catch_rate": 60
+    },
+    "333": {
+      "id": 333,
+      "name": "333",
+      "types": [
+        "normal",
+        "flying"
+      ],
+      "stage": 0,
+      "line": [
+        "333",
+        "334"
+      ],
+      "evolves_at": 35,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "6",
+      "base_stats": {
+        "hp": 45,
+        "attack": 40,
+        "defense": 60,
+        "speed": 50
+      },
+      "catch_rate": 255,
+      "evolves_to": "334"
+    },
+    "334": {
+      "id": 334,
+      "name": "334",
+      "types": [
+        "dragon",
+        "flying"
+      ],
+      "stage": 1,
+      "line": [
+        "333",
+        "334"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 75,
+        "attack": 70,
+        "defense": 90,
+        "speed": 80
+      },
+      "catch_rate": 45
+    },
+    "335": {
+      "id": 335,
+      "name": "335",
+      "types": [
+        "normal"
+      ],
+      "stage": 0,
+      "line": [
+        "335"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 73,
+        "attack": 115,
+        "defense": 60,
+        "speed": 90
+      },
+      "catch_rate": 90
+    },
+    "336": {
+      "id": 336,
+      "name": "336",
+      "types": [
+        "poison"
+      ],
+      "stage": 0,
+      "line": [
+        "336"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 73,
+        "attack": 100,
+        "defense": 60,
+        "speed": 65
+      },
+      "catch_rate": 90
+    },
+    "337": {
+      "id": 337,
+      "name": "337",
+      "types": [
+        "rock",
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "337"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 90,
+        "attack": 55,
+        "defense": 65,
+        "speed": 70
+      },
+      "catch_rate": 45
+    },
+    "338": {
+      "id": 338,
+      "name": "338",
+      "types": [
+        "rock",
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "338"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 90,
+        "attack": 95,
+        "defense": 85,
+        "speed": 70
+      },
+      "catch_rate": 45
+    },
+    "339": {
+      "id": 339,
+      "name": "339",
+      "types": [
+        "water",
+        "ground"
+      ],
+      "stage": 0,
+      "line": [
+        "339",
+        "340"
+      ],
+      "evolves_at": 30,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "8",
+      "base_stats": {
+        "hp": 50,
+        "attack": 48,
+        "defense": 43,
+        "speed": 60
+      },
+      "catch_rate": 190,
+      "evolves_to": "340"
+    },
+    "340": {
+      "id": 340,
+      "name": "340",
+      "types": [
+        "water",
+        "ground"
+      ],
+      "stage": 1,
+      "line": [
+        "339",
+        "340"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "8",
+      "base_stats": {
+        "hp": 110,
+        "attack": 78,
+        "defense": 73,
+        "speed": 60
+      },
+      "catch_rate": 75
+    },
+    "341": {
+      "id": 341,
+      "name": "341",
+      "types": [
+        "water"
+      ],
+      "stage": 0,
+      "line": [
+        "341",
+        "342"
+      ],
+      "evolves_at": 30,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "4",
+      "base_stats": {
+        "hp": 43,
+        "attack": 80,
+        "defense": 65,
+        "speed": 35
+      },
+      "catch_rate": 205,
+      "evolves_to": "342"
+    },
+    "342": {
+      "id": 342,
+      "name": "342",
+      "types": [
+        "water",
+        "dark"
+      ],
+      "stage": 1,
+      "line": [
+        "341",
+        "342"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "4",
+      "base_stats": {
+        "hp": 63,
+        "attack": 120,
+        "defense": 85,
+        "speed": 55
+      },
+      "catch_rate": 155
+    },
+    "343": {
+      "id": 343,
+      "name": "343",
+      "types": [
+        "ground",
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "343",
+        "344"
+      ],
+      "evolves_at": 36,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "6",
+      "base_stats": {
+        "hp": 40,
+        "attack": 40,
+        "defense": 55,
+        "speed": 55
+      },
+      "catch_rate": 255,
+      "evolves_to": "344"
+    },
+    "344": {
+      "id": 344,
+      "name": "344",
+      "types": [
+        "ground",
+        "psychic"
+      ],
+      "stage": 1,
+      "line": [
+        "343",
+        "344"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 60,
+        "attack": 70,
+        "defense": 105,
+        "speed": 75
+      },
+      "catch_rate": 90
+    },
+    "345": {
+      "id": 345,
+      "name": "345",
+      "types": [
+        "rock",
+        "grass"
+      ],
+      "stage": 0,
+      "line": [
+        "345",
+        "346"
+      ],
+      "evolves_at": 40,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "3",
+      "base_stats": {
+        "hp": 66,
+        "attack": 41,
+        "defense": 77,
+        "speed": 23
+      },
+      "catch_rate": 45,
+      "evolves_to": "346"
+    },
+    "346": {
+      "id": 346,
+      "name": "346",
+      "types": [
+        "rock",
+        "grass"
+      ],
+      "stage": 1,
+      "line": [
+        "345",
+        "346"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "3",
+      "base_stats": {
+        "hp": 86,
+        "attack": 81,
+        "defense": 97,
+        "speed": 43
+      },
+      "catch_rate": 45
+    },
+    "347": {
+      "id": 347,
+      "name": "347",
+      "types": [
+        "rock",
+        "bug"
+      ],
+      "stage": 0,
+      "line": [
+        "347",
+        "348"
+      ],
+      "evolves_at": 40,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "3",
+      "base_stats": {
+        "hp": 45,
+        "attack": 95,
+        "defense": 50,
+        "speed": 75
+      },
+      "catch_rate": 45,
+      "evolves_to": "348"
+    },
+    "348": {
+      "id": 348,
+      "name": "348",
+      "types": [
+        "rock",
+        "bug"
+      ],
+      "stage": 1,
+      "line": [
+        "347",
+        "348"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "3",
+      "base_stats": {
+        "hp": 75,
+        "attack": 125,
+        "defense": 100,
+        "speed": 45
+      },
+      "catch_rate": 45
+    },
+    "349": {
+      "id": 349,
+      "name": "349",
+      "types": [
+        "water"
+      ],
+      "stage": 0,
+      "line": [
+        "349",
+        "350"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "4",
+      "base_stats": {
+        "hp": 20,
+        "attack": 15,
+        "defense": 20,
+        "speed": 80
+      },
+      "catch_rate": 255,
+      "evolves_condition": "special",
+      "evolves_to": "350"
+    },
+    "350": {
+      "id": 350,
+      "name": "350",
+      "types": [
+        "water"
+      ],
+      "stage": 1,
+      "line": [
+        "349",
+        "350"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "4",
+      "base_stats": {
+        "hp": 95,
+        "attack": 60,
+        "defense": 79,
+        "speed": 81
+      },
+      "catch_rate": 60
+    },
+    "351": {
+      "id": 351,
+      "name": "351",
+      "types": [
+        "normal"
+      ],
+      "stage": 0,
+      "line": [
+        "351"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 70,
+        "attack": 70,
+        "defense": 70,
+        "speed": 70
+      },
+      "catch_rate": 45
+    },
+    "352": {
+      "id": 352,
+      "name": "352",
+      "types": [
+        "normal"
+      ],
+      "stage": 0,
+      "line": [
+        "352"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 60,
+        "attack": 90,
+        "defense": 70,
+        "speed": 40
+      },
+      "catch_rate": 200
+    },
+    "353": {
+      "id": 353,
+      "name": "353",
+      "types": [
+        "ghost"
+      ],
+      "stage": 0,
+      "line": [
+        "353",
+        "354"
+      ],
+      "evolves_at": 37,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "common",
+      "region": "7",
+      "base_stats": {
+        "hp": 44,
+        "attack": 75,
+        "defense": 35,
+        "speed": 45
+      },
+      "catch_rate": 225,
+      "evolves_to": "354"
+    },
+    "354": {
+      "id": 354,
+      "name": "354",
+      "types": [
+        "ghost"
+      ],
+      "stage": 1,
+      "line": [
+        "353",
+        "354"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "fast",
+      "rarity": "uncommon",
+      "region": "7",
+      "base_stats": {
+        "hp": 64,
+        "attack": 115,
+        "defense": 65,
+        "speed": 65
+      },
+      "catch_rate": 45
+    },
+    "355": {
+      "id": 355,
+      "name": "355",
+      "types": [
+        "ghost"
+      ],
+      "stage": 0,
+      "line": [
+        "355",
+        "356"
+      ],
+      "evolves_at": 37,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "common",
+      "region": "7",
+      "base_stats": {
+        "hp": 20,
+        "attack": 40,
+        "defense": 90,
+        "speed": 25
+      },
+      "catch_rate": 190,
+      "evolves_to": "356"
+    },
+    "356": {
+      "id": 356,
+      "name": "356",
+      "types": [
+        "ghost"
+      ],
+      "stage": 1,
+      "line": [
+        "355",
+        "356"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "fast",
+      "rarity": "uncommon",
+      "region": "7",
+      "base_stats": {
+        "hp": 40,
+        "attack": 70,
+        "defense": 130,
+        "speed": 25
+      },
+      "catch_rate": 90,
+      "evolves_condition": "held_item:reaper-cloth"
+    },
+    "357": {
+      "id": 357,
+      "name": "357",
+      "types": [
+        "grass",
+        "flying"
+      ],
+      "stage": 0,
+      "line": [
+        "357"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 99,
+        "attack": 68,
+        "defense": 83,
+        "speed": 51
+      },
+      "catch_rate": 200
+    },
+    "358": {
+      "id": 358,
+      "name": "358",
+      "types": [
+        "psychic"
+      ],
+      "stage": 1,
+      "line": [
+        "358"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "fast",
+      "rarity": "uncommon",
+      "region": "7",
+      "base_stats": {
+        "hp": 75,
+        "attack": 50,
+        "defense": 80,
+        "speed": 65
+      },
+      "catch_rate": 45
+    },
+    "359": {
+      "id": 359,
+      "name": "359",
+      "types": [
+        "dark"
+      ],
+      "stage": 0,
+      "line": [
+        "359"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "6",
+      "base_stats": {
+        "hp": 65,
+        "attack": 130,
+        "defense": 60,
+        "speed": 75
+      },
+      "catch_rate": 30
+    },
+    "360": {
+      "id": 360,
+      "name": "360",
+      "types": [
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "360"
+      ],
+      "evolves_at": 15,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "6",
+      "base_stats": {
+        "hp": 95,
+        "attack": 23,
+        "defense": 48,
+        "speed": 23
+      },
+      "catch_rate": 125
+    },
+    "361": {
+      "id": 361,
+      "name": "361",
+      "types": [
+        "ice"
+      ],
+      "stage": 0,
+      "line": [
+        "361",
+        "362"
+      ],
+      "evolves_at": 42,
+      "unlock": "encounter",
+      "exp_group": "medium_fast",
+      "rarity": "common",
+      "region": "2",
+      "base_stats": {
+        "hp": 50,
+        "attack": 50,
+        "defense": 50,
+        "speed": 50
+      },
+      "catch_rate": 190,
+      "evolves_to": "362"
+    },
+    "362": {
+      "id": 362,
+      "name": "362",
+      "types": [
+        "ice"
+      ],
+      "stage": 1,
+      "line": [
+        "361",
+        "362"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_fast",
+      "rarity": "uncommon",
+      "region": "2",
+      "base_stats": {
+        "hp": 80,
+        "attack": 80,
+        "defense": 80,
+        "speed": 80
+      },
+      "catch_rate": 75
+    },
+    "363": {
+      "id": 363,
+      "name": "363",
+      "types": [
+        "ice",
+        "water"
+      ],
+      "stage": 0,
+      "line": [
+        "363",
+        "364",
+        "365"
+      ],
+      "evolves_at": 32,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "4",
+      "base_stats": {
+        "hp": 70,
+        "attack": 40,
+        "defense": 50,
+        "speed": 25
+      },
+      "catch_rate": 255,
+      "evolves_to": "364"
+    },
+    "364": {
+      "id": 364,
+      "name": "364",
+      "types": [
+        "ice",
+        "water"
+      ],
+      "stage": 1,
+      "line": [
+        "363",
+        "364",
+        "365"
+      ],
+      "evolves_at": 44,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "4",
+      "base_stats": {
+        "hp": 90,
+        "attack": 60,
+        "defense": 70,
+        "speed": 45
+      },
+      "catch_rate": 120,
+      "evolves_to": "365"
+    },
+    "365": {
+      "id": 365,
+      "name": "365",
+      "types": [
+        "ice",
+        "water"
+      ],
+      "stage": 2,
+      "line": [
+        "363",
+        "364",
+        "365"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "4",
+      "base_stats": {
+        "hp": 110,
+        "attack": 80,
+        "defense": 90,
+        "speed": 65
+      },
+      "catch_rate": 45
+    },
+    "366": {
+      "id": 366,
+      "name": "366",
+      "types": [
+        "water"
+      ],
+      "stage": 0,
+      "line": [
+        "366",
+        "367",
+        "368"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "medium_slow",
+      "rarity": "common",
+      "region": "8",
+      "base_stats": {
+        "hp": 35,
+        "attack": 64,
+        "defense": 85,
+        "speed": 32
+      },
+      "catch_rate": 255,
+      "evolves_condition": "held_item:deep-sea-tooth",
+      "evolves_to": [
+        {
+          "name": "367",
+          "condition": "trade"
+        },
+        {
+          "name": "368",
+          "condition": "trade"
+        }
+      ]
+    },
+    "367": {
+      "id": 367,
+      "name": "367",
+      "types": [
+        "water"
+      ],
+      "stage": 1,
+      "line": [
+        "366",
+        "367",
+        "368"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "uncommon",
+      "region": "8",
+      "base_stats": {
+        "hp": 55,
+        "attack": 104,
+        "defense": 105,
+        "speed": 52
+      },
+      "catch_rate": 60
+    },
+    "368": {
+      "id": 368,
+      "name": "368",
+      "types": [
+        "water"
+      ],
+      "stage": 2,
+      "line": [
+        "366",
+        "367",
+        "368"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "medium_slow",
+      "rarity": "rare",
+      "region": "8",
+      "base_stats": {
+        "hp": 55,
+        "attack": 84,
+        "defense": 105,
+        "speed": 52
+      },
+      "catch_rate": 60
+    },
+    "369": {
+      "id": 369,
+      "name": "369",
+      "types": [
+        "water",
+        "rock"
+      ],
+      "stage": 0,
+      "line": [
+        "369"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "uncommon",
+      "region": "8",
+      "base_stats": {
+        "hp": 100,
+        "attack": 90,
+        "defense": 130,
+        "speed": 55
+      },
+      "catch_rate": 25
+    },
+    "370": {
+      "id": 370,
+      "name": "370",
+      "types": [
+        "water"
+      ],
+      "stage": 0,
+      "line": [
+        "370"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "fast",
+      "rarity": "common",
+      "region": "8",
+      "base_stats": {
+        "hp": 43,
+        "attack": 30,
+        "defense": 55,
+        "speed": 97
+      },
+      "catch_rate": 225
+    },
+    "371": {
+      "id": 371,
+      "name": "371",
+      "types": [
+        "dragon"
+      ],
+      "stage": 0,
+      "line": [
+        "371",
+        "372",
+        "373"
+      ],
+      "evolves_at": 30,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "common",
+      "region": "9",
+      "base_stats": {
+        "hp": 45,
+        "attack": 75,
+        "defense": 60,
+        "speed": 50
+      },
+      "catch_rate": 45,
+      "evolves_to": "372"
+    },
+    "372": {
+      "id": 372,
+      "name": "372",
+      "types": [
+        "dragon"
+      ],
+      "stage": 1,
+      "line": [
+        "371",
+        "372",
+        "373"
+      ],
+      "evolves_at": 50,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "uncommon",
+      "region": "9",
+      "base_stats": {
+        "hp": 65,
+        "attack": 95,
+        "defense": 100,
+        "speed": 50
+      },
+      "catch_rate": 45,
+      "evolves_to": "373"
+    },
+    "373": {
+      "id": 373,
+      "name": "373",
+      "types": [
+        "dragon",
+        "flying"
+      ],
+      "stage": 2,
+      "line": [
+        "371",
+        "372",
+        "373"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "rare",
+      "region": "9",
+      "base_stats": {
+        "hp": 95,
+        "attack": 135,
+        "defense": 80,
+        "speed": 100
+      },
+      "catch_rate": 45
+    },
+    "374": {
+      "id": 374,
+      "name": "374",
+      "types": [
+        "steel",
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "374",
+        "375",
+        "376"
+      ],
+      "evolves_at": 20,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "common",
+      "region": "9",
+      "base_stats": {
+        "hp": 40,
+        "attack": 55,
+        "defense": 80,
+        "speed": 30
+      },
+      "catch_rate": 3,
+      "evolves_to": "375"
+    },
+    "375": {
+      "id": 375,
+      "name": "375",
+      "types": [
+        "steel",
+        "psychic"
+      ],
+      "stage": 1,
+      "line": [
+        "374",
+        "375",
+        "376"
+      ],
+      "evolves_at": 45,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "uncommon",
+      "region": "9",
+      "base_stats": {
+        "hp": 60,
+        "attack": 75,
+        "defense": 100,
+        "speed": 50
+      },
+      "catch_rate": 3,
+      "evolves_to": "376"
+    },
+    "376": {
+      "id": 376,
+      "name": "376",
+      "types": [
+        "steel",
+        "psychic"
+      ],
+      "stage": 2,
+      "line": [
+        "374",
+        "375",
+        "376"
+      ],
+      "evolves_at": null,
+      "unlock": "evolution",
+      "exp_group": "slow",
+      "rarity": "rare",
+      "region": "9",
+      "base_stats": {
+        "hp": 80,
+        "attack": 135,
+        "defense": 130,
+        "speed": 70
+      },
+      "catch_rate": 3
+    },
+    "377": {
+      "id": 377,
+      "name": "377",
+      "types": [
+        "rock"
+      ],
+      "stage": 0,
+      "line": [
+        "377"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "legendary",
+      "region": "9",
+      "base_stats": {
+        "hp": 80,
+        "attack": 100,
+        "defense": 200,
+        "speed": 50
+      },
+      "catch_rate": 3
+    },
+    "378": {
+      "id": 378,
+      "name": "378",
+      "types": [
+        "ice"
+      ],
+      "stage": 0,
+      "line": [
+        "378"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "legendary",
+      "region": "9",
+      "base_stats": {
+        "hp": 80,
+        "attack": 50,
+        "defense": 100,
+        "speed": 50
+      },
+      "catch_rate": 3
+    },
+    "379": {
+      "id": 379,
+      "name": "379",
+      "types": [
+        "steel"
+      ],
+      "stage": 0,
+      "line": [
+        "379"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "legendary",
+      "region": "9",
+      "base_stats": {
+        "hp": 80,
+        "attack": 75,
+        "defense": 150,
+        "speed": 50
+      },
+      "catch_rate": 3
+    },
+    "380": {
+      "id": 380,
+      "name": "380",
+      "types": [
+        "dragon",
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "380"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "legendary",
+      "region": "9",
+      "base_stats": {
+        "hp": 80,
+        "attack": 80,
+        "defense": 90,
+        "speed": 110
+      },
+      "catch_rate": 3
+    },
+    "381": {
+      "id": 381,
+      "name": "381",
+      "types": [
+        "dragon",
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "381"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "legendary",
+      "region": "9",
+      "base_stats": {
+        "hp": 80,
+        "attack": 90,
+        "defense": 80,
+        "speed": 110
+      },
+      "catch_rate": 3
+    },
+    "382": {
+      "id": 382,
+      "name": "382",
+      "types": [
+        "water"
+      ],
+      "stage": 0,
+      "line": [
+        "382"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "legendary",
+      "region": "9",
+      "base_stats": {
+        "hp": 100,
+        "attack": 100,
+        "defense": 90,
+        "speed": 90
+      },
+      "catch_rate": 3
+    },
+    "383": {
+      "id": 383,
+      "name": "383",
+      "types": [
+        "ground"
+      ],
+      "stage": 0,
+      "line": [
+        "383"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "legendary",
+      "region": "9",
+      "base_stats": {
+        "hp": 100,
+        "attack": 150,
+        "defense": 140,
+        "speed": 90
+      },
+      "catch_rate": 3
+    },
+    "384": {
+      "id": 384,
+      "name": "384",
+      "types": [
+        "dragon",
+        "flying"
+      ],
+      "stage": 0,
+      "line": [
+        "384"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "legendary",
+      "region": "9",
+      "base_stats": {
+        "hp": 105,
+        "attack": 150,
+        "defense": 90,
+        "speed": 95
+      },
+      "catch_rate": 45
+    },
+    "385": {
+      "id": 385,
+      "name": "385",
+      "types": [
+        "steel",
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "385"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "mythical",
+      "region": "9",
+      "base_stats": {
+        "hp": 100,
+        "attack": 100,
+        "defense": 100,
+        "speed": 100
+      },
+      "catch_rate": 3
+    },
+    "386": {
+      "id": 386,
+      "name": "386",
+      "types": [
+        "psychic"
+      ],
+      "stage": 0,
+      "line": [
+        "386"
+      ],
+      "evolves_at": null,
+      "unlock": "encounter",
+      "exp_group": "slow",
+      "rarity": "mythical",
+      "region": "9",
+      "base_stats": {
+        "hp": 50,
+        "attack": 150,
+        "defense": 50,
+        "speed": 150
+      },
+      "catch_rate": 3
+    }
+  },
+  "starters": [
+    "252",
+    "255",
+    "258"
+  ]
+}

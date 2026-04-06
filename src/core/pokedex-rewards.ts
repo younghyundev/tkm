@@ -1,5 +1,5 @@
 import { getPokemonDB, getPokedexRewardsDB } from './pokemon-data.js';
-import { addItem } from './items.js';
+import { addItem, randInt } from './items.js';
 import type { State, Config, MilestoneReward } from './types.js';
 
 /**
@@ -127,12 +127,13 @@ export function checkTypeMasters(state: State): string[] {
 
 /**
  * Check evolution chain completion and award pokeball rewards.
- * Returns number of newly completed chains.
+ * Returns number of newly completed chains and total balls awarded.
  */
-export function checkChainCompletion(state: State): number {
+export function checkChainCompletion(state: State): { chains: number; ballsAwarded: number } {
   const db = getPokemonDB();
   const rewardsDB = getPokedexRewardsDB();
   let newCompletions = 0;
+  let totalBalls = 0;
 
   const completedChains = state.completed_chains;
 
@@ -153,12 +154,15 @@ export function checkChainCompletion(state: State): number {
     const allCaught = members.every(name => state.pokedex[name]?.caught);
     if (allCaught) {
       completedChains.push(lineKey);
-      addItem(state, 'pokeball', rewardsDB.chain_completion_reward.pokeball_count);
+      const { pokeball_min, pokeball_max } = rewardsDB.chain_completion_reward;
+      const balls = randInt(pokeball_min, pokeball_max);
+      addItem(state, 'pokeball', balls);
+      totalBalls += balls;
       newCompletions++;
     }
   }
 
-  return newCompletions;
+  return { chains: newCompletions, ballsAwarded: totalBalls };
 }
 
 /**

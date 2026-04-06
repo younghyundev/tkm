@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
-import { readState, writeState } from '../core/state.js';
-import { readConfig, writeConfig } from '../core/config.js';
-import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
+import { readState, writeState, readCommonState, writeCommonState } from '../core/state.js';
+import { readConfig, writeConfig, readGlobalConfig } from '../core/config.js';
+import { checkAchievements, formatAchievementMessage, checkCommonAchievements } from '../core/achievements.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
@@ -39,23 +39,31 @@ function main(): void {
   const result = withLock(() => {
     const state = readState();
     const config = readConfig();
-    initLocale(config.language ?? 'en');
+    const commonState = readCommonState();
+    initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
-    // Increment permission_count
+    // Increment permission_count (delta-based: +1 per hook call)
     state.permission_count += 1;
+    commonState.permission_count += 1;
 
     // Check achievements (permission_master)
-    const achEvents = checkAchievements(state, config);
+    const achEvents = checkAchievements(state, config, commonState);
     for (const achEvent of achEvents) {
       messages.push(formatAchievementMessage(achEvent));
     }
 
+    const commonAchEvents = checkCommonAchievements(commonState, config, state);
+    for (const achEvent of commonAchEvents) {
+      messages.push(formatAchievementMessage(achEvent));
+    }
+
+    writeCommonState(commonState);
     writeState(state);
     writeConfig(config); // permission_master may update max_party_size
   });
 
   // Lock failed — skip gracefully
-  if (result === null) {
+  if (!result.acquired) {
     // no-op
   }
 

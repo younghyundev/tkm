@@ -1,0 +1,174 @@
+{
+  "milestones": [
+    {
+      "id": "catch_10_reward",
+      "threshold": 10,
+      "reward_type": "pokeball",
+      "reward_value": 3,
+      "label": {
+        "en": "Catch 10 — 3 Poké Balls",
+        "ko": "10마리 포획 — 몬스터볼 3개"
+      }
+    },
+    {
+      "id": "catch_25_reward",
+      "threshold": 25,
+      "reward_type": "pokeball",
+      "reward_value": 5,
+      "label": {
+        "en": "Catch 25 — 5 Poké Balls",
+        "ko": "25마리 포획 — 몬스터볼 5개"
+      }
+    },
+    {
+      "id": "catch_50_reward",
+      "threshold": 50,
+      "reward_type": "xp_multiplier",
+      "reward_value": 1.1,
+      "legendary_bonus": "weather_trio",
+      "label": {
+        "en": "Catch 50 — XP boost + Weather Trio encounter!",
+        "ko": "50마리 포획 — 경험치 부스트 + 날씨 트리오 조우!"
+      }
+    },
+    {
+      "id": "catch_70_reward",
+      "threshold": 70,
+      "reward_type": "legendary_unlock",
+      "reward_value": "weather_trio",
+      "legendary_bonus": "weather_trio",
+      "label": {
+        "en": "Catch 70 — Weather Trio encounter!",
+        "ko": "70마리 포획 — 날씨 트리오 조우!"
+      }
+    },
+    {
+      "id": "catch_90_reward",
+      "threshold": 90,
+      "reward_type": "legendary_unlock",
+      "reward_value": "regis",
+      "label": {
+        "en": "Catch 90 — Regi Trio encounter!",
+        "ko": "90마리 포획 — 레지 트리오 조우!"
+      }
+    },
+    {
+      "id": "catch_120_reward",
+      "threshold": 120,
+      "reward_type": "legendary_unlock",
+      "reward_value": "eon_duo",
+      "label": {
+        "en": "Catch 120 — Eon Duo encounter!",
+        "ko": "120마리 포획 — 이온 듀오 조우!"
+      }
+    },
+    {
+      "id": "catch_135_reward",
+      "threshold": 135,
+      "reward_type": "legendary_unlock",
+      "reward_value": "mythicals",
+      "label": {
+        "en": "Catch all 135 — Deoxys & Jirachi!",
+        "ko": "135마리 포획 — 데오키시스 & 지라치!"
+      }
+    }
+  ],
+  "legendary_groups": {
+    "weather_trio": {
+      "label": {
+        "en": "Weather Trio",
+        "ko": "날씨 트리오"
+      },
+      "description": {
+        "en": "The three weather legendary Pokémon of Hoenn",
+        "ko": "호연 지방 날씨 전설 포켓몬 3마리"
+      },
+      "options": [
+        "382",
+        "383",
+        "384"
+      ]
+    },
+    "regis": {
+      "label": {
+        "en": "Regi Trio",
+        "ko": "레지 트리오"
+      },
+      "description": {
+        "en": "The three ancient golem Pokémon",
+        "ko": "세 고대 골렘 포켓몬"
+      },
+      "options": [
+        "377",
+        "378",
+        "379"
+      ]
+    },
+    "eon_duo": {
+      "label": {
+        "en": "Eon Duo",
+        "ko": "이온 듀오"
+      },
+      "description": {
+        "en": "The roaming eon Pokémon of Hoenn",
+        "ko": "호연을 떠도는 이온 포켓몬"
+      },
+      "options": [
+        "380",
+        "381"
+      ]
+    },
+    "mythicals": {
+      "label": {
+        "en": "Mythicals",
+        "ko": "환상의 포켓몬"
+      },
+      "description": {
+        "en": "Jirachi and Deoxys",
+        "ko": "지라치와 데오키시스"
+      },
+      "options": [
+        "385",
+        "386"
+      ]
+    },
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Unlocked through type mastery",
+        "ko": "타입 마스터를 통해 해금"
+      },
+      "options": [
+        "382",
+        "383",
+        "384"
+      ]
+    }
+  },
+  "type_master": {
+    "xp_bonus": 1.2,
+    "legendary_unlock_threshold": 3,
+    "legendary_group": "special_legends",
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Master 3 types to unlock",
+        "ko": "3개 타입 마스터 달성 시 해금"
+      },
+      "options": [
+        "382",
+        "383",
+        "384"
+      ]
+    }
+  },
+  "chain_completion_reward": {
+    "pokeball_count": 1
+  }
+}

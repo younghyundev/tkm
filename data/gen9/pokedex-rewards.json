@@ -1,0 +1,174 @@
+{
+  "milestones": [
+    {
+      "id": "catch_10_reward",
+      "threshold": 10,
+      "reward_type": "pokeball",
+      "reward_value": 3,
+      "label": {
+        "en": "Catch 10 — 3 Poké Balls",
+        "ko": "10마리 포획 — 몬스터볼 3개"
+      }
+    },
+    {
+      "id": "catch_25_reward",
+      "threshold": 25,
+      "reward_type": "pokeball",
+      "reward_value": 5,
+      "label": {
+        "en": "Catch 25 — 5 Poké Balls",
+        "ko": "25마리 포획 — 몬스터볼 5개"
+      }
+    },
+    {
+      "id": "catch_50_reward",
+      "threshold": 50,
+      "reward_type": "xp_multiplier",
+      "reward_value": 1.1,
+      "legendary_bonus": "ride_legends",
+      "label": {
+        "en": "Catch 50 — Ride Legend encounter!",
+        "ko": "50마리 포획 — 라이드 전설 조우!"
+      }
+    },
+    {
+      "id": "catch_70_reward",
+      "threshold": 70,
+      "reward_type": "legendary_unlock",
+      "reward_value": "treasures_of_ruin",
+      "label": {
+        "en": "Catch 70 — Treasures of Ruin!",
+        "ko": "70마리 포획 — 재앙의 보물!"
+      }
+    },
+    {
+      "id": "catch_90_reward",
+      "threshold": 90,
+      "reward_type": "legendary_unlock",
+      "reward_value": "ride_legends",
+      "label": {
+        "en": "Catch 90 — Ride Legends!",
+        "ko": "90마리 포획 — 라이드 전설!"
+      }
+    },
+    {
+      "id": "catch_110_reward",
+      "threshold": 110,
+      "reward_type": "legendary_unlock",
+      "reward_value": "dlc_legends",
+      "label": {
+        "en": "Catch 110 — DLC Legends!",
+        "ko": "110마리 포획 — DLC 전설!"
+      }
+    },
+    {
+      "id": "catch_120_reward",
+      "threshold": 120,
+      "reward_type": "legendary_unlock",
+      "reward_value": "mythicals",
+      "label": {
+        "en": "Catch all 120 — Mythicals!",
+        "ko": "120마리 포획 — 환상의 포켓몬!"
+      }
+    }
+  ],
+  "legendary_groups": {
+    "ride_legends": {
+      "label": {
+        "en": "Ride Legends",
+        "ko": "라이드 전설"
+      },
+      "description": {
+        "en": "The legendary ride Pokémon of Paldea",
+        "ko": "팔데아의 전설 라이드 포켓몬"
+      },
+      "options": [
+        "1007",
+        "1008"
+      ]
+    },
+    "treasures_of_ruin": {
+      "label": {
+        "en": "Treasures of Ruin",
+        "ko": "재앙의 보물"
+      },
+      "description": {
+        "en": "The four cursed treasures sealed across Paldea",
+        "ko": "팔데아 곳곳에 봉인된 네 재앙의 보물"
+      },
+      "options": [
+        "1001",
+        "1002",
+        "1003",
+        "1004"
+      ]
+    },
+    "dlc_legends": {
+      "label": {
+        "en": "DLC Legends",
+        "ko": "DLC 전설"
+      },
+      "description": {
+        "en": "Legendary Pokémon from The Hidden Treasure of Area Zero",
+        "ko": "에리어 제로의 숨겨진 보물의 전설 포켓몬"
+      },
+      "options": [
+        "1017",
+        "1024",
+        "1025"
+      ]
+    },
+    "mythicals": {
+      "label": {
+        "en": "Paldea Mythicals",
+        "ko": "팔데아 환상"
+      },
+      "description": {
+        "en": "The mythical Pokémon of Paldea",
+        "ko": "팔데아 지방의 환상 포켓몬"
+      },
+      "options": [
+        "1007",
+        "1008",
+        "1024",
+        "1025"
+      ]
+    },
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Unlocked through type mastery",
+        "ko": "타입 마스터를 통해 해금"
+      },
+      "options": [
+        "1007",
+        "1008"
+      ]
+    }
+  },
+  "type_master": {
+    "xp_bonus": 1.2,
+    "legendary_unlock_threshold": 3,
+    "legendary_group": "special_legends",
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Master 3 types to unlock",
+        "ko": "3개 타입 마스터 달성 시 해금"
+      },
+      "options": [
+        "1007",
+        "1008"
+      ]
+    }
+  },
+  "chain_completion_reward": {
+    "pokeball_count": 1
+  }
+}

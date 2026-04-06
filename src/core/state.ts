@@ -1,9 +1,10 @@
 import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
-import { statePath, sessionPath, i18nDataDir, DATA_DIR, SESSION_GEN_MAP_PATH } from './paths.js';
+import { statePath, sessionPath, i18nDataDir, DATA_DIR, SESSION_GEN_MAP_PATH, COMMON_STATE_PATH } from './paths.js';
 // Legacy imports for backward compat during migration
-import { STATE_PATH, SESSION_PATH, I18N_DATA_DIR } from './paths.js';
-import type { State, Session, PokemonState, PokedexEntry, Notification, Stats, LegendaryPending, SessionGenMap } from './types.js';
+import { I18N_DATA_DIR } from './paths.js';
+import type { State, Session, PokemonState, PokedexEntry, Notification, Stats, LegendaryPending, SessionGenMap, CommonState } from './types.js';
+import { runMigrations } from './migration.js';
 
 const DEFAULT_STATS: Stats = {
   streak_days: 0,
@@ -44,6 +45,8 @@ const DEFAULT_STATE: State = {
   cheat_log: [],
   last_battle: null,
   last_tip: null,
+  last_drop: null,
+  last_achievement: null,
   notifications: [],
   dismissed_notifications: [],
   last_known_regions: 1,
@@ -67,6 +70,55 @@ const DEFAULT_SESSION: Session = {
   evolution_events: [],
   achievement_events: [],
 };
+
+// ── Common State (shared across all generations) ──
+
+const DEFAULT_COMMON_STATE: CommonState = {
+  achievements: {},
+  encounter_rate_bonus: 0,
+  xp_bonus_multiplier: 0,
+  items: {},
+  max_party_size_bonus: 0,
+  session_count: 0,
+  total_tokens_consumed: 0,
+  battle_count: 0,
+  battle_wins: 0,
+  catch_count: 0,
+  evolution_count: 0,
+  error_count: 0,
+  permission_count: 0,
+};
+
+export function readCommonState(): CommonState {
+  if (!existsSync(COMMON_STATE_PATH)) {
+    return { ...DEFAULT_COMMON_STATE, achievements: {}, items: {} };
+  }
+  try {
+    const raw = readFileSync(COMMON_STATE_PATH, 'utf-8');
+    const parsed = JSON.parse(raw) as Partial<CommonState>;
+    return {
+      ...DEFAULT_COMMON_STATE,
+      ...parsed,
+      achievements: parsed.achievements ?? {},
+      items: parsed.items ?? {},
+    };
+  } catch {
+    return { ...DEFAULT_COMMON_STATE, achievements: {}, items: {} };
+  }
+}
+
+export function writeCommonState(state: CommonState): void {
+  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
+  const tmpPath = COMMON_STATE_PATH + '.tmp';
+  writeFileSync(tmpPath, JSON.stringify(state, null, 2), 'utf-8');
+  renameSync(tmpPath, COMMON_STATE_PATH);
+}
+
+export function commonStateExists(): boolean {
+  return existsSync(COMMON_STATE_PATH);
+}
+
+// ── Per-generation State ──
 
 export function readState(gen?: string): State {
   const path = statePath(gen);
@@ -114,6 +166,9 @@ export function readState(gen?: string): State {
 
   // Migrate Korean name keys -> ID keys
   migrateNameToId(result, path, i18nDataDir(gen));
+
+  // Version-gated migrations
+  runMigrations(result);
 
   return result;
 }

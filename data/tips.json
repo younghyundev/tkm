@@ -146,7 +146,7 @@
   {
     "id": "item_ball_drop",
     "category": "item",
-    "template": "🔴 몬스터볼은 전투 승리 시 20%, 패배 시 5% 확률로 드랍됩니다",
+    "template": "🔴 몬스터볼은 전투 승리 시 30%, 패배 시 12% 확률로 드랍됩니다",
     "dynamic": false,
     "template_key": "tip.item_ball_drop"
   },
@@ -178,5 +178,68 @@
     "template": "🔴 이미 포획한 포켓몬과의 전투에서는 몬스터볼이 소비되지 않습니다",
     "dynamic": false,
     "template_key": "tip.item_ball_strategy"
+  },
+  {
+    "id": "volume_xp",
+    "category": "xp",
+    "template": "한번에 많은 토큰을 사용하면 경험치를 더 많이 받을 수 있다고 한다.",
+    "dynamic": false,
+    "template_key": "tip.volume_xp"
+  },
+  {
+    "id": "volume_encounter",
+    "category": "battle",
+    "template": "긴 작업을 하면 야생 포켓몬이 더 자주 나타나는 것 같다.",
+    "dynamic": false,
+    "template_key": "tip.volume_encounter"
+  },
+  {
+    "id": "volume_rare",
+    "category": "battle",
+    "template": "복잡한 작업일수록 강한 포켓몬이 나타날 확률이 높아진다는 소문이 있다.",
+    "dynamic": false,
+    "template_key": "tip.volume_rare"
+  },
+  {
+    "id": "rest_info",
+    "category": "rest",
+    "template": "💤 가끔 쉬어가면 경험치 보너스를 받을 수 있습니다!",
+    "dynamic": false,
+    "template_key": "tip.rest_info"
+  },
+  {
+    "id": "rest_threshold",
+    "category": "rest",
+    "template": "💤 2시간 이상 쉬면 휴식 보너스가 활성화됩니다.",
+    "dynamic": false,
+    "template_key": "tip.rest_threshold"
+  },
+  {
+    "id": "item_tool_drop",
+    "category": "item",
+    "template": "🔴 도구를 사용하면 가끔 몬스터볼을 주울 수 있습니다!",
+    "dynamic": false,
+    "template_key": "tip.item_tool_drop"
+  },
+  {
+    "id": "item_subagent_drop",
+    "category": "item",
+    "template": "🔴 서브에이전트를 보내면 반드시 몬스터볼을 가져옵니다!",
+    "dynamic": false,
+    "template_key": "tip.item_subagent_drop"
+  },
+  {
+    "id": "item_session_bonus",
+    "category": "item",
+    "template": "🔴 세션이 끝나면 몬스터볼 보너스를 받을 수 있습니다!",
+    "dynamic": false,
+    "template_key": "tip.item_session_bonus"
+  },
+  {
+    "id": "item_field_drop",
+    "category": "item",
+    "template": "🔴 풀숲을 걷다 보면 몬스터볼이 떨어져 있을 때도 있습니다!",
+    "dynamic": false,
+    "template_key": "tip.item_field_drop"
   }
 ]

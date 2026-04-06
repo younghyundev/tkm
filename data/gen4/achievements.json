@@ -22,127 +22,31 @@
       "reward_pokemon": "390"
     },
     {
-      "id": "first_battle_win",
-      "trigger_type": "battle_wins",
-      "trigger_value": 1,
-      "rarity": 1,
-      "reward_effects": [
-        {
-          "type": "add_item",
-          "item": "pokeball",
-          "count": 3
-        }
-      ]
-    },
-    {
-      "id": "ten_sessions",
-      "trigger_type": "session_count",
-      "trigger_value": 10,
-      "rarity": 2,
-      "reward_effects": [
-        {
-          "type": "xp_bonus",
-          "value": 0.2
-        }
-      ]
-    },
-    {
-      "id": "ten_catches",
-      "trigger_type": "catch_count",
-      "trigger_value": 10,
-      "rarity": 2,
-      "reward_effects": [
-        {
-          "type": "xp_bonus",
-          "value": 0.1
-        },
-        {
-          "type": "party_slot",
-          "count": 1
-        }
-      ]
-    },
-    {
       "id": "hundred_k_tokens",
       "trigger_type": "total_tokens",
       "trigger_value": 100000,
       "rarity": 2,
-      "reward_pokemon": "403"
+      "reward_pokemon": "403",
+      "reward_effects": [
+        { "type": "encounter_rate_bonus", "value": 0.02 }
+      ]
     },
     {
       "id": "five_hundred_k_tokens",
       "trigger_type": "total_tokens",
       "trigger_value": 500000,
       "rarity": 3,
-      "reward_pokemon": "447"
-    },
-    {
-      "id": "permission_master",
-      "trigger_type": "permission_count",
-      "trigger_value": 50,
-      "rarity": 3,
+      "reward_pokemon": "447",
       "reward_effects": [
-        {
-          "type": "party_slot",
-          "count": 1
-        }
+        { "type": "encounter_rate_bonus", "value": 0.02 }
       ]
     },
     {
-      "id": "pokedex_25",
-      "trigger_type": "catch_count",
-      "trigger_value": 25,
-      "rarity": 2,
-      "reward_effects": [
-        {
-          "type": "add_item",
-          "item": "pokeball",
-          "count": 5
-        }
-      ]
-    },
-    {
-      "id": "pokedex_50",
-      "trigger_type": "catch_count",
-      "trigger_value": 50,
-      "rarity": 3,
-      "reward_effects": [
-        {
-          "type": "unlock_legendary"
-        }
-      ]
-    },
-    {
-      "id": "pokedex_100",
-      "trigger_type": "catch_count",
+      "id": "hundred_sessions",
+      "trigger_type": "session_count",
       "trigger_value": 100,
       "rarity": 3,
-      "reward_pokemon": "493"
-    },
-    {
-      "id": "battle_50",
-      "trigger_type": "battle_count",
-      "trigger_value": 50,
-      "rarity": 2,
-      "reward_effects": [
-        {
-          "type": "xp_bonus",
-          "value": 0.15
-        }
-      ]
-    },
-    {
-      "id": "battle_wins_25",
-      "trigger_type": "battle_wins",
-      "trigger_value": 25,
-      "rarity": 2,
-      "reward_effects": [
-        {
-          "type": "add_item",
-          "item": "pokeball",
-          "count": 10
-        }
-      ]
+      "reward_pokemon": "491"
     },
     {
       "id": "one_million_tokens",
@@ -166,49 +70,11 @@
       "reward_pokemon": "487"
     },
     {
-      "id": "fifty_sessions",
-      "trigger_type": "session_count",
-      "trigger_value": 50,
-      "rarity": 2,
-      "reward_effects": [
-        {
-          "type": "add_item",
-          "item": "pokeball",
-          "count": 5
-        }
-      ]
-    },
-    {
-      "id": "hundred_sessions",
-      "trigger_type": "session_count",
+      "id": "pokedex_100",
+      "trigger_type": "catch_count",
       "trigger_value": 100,
       "rarity": 3,
-      "reward_pokemon": "491"
-    },
-    {
-      "id": "evolution_10",
-      "trigger_type": "evolution_count",
-      "trigger_value": 10,
-      "rarity": 2,
-      "reward_effects": [
-        {
-          "type": "xp_bonus",
-          "value": 0.1
-        }
-      ]
-    },
-    {
-      "id": "error_50",
-      "trigger_type": "error_count",
-      "trigger_value": 50,
-      "rarity": 2,
-      "reward_effects": [
-        {
-          "type": "add_item",
-          "item": "pokeball",
-          "count": 10
-        }
-      ]
+      "reward_pokemon": "493"
     }
   ]
 }

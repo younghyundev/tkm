@@ -1,0 +1,174 @@
+{
+  "milestones": [
+    {
+      "id": "catch_10_reward",
+      "threshold": 10,
+      "reward_type": "pokeball",
+      "reward_value": 3,
+      "label": {
+        "en": "Catch 10 — 3 Poké Balls",
+        "ko": "10마리 포획 — 몬스터볼 3개"
+      }
+    },
+    {
+      "id": "catch_20_reward",
+      "threshold": 20,
+      "reward_type": "pokeball",
+      "reward_value": 5,
+      "label": {
+        "en": "Catch 20 — 5 Poké Balls",
+        "ko": "20마리 포획 — 몬스터볼 5개"
+      }
+    },
+    {
+      "id": "catch_40_reward",
+      "threshold": 40,
+      "reward_type": "xp_multiplier",
+      "reward_value": 1.1,
+      "legendary_bonus": "hero_duo",
+      "label": {
+        "en": "Catch 40 — Hero Duo encounter!",
+        "ko": "40마리 포획 — 영웅 듀오 조우!"
+      }
+    },
+    {
+      "id": "catch_55_reward",
+      "threshold": 55,
+      "reward_type": "legendary_unlock",
+      "reward_value": "hero_duo",
+      "label": {
+        "en": "Catch 55 — Hero Duo encounter!",
+        "ko": "55마리 포획 — 영웅 듀오 조우!"
+      }
+    },
+    {
+      "id": "catch_70_reward",
+      "threshold": 70,
+      "reward_type": "legendary_unlock",
+      "reward_value": "eternatus",
+      "label": {
+        "en": "Catch 70 — Eternatus!",
+        "ko": "70마리 포획 — 무한다이노 조우!"
+      }
+    },
+    {
+      "id": "catch_85_reward",
+      "threshold": 85,
+      "reward_type": "legendary_unlock",
+      "reward_value": "crown_legends",
+      "label": {
+        "en": "Catch 85 — Crown Legends!",
+        "ko": "85마리 포획 — 크라운 전설!"
+      }
+    },
+    {
+      "id": "catch_96_reward",
+      "threshold": 96,
+      "reward_type": "legendary_unlock",
+      "reward_value": "mythicals",
+      "label": {
+        "en": "Catch all 96 — Mythicals!",
+        "ko": "96마리 포획 — 환상의 포켓몬!"
+      }
+    }
+  ],
+  "legendary_groups": {
+    "hero_duo": {
+      "label": {
+        "en": "Hero Duo",
+        "ko": "영웅 듀오"
+      },
+      "description": {
+        "en": "The legendary wolves of Galar",
+        "ko": "가라르의 전설의 늑대"
+      },
+      "options": [
+        "888",
+        "889"
+      ]
+    },
+    "eternatus": {
+      "label": {
+        "en": "Eternatus",
+        "ko": "무한다이노"
+      },
+      "description": {
+        "en": "The Pokémon that nearly caused the Darkest Day",
+        "ko": "다크니스 데이를 일으킬 뻔한 포켓몬"
+      },
+      "options": [
+        "890"
+      ]
+    },
+    "crown_legends": {
+      "label": {
+        "en": "Crown Tundra Legends",
+        "ko": "크라운 툰드라 전설"
+      },
+      "description": {
+        "en": "Legendary Pokémon of the Crown Tundra",
+        "ko": "크라운 툰드라의 전설 포켓몬"
+      },
+      "options": [
+        "894",
+        "895",
+        "896",
+        "897",
+        "898"
+      ]
+    },
+    "mythicals": {
+      "label": {
+        "en": "Galar Mythicals",
+        "ko": "가라르 환상"
+      },
+      "description": {
+        "en": "The mythical Pokémon of Galar",
+        "ko": "가라르 지방의 환상 포켓몬"
+      },
+      "options": [
+        "891",
+        "892",
+        "893"
+      ]
+    },
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Unlocked through type mastery",
+        "ko": "타입 마스터를 통해 해금"
+      },
+      "options": [
+        "888",
+        "889",
+        "890"
+      ]
+    }
+  },
+  "type_master": {
+    "xp_bonus": 1.2,
+    "legendary_unlock_threshold": 3,
+    "legendary_group": "special_legends",
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Master 3 types to unlock",
+        "ko": "3개 타입 마스터 달성 시 해금"
+      },
+      "options": [
+        "888",
+        "889",
+        "890"
+      ]
+    }
+  },
+  "chain_completion_reward": {
+    "pokeball_count": 1
+  }
+}

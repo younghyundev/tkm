@@ -1,0 +1,289 @@
+{
+  "pokemon": {
+    "906": "Sprigatito",
+    "907": "Floragato",
+    "908": "Meowscarada",
+    "909": "Fuecoco",
+    "910": "Crocalor",
+    "911": "Skeledirge",
+    "912": "Quaxly",
+    "913": "Quaxwell",
+    "914": "Quaquaval",
+    "915": "Lechonk",
+    "916": "Oinkologne",
+    "917": "Tarountula",
+    "918": "Spidops",
+    "919": "Nymble",
+    "920": "Lokix",
+    "921": "Pawmi",
+    "922": "Pawmo",
+    "923": "Pawmot",
+    "924": "Tandemaus",
+    "925": "Maushold",
+    "926": "Fidough",
+    "927": "Dachsbun",
+    "928": "Smoliv",
+    "929": "Dolliv",
+    "930": "Arboliva",
+    "931": "Squawkabilly",
+    "932": "Nacli",
+    "933": "Naclstack",
+    "934": "Garganacl",
+    "935": "Charcadet",
+    "936": "Armarouge",
+    "937": "Ceruledge",
+    "938": "Tadbulb",
+    "939": "Bellibolt",
+    "940": "Wattrel",
+    "941": "Kilowattrel",
+    "942": "Maschiff",
+    "943": "Mabosstiff",
+    "944": "Shroodle",
+    "945": "Grafaiai",
+    "946": "Bramblin",
+    "947": "Brambleghast",
+    "948": "Toedscool",
+    "949": "Toedscruel",
+    "950": "Klawf",
+    "951": "Capsakid",
+    "952": "Scovillain",
+    "953": "Rellor",
+    "954": "Rabsca",
+    "955": "Flittle",
+    "956": "Espathra",
+    "957": "Tinkatink",
+    "958": "Tinkatuff",
+    "959": "Tinkaton",
+    "960": "Wiglett",
+    "961": "Wugtrio",
+    "962": "Bombirdier",
+    "963": "Finizen",
+    "964": "Palafin",
+    "965": "Varoom",
+    "966": "Revavroom",
+    "967": "Cyclizar",
+    "968": "Orthworm",
+    "969": "Glimmet",
+    "970": "Glimmora",
+    "971": "Greavard",
+    "972": "Houndstone",
+    "973": "Flamigo",
+    "974": "Cetoddle",
+    "975": "Cetitan",
+    "976": "Veluza",
+    "977": "Dondozo",
+    "978": "Tatsugiri",
+    "979": "Annihilape",
+    "980": "Clodsire",
+    "981": "Farigiraf",
+    "982": "Dudunsparce",
+    "983": "Kingambit",
+    "984": "Great Tusk",
+    "985": "Scream Tail",
+    "986": "Brute Bonnet",
+    "987": "Flutter Mane",
+    "988": "Slither Wing",
+    "989": "Sandy Shocks",
+    "990": "Iron Treads",
+    "991": "Iron Bundle",
+    "992": "Iron Hands",
+    "993": "Iron Jugulis",
+    "994": "Iron Moth",
+    "995": "Iron Thorns",
+    "996": "Frigibax",
+    "997": "Arctibax",
+    "998": "Baxcalibur",
+    "999": "Gimmighoul",
+    "1000": "Gholdengo",
+    "1001": "Wo-Chien",
+    "1002": "Chien-Pao",
+    "1003": "Ting-Lu",
+    "1004": "Chi-Yu",
+    "1005": "Roaring Moon",
+    "1006": "Iron Valiant",
+    "1007": "Koraidon",
+    "1008": "Miraidon",
+    "1009": "Walking Wake",
+    "1010": "Iron Leaves",
+    "1011": "Dipplin",
+    "1012": "Poltchageist",
+    "1013": "Sinistcha",
+    "1014": "Okidogi",
+    "1015": "Munkidori",
+    "1016": "Fezandipiti",
+    "1017": "Ogerpon",
+    "1018": "Archaludon",
+    "1019": "Hydrapple",
+    "1020": "Gouging Fire",
+    "1021": "Raging Bolt",
+    "1022": "Iron Boulder",
+    "1023": "Iron Crown",
+    "1024": "Terapagos",
+    "1025": "Pecharunt"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fire",
+    "water": "Water",
+    "electric": "Electric",
+    "grass": "Grass",
+    "ice": "Ice",
+    "fighting": "Fighting",
+    "poison": "Poison",
+    "ground": "Ground",
+    "flying": "Flying",
+    "psychic": "Psychic",
+    "bug": "Bug",
+    "rock": "Rock",
+    "ghost": "Ghost",
+    "dragon": "Dragon",
+    "dark": "Dark",
+    "steel": "Steel",
+    "fairy": "Fairy"
+  },
+  "regions": {
+    "1": {
+      "name": "Cabo Poco",
+      "description": "A small seaside town at the southern tip of Paldea"
+    },
+    "2": {
+      "name": "Cortondo",
+      "description": "A farming town surrounded by olive groves"
+    },
+    "3": {
+      "name": "Artazon",
+      "description": "A vibrant town of art and creativity"
+    },
+    "4": {
+      "name": "Levincia",
+      "description": "An electric city that never stops streaming"
+    },
+    "5": {
+      "name": "Cascarrafa",
+      "description": "A desert oasis city with flowing waterfalls"
+    },
+    "6": {
+      "name": "Medali",
+      "description": "A gourmet city where flavor reigns supreme"
+    },
+    "7": {
+      "name": "Montenevera",
+      "description": "A snowy mountain town with ghostly charm"
+    },
+    "8": {
+      "name": "Alfornada",
+      "description": "A hidden town nestled in the mountain peaks"
+    },
+    "9": {
+      "name": "Area Zero",
+      "description": "The mysterious depths of the Great Crater of Paldea"
+    }
+  },
+  "achievements": {
+    "first_catch": {
+      "name": "First Catch",
+      "description": "Catch your first wild Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_10": {
+      "name": "Bug Badge",
+      "description": "Catch 10 Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_20": {
+      "name": "Grass Badge",
+      "description": "Catch 20 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_35": {
+      "name": "Electric Badge",
+      "description": "Catch 35 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_50": {
+      "name": "Water Badge",
+      "description": "Catch 50 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_65": {
+      "name": "Normal Badge",
+      "description": "Catch 65 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_80": {
+      "name": "Ghost Badge",
+      "description": "Catch 80 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_100": {
+      "name": "Psychic Badge",
+      "description": "Catch 100 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_120": {
+      "name": "Ice Badge",
+      "description": "Complete the Paldea Pokédex!",
+      "rarity_label": "Legendary"
+    },
+    "first_evolution": {
+      "name": "First Evolution",
+      "description": "Evolve a Pokémon for the first time",
+      "rarity_label": "Common"
+    },
+    "evolve_10": {
+      "name": "Evolution Expert",
+      "description": "Evolve 10 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "win_10": {
+      "name": "Rising Trainer",
+      "description": "Win 10 battles",
+      "rarity_label": "Common"
+    },
+    "win_50": {
+      "name": "Battle Veteran",
+      "description": "Win 50 battles",
+      "rarity_label": "Uncommon"
+    },
+    "win_100": {
+      "name": "Battle Master",
+      "description": "Win 100 battles",
+      "rarity_label": "Rare"
+    },
+    "level_50": {
+      "name": "Power Trainer",
+      "description": "Reach level 50 with any Pokémon",
+      "rarity_label": "Rare"
+    },
+    "level_100": {
+      "name": "Champion",
+      "description": "Reach level 100 with any Pokémon",
+      "rarity_label": "Epic"
+    },
+    "streak_7": {
+      "name": "Weekly Warrior",
+      "description": "Maintain a 7-day streak",
+      "rarity_label": "Uncommon"
+    },
+    "streak_30": {
+      "name": "Monthly Master",
+      "description": "Maintain a 30-day streak",
+      "rarity_label": "Rare"
+    },
+    "all_types": {
+      "name": "Type Collector",
+      "description": "Catch at least one Pokémon of every type",
+      "rarity_label": "Rare"
+    },
+    "all_starters": {
+      "name": "Clavell's Pride",
+      "description": "Obtain all three Paldea starters",
+      "rarity_label": "Uncommon"
+    },
+    "ruin_quartet": {
+      "name": "Treasures of Ruin",
+      "description": "Obtain all four Treasures of Ruin",
+      "rarity_label": "Rare"
+    }
+  }
+}

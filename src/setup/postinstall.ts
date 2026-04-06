@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync, renam
 import { join } from 'path';
 import { DATA_DIR, GLOBAL_CONFIG_PATH, CLAUDE_DIR, PLUGIN_ROOT } from '../core/paths.js';
 import { t, initLocale } from '../i18n/index.js';
-import { readGlobalConfig } from '../core/config.js';
+import { readGlobalConfig, writeGlobalConfig } from '../core/config.js';
 
 function getDefaultGen(): string {
   try {
@@ -194,6 +194,9 @@ function bakeHookPaths(): void {
 }
 
 function main(): void {
+  // Detect new user before any migration happens
+  const isNewUser = !existsSync(GLOBAL_CONFIG_PATH);
+
   // Initialize locale — try reading from global config first, fallback to legacy config
   let lang: 'ko' | 'en' = 'en';
   try {
@@ -208,7 +211,7 @@ function main(): void {
       }
     } catch { /* use default */ }
   }
-  initLocale(lang);
+  initLocale(lang, readGlobalConfig().voice_tone);
   console.log('');
   console.log(t('setup.postinstall.title'));
   console.log('');
@@ -256,6 +259,13 @@ function main(): void {
 
   // Multi-gen migration: move root-level files to gen4/ if needed
   migrateToMultiGen();
+
+  // New users get pokemon voice tone by default
+  if (isNewUser) {
+    const gc = readGlobalConfig();
+    gc.voice_tone = 'pokemon';
+    writeGlobalConfig(gc);
+  }
 
   console.log('');
   console.log(t('setup.postinstall.done'));

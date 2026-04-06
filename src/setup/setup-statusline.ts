@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { CLAUDE_DIR, DATA_DIR, PLUGIN_ROOT } from '../core/paths.js';
 import { t, initLocale } from '../i18n/index.js';
-import { readConfig } from '../core/config.js';
+import { readConfig, readGlobalConfig } from '../core/config.js';
 
 const SETTINGS_PATH = join(CLAUDE_DIR, 'settings.json');
 const WRAPPER_PATH = join(DATA_DIR, 'status-wrapper.mjs');
@@ -80,7 +80,7 @@ function extractCommand(statusLine: unknown): string | null {
 }
 
 function main(): void {
-  initLocale(readConfig().language ?? 'ko');
+  initLocale(readConfig().language ?? 'ko', readGlobalConfig().voice_tone);
   const settings = readSettings();
   const existingCmd = extractCommand(settings.statusLine);
 

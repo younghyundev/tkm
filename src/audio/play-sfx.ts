@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { readConfig } from '../core/config.js';
 import { PLUGIN_ROOT } from '../core/paths.js';
-import { playSound } from './play-cry.js';
+import { playSound, type RelayConfig } from './play-cry.js';
 
 const SFX_DIR = join(PLUGIN_ROOT, 'sfx');
 
@@ -28,5 +28,8 @@ export function playSfx(type: SfxType): void {
 
   if (!sfxFile) return;
 
-  playSound(sfxFile, config.volume);
+  const relay: RelayConfig | undefined = config.relay_audio
+    ? { host: config.relay_host, port: config.peon_ping_port, soundRoot: config.relay_sound_root }
+    : undefined;
+  playSound(sfxFile, config.volume, relay);
 }

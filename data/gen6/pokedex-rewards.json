@@ -1,0 +1,135 @@
+{
+  "milestones": [
+    {
+      "id": "catch_10_reward",
+      "threshold": 10,
+      "reward_type": "pokeball",
+      "reward_value": 3,
+      "label": {
+        "en": "Catch 10 — 3 Poké Balls",
+        "ko": "10마리 포획 — 몬스터볼 3개"
+      }
+    },
+    {
+      "id": "catch_20_reward",
+      "threshold": 20,
+      "reward_type": "pokeball",
+      "reward_value": 5,
+      "label": {
+        "en": "Catch 20 — 5 Poké Balls",
+        "ko": "20마리 포획 — 몬스터볼 5개"
+      }
+    },
+    {
+      "id": "catch_35_reward",
+      "threshold": 35,
+      "reward_type": "xp_multiplier",
+      "reward_value": 1.1,
+      "legendary_bonus": "aura_trio",
+      "label": {
+        "en": "Catch 35 — Aura Trio encounter!",
+        "ko": "35마리 포획 — 오라 트리오 조우!"
+      }
+    },
+    {
+      "id": "catch_50_reward",
+      "threshold": 50,
+      "reward_type": "legendary_unlock",
+      "reward_value": "aura_trio",
+      "label": {
+        "en": "Catch 50 — Aura Trio encounter!",
+        "ko": "50마리 포획 — 오라 트리오 조우!"
+      }
+    },
+    {
+      "id": "catch_60_reward",
+      "threshold": 60,
+      "reward_type": "legendary_unlock",
+      "reward_value": "aura_trio",
+      "label": {
+        "en": "Catch 60 — Aura Trio encounter!",
+        "ko": "60마리 포획 — 오라 트리오 조우!"
+      }
+    },
+    {
+      "id": "catch_72_reward",
+      "threshold": 72,
+      "reward_type": "legendary_unlock",
+      "reward_value": "mythicals",
+      "label": {
+        "en": "Catch all 72 — Mythicals!",
+        "ko": "72마리 포획 — 환상의 포켓몬!"
+      }
+    }
+  ],
+  "legendary_groups": {
+    "aura_trio": {
+      "label": {
+        "en": "Aura Trio",
+        "ko": "오라 트리오"
+      },
+      "description": {
+        "en": "The legendary trio of life, destruction, and order",
+        "ko": "생명, 파괴, 질서의 전설 트리오"
+      },
+      "options": [
+        "716",
+        "717",
+        "718"
+      ]
+    },
+    "mythicals": {
+      "label": {
+        "en": "Kalos Mythicals",
+        "ko": "칼로스 환상"
+      },
+      "description": {
+        "en": "The mythical Pokémon of Kalos",
+        "ko": "칼로스 지방의 환상 포켓몬"
+      },
+      "options": [
+        "719",
+        "720",
+        "721"
+      ]
+    },
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Unlocked through type mastery",
+        "ko": "타입 마스터를 통해 해금"
+      },
+      "options": [
+        "716",
+        "717",
+        "718"
+      ]
+    }
+  },
+  "type_master": {
+    "xp_bonus": 1.2,
+    "legendary_unlock_threshold": 3,
+    "legendary_group": "special_legends",
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Master 3 types to unlock",
+        "ko": "3개 타입 마스터 달성 시 해금"
+      },
+      "options": [
+        "716",
+        "717",
+        "718"
+      ]
+    }
+  },
+  "chain_completion_reward": {
+    "pokeball_count": 1
+  }
+}

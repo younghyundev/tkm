@@ -1,0 +1,154 @@
+{
+  "achievements": [
+    {
+      "id": "first_catch",
+      "trigger_type": "catch_count",
+      "trigger_value": 1,
+      "reward_pokemon": null,
+      "rarity": 1
+    },
+    {
+      "id": "catch_10",
+      "trigger_type": "catch_count",
+      "trigger_value": 10,
+      "reward_pokemon": null,
+      "rarity": 1
+    },
+    {
+      "id": "catch_20",
+      "trigger_type": "catch_count",
+      "trigger_value": 20,
+      "reward_pokemon": null,
+      "rarity": 2
+    },
+    {
+      "id": "catch_30",
+      "trigger_type": "catch_count",
+      "trigger_value": 30,
+      "reward_pokemon": null,
+      "rarity": 2
+    },
+    {
+      "id": "catch_40",
+      "trigger_type": "catch_count",
+      "trigger_value": 40,
+      "reward_pokemon": null,
+      "rarity": 3
+    },
+    {
+      "id": "catch_55",
+      "trigger_type": "catch_count",
+      "trigger_value": 55,
+      "reward_pokemon": null,
+      "rarity": 3
+    },
+    {
+      "id": "catch_70",
+      "trigger_type": "catch_count",
+      "trigger_value": 70,
+      "reward_pokemon": null,
+      "rarity": 4
+    },
+    {
+      "id": "catch_85",
+      "trigger_type": "catch_count",
+      "trigger_value": 85,
+      "reward_pokemon": null,
+      "rarity": 4
+    },
+    {
+      "id": "catch_96",
+      "trigger_type": "catch_count",
+      "trigger_value": 96,
+      "reward_pokemon": "890",
+      "rarity": 5
+    },
+    {
+      "id": "first_evolution",
+      "trigger_type": "evolution_count",
+      "trigger_value": 1,
+      "reward_pokemon": null,
+      "rarity": 1
+    },
+    {
+      "id": "evolve_10",
+      "trigger_type": "evolution_count",
+      "trigger_value": 10,
+      "reward_pokemon": null,
+      "rarity": 2
+    },
+    {
+      "id": "win_10",
+      "trigger_type": "battle_wins",
+      "trigger_value": 10,
+      "reward_pokemon": null,
+      "rarity": 1
+    },
+    {
+      "id": "win_50",
+      "trigger_type": "battle_wins",
+      "trigger_value": 50,
+      "reward_pokemon": null,
+      "rarity": 2
+    },
+    {
+      "id": "win_100",
+      "trigger_type": "battle_wins",
+      "trigger_value": 100,
+      "reward_pokemon": null,
+      "rarity": 3
+    },
+    {
+      "id": "level_50",
+      "trigger_type": "max_level",
+      "trigger_value": 50,
+      "reward_pokemon": null,
+      "rarity": 3
+    },
+    {
+      "id": "level_100",
+      "trigger_type": "max_level",
+      "trigger_value": 100,
+      "reward_pokemon": null,
+      "rarity": 4
+    },
+    {
+      "id": "streak_7",
+      "trigger_type": "streak_days",
+      "trigger_value": 7,
+      "reward_pokemon": null,
+      "rarity": 2
+    },
+    {
+      "id": "streak_30",
+      "trigger_type": "streak_days",
+      "trigger_value": 30,
+      "reward_pokemon": null,
+      "rarity": 3
+    },
+    {
+      "id": "all_types",
+      "trigger_type": "unique_types",
+      "trigger_value": 15,
+      "reward_pokemon": null,
+      "rarity": 3
+    },
+    {
+      "id": "all_starters",
+      "trigger_type": "specific_pokemon",
+      "trigger_value": 3,
+      "reward_pokemon": null,
+      "rarity": 2,
+      "reward_effects": [
+        {
+          "type": "require_pokemon",
+          "pokemon": [
+            "810",
+            "813",
+            "816"
+          ]
+        }
+      ]
+    }
+  ]
+}

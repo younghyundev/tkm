@@ -132,7 +132,7 @@
     }
   },
   "type_master": {
-    "xp_bonus": 0.1,
+    "xp_bonus": 1.2,
     "legendary_unlock_threshold": 3,
     "legendary_group": "special_legends",
     "special_legends": {

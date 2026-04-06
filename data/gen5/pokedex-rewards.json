@@ -1,0 +1,177 @@
+{
+  "milestones": [
+    {
+      "id": "catch_10_reward",
+      "threshold": 10,
+      "reward_type": "pokeball",
+      "reward_value": 3,
+      "label": {
+        "en": "Catch 10 — 3 Poké Balls",
+        "ko": "10마리 포획 — 몬스터볼 3개"
+      }
+    },
+    {
+      "id": "catch_25_reward",
+      "threshold": 25,
+      "reward_type": "pokeball",
+      "reward_value": 5,
+      "label": {
+        "en": "Catch 25 — 5 Poké Balls",
+        "ko": "25마리 포획 — 몬스터볼 5개"
+      }
+    },
+    {
+      "id": "catch_50_reward",
+      "threshold": 50,
+      "reward_type": "xp_multiplier",
+      "reward_value": 1.1,
+      "legendary_bonus": "tao_trio",
+      "label": {
+        "en": "Catch 50 — Tao Dragon encounter!",
+        "ko": "50마리 포획 — 도삼룡 조우!"
+      }
+    },
+    {
+      "id": "catch_70_reward",
+      "threshold": 70,
+      "reward_type": "legendary_unlock",
+      "reward_value": "tao_trio",
+      "legendary_bonus": "tao_trio",
+      "label": {
+        "en": "Catch 70 — Tao Dragon encounter!",
+        "ko": "70마리 포획 — 도삼룡 조우!"
+      }
+    },
+    {
+      "id": "catch_90_reward",
+      "threshold": 90,
+      "reward_type": "legendary_unlock",
+      "reward_value": "swords_of_justice",
+      "label": {
+        "en": "Catch 90 — Swords of Justice!",
+        "ko": "90마리 포획 — 삼검사 조우!"
+      }
+    },
+    {
+      "id": "catch_120_reward",
+      "threshold": 120,
+      "reward_type": "legendary_unlock",
+      "reward_value": "forces_of_nature",
+      "label": {
+        "en": "Catch 120 — Forces of Nature!",
+        "ko": "120마리 포획 — 자연의 힘 조우!"
+      }
+    },
+    {
+      "id": "catch_156_reward",
+      "threshold": 156,
+      "reward_type": "legendary_unlock",
+      "reward_value": "mythicals",
+      "label": {
+        "en": "Catch all 156 — Mythicals!",
+        "ko": "156마리 포획 — 환상의 포켓몬!"
+      }
+    }
+  ],
+  "legendary_groups": {
+    "tao_trio": {
+      "label": {
+        "en": "Tao Trio",
+        "ko": "도삼룡"
+      },
+      "description": {
+        "en": "The dragons of truth, ideals, and emptiness",
+        "ko": "진실, 이상, 공허의 드래곤"
+      },
+      "options": [
+        "643",
+        "644",
+        "646"
+      ]
+    },
+    "swords_of_justice": {
+      "label": {
+        "en": "Swords of Justice",
+        "ko": "삼검사"
+      },
+      "description": {
+        "en": "The righteous sword trio of Unova",
+        "ko": "하나 지방의 정의의 삼검사"
+      },
+      "options": [
+        "638",
+        "639",
+        "640"
+      ]
+    },
+    "forces_of_nature": {
+      "label": {
+        "en": "Forces of Nature",
+        "ko": "자연의 힘"
+      },
+      "description": {
+        "en": "The legendary forces that command weather",
+        "ko": "날씨를 지배하는 전설의 힘"
+      },
+      "options": [
+        "641",
+        "642",
+        "645"
+      ]
+    },
+    "mythicals": {
+      "label": {
+        "en": "Unova Mythicals",
+        "ko": "하나 환상"
+      },
+      "description": {
+        "en": "The mythical Pokémon of Unova",
+        "ko": "하나 지방의 환상 포켓몬"
+      },
+      "options": [
+        "494",
+        "647",
+        "648",
+        "649"
+      ]
+    },
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Unlocked through type mastery",
+        "ko": "타입 마스터를 통해 해금"
+      },
+      "options": [
+        "643",
+        "644",
+        "646"
+      ]
+    }
+  },
+  "type_master": {
+    "xp_bonus": 1.2,
+    "legendary_unlock_threshold": 3,
+    "legendary_group": "special_legends",
+    "special_legends": {
+      "label": {
+        "en": "Special Legends",
+        "ko": "스페셜 전설"
+      },
+      "description": {
+        "en": "Master 3 types to unlock",
+        "ko": "3개 타입 마스터 달성 시 해금"
+      },
+      "options": [
+        "643",
+        "644",
+        "646"
+      ]
+    }
+  },
+  "chain_completion_reward": {
+    "pokeball_count": 1
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "pokemon": {
+    "810": "Grookey",
+    "811": "Thwackey",
+    "812": "Rillaboom",
+    "813": "Scorbunny",
+    "814": "Raboot",
+    "815": "Cinderace",
+    "816": "Sobble",
+    "817": "Drizzile",
+    "818": "Inteleon",
+    "819": "Skwovet",
+    "820": "Greedent",
+    "821": "Rookidee",
+    "822": "Corvisquire",
+    "823": "Corviknight",
+    "824": "Blipbug",
+    "825": "Dottler",
+    "826": "Orbeetle",
+    "827": "Nickit",
+    "828": "Thievul",
+    "829": "Gossifleur",
+    "830": "Eldegoss",
+    "831": "Wooloo",
+    "832": "Dubwool",
+    "833": "Chewtle",
+    "834": "Drednaw",
+    "835": "Yamper",
+    "836": "Boltund",
+    "837": "Rolycoly",
+    "838": "Carkol",
+    "839": "Coalossal",
+    "840": "Applin",
+    "841": "Flapple",
+    "842": "Appletun",
+    "843": "Silicobra",
+    "844": "Sandaconda",
+    "845": "Cramorant",
+    "846": "Arrokuda",
+    "847": "Barraskewda",
+    "848": "Toxel",
+    "849": "Toxtricity",
+    "850": "Sizzlipede",
+    "851": "Centiskorch",
+    "852": "Clobbopus",
+    "853": "Grapploct",
+    "854": "Sinistea",
+    "855": "Polteageist",
+    "856": "Hatenna",
+    "857": "Hattrem",
+    "858": "Hatterene",
+    "859": "Impidimp",
+    "860": "Morgrem",
+    "861": "Grimmsnarl",
+    "862": "Obstagoon",
+    "863": "Perrserker",
+    "864": "Cursola",
+    "865": "Sirfetch’d",
+    "866": "Mr. Rime",
+    "867": "Runerigus",
+    "868": "Milcery",
+    "869": "Alcremie",
+    "870": "Falinks",
+    "871": "Pincurchin",
+    "872": "Snom",
+    "873": "Frosmoth",
+    "874": "Stonjourner",
+    "875": "Eiscue",
+    "876": "Indeedee",
+    "877": "Morpeko",
+    "878": "Cufant",
+    "879": "Copperajah",
+    "880": "Dracozolt",
+    "881": "Arctozolt",
+    "882": "Dracovish",
+    "883": "Arctovish",
+    "884": "Duraludon",
+    "885": "Dreepy",
+    "886": "Drakloak",
+    "887": "Dragapult",
+    "888": "Zacian",
+    "889": "Zamazenta",
+    "890": "Eternatus",
+    "891": "Kubfu",
+    "892": "Urshifu",
+    "893": "Zarude",
+    "894": "Regieleki",
+    "895": "Regidrago",
+    "896": "Glastrier",
+    "897": "Spectrier",
+    "898": "Calyrex",
+    "899": "Wyrdeer",
+    "900": "Kleavor",
+    "901": "Ursaluna",
+    "902": "Basculegion",
+    "903": "Sneasler",
+    "904": "Overqwil",
+    "905": "Enamorus"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fire",
+    "water": "Water",
+    "electric": "Electric",
+    "grass": "Grass",
+    "ice": "Ice",
+    "fighting": "Fighting",
+    "poison": "Poison",
+    "ground": "Ground",
+    "flying": "Flying",
+    "psychic": "Psychic",
+    "bug": "Bug",
+    "rock": "Rock",
+    "ghost": "Ghost",
+    "dragon": "Dragon",
+    "dark": "Dark",
+    "steel": "Steel",
+    "fairy": "Fairy"
+  },
+  "regions": {
+    "1": {
+      "name": "Postwick",
+      "description": "A quiet village where your adventure begins"
+    },
+    "2": {
+      "name": "Turffield",
+      "description": "A town with mysterious geoglyphs on the hillside"
+    },
+    "3": {
+      "name": "Hulbury",
+      "description": "A port town with a bustling marketplace"
+    },
+    "4": {
+      "name": "Motostoke",
+      "description": "An industrial city powered by steam"
+    },
+    "5": {
+      "name": "Stow-on-Side",
+      "description": "A town built into the face of a cliff"
+    },
+    "6": {
+      "name": "Circhester",
+      "description": "A snowy city with a famous restaurant row"
+    },
+    "7": {
+      "name": "Spikemuth",
+      "description": "A dark punk town nestled in the shadows"
+    },
+    "8": {
+      "name": "Crown Tundra",
+      "description": "A frozen wilderness full of legendary Pokémon"
+    },
+    "9": {
+      "name": "Wyndon",
+      "description": "The capital city where the Champion Cup is held"
+    }
+  },
+  "achievements": {
+    "first_catch": {
+      "name": "First Catch",
+      "description": "Catch your first wild Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_10": {
+      "name": "Grass Badge",
+      "description": "Catch 10 Pokémon",
+      "rarity_label": "Common"
+    },
+    "catch_20": {
+      "name": "Water Badge",
+      "description": "Catch 20 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_30": {
+      "name": "Fire Badge",
+      "description": "Catch 30 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "catch_40": {
+      "name": "Fighting Badge",
+      "description": "Catch 40 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_55": {
+      "name": "Fairy Badge",
+      "description": "Catch 55 Pokémon",
+      "rarity_label": "Rare"
+    },
+    "catch_70": {
+      "name": "Rock Badge",
+      "description": "Catch 70 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_85": {
+      "name": "Dragon Badge",
+      "description": "Catch 85 Pokémon",
+      "rarity_label": "Epic"
+    },
+    "catch_96": {
+      "name": "Galar Champion",
+      "description": "Complete the Galar Pokédex!",
+      "rarity_label": "Legendary"
+    },
+    "first_evolution": {
+      "name": "First Evolution",
+      "description": "Evolve a Pokémon for the first time",
+      "rarity_label": "Common"
+    },
+    "evolve_10": {
+      "name": "Evolution Expert",
+      "description": "Evolve 10 Pokémon",
+      "rarity_label": "Uncommon"
+    },
+    "win_10": {
+      "name": "Rising Trainer",
+      "description": "Win 10 battles",
+      "rarity_label": "Common"
+    },
+    "win_50": {
+      "name": "Battle Veteran",
+      "description": "Win 50 battles",
+      "rarity_label": "Uncommon"
+    },
+    "win_100": {
+      "name": "Battle Master",
+      "description": "Win 100 battles",
+      "rarity_label": "Rare"
+    },
+    "level_50": {
+      "name": "Power Trainer",
+      "description": "Reach level 50 with any Pokémon",
+      "rarity_label": "Rare"
+    },
+    "level_100": {
+      "name": "Champion",
+      "description": "Reach level 100 with any Pokémon",
+      "rarity_label": "Epic"
+    },
+    "streak_7": {
+      "name": "Weekly Warrior",
+      "description": "Maintain a 7-day streak",
+      "rarity_label": "Uncommon"
+    },
+    "streak_30": {
+      "name": "Monthly Master",
+      "description": "Maintain a 30-day streak",
+      "rarity_label": "Rare"
+    },
+    "all_types": {
+      "name": "Type Collector",
+      "description": "Catch at least one Pokémon of every type",
+      "rarity_label": "Rare"
+    },
+    "all_starters": {
+      "name": "Magnolia's Pride",
+      "description": "Obtain all three Galar starters",
+      "rarity_label": "Uncommon"
+    }
+  }
+}
