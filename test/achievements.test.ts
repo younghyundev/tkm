@@ -249,6 +249,19 @@ describe('runMigrations — legendary reward level fix', () => {
     assert.equal(state.pokemon['483'].level, 72);
   });
 
+  it('fixes legendary that was set to lv50 but xp stayed 0 (v0.5.2 bug)', () => {
+    // Simulates: v0.5.2 migration set level=50 but xp=0, then xpToLevel recalculated to lv2
+    const state = makeState({
+      migrated_version: '0.5.2',
+      achievements: { one_million_tokens: true },
+      unlocked: ['483'],
+      pokemon: { '483': { id: 483, xp: 150, level: 2, friendship: 0, ev: 0 } },
+    });
+    runMigrations(state);
+    assert.equal(state.pokemon['483'].level, 50, 'level should be restored to 50');
+    assert.ok(state.pokemon['483'].xp >= levelToXp(50, 'slow'), 'XP should match level 50');
+  });
+
   it('does not touch common pokemon', () => {
     const state = makeState({
       achievements: { first_session: true },

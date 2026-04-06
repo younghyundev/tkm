@@ -58,9 +58,37 @@ function migrateLegendaryRewardLevels(state: State): void {
   }
 }
 
+/**
+ * Fix legendary/mythical reward Pokémon whose XP doesn't match level 50.
+ * Catches cases where v0.5.2 set level=50 but left xp=0, causing
+ * xpToLevel() to recalculate the level back down on next XP distribution.
+ */
+function migrateLegendaryRewardXpSync(state: State): void {
+  const pokemonDB = getPokemonDB();
+  const achDB = getAchievementsDB();
+
+  const rewardIds = new Set(
+    achDB.achievements.filter(a => a.reward_pokemon).map(a => a.reward_pokemon!)
+  );
+
+  for (const id of rewardIds) {
+    const pData = pokemonDB.pokemon[id];
+    const pState = state.pokemon[id];
+    if (!pData || !pState) continue;
+    if (pData.rarity === 'legendary' || pData.rarity === 'mythical') {
+      const minXp = levelToXp(50, pData.exp_group);
+      if (pState.xp < minXp) {
+        pState.xp = minXp;
+        pState.level = Math.max(pState.level, 50);
+      }
+    }
+  }
+}
+
 /** Ordered list of version-gated migrations. Append new entries at the end. */
 const MIGRATIONS: Migration[] = [
   { version: '0.5.2', fn: migrateLegendaryRewardLevels },
+  { version: '0.5.3', fn: migrateLegendaryRewardXpSync },
 ];
 
 /**
