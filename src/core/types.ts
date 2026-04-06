@@ -328,6 +328,7 @@ export interface BattleResult {
   caught: boolean;
   typeMultiplier: number;
   ballCost: number;
+  ballDrop?: number;
   shiny?: boolean;
   partyFull?: boolean;
 }

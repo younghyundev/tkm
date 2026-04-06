@@ -307,7 +307,7 @@ export function resolveBattle(
   }
 
   // Item drop (after catch check — dropped balls are for next battle)
-  rollItemDrop(state, won);
+  const ballDrop = rollItemDrop(state, won);
 
   return {
     attacker,
@@ -319,6 +319,7 @@ export function resolveBattle(
     caught,
     typeMultiplier,
     ballCost,
+    ballDrop,
     shiny: wild.shiny,
   };
 }
@@ -351,12 +352,18 @@ export function formatBattleMessage(result: BattleResult): string {
       // Won but couldn't catch — not enough balls
       msg += ` ${t('battle.need_balls', { defender: defenderName })}`;
     }
+    if (result.ballDrop) {
+      msg += ` 🔴×${result.ballDrop}`;
+    }
     return prefix + msg;
   }
 
   let msg = t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
   if (isShiny) {
     msg += t('battle.shiny_escaped', { pokemon: defenderName });
+  }
+  if (result.ballDrop) {
+    msg += ` 🔴×${result.ballDrop}`;
   }
   return prefix + msg;
 }
