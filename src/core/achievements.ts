@@ -59,7 +59,14 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
         state.unlocked.push(rewardName);
         const pData = pokemonDB.pokemon[rewardName];
         if (pData && !state.pokemon[rewardName]) {
-          state.pokemon[rewardName] = { id: pData.id, xp: 0, level: 1, friendship: 0, ev: 0 };
+          let level: number;
+          if (pData.rarity === 'legendary' || pData.rarity === 'mythical') {
+            level = 50;
+          } else {
+            const partyLevels = (config.party ?? []).map((name: string) => state.pokemon[name]?.level ?? 0).filter((l: number) => l > 0);
+            level = partyLevels.length > 0 ? Math.round(partyLevels.reduce((a, b) => a + b, 0) / partyLevels.length) : 1;
+          }
+          state.pokemon[rewardName] = { id: pData.id, xp: 0, level, friendship: 0, ev: 0 };
         }
         markCaught(state, rewardName);
         event.rewardPokemon = rewardName;

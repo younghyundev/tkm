@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../src/core/achievements.js';
 import { readCommonState } from '../src/core/state.js';
+import { runMigrations } from '../src/core/migration.js';
 import { makeState, makeConfig } from './helpers.js';
 import { initLocale } from '../src/i18n/index.js';
 import type { CommonState } from '../src/core/types.js';
@@ -148,6 +149,43 @@ describe('checkAchievements', () => {
     assert.ok(events.find(e => e.id === 'first_error'));
   });
 
+  it('legendary/mythical reward pokemon start at level 50', () => {
+    const state = makeState({ total_tokens_consumed: 1000000, catch_count: 100 });
+    const config = makeConfig();
+    const events = checkAchievements(state, config);
+
+    // Dialga (#483) — legendary
+    const dialga = events.find(e => e.id === 'one_million_tokens');
+    assert.ok(dialga);
+    assert.equal(state.pokemon['483'].level, 50, 'legendary should start at level 50');
+
+    // Arceus (#493) — mythical
+    const arceus = events.find(e => e.id === 'pokedex_100');
+    assert.ok(arceus);
+    assert.equal(state.pokemon['493'].level, 50, 'mythical should start at level 50');
+  });
+
+  it('common reward pokemon match party average level', () => {
+    const state = makeState({
+      total_tokens_consumed: 100000,
+      pokemon: { '393': { id: 393, xp: 0, level: 20, friendship: 0, ev: 0 } },
+    });
+    const config = makeConfig({ party: ['393'] });
+    const events = checkAchievements(state, config);
+
+    const ev = events.find(e => e.id === 'hundred_k_tokens');
+    assert.ok(ev);
+    assert.equal(state.pokemon['403'].level, 20, 'should match party average level');
+  });
+
+  it('common reward pokemon default to level 1 when party is empty', () => {
+    const state = makeState({ session_count: 1 });
+    const config = makeConfig();
+    checkAchievements(state, config);
+
+    assert.equal(state.pokemon['393'].level, 1, 'empty party should default to level 1');
+  });
+
   it('does not add duplicate to unlocked', () => {
     const state = makeState({
       session_count: 1,
@@ -172,5 +210,58 @@ describe('formatAchievementMessage', () => {
   it('formats basic unlocked message', () => {
     const msg = formatAchievementMessage({ id: 'test', name: '단골 트레이너' });
     assert.ok(msg.includes('단골 트레이너'));
+  });
+});
+
+describe('runMigrations — legendary reward level fix', () => {
+  it('bumps legendary reward pokemon from level 1 to 50', () => {
+    const state = makeState({
+      achievements: { one_million_tokens: true },
+      unlocked: ['483'],
+      pokemon: { '483': { id: 483, xp: 0, level: 1, friendship: 0, ev: 0 } },
+    });
+    runMigrations(state);
+    assert.equal(state.pokemon['483'].level, 50);
+  });
+
+  it('bumps mythical reward pokemon from level 1 to 50', () => {
+    const state = makeState({
+      achievements: { pokedex_100: true },
+      unlocked: ['493'],
+      pokemon: { '493': { id: 493, xp: 0, level: 1, friendship: 0, ev: 0 } },
+    });
+    runMigrations(state);
+    assert.equal(state.pokemon['493'].level, 50);
+  });
+
+  it('does not downgrade legendary pokemon above 50', () => {
+    const state = makeState({
+      achievements: { one_million_tokens: true },
+      unlocked: ['483'],
+      pokemon: { '483': { id: 483, xp: 5000, level: 72, friendship: 50, ev: 10 } },
+    });
+    runMigrations(state);
+    assert.equal(state.pokemon['483'].level, 72);
+  });
+
+  it('does not touch common pokemon', () => {
+    const state = makeState({
+      achievements: { first_session: true },
+      unlocked: ['393'],
+      pokemon: { '393': { id: 393, xp: 0, level: 5, friendship: 0, ev: 0 } },
+    });
+    runMigrations(state);
+    assert.equal(state.pokemon['393'].level, 5);
+  });
+
+  it('skips if already migrated', () => {
+    const state = makeState({
+      migrated_version: '99.0.0',
+      achievements: { one_million_tokens: true },
+      unlocked: ['483'],
+      pokemon: { '483': { id: 483, xp: 0, level: 1, friendship: 0, ev: 0 } },
+    });
+    runMigrations(state);
+    assert.equal(state.pokemon['483'].level, 1, 'should not run migration if already at higher version');
   });
 });

@@ -1,8 +1,91 @@
 import { readFileSync, readdirSync, existsSync } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { DATA_DIR, commonAchievementsJsonPath } from './paths.js';
 import { readCommonState, writeCommonState, readState, writeState } from './state.js';
-import type { CommonState, AchievementsDB, Achievement } from './types.js';
+import { getPokemonDB, getAchievementsDB } from './pokemon-data.js';
+import type { State, CommonState, AchievementsDB, Achievement } from './types.js';
+
+// ---------- Version-based migration runner ----------
+
+interface Migration {
+  version: string;
+  fn: (state: State) => void;
+}
+
+function compareSemver(a: string, b: string): number {
+  const pa = a.split('.').map(Number);
+  const pb = b.split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    if ((pa[i] ?? 0) !== (pb[i] ?? 0)) return (pa[i] ?? 0) - (pb[i] ?? 0);
+  }
+  return 0;
+}
+
+let _pkgVersion: string | null = null;
+export function getPackageVersion(): string {
+  if (_pkgVersion) return _pkgVersion;
+  const pkgPath = join(dirname(fileURLToPath(import.meta.url)), '../../package.json');
+  try {
+    _pkgVersion = JSON.parse(readFileSync(pkgPath, 'utf-8')).version;
+  } catch {
+    _pkgVersion = '0.0.0';
+  }
+  return _pkgVersion!;
+}
+
+/**
+ * Fix legendary/mythical achievement reward Pokémon that were granted at level 1.
+ * They should be at least level 50.
+ */
+function migrateLegendaryRewardLevels(state: State): void {
+  const pokemonDB = getPokemonDB();
+  const achDB = getAchievementsDB();
+
+  const rewardIds = new Set(
+    achDB.achievements.filter(a => a.reward_pokemon).map(a => a.reward_pokemon!)
+  );
+
+  for (const id of rewardIds) {
+    const pData = pokemonDB.pokemon[id];
+    const pState = state.pokemon[id];
+    if (!pData || !pState) continue;
+    if ((pData.rarity === 'legendary' || pData.rarity === 'mythical') && pState.level < 50) {
+      pState.level = 50;
+    }
+  }
+}
+
+/** Ordered list of version-gated migrations. Append new entries at the end. */
+const MIGRATIONS: Migration[] = [
+  { version: '0.5.2', fn: migrateLegendaryRewardLevels },
+];
+
+/**
+ * Run pending version-gated migrations on the given state (in-place).
+ * Call from readState() after loading.
+ */
+export function runMigrations(state: State): void {
+  const from = state.migrated_version ?? '0.0.0';
+  const target = getPackageVersion();
+
+  // Already up-to-date
+  if (compareSemver(from, target) >= 0) return;
+
+  let changed = false;
+  for (const m of MIGRATIONS) {
+    if (compareSemver(from, m.version) < 0) {
+      try {
+        m.fn(state);
+      } catch { /* skip migration if data unavailable (e.g. test env) */ }
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    state.migrated_version = target;
+  }
+}
 
 // Gen1 legacy ID → common ID mapping
 const GEN1_LEGACY_MAP: Record<string, string> = {

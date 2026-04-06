@@ -186,6 +186,7 @@ export interface EvolutionContext {
 
 export interface State {
   state_version?: number;
+  migrated_version?: string;
   pokemon: Record<string, PokemonState>;
   unlocked: string[];
   achievements: Record<string, boolean>;

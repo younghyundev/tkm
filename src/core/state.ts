@@ -4,6 +4,7 @@ import { statePath, sessionPath, i18nDataDir, DATA_DIR, SESSION_GEN_MAP_PATH, CO
 // Legacy imports for backward compat during migration
 import { I18N_DATA_DIR } from './paths.js';
 import type { State, Session, PokemonState, PokedexEntry, Notification, Stats, LegendaryPending, SessionGenMap, CommonState } from './types.js';
+import { runMigrations } from './migration.js';
 
 const DEFAULT_STATS: Stats = {
   streak_days: 0,
@@ -163,6 +164,9 @@ export function readState(gen?: string): State {
 
   // Migrate Korean name keys -> ID keys
   migrateNameToId(result, path, i18nDataDir(gen));
+
+  // Version-gated migrations
+  runMigrations(result);
 
   return result;
 }
