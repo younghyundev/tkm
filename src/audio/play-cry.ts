@@ -1,10 +1,44 @@
 import { spawn, execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
 import * as http from 'http';
-import { join } from 'path';
+import { join, relative } from 'path';
 import { readConfig } from '../core/config.js';
 import { getPokemonDB } from '../core/pokemon-data.js';
 import { CRIES_DIR, PLUGIN_ROOT } from '../core/paths.js';
+
+export interface RelayConfig {
+  host: string;
+  port: number;
+  /** Symlink name inside PEON_DIR that points to the local tokenmon sounds (e.g. 'tkm-sounds'). */
+  soundRoot: string;
+}
+
+/**
+ * Send a sound-play request to the peon-ping relay.
+ * The relay expects a path relative to its PEON_DIR.
+ * A symlink `PEON_DIR/<soundRoot>` → local tokenmon dir must exist on the relay host.
+ */
+export function relaySound(filePath: string, volume: number, relay: RelayConfig): void {
+  // Build relay-relative path: <soundRoot>/<relative-to-PLUGIN_ROOT>
+  let relayPath: string;
+  if (filePath.startsWith(PLUGIN_ROOT)) {
+    const rel = relative(PLUGIN_ROOT, filePath);
+    relayPath = relay.soundRoot ? `${relay.soundRoot}/${rel}` : rel;
+  } else {
+    // Prefix mismatch — send relative portion as best-effort
+    relayPath = relay.soundRoot ? `${relay.soundRoot}/${filePath.split('/').pop() ?? ''}` : filePath;
+  }
+
+  const encodedPath = encodeURIComponent(relayPath);
+  const req = http.get({
+    hostname: relay.host,
+    port: relay.port,
+    path: `/play?file=${encodedPath}`,
+    headers: { 'X-Volume': String(volume) },
+  }, () => {});
+  req.on('error', () => {});
+  req.setTimeout(2000, () => req.destroy());
+}
 
 function isWSL2(): boolean {
   try {
@@ -34,7 +68,12 @@ function wslPath(linuxPath: string): string {
   }
 }
 
-export function playSound(filePath: string, volume: number): void {
+export function playSound(filePath: string, volume: number, relay?: RelayConfig): void {
+  if (relay) {
+    relaySound(filePath, volume, relay);
+    return;
+  }
+
   if (isWSL2()) {
     const ps = findPowerShell();
     if (ps) {
@@ -107,7 +146,10 @@ export function playCry(pokemonName?: string): void {
 
   if (!cryFile) return;
 
-  playSound(cryFile, config.volume);
+  const relay = config.relay_audio
+    ? { host: config.relay_host, port: config.peon_ping_port, soundRoot: config.relay_sound_root }
+    : undefined;
+  playSound(cryFile, config.volume, relay);
 
   // Peon-ping integration
   if (config.peon_ping_integration) {

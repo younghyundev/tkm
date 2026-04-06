@@ -240,6 +240,12 @@ export interface Config {
   max_party_size: number;
   peon_ping_integration: boolean;
   peon_ping_port: number;
+  /** Send audio to a peon-ping relay instead of playing locally. Independent of peon_ping_integration. */
+  relay_audio: boolean;
+  /** Relay server hostname. Shares peon_ping_port. */
+  relay_host: string;
+  /** Local PLUGIN_ROOT on the relay host, used to translate remote file paths. */
+  relay_sound_root: string;
   current_region: string;
   default_dispatch: string | null;
   sprite_mode: 'all' | 'ace_only' | 'emoji_all' | 'emoji_ace';
