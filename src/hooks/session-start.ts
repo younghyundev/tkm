@@ -9,6 +9,7 @@ import { updateStreak, resetWeeklyStats } from '../core/stats.js';
 import { getActiveEvents } from '../core/encounter.js';
 import { checkMilestoneRewards, checkTypeMasters, checkChainCompletion } from '../core/pokedex-rewards.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
+import { addItem, randInt } from '../core/items.js';
 import { getPokemonName } from '../core/pokemon-data.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale, t } from '../i18n/index.js';
@@ -110,6 +111,13 @@ function main(): void {
     if (!existingBinding) {
       state.session_count += 1;
       commonState.session_count += 1;
+
+      // New session ball bonus: random 0~10 balls
+      const sessionBalls = randInt(0, 10);
+      if (sessionBalls > 0) {
+        addItem(state, 'pokeball', sessionBalls);
+        messages.push(t('item_drop.session_end', { n: sessionBalls }));
+      }
     }
     state.last_session_id = sessionId;
 

@@ -402,11 +402,6 @@ async function main(): Promise<void> {
       writeGlobalConfig(gc);
     }
 
-    // Session-end ball bonus: 100%, 2~3 balls
-    const sessionEndBalls = randInt(2, 3);
-    addItem(state, 'pokeball', sessionEndBalls);
-    messages.push(t('item_drop.session_end', { n: sessionEndBalls }));
-
     writeState(state);
     writeConfig(config);
     writeCommonState(commonState);
