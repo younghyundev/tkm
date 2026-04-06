@@ -16,6 +16,7 @@ import { dirname } from 'path';
 import { LOCK_PATH } from './paths.js';
 
 let lockHeld = false;
+const SLEEP_BUFFER = new Int32Array(new SharedArrayBuffer(4));
 
 // Safety net: clean up lock on process exit (covers process.exit, SIGTERM, SIGINT — not SIGKILL)
 process.on('exit', () => {
@@ -45,7 +46,7 @@ function acquireGlobalLock(timeoutMs: number): boolean {
       return true;
     } catch {
       // Lock held by another process — non-busy sleep 50ms
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50);
+      Atomics.wait(SLEEP_BUFFER, 0, 0, 50);
     }
   }
 
@@ -101,7 +102,7 @@ export function withLockRetry<T>(fn: () => T, retries: number = 1, timeoutMs: nu
     const result = withLock(fn, timeoutMs);
     if (result.acquired) return result;
     if (attempt < retries) {
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 500);
+      Atomics.wait(SLEEP_BUFFER, 0, 0, 500);
     }
   }
   return { acquired: false };
