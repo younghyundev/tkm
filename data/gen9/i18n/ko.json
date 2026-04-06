@@ -143,35 +143,35 @@
   },
   "regions": {
     "1": {
-      "name": "마을입구마을",
+      "name": "티스푼마을",
       "description": "팔데아 남쪽 끝의 작은 해변 마을"
     },
     "2": {
-      "name": "콜론도",
+      "name": "세르클마을",
       "description": "올리브 숲에 둘러싸인 농업 마을"
     },
     "3": {
-      "name": "마중마을",
+      "name": "보울마을",
       "description": "예술과 창의성의 활기찬 마을"
     },
     "4": {
-      "name": "테이블시티",
+      "name": "누룩스시티",
       "description": "스트리밍이 끊이지 않는 전기 도시"
     },
     "5": {
-      "name": "카스카라파",
+      "name": "카라프시티",
       "description": "폭포가 흐르는 사막 오아시스 도시"
     },
     "6": {
-      "name": "메다리",
+      "name": "참푸르마을",
       "description": "맛이 최고인 미식 도시"
     },
     "7": {
-      "name": "프리지타운",
+      "name": "프리지마을",
       "description": "유령 같은 매력의 눈 덮인 산악 마을"
     },
     "8": {
-      "name": "나페",
+      "name": "베이크마을",
       "description": "산봉우리 사이에 숨겨진 마을"
     },
     "9": {
@@ -186,22 +186,22 @@
       "rarity_label": "일반"
     },
     "catch_10": {
-      "name": "벅배지",
+      "name": "벌레배지",
       "description": "포켓몬 10마리 포획",
       "rarity_label": "일반"
     },
     "catch_20": {
-      "name": "그래스배지",
+      "name": "풀배지",
       "description": "포켓몬 20마리 포획",
       "rarity_label": "고급"
     },
     "catch_35": {
-      "name": "일렉트릭배지",
+      "name": "전기배지",
       "description": "포켓몬 35마리 포획",
       "rarity_label": "고급"
     },
     "catch_50": {
-      "name": "워터배지",
+      "name": "물배지",
       "description": "포켓몬 50마리 포획",
       "rarity_label": "희귀"
     },
@@ -216,12 +216,12 @@
       "rarity_label": "에픽"
     },
     "catch_100": {
-      "name": "사이킥배지",
+      "name": "에스퍼배지",
       "description": "포켓몬 100마리 포획",
       "rarity_label": "에픽"
     },
     "catch_120": {
-      "name": "아이스배지",
+      "name": "얼음배지",
       "description": "팔데아 도감을 완성하라!",
       "rarity_label": "전설"
     },

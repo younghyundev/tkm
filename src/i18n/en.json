@@ -499,5 +499,18 @@
   "cli.nickname.too_long": "Nickname must be 7 characters or fewer.",
   "cli.nickname.current": "{species}'s nickname: {nickname}",
   "cli.nickname.none": "{species} doesn't have a nickname yet.",
-  "cli.nickname.set": "Set {species}'s nickname to '{nickname}'!"
+  "cli.nickname.set": "Set {species}'s nickname to '{nickname}'!",
+
+  "rarity.common": "Common",
+  "rarity.uncommon": "Uncommon",
+  "rarity.rare": "Rare",
+  "rarity.legendary": "Legendary",
+  "rarity.mythical": "Mythical",
+
+  "exp_group.medium_fast": "Medium Fast",
+  "exp_group.medium_slow": "Medium Slow",
+  "exp_group.fast": "Fast",
+  "exp_group.slow": "Slow",
+  "exp_group.erratic": "Erratic",
+  "exp_group.fluctuating": "Fluctuating"
 }

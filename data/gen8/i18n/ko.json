@@ -119,15 +119,15 @@
   },
   "regions": {
     "1": {
-      "name": "브래서턴",
+      "name": "펄롱마을",
       "description": "모험이 시작되는 조용한 마을"
     },
     "2": {
-      "name": "터프시티",
+      "name": "터프마을",
       "description": "언덕 위 신비한 지상화가 있는 마을"
     },
     "3": {
-      "name": "바우타운",
+      "name": "바우마을",
       "description": "활기찬 시장이 있는 항구 마을"
     },
     "4": {
@@ -135,19 +135,19 @@
       "description": "증기로 움직이는 산업 도시"
     },
     "5": {
-      "name": "라테라타운",
+      "name": "래터럴마을",
       "description": "절벽에 지어진 마을"
     },
     "6": {
-      "name": "키르크스타운",
+      "name": "키르쿠스마을",
       "description": "유명한 레스토랑 거리의 눈 덮인 도시"
     },
     "7": {
-      "name": "스파이크타운",
+      "name": "스파이크마을",
       "description": "그림자 속에 숨은 어둡고 펑크한 마을"
     },
     "8": {
-      "name": "크라운 툰드라",
+      "name": "왕관설원",
       "description": "전설 포켓몬으로 가득한 얼어붙은 황야"
     },
     "9": {
@@ -162,22 +162,22 @@
       "rarity_label": "일반"
     },
     "catch_10": {
-      "name": "그래스배지",
+      "name": "풀배지",
       "description": "포켓몬 10마리 포획",
       "rarity_label": "일반"
     },
     "catch_20": {
-      "name": "워터배지",
+      "name": "물배지",
       "description": "포켓몬 20마리 포획",
       "rarity_label": "고급"
     },
     "catch_30": {
-      "name": "파이어배지",
+      "name": "불꽃배지",
       "description": "포켓몬 30마리 포획",
       "rarity_label": "고급"
     },
     "catch_40": {
-      "name": "파이팅배지",
+      "name": "격투배지",
       "description": "포켓몬 40마리 포획",
       "rarity_label": "희귀"
     },
@@ -187,7 +187,7 @@
       "rarity_label": "희귀"
     },
     "catch_70": {
-      "name": "록배지",
+      "name": "바위배지",
       "description": "포켓몬 70마리 포획",
       "rarity_label": "에픽"
     },

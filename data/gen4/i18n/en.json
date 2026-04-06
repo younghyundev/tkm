@@ -139,32 +139,32 @@
       "description": "A quiet town where adventures begin"
     },
     "2": {
-      "name": "Forest",
-      "description": "A lush forest full of trees"
+      "name": "Eterna Forest",
+      "description": "A vast, ancient forest shrouded in mystery where Bug-type Pokémon thrive"
     },
     "3": {
-      "name": "Beach",
-      "description": "A calm shore with gentle waves"
+      "name": "Pastoria City",
+      "description": "A wetland city bordering the Great Marsh, home to Water-type Pokémon"
     },
     "4": {
-      "name": "Mine",
-      "description": "Deep caves filled with minerals"
+      "name": "Oreburgh City",
+      "description": "A coal-mining city where fossil Pokémon are excavated from deep underground"
     },
     "5": {
-      "name": "Power Plant",
-      "description": "An abandoned power plant zone crackling with electricity"
+      "name": "Valley Windworks",
+      "description": "A wind-powered facility crackling with Electric-type energy on the valley breeze"
     },
     "6": {
-      "name": "Snowpoint Mountain",
-      "description": "A harsh mountain blanketed in blizzards"
+      "name": "Snowpoint City",
+      "description": "A remote northern city buried in perpetual snow and blizzards"
     },
     "7": {
       "name": "Stark Mountain",
-      "description": "A volcanic zone with flowing lava"
+      "description": "A scorching volcanic mountain where Heatran slumbers amid flowing lava"
     },
     "8": {
       "name": "Solaceon Ruins",
-      "description": "A mysterious place with traces of ancient civilization"
+      "description": "Ancient stone ruins near Solaceon Town, etched with Unown and forgotten legends"
     },
     "9": {
       "name": "Victory Road",

@@ -95,7 +95,7 @@
   },
   "regions": {
     "1": {
-      "name": "아사메마을",
+      "name": "조아마을",
       "description": "포켓몬과 함께하는 모험이 시작되는 마을"
     },
     "2": {
@@ -103,31 +103,31 @@
       "description": "꽃향기에 감싸인 도시"
     },
     "3": {
-      "name": "쇼요시티",
+      "name": "삼채시티",
       "description": "절벽과 바다 사이에 자리한 도시"
     },
     "4": {
-      "name": "샤라시티",
+      "name": "사라시티",
       "description": "고대의 비밀과 메가진화의 도시"
     },
     "5": {
-      "name": "향전시티",
+      "name": "비익시티",
       "description": "활기찬 시장이 있는 해변 도시"
     },
     "6": {
-      "name": "미아레시티",
+      "name": "미르시티",
       "description": "빛의 도시, 칼로스의 중심"
     },
     "7": {
-      "name": "쿠노에시티",
+      "name": "후늬시티",
       "description": "자연이 넘치는 동화 같은 도시"
     },
     "8": {
-      "name": "혜성시티",
+      "name": "향전시티",
       "description": "우주 기원의 해시계가 있는 신비한 도시"
     },
     "9": {
-      "name": "에이세쓰시티",
+      "name": "이설시티",
       "description": "칼로스 오지의 얼어붙은 도시"
     }
   },
@@ -138,17 +138,17 @@
       "rarity_label": "일반"
     },
     "catch_10": {
-      "name": "벅배지",
+      "name": "버그배지",
       "description": "포켓몬 10마리 포획",
       "rarity_label": "일반"
     },
     "catch_20": {
-      "name": "클리프배지",
+      "name": "월배지",
       "description": "포켓몬 20마리 포획",
       "rarity_label": "고급"
     },
     "catch_30": {
-      "name": "럼블배지",
+      "name": "파이트배지",
       "description": "포켓몬 30마리 포획",
       "rarity_label": "고급"
     },
