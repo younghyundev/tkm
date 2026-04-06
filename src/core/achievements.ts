@@ -1,5 +1,6 @@
 import { getPokemonDB, getAchievementsDB, getCommonAchievementsDB, getAchievementName, getPokemonName } from './pokemon-data.js';
 import { markCaught } from './pokedex.js';
+import { levelToXp } from './xp.js';
 import { t } from '../i18n/index.js';
 import type { State, Config, AchievementEvent, CommonState } from './types.js';
 
@@ -66,7 +67,8 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
             const partyLevels = (config.party ?? []).map((name: string) => state.pokemon[name]?.level ?? 0).filter((l: number) => l > 0);
             level = partyLevels.length > 0 ? Math.round(partyLevels.reduce((a, b) => a + b, 0) / partyLevels.length) : 1;
           }
-          state.pokemon[rewardName] = { id: pData.id, xp: 0, level, friendship: 0, ev: 0 };
+          const xp = levelToXp(level, pData.exp_group);
+          state.pokemon[rewardName] = { id: pData.id, xp, level, friendship: 0, ev: 0 };
         }
         markCaught(state, rewardName);
         event.rewardPokemon = rewardName;

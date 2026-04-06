@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../src/core/achievements.js';
 import { readCommonState } from '../src/core/state.js';
 import { runMigrations } from '../src/core/migration.js';
+import { levelToXp } from '../src/core/xp.js';
 import { makeState, makeConfig } from './helpers.js';
 import { initLocale } from '../src/i18n/index.js';
 import type { CommonState } from '../src/core/types.js';
@@ -158,11 +159,13 @@ describe('checkAchievements', () => {
     const dialga = events.find(e => e.id === 'one_million_tokens');
     assert.ok(dialga);
     assert.equal(state.pokemon['483'].level, 50, 'legendary should start at level 50');
+    assert.ok(state.pokemon['483'].xp > 0, 'legendary should have XP matching level 50');
 
     // Arceus (#493) — mythical
     const arceus = events.find(e => e.id === 'pokedex_100');
     assert.ok(arceus);
     assert.equal(state.pokemon['493'].level, 50, 'mythical should start at level 50');
+    assert.ok(state.pokemon['493'].xp > 0, 'mythical should have XP matching level 50');
   });
 
   it('common reward pokemon match party average level', () => {
@@ -214,7 +217,7 @@ describe('formatAchievementMessage', () => {
 });
 
 describe('runMigrations — legendary reward level fix', () => {
-  it('bumps legendary reward pokemon from level 1 to 50', () => {
+  it('bumps legendary reward pokemon from level 1 to 50 with matching XP', () => {
     const state = makeState({
       achievements: { one_million_tokens: true },
       unlocked: ['483'],
@@ -222,9 +225,10 @@ describe('runMigrations — legendary reward level fix', () => {
     });
     runMigrations(state);
     assert.equal(state.pokemon['483'].level, 50);
+    assert.ok(state.pokemon['483'].xp >= levelToXp(50, 'slow'), 'XP should match level 50');
   });
 
-  it('bumps mythical reward pokemon from level 1 to 50', () => {
+  it('bumps mythical reward pokemon from level 1 to 50 with matching XP', () => {
     const state = makeState({
       achievements: { pokedex_100: true },
       unlocked: ['493'],
@@ -232,6 +236,7 @@ describe('runMigrations — legendary reward level fix', () => {
     });
     runMigrations(state);
     assert.equal(state.pokemon['493'].level, 50);
+    assert.ok(state.pokemon['493'].xp >= levelToXp(50, 'slow'), 'XP should match level 50');
   });
 
   it('does not downgrade legendary pokemon above 50', () => {

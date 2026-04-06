@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { DATA_DIR, commonAchievementsJsonPath } from './paths.js';
 import { readCommonState, writeCommonState, readState, writeState } from './state.js';
 import { getPokemonDB, getAchievementsDB } from './pokemon-data.js';
+import { levelToXp } from './xp.js';
 import type { State, CommonState, AchievementsDB, Achievement } from './types.js';
 
 // ---------- Version-based migration runner ----------
@@ -52,6 +53,7 @@ function migrateLegendaryRewardLevels(state: State): void {
     if (!pData || !pState) continue;
     if ((pData.rarity === 'legendary' || pData.rarity === 'mythical') && pState.level < 50) {
       pState.level = 50;
+      pState.xp = Math.max(pState.xp, levelToXp(50, pData.exp_group));
     }
   }
 }
