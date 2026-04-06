@@ -209,6 +209,15 @@ function main(): void {
     console.log(state.last_drop);
   } else if (state.last_tip) {
     console.log(state.last_tip.text);
+  } else {
+    // Show evolution_ready hint for party pokemon with pending branching evolution
+    for (const pokemonName of config.party) {
+      const pState = state.pokemon[pokemonName];
+      if (pState?.evolution_ready) {
+        console.log(t('statusline.evolution_ready', { pokemon: getPokemonName(pokemonName) }));
+        break;
+      }
+    }
   }
 
   // === Info line rendering ===

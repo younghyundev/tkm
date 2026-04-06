@@ -159,6 +159,7 @@
   "cli.help.cmd_notifications_clear": "  notifications clear 알림 모두 삭제",
 
   "notification.evolution_ready": "{pokemon:이/가} 진화 준비 완료! 실행: tokenmon evolve {pokemon}",
+  "statusline.evolution_ready": "✨ {pokemon:이/가} 진화 준비 완료! /tkm evolve {pokemon}",
   "notification.region_unlocked": "새로운 지역 {count}개 해금! 실행: tokenmon region list",
   "notification.achievement_near": "업적 \"{name}\" 달성률 {pct}%!",
 

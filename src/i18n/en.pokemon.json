@@ -158,7 +158,8 @@
   "cli.help.cmd_notifications": "  notifications       View notifications",
   "cli.help.cmd_notifications_clear": "  notifications clear Clear all notifications",
 
-  "notification.evolution_ready": "{pokemon} is ready to evolve! Run: tokenmon evolve {pokemon}",
+  "notification.evolution_ready": "What? {pokemon} is trying to evolve! /tkm evolve {pokemon}",
+  "statusline.evolution_ready": "What? {pokemon} is trying to evolve! /tkm evolve {pokemon}",
   "notification.region_unlocked": "{count} new region(s) unlocked! Run: tokenmon region list",
   "notification.achievement_near": "Achievement \"{name}\" is {pct}% complete!",
 
