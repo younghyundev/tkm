@@ -216,6 +216,68 @@ Options:
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set info_mode <ace_full|name_level|all_full|ace_level>
 ```
 
+## Step 5.5: Sound Settings
+
+Detect the environment and offer sound relay setup if remote.
+
+```bash
+node -e "
+const fs = require('fs');
+const env = {
+  ssh: !!(process.env.SSH_CONNECTION || process.env.SSH_CLIENT || process.env.SSH_TTY),
+  docker: fs.existsSync('/.dockerenv') || (fs.existsSync('/proc/1/cgroup') && fs.readFileSync('/proc/1/cgroup','utf8').includes('docker')),
+  wsl: false,
+  remote_container: !!process.env.REMOTE_CONTAINERS,
+};
+try { env.wsl = /microsoft/i.test(fs.readFileSync('/proc/version','utf8')); } catch {}
+env.is_remote = env.ssh || env.docker || env.remote_container;
+env.is_local_wsl = env.wsl && !env.ssh;
+console.log(JSON.stringify(env));
+"
+```
+
+**If remote environment (SSH or Docker):**
+
+Use AskUserQuestion:
+
+> You're running in a **remote environment**. Tokenmon sounds won't play here.
+> Enable **relay mode** to route sounds to your local machine?
+
+Options:
+1. **Enable relay (Recommended)** — Route sounds via peon-ping relay (localhost:19998)
+2. **Skip** — Set up sound later with `/tkm:relay-setup`
+
+If user picks "Enable relay":
+
+```bash
+TSX="${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh"
+"${TSX}" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set relay_audio true
+"${TSX}" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set relay_sound_root tkm-sounds
+```
+
+Then verify:
+```bash
+curl -sf --max-time 2 http://localhost:19998/health 2>/dev/null && echo "RELAY_OK" || echo "RELAY_FAIL"
+```
+
+- `RELAY_OK` → "Relay connected. Sounds will play on your local machine."
+- `RELAY_FAIL` → "Relay not reachable. Run `/tkm:relay-setup` later for detailed setup instructions."
+
+**If local environment (WSL, not SSH):**
+
+Use AskUserQuestion:
+
+> Would you like to enable Pokémon sounds?
+
+Options:
+1. **Enable sounds (Recommended)** — Cries and SFX play during battles and events
+2. **Disable sounds** — Silent mode
+
+```bash
+TSX="${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh"
+"${TSX}" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" config set cry_enabled <true|false>
+```
+
 ## Step 6: Confirm Setup
 
 ```
