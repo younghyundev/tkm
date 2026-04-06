@@ -13,6 +13,7 @@ import { playCry } from '../audio/play-cry.js';
 import { playSfx } from '../audio/play-sfx.js';
 import { syncPokedexFromUnlocked, markShinyCaught } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
+import { addItem, randInt } from '../core/items.js';
 import { getVolumeTier } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
 import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
@@ -363,6 +364,13 @@ async function main(): Promise<void> {
       if (tip) state.last_tip = tip;
     }
 
+    // Non-battle turn ball drop: 20% chance, 1~5 balls
+    if (!state.last_battle && Math.random() < 0.20) {
+      const dropCount = randInt(1, 5);
+      addItem(state, 'pokeball', dropCount);
+      messages.push(t('item_drop.generic', { n: dropCount }));
+    }
+
     // Rest bonus countdown (XP-granting turns only)
     if (state.rest_bonus) {
       state.rest_bonus.turns_remaining--;
@@ -387,6 +395,11 @@ async function main(): Promise<void> {
       gc.voice_tone = 'claude';
       writeGlobalConfig(gc);
     }
+
+    // Session-end ball bonus: 100%, 2~3 balls
+    const sessionEndBalls = randInt(2, 3);
+    addItem(state, 'pokeball', sessionEndBalls);
+    messages.push(t('item_drop.session_end', { n: sessionEndBalls }));
 
     writeState(state);
     writeConfig(config);
