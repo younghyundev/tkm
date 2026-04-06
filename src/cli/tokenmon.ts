@@ -18,6 +18,7 @@ import { getTypeMasterProgress } from '../core/pokedex-rewards.js';
 import { t, initLocale, getLocale } from '../i18n/index.js';
 import { withLock, withLockRetry } from '../core/lock.js';
 import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCache, PLUGIN_ROOT } from '../core/paths.js';
+import { isShinyKey, toBaseId } from '../core/shiny-utils.js';
 import type { ExpGroup, EvolutionContext } from '../core/types.js';
 
 // ANSI color helpers
@@ -37,6 +38,8 @@ const bold = (s: string) => console.log(`${BOLD}${s}${RESET}`);
 function resolvePokemonArg(name: string): string {
   const pokemonDB = getPokemonDB();
   if (pokemonDB.pokemon[name]) return name;
+  // Support shiny keys (e.g., "460_shiny")
+  if (isShinyKey(name) && pokemonDB.pokemon[toBaseId(name)]) return name;
   const id = pokemonIdByName(name);
   return id ?? name;
 }
@@ -76,7 +79,7 @@ function cmdStatus(): void {
     for (const pokemon of config.party) {
       const level = state.pokemon[pokemon]?.level ?? 1;
       const xp = state.pokemon[pokemon]?.xp ?? 0;
-      const pData = pokemonDB.pokemon[pokemon];
+      const pData = pokemonDB.pokemon[toBaseId(pokemon)];
       const pokemonId = pData?.id ?? 0;
       const types = pData?.types?.join('/') ?? '';
       const evolvesAt = pData?.evolves_at;
@@ -84,10 +87,10 @@ function cmdStatus(): void {
       const bar = xpBar(xp, level, expGroup);
       const evolInfo = evolvesAt != null ? t('cli.status.evolves_at', { level: evolvesAt }) : '';
 
-      const isShiny = state.pokemon[pokemon]?.shiny ?? false;
+      const isShiny = isShinyKey(pokemon);
       const nickname = state.pokemon[pokemon]?.nickname;
-      const displayName = getDisplayName(pokemon, nickname);
-      const shinyName = isShiny ? '★' + (nickname ? `${displayName} (${getPokemonName(pokemon)})` : displayName) : (nickname ? `${displayName} (${getPokemonName(pokemon)})` : displayName);
+      const displayName = getDisplayName(toBaseId(pokemon), nickname);
+      const shinyName = isShiny ? '★' + (nickname ? `${displayName} (${getPokemonName(toBaseId(pokemon))})` : displayName) : (nickname ? `${displayName} (${getPokemonName(toBaseId(pokemon))})` : displayName);
       console.log(`  ${BOLD}${shinyName}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET}`);
       console.log(`  Lv.${level} [${GREEN}${bar}${RESET}] XP: ${xp}${evolInfo}`);
     }
@@ -288,7 +291,7 @@ function cmdParty(subcmd: string, pokemon?: string): void {
       for (const p of config.party) {
         const level = state.pokemon[p]?.level ?? 1;
         const xp = state.pokemon[p]?.xp ?? 0;
-        const expGroup: ExpGroup = pokemonDB.pokemon[p]?.exp_group ?? 'medium_fast';
+        const expGroup: ExpGroup = pokemonDB.pokemon[toBaseId(p)]?.exp_group ?? 'medium_fast';
         const bar = xpBar(xp, level, expGroup);
         const nick = state.pokemon[p]?.nickname;
         const label = nick ? `${nick} (${getPokemonName(p)})` : getPokemonName(p);
@@ -310,8 +313,8 @@ function cmdUnlockList(): void {
   }
   for (const p of state.unlocked) {
     const level = state.pokemon[p]?.level ?? 1;
-    const pokemonId = pokemonDB.pokemon[p]?.id ?? 0;
-    const types = pokemonDB.pokemon[p]?.types?.join('/') ?? '';
+    const pokemonId = pokemonDB.pokemon[toBaseId(p)]?.id ?? 0;
+    const types = pokemonDB.pokemon[toBaseId(p)]?.types?.join('/') ?? '';
     console.log(`  ${BOLD}${getPokemonName(p)}${RESET} [#${pokemonId}] ${GRAY}${types}${RESET} Lv.${level}`);
   }
 }
@@ -419,13 +422,13 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
 
   // Detail view for single pokemon
   if (pokemonName && pokemonName !== '--type' && pokemonName !== '--region' && pokemonName !== '--rarity') {
-    const pData = pokemonDB.pokemon[pokemonName];
+    const pData = pokemonDB.pokemon[toBaseId(pokemonName)];
     if (!pData) {
       error(t('cli.pokedex.not_found', { name: pokemonName }));
       process.exit(1);
     }
 
-    const pdex = state.pokedex?.[pokemonName];
+    const pdex = state.pokedex?.[toBaseId(pokemonName)];
     const statusIcon = pdex?.caught ? `${GREEN}●${RESET}` : pdex?.seen ? `${YELLOW}◐${RESET}` : `${GRAY}○${RESET}`;
     const statusText = pdex?.caught ? t('cli.pokedex.status_caught') : pdex?.seen ? t('cli.pokedex.status_seen') : t('cli.pokedex.status_unknown');
 
@@ -1007,7 +1010,7 @@ function cmdDashboard(): void {
       if (!p) continue;
       const pName = getPokemonName(name);
       const level = p.level;
-      const pData = pokemonDB.pokemon[name];
+      const pData = pokemonDB.pokemon[toBaseId(name)];
       const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
       const bar = xpBar(p.xp, level, expGroup, 10);
       const currLvlXp = levelToXp(level, expGroup);
@@ -1203,7 +1206,7 @@ function cmdBox(sortBy?: string): void {
   const boxPokemon = state.unlocked
     .filter(name => !config.party.includes(name) && state.pokemon[name])
     .map(name => {
-      const pData = pokemonDB.pokemon[name];
+      const pData = pokemonDB.pokemon[toBaseId(name)];
       const ps = state.pokemon[name];
       return {
         name,
@@ -1262,7 +1265,7 @@ function cmdPartySwap(slot: string, pokemon: string): void {
 
     // Resolve pokemon name to ID
     const pokemonDB = getPokemonDB();
-    const targetId = pokemonDB.pokemon[pokemon] ? pokemon : Object.keys(pokemonDB.pokemon).find(k => getPokemonName(k).toLowerCase() === pokemon.toLowerCase());
+    const targetId = pokemonDB.pokemon[toBaseId(pokemon)] ? pokemon : Object.keys(pokemonDB.pokemon).find(k => getPokemonName(k).toLowerCase() === pokemon.toLowerCase());
     if (!targetId || !state.unlocked.includes(targetId)) {
       error(t('cli.party.swap_not_in_box', { pokemon }));
       return;
@@ -1332,9 +1335,9 @@ function cmdPartySuggest(): void {
 
   // Score each owned pokemon by type effectiveness against region pool
   const candidates = state.unlocked
-    .filter(name => state.pokemon[name] && pokemonDB.pokemon[name])
+    .filter(name => state.pokemon[name] && pokemonDB.pokemon[toBaseId(name)])
     .map(name => {
-      const pData = pokemonDB.pokemon[name];
+      const pData = pokemonDB.pokemon[toBaseId(name)];
       const ps = state.pokemon[name];
       let score = 0;
       const typeChart = pokemonDB.type_chart;

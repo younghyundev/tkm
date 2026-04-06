@@ -1,4 +1,5 @@
 import { getPokemonDB } from './pokemon-data.js';
+import { isShinyKey, toBaseId } from './shiny-utils.js';
 import type { State, PokedexEntry } from './types.js';
 
 /**
@@ -60,7 +61,12 @@ export function markShinyCaught(state: State, name: string): void {
  */
 export function syncPokedexFromUnlocked(state: State): void {
   for (const name of state.unlocked) {
-    markCaught(state, name);
+    // Pokedex tracks by base species ID, not shiny key
+    const baseId = toBaseId(name);
+    markCaught(state, baseId);
+    if (isShinyKey(name)) {
+      markShinyCaught(state, baseId);
+    }
   }
 }
 

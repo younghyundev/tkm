@@ -1,4 +1,5 @@
 import { getPokemonDB } from './pokemon-data.js';
+import { isShinyKey, toBaseId, toShinyKey } from './shiny-utils.js';
 import type { State, Config, EvolutionResult, EvolutionContext, BranchEvolution } from './types.js';
 
 const FRIENDSHIP_THRESHOLD = 220;
@@ -23,7 +24,7 @@ export function checkEvolution(
   state?: State,
 ): EvolutionResult | null {
   const db = getPokemonDB();
-  const data = db.pokemon[pokemonName];
+  const data = db.pokemon[toBaseId(pokemonName)];
   if (!data) return null;
 
   // Branching evolution: block auto-evolve, set flags on state.
@@ -105,7 +106,7 @@ export function getEligibleBranches(
   context: EvolutionContext,
 ): BranchInfo[] {
   const db = getPokemonDB();
-  const data = db.pokemon[pokemonName];
+  const data = db.pokemon[toBaseId(pokemonName)];
   if (!data || !Array.isArray(data.evolves_to)) return [];
 
   return (data.evolves_to as BranchEvolution[]).map(branch => ({
@@ -125,7 +126,7 @@ export function applyBranchEvolution(
   targetName: string,
 ): EvolutionResult | null {
   const db = getPokemonDB();
-  const data = db.pokemon[pokemonName];
+  const data = db.pokemon[toBaseId(pokemonName)];
   if (!data || !Array.isArray(data.evolves_to)) return null;
 
   const branch = (data.evolves_to as BranchEvolution[]).find(b => b.name === targetName);
@@ -225,7 +226,9 @@ export function applyEvolution(
   // Add evolved pokemon to state, carrying over all existing fields (nickname, ev, friendship, etc.)
   // then overriding only what changes on evolution.
   // Note: old form is intentionally kept in state.pokemon for collection/pokedex tracking.
-  state.pokemon[evolution.newPokemon] = {
+  // Shiny pokemon evolves to shiny evolved form
+  const newKey = isShinyKey(evolution.oldPokemon) ? toShinyKey(evolution.newPokemon) : evolution.newPokemon;
+  state.pokemon[newKey] = {
     ...old,
     id: evolution.newId,
     xp: currentXp,
@@ -233,13 +236,13 @@ export function applyEvolution(
   };
 
   // Add to unlocked if not already there
-  if (!state.unlocked.includes(evolution.newPokemon)) {
-    state.unlocked.push(evolution.newPokemon);
+  if (!state.unlocked.includes(newKey)) {
+    state.unlocked.push(newKey);
   }
 
   // Increment evolution count
   state.evolution_count += 1;
 
   // Replace in party config
-  config.party = config.party.map(p => p === evolution.oldPokemon ? evolution.newPokemon : p);
+  config.party = config.party.map(p => p === evolution.oldPokemon ? newKey : p);
 }

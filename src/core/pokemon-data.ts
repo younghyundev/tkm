@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import { isShinyKey, toBaseId, toShinyKey } from './shiny-utils.js';
 import {
   pokemonJsonPath, achievementsJsonPath, regionsJsonPath,
   pokedexRewardsJsonPath, i18nDataDir, getActiveGeneration,
@@ -209,9 +210,11 @@ export function getGameI18n(locale?: string, gen?: string): GameI18nData {
 }
 
 export function getPokemonName(id: string | number, gen?: string, shiny?: boolean): string {
+  const strId = String(id);
+  const baseId = toBaseId(strId);
   const i18n = getGameI18n(undefined, gen);
-  const name = i18n.pokemon[String(id)] || String(id);
-  if (shiny) return '★' + name;
+  const name = i18n.pokemon[baseId] || baseId;
+  if (shiny || isShinyKey(strId)) return '★' + name;
   return name;
 }
 
@@ -224,8 +227,20 @@ export function getPokemonName(id: string | number, gen?: string, shiny?: boolea
  */
 export function resolveNameToId(nameOrId: string, state?: { pokemon: Record<string, { nickname?: string }> }): string | null {
   const db = getPokemonDB();
-  // Direct ID match
+
+  // Shiny prefix detection: "색다른 X", "★X", "shiny X"
+  const shinyPrefixes = ['색다른 ', '★', 'shiny '];
+  for (const prefix of shinyPrefixes) {
+    if (nameOrId.startsWith(prefix)) {
+      const baseName = nameOrId.slice(prefix.length);
+      const baseId = resolveNameToId(baseName, state);
+      return baseId ? toShinyKey(toBaseId(baseId)) : null;
+    }
+  }
+
+  // Direct ID match (including shiny keys like "460_shiny")
   if (db.pokemon[nameOrId]) return nameOrId;
+  if (isShinyKey(nameOrId) && db.pokemon[toBaseId(nameOrId)]) return nameOrId;
 
   // Search by nickname in owned pokemon state
   if (state) {
@@ -278,6 +293,16 @@ export function getAchievementRarityLabel(id: string, gen?: string): string {
 
 // Reverse lookup: name (any locale) → pokemon ID string
 export function pokemonIdByName(name: string, gen?: string): string | undefined {
+  // Shiny prefix detection
+  const shinyPrefixes = ['색다른 ', '★', 'shiny '];
+  for (const prefix of shinyPrefixes) {
+    if (name.startsWith(prefix)) {
+      const baseName = name.slice(prefix.length);
+      const baseId = pokemonIdByName(baseName, gen);
+      return baseId ? toShinyKey(baseId) : undefined;
+    }
+  }
+
   for (const locale of ['ko', 'en']) {
     const i18n = getGameI18n(locale, gen);
     for (const [id, pokeName] of Object.entries(i18n.pokemon)) {

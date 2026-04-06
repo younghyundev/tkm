@@ -441,7 +441,7 @@ describe('battle', () => {
       assert.equal(result!.shiny, true);
     });
 
-    it('catch success + shiny:true records PokemonState.shiny === true', () => {
+    it('catch success + shiny:true creates separate shiny entry', () => {
       const state = makeState({
         pokemon: { '387': { id: 387, xp: 500000, level: 80, friendship: 0, ev: 0 } },
         items: { pokeball: 50 },
@@ -452,13 +452,14 @@ describe('battle', () => {
         const result = resolveBattle(state, config, { name: '396', level: 1, shiny: true });
         if (result?.won && result?.caught) {
           caughtShiny = true;
-          assert.equal(state.pokemon['396']?.shiny, true, 'PokemonState.shiny should be true after shiny catch');
+          assert.ok(state.pokemon['396_shiny'], 'shiny catch should create separate 396_shiny entry');
+          assert.ok(state.unlocked.includes('396_shiny'), 'shiny key should be in unlocked');
         }
       }
       assert.ok(caughtShiny, 'Should catch at least one shiny pokemon');
     });
 
-    it('shiny catch of already-caught species marks existing pokemon as shiny', () => {
+    it('shiny catch of already-caught species creates separate shiny entry', () => {
       const state = makeState({
         pokemon: {
           '387': { id: 387, xp: 500000, level: 80, friendship: 0, ev: 0 },
@@ -474,7 +475,9 @@ describe('battle', () => {
         const result = resolveBattle(state, config, { name: '396', level: 1, shiny: true });
         if (result?.won && result?.caught) {
           caughtShiny = true;
-          assert.equal(state.pokemon['396']?.shiny, true, 'existing pokemon should be marked shiny');
+          assert.ok(state.pokemon['396_shiny'], 'shiny catch should create separate 396_shiny entry');
+          assert.ok(state.pokemon['396'], 'original normal entry should still exist');
+          assert.ok(state.unlocked.includes('396_shiny'), 'shiny key should be in unlocked');
         }
       }
       assert.ok(caughtShiny, 'Should be able to catch shiny of already-caught species');

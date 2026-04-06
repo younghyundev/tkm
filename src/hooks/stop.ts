@@ -18,6 +18,7 @@ import { getRegionDropMessage } from '../core/region-messages.js';
 import { getVolumeTier } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
 import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
+import { isShinyKey, toBaseId, toShinyKey } from '../core/shiny-utils.js';
 import { recordXp, recordBattle, recordCatch, recordEncounter, recordShinyEncounter, recordShinyCatch, recordShinyEscaped } from '../core/stats.js';
 
 function getTurnFloor(level: number): number {
@@ -201,11 +202,25 @@ async function main(): Promise<void> {
     const pokemonDB = getPokemonDB();
     let totalXpGranted = 0;
 
+    // One-time config party migration: swap shiny pokemon to shiny keys
+    for (let i = 0; i < config.party.length; i++) {
+      const member = config.party[i];
+      if (!isShinyKey(member) && state.pokemon[member]?.shiny && state.pokemon[toShinyKey(member)]) {
+        config.party[i] = toShinyKey(member);
+        state.pokemon[member].shiny = false;
+      }
+    }
+    // Also migrate default_dispatch
+    if (config.default_dispatch && !isShinyKey(config.default_dispatch) &&
+        state.pokemon[config.default_dispatch]?.shiny && state.pokemon[toShinyKey(config.default_dispatch)]) {
+      config.default_dispatch = toShinyKey(config.default_dispatch);
+    }
+
     for (const pokemonName of config.party) {
       if (!pokemonName) continue;
 
       // Ensure pokemon entry exists
-      const pData = pokemonDB.pokemon[pokemonName];
+      const pData = pokemonDB.pokemon[toBaseId(pokemonName)];
       if (!state.pokemon[pokemonName]) {
         state.pokemon[pokemonName] = {
           id: pData?.id ?? 0,
@@ -318,7 +333,7 @@ async function main(): Promise<void> {
           recordShinyEncounter(state);
           if (battleResult.caught) {
             recordShinyCatch(state);
-            markShinyCaught(state, battleResult.defender);
+            markShinyCaught(state, toBaseId(battleResult.defender));
           } else {
             recordShinyEscaped(state);
           }

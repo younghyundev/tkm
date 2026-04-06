@@ -6,6 +6,7 @@ import { getTypeMasterXpMultiplier } from './pokedex-rewards.js';
 import { levelToXp } from './xp.js';
 import { t } from '../i18n/index.js';
 import { readCommonState } from './state.js';
+import { isShinyKey, toBaseId, toShinyKey } from './shiny-utils.js';
 import type { State, Config, BattleResult, WildPokemon } from './types.js';
 
 /**
@@ -119,7 +120,7 @@ export function calculatePartyMultiplier(
   // Calculate relative combat power for each party member
   const scores: Array<{ name: string; score: number }> = [];
   for (const name of config.party) {
-    const pData = db.pokemon[name];
+    const pData = db.pokemon[toBaseId(name)];
     if (!pData) continue;
     const level = state.pokemon[name]?.level ?? 1;
     const score = relativeCombatPower(
@@ -160,7 +161,7 @@ export function selectBattlePokemon(config: Config, state: State, wildTypes: str
   let bestScore = -Infinity;
 
   for (const name of config.party) {
-    const pData = db.pokemon[name];
+    const pData = db.pokemon[toBaseId(name)];
     if (!pData) continue;
     const raw = getRawTypeMultiplier(pData.types, wildTypes);
     const level = state.pokemon[name]?.level ?? 1;
@@ -217,7 +218,7 @@ export function resolveBattle(
     config, state, wildData.types, wild.level, wildData.base_stats,
   );
   const attacker = bestFighter;
-  const attackerData = db.pokemon[attacker];
+  const attackerData = db.pokemon[toBaseId(attacker)];
   if (!attackerData) return null;
 
   const attackerLevel = state.pokemon[attacker]?.level ?? 1;
@@ -291,15 +292,14 @@ export function resolveBattle(
         caught = true;
         markCaught(state, wild.name);
         state.catch_count++;
-        if (!state.unlocked.includes(wild.name)) {
-          state.unlocked.push(wild.name);
+        // Use shiny key for separate storage
+        const stateKey = wild.shiny ? toShinyKey(wild.name) : wild.name;
+        if (!state.unlocked.includes(stateKey)) {
+          state.unlocked.push(stateKey);
         }
-        if (!state.pokemon[wild.name]) {
+        if (!state.pokemon[stateKey]) {
           const catchXp = levelToXp(wild.level, wildData.exp_group);
-          state.pokemon[wild.name] = { id: wildData.id, xp: catchXp, level: wild.level, friendship: 0, ev: 0, shiny: wild.shiny };
-        } else if (wild.shiny) {
-          // Already have this species but caught a shiny — mark existing as shiny
-          state.pokemon[wild.name].shiny = true;
+          state.pokemon[stateKey] = { id: wildData.id, xp: catchXp, level: wild.level, friendship: 0, ev: 0 };
         }
       }
       // Not enough balls: markSeen already called above, XP already awarded. No catch.
@@ -309,9 +309,10 @@ export function resolveBattle(
   // Item drop (after catch check — dropped balls are for next battle)
   const ballDrop = rollItemDrop(state, won);
 
+  const defenderKey = (caught && wild.shiny) ? toShinyKey(wild.name) : wild.name;
   return {
     attacker,
-    defender: wild.name,
+    defender: defenderKey,
     defenderLevel: wild.level,
     winRate,
     won,

@@ -5,6 +5,7 @@ import { DATA_DIR, commonAchievementsJsonPath } from './paths.js';
 import { readCommonState, writeCommonState, readState, writeState } from './state.js';
 import { getPokemonDB, getAchievementsDB } from './pokemon-data.js';
 import { levelToXp } from './xp.js';
+import { isShinyKey, toShinyKey } from './shiny-utils.js';
 import type { State, CommonState, AchievementsDB, Achievement } from './types.js';
 
 // ---------- Version-based migration runner ----------
@@ -85,10 +86,35 @@ function migrateLegendaryRewardXpSync(state: State): void {
   }
 }
 
+/**
+ * Migrate shiny pokemon from flag-based to separate key-based storage.
+ * For each pokemon with shiny=true:
+ * - Create "{id}_shiny" entry with same stats (the shiny version)
+ * - Keep original "{id}" entry as normal copy (gift to user)
+ * - Add shiny key to unlocked
+ * Note: shiny flag is kept on original temporarily for config.party migration in stop.ts
+ */
+function migrateShinyToSeparateEntries(state: State): void {
+  for (const [key, entry] of Object.entries(state.pokemon)) {
+    if (entry.shiny && !isShinyKey(key)) {
+      const shinyKey = toShinyKey(key);
+      // Create shiny entry with same stats
+      state.pokemon[shinyKey] = { ...entry };
+      // Normal copy keeps same stats but not shiny
+      // Note: keep shiny=true on original temporarily for config.party migration in stop.ts
+      // Add shiny key to unlocked
+      if (!state.unlocked.includes(shinyKey)) {
+        state.unlocked.push(shinyKey);
+      }
+    }
+  }
+}
+
 /** Ordered list of version-gated migrations. Append new entries at the end. */
 const MIGRATIONS: Migration[] = [
   { version: '0.5.2', fn: migrateLegendaryRewardLevels },
   { version: '0.5.3', fn: migrateLegendaryRewardXpSync },
+  { version: '0.5.8', fn: migrateShinyToSeparateEntries },
 ];
 
 /**

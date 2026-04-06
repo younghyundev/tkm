@@ -7,6 +7,7 @@ import { levelToXp, xpToLevel } from './core/xp.js';
 import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, getActiveGeneration } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
 import { shiftAnsiHue } from './sprites/shiny.js';
+import { isShinyKey, toBaseId } from './core/shiny-utils.js';
 import { t, initLocale } from './i18n/index.js';
 import type { ExpGroup } from './core/types.js';
 
@@ -143,7 +144,7 @@ function main(): void {
 
   for (const pokemonName of config.party) {
     if (!pokemonName) continue;
-    const pData = pokemonDB.pokemon[pokemonName];
+    const pData = pokemonDB.pokemon[toBaseId(pokemonName)];
     const assignment = session.agent_assignments.find(a => a.pokemon === pokemonName);
     const nickname = state.pokemon[pokemonName]?.nickname;
     pokeData.push({
@@ -167,7 +168,7 @@ function main(): void {
     for (let i = 0; i < pokeData.length; i++) {
       const p = pokeData[i];
       if (spriteMode === 'all' || i === 0) {
-        const isShinySprite = state.pokemon[p.speciesId]?.shiny ?? false;
+        const isShinySprite = isShinyKey(p.speciesId);
         spriteEntries.push(loadSprite(p.pokemonId, isShinySprite));
       }
     }
@@ -235,7 +236,7 @@ function main(): void {
       ? (spriteMode === 'emoji_all' || (spriteMode === 'emoji_ace' && isAce)) ? `${emoji} ` : ''
       : '';
 
-    const isShiny = state.pokemon[p.speciesId]?.shiny ?? false;
+    const isShiny = isShinyKey(p.speciesId);
     const shinyPrefix = isShiny ? '★' : '';
     const displayName = `${shinyPrefix}${p.name}`;
     let info: string;
