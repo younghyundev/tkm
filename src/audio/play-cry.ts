@@ -13,12 +13,18 @@ export interface RelayConfig {
   soundRoot: string;
 }
 
+let _lastRelayWarning = 0;
+
 /**
  * Send a sound-play request to the peon-ping relay.
  * The relay expects a path relative to its PEON_DIR.
  * A symlink `PEON_DIR/<soundRoot>` → local tokenmon dir must exist on the relay host.
+ * Calls onError() if the relay request fails (timeout, connection refused, non-2xx).
  */
-export function relaySound(filePath: string, volume: number, relay: RelayConfig): void {
+export function relaySound(
+  filePath: string, volume: number, relay: RelayConfig,
+  onError?: () => void,
+): void {
   // Build relay-relative path: <soundRoot>/<relative-to-PLUGIN_ROOT>
   let relayPath: string;
   if (filePath.startsWith(PLUGIN_ROOT)) {
@@ -29,15 +35,29 @@ export function relaySound(filePath: string, volume: number, relay: RelayConfig)
     relayPath = relay.soundRoot ? `${relay.soundRoot}/${filePath.split('/').pop() ?? ''}` : filePath;
   }
 
+  const warnAndFallback = () => {
+    const now = Date.now();
+    if (now - _lastRelayWarning > 30_000) {
+      _lastRelayWarning = now;
+      process.stderr.write(`[tokenmon] relay unreachable (${relay.host}:${relay.port}) — falling back to local audio\n`);
+    }
+    onError?.();
+  };
+
   const encodedPath = encodeURIComponent(relayPath);
   const req = http.get({
     hostname: relay.host,
     port: relay.port,
     path: `/play?file=${encodedPath}`,
     headers: { 'X-Volume': String(volume) },
-  }, () => {});
-  req.on('error', () => {});
-  req.setTimeout(2000, () => req.destroy());
+  }, (res) => {
+    if (res.statusCode && res.statusCode >= 400) {
+      warnAndFallback();
+    }
+    res.resume(); // drain response
+  });
+  req.on('error', () => warnAndFallback());
+  req.setTimeout(2000, () => { req.destroy(); warnAndFallback(); });
 }
 
 function isWSL2(): boolean {
@@ -70,7 +90,10 @@ function wslPath(linuxPath: string): string {
 
 export function playSound(filePath: string, volume: number, relay?: RelayConfig): void {
   if (relay) {
-    relaySound(filePath, volume, relay);
+    relaySound(filePath, volume, relay, () => {
+      // Fallback: attempt local playback on relay failure
+      playSound(filePath, volume);
+    });
     return;
   }
 

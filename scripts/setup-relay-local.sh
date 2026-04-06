@@ -60,18 +60,38 @@ fi
 # ── Step 3: Sync sound files ──
 echo "[3/5] Syncing sound files from ${REMOTE_HOST}..."
 
-REMOTE_TKM="~/.claude/plugins/marketplaces/tkm"
+# Dynamically resolve remote tokenmon plugin root (marketplace or cache install)
+echo "  Resolving remote plugin root..."
+REMOTE_TKM=$(ssh "${REMOTE_HOST}" 'bash -lc "
+  mp=\"$HOME/.claude/plugins/marketplaces/tkm\"
+  if [ -d \"$mp/cries\" ]; then echo \"$mp\"; exit 0; fi
+  cache=$(ls -d \"$HOME/.claude/plugins/cache/tkm/tkm/\"*/ 2>/dev/null | sort -V | tail -1)
+  if [ -n \"$cache\" ] && [ -d \"${cache}cries\" ]; then echo \"$cache\"; exit 0; fi
+  echo \"\"
+"' 2>/dev/null) || true
+REMOTE_TKM=$(echo "${REMOTE_TKM}" | tr -d '[:space:]')
+
+if [ -z "${REMOTE_TKM}" ]; then
+  echo "  ERROR: Could not find tokenmon on ${REMOTE_HOST}" >&2
+  echo "  Checked: ~/.claude/plugins/marketplaces/tkm" >&2
+  echo "  Checked: ~/.claude/plugins/cache/tkm/tkm/*/" >&2
+  exit 1
+fi
+echo "  Found: ${REMOTE_TKM}"
+
 mkdir -p "${LOCAL_TKM_ROOT}/cries" "${LOCAL_TKM_ROOT}/sfx"
 
 echo "  Syncing cries/..."
-rsync -az "${REMOTE_HOST}:${REMOTE_TKM}/cries/" "${LOCAL_TKM_ROOT}/cries/" 2>/dev/null || {
-  echo "  WARNING: Could not sync cries/ — check SSH access to ${REMOTE_HOST}"
-}
+if ! rsync -az "${REMOTE_HOST}:${REMOTE_TKM}/cries/" "${LOCAL_TKM_ROOT}/cries/"; then
+  echo "  ERROR: Failed to sync cries/ from ${REMOTE_HOST}" >&2
+  exit 1
+fi
 
 echo "  Syncing sfx/..."
-rsync -az "${REMOTE_HOST}:${REMOTE_TKM}/sfx/" "${LOCAL_TKM_ROOT}/sfx/" 2>/dev/null || {
-  echo "  WARNING: Could not sync sfx/ — check SSH access to ${REMOTE_HOST}"
-}
+if ! rsync -az "${REMOTE_HOST}:${REMOTE_TKM}/sfx/" "${LOCAL_TKM_ROOT}/sfx/"; then
+  echo "  ERROR: Failed to sync sfx/ from ${REMOTE_HOST}" >&2
+  exit 1
+fi
 
 cry_count=$(find "${LOCAL_TKM_ROOT}/cries" -type f 2>/dev/null | wc -l)
 sfx_count=$(find "${LOCAL_TKM_ROOT}/sfx" -type f 2>/dev/null | wc -l)
