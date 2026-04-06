@@ -29,15 +29,15 @@ function makeConfig(overrides: Partial<Config> = {}): Config {
 
 describe('type-chart', () => {
   it('fire is super effective vs grass', () => {
-    assert.equal(getTypeEffectiveness('fire', 'grass'), 1.5);
+    assert.equal(getTypeEffectiveness('fire', 'grass'), 2.0);
   });
 
   it('water is not effective vs grass', () => {
-    assert.equal(getTypeEffectiveness('water', 'grass'), 0.67);
+    assert.equal(getTypeEffectiveness('water', 'grass'), 0.5);
   });
 
   it('normal is immune to ghost', () => {
-    assert.equal(getTypeEffectiveness('normal', 'ghost'), 0.25);
+    assert.equal(getTypeEffectiveness('normal', 'ghost'), 0);
   });
 
   it('neutral matchup is 1.0', () => {
@@ -45,16 +45,15 @@ describe('type-chart', () => {
   });
 
   it('dual type raw multiplier stacks', () => {
-    // Fire/Fighting vs Grass/Steel = 1.5 * 1.5 * 1.0 * 1.5 = 3.375
+    // Fire/Fighting vs Grass/Steel = 2.0 * 2.0 * 1.0 * 2.0 = 8.0
     const raw = getRawTypeMultiplier(['fire', 'fighting'], ['grass', 'steel']);
-    assert.ok(raw > 3.0 && raw < 4.0, `Raw multiplier: ${raw}`);
+    assert.ok(raw >= 8.0, `Raw multiplier: ${raw}`);
   });
 
-  it('dampening compresses extreme multipliers', () => {
-    // Formula: 1 + (raw - 1) * 0.4
-    assert.equal(applyTypeDampening(1.0), 1.0); // neutral unchanged
-    assert.ok(Math.abs(applyTypeDampening(5.06) - 2.624) < 0.1); // compressed
-    assert.ok(Math.abs(applyTypeDampening(0.45) - 0.78) < 0.05); // not-effective compressed
+  it('dampening is pass-through (no compression)', () => {
+    assert.equal(applyTypeDampening(1.0), 1.0);
+    assert.equal(applyTypeDampening(4.0), 4.0);
+    assert.equal(applyTypeDampening(0.25), 0.25);
   });
 });
 
@@ -77,10 +76,10 @@ describe('battle', () => {
       assert.ok(winRate < 0.45, `Win rate: ${winRate}`);
     });
 
-    it('double super effective after dampening is reasonable', () => {
-      // Fire vs Grass (1.5x dampened to ~1.2x)
+    it('super effective gives dominant win rate', () => {
+      // Fire vs Grass (2.0x, no dampening)
       const { winRate } = calculateWinRate(['fire'], ['grass'], 20, 20, neutralStats, neutralStats);
-      assert.ok(winRate > 0.40 && winRate < 0.75, `Win rate: ${winRate}`);
+      assert.ok(winRate >= 0.90, `Win rate: ${winRate}`);
     });
 
     it('always in [0.03, 0.95] range', () => {

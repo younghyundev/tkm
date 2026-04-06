@@ -9,9 +9,9 @@ export function getTypeEffectiveness(attackType: string, defendType: string): nu
   const chart = db.type_chart[attackType];
   if (!chart) return 1.0;
 
-  if (chart.immune.includes(defendType)) return 0.25;
-  if (chart.strong.includes(defendType)) return 1.5;
-  if (chart.weak.includes(defendType)) return 0.67;
+  if (chart.immune.includes(defendType)) return 0;
+  if (chart.strong.includes(defendType)) return 2.0;
+  if (chart.weak.includes(defendType)) return 0.5;
   return 1.0;
 }
 
@@ -29,9 +29,9 @@ export function getRawTypeMultiplier(attackerTypes: string[], defenderTypes: str
 }
 
 /**
- * Apply dampening to compress extreme dual-type stacking.
- * Formula: 1 + (raw - 1) * 0.4
+ * Pass-through: no dampening applied.
+ * Type multipliers use real game values (2x/0.5x/0x).
  */
 export function applyTypeDampening(rawMultiplier: number): number {
-  return 1 + (rawMultiplier - 1) * 0.4;
+  return rawMultiplier;
 }
