@@ -9,6 +9,7 @@ import { formatBattleMessage } from './core/battle.js';
 import { shiftAnsiHue } from './sprites/shiny.js';
 import { isShinyKey, toBaseId } from './core/shiny-utils.js';
 import { t, initLocale } from './i18n/index.js';
+import { readWeatherCache, WEATHER_LABELS, type WeatherCondition } from './core/weather.js';
 import type { ExpGroup } from './core/types.js';
 
 const TYPE_EMOJI: Record<string, string> = {
@@ -98,6 +99,32 @@ function wrapPrint(parts: string[], maxWidth: number): void {
   if (currentLine) console.log(currentLine);
 }
 
+// ── Weather particle effects ──
+
+const WEATHER_PARTICLES: Record<WeatherCondition, { chars: string[]; color: string; density: number }> = {
+  rain:         { chars: ['/', '/', '╱', '│'],        color: '\x1b[34m',  density: 0.12 },
+  thunderstorm: { chars: ['/', '╱', '⚡', '│'],       color: '\x1b[33m',  density: 0.15 },
+  snow:         { chars: ['*', '·', '◦', '∘'],        color: '\x1b[97m',  density: 0.10 },
+  fog:          { chars: ['░', '░', '·', '·'],         color: '\x1b[90m',  density: 0.20 },
+  sandstorm:    { chars: ['·', '∙', '.', '⠁'],        color: '\x1b[33m',  density: 0.14 },
+  clear:        { chars: ['·', '✦', '˙'],              color: '\x1b[93m',  density: 0.05 },
+  cloudy:       { chars: ['~', '·', '○'],              color: '\x1b[90m',  density: 0.06 },
+};
+
+function scatterWeatherParticles(line: string, condition: WeatherCondition): string {
+  const fx = WEATHER_PARTICLES[condition];
+  if (!fx || fx.chars.length === 0) return line;
+  const RESET = '\x1b[0m';
+  // Replace some \u2800 (Braille blank) chars with colored particles
+  return line.replace(/\u2800/g, (match) => {
+    if (Math.random() < fx.density) {
+      const ch = fx.chars[Math.floor(Math.random() * fx.chars.length)];
+      return `${fx.color}${ch}${RESET}`;
+    }
+    return match;
+  });
+}
+
 function main(): void {
   const config = readConfig();
   initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
@@ -134,7 +161,18 @@ function main(): void {
   const pokeballs = state.items?.pokeball ?? 0;
   const itemInfo = pokeballs > 0 ? ` 🔴 ${pokeballs}` : '';
   const restInfo = state.rest_bonus ? ` 💤 ${state.rest_bonus.multiplier}×(${state.rest_bonus.turns_remaining})` : '';
-  const footer = `🎮${genRegion} ${genSuffix} 📍${regionName}${itemInfo}${restInfo}`;
+  let weatherInfo = '';
+  try {
+    const gc = readGlobalConfig();
+    if (gc.weather_enabled) {
+      const cache = readWeatherCache();
+      if (cache && Date.now() - cache.fetched_at < 60 * 60 * 1000) {
+        const labels = WEATHER_LABELS[cache.condition as WeatherCondition];
+        if (labels) weatherInfo = ` ${labels.emoji} ${labels[lang as 'en' | 'ko'] ?? labels.en}`;
+      }
+    }
+  } catch { /* ignore */ }
+  const footer = `🎮${genRegion} ${genSuffix} 📍${regionName}${weatherInfo}${itemInfo}${restInfo}`;
 
   // Build per-pokemon data
   const pokeData: Array<{
@@ -177,6 +215,19 @@ function main(): void {
     const SPRITE_WIDTH = 20;
     const isBlankLine = (line: string) => line.replace(/\x1b\[[^m]*m/g, '').replace(/[\s\u2800]/g, '').length === 0;
     const spritesPerRow = Math.max(1, Math.floor(termWidth / (SPRITE_WIDTH + 1)));
+
+    // Weather particle overlay
+    let weatherCondition: WeatherCondition | null = null;
+    try {
+      const gc = readGlobalConfig();
+      if (gc.weather_enabled) {
+        const cache = readWeatherCache();
+        if (cache && Date.now() - cache.fetched_at < 60 * 60 * 1000) {
+          weatherCondition = cache.condition;
+        }
+      }
+    } catch { /* ignore */ }
+
     for (let gi = 0; gi < spriteEntries.length; gi += spritesPerRow) {
       const group = spriteEntries.slice(gi, gi + spritesPerRow);
       const maxRows = Math.max(...group.map(s => s.length), 0);
@@ -188,11 +239,15 @@ function main(): void {
         }
       }
       for (let row = firstRow; row <= lastRow; row++) {
-        console.log(group.map(s => {
+        let rowStr = group.map(s => {
           const line = s[row] ?? '';
           const visibleLen = line.replace(/\x1b\[[^m]*m/g, '').length;
           return visibleLen < SPRITE_WIDTH ? line + '\u2800'.repeat(SPRITE_WIDTH - visibleLen) : line;
-        }).join('\u2800'));
+        }).join('\u2800');
+        if (weatherCondition) {
+          rowStr = scatterWeatherParticles(rowStr, weatherCondition);
+        }
+        console.log(rowStr);
       }
     }
   }

@@ -1,7 +1,9 @@
 import { getPokemonDB, getRegionsDB, getEventsDB } from './pokemon-data.js';
 import { resolveBattle, formatBattleMessage } from './battle.js';
 import { getLegendaryPoolMultiplier } from './volume-tier.js';
-import type { State, Config, EncounterResult, BattleResult, WildPokemon, TimeEvent, DayEvent, StreakEvent, MilestoneEvent, VolumeTier, CommonState } from './types.js';
+import type { State, Config, EncounterResult, BattleResult, WildPokemon, TimeEvent, DayEvent, StreakEvent, MilestoneEvent, WeatherEvent, VolumeTier, CommonState } from './types.js';
+import { readWeatherCache, WEATHER_TYPE_BOOSTS, WEATHER_LABELS } from './weather.js';
+import { readGlobalConfig } from './config.js';
 
 const BASE_ENCOUNTER_RATE = 0.15;
 
@@ -78,6 +80,7 @@ export interface ActiveEvents {
   dayEvents: DayEvent[];
   streakEvents: StreakEvent[];
   milestoneEvents: MilestoneEvent[];
+  weatherEvents: WeatherEvent[];
 }
 
 /**
@@ -98,7 +101,28 @@ export function getActiveEvents(state: State): ActiveEvents {
     return typeof value === 'number' && value >= e.trigger_value;
   });
 
-  return { timeEvents, dayEvents, streakEvents, milestoneEvents };
+  // Weather events
+  let weatherEvents: WeatherEvent[] = [];
+  try {
+    const gc = readGlobalConfig();
+    if (gc.weather_enabled) {
+      const cache = readWeatherCache();
+      if (cache && Date.now() - cache.fetched_at < 60 * 60 * 1000) {
+        const boost = WEATHER_TYPE_BOOSTS[cache.condition];
+        const labels = WEATHER_LABELS[cache.condition];
+        if (boost && labels) {
+          weatherEvents = [{
+            condition: cache.condition,
+            type_boost: boost,
+            label: { en: labels.en, ko: labels.ko },
+            emoji: labels.emoji,
+          }];
+        }
+      }
+    }
+  } catch { /* ignore weather errors */ }
+
+  return { timeEvents, dayEvents, streakEvents, milestoneEvents, weatherEvents };
 }
 
 /**
@@ -151,6 +175,15 @@ export function selectWildPokemon(state: State, config: Config, tier?: VolumeTie
       for (const pType of p.types) {
         if (te.type_boost[pType]) {
           w *= te.type_boost[pType];
+        }
+      }
+    }
+
+    // Apply weather type boosts
+    for (const we of events.weatherEvents) {
+      for (const pType of p.types) {
+        if (we.type_boost[pType]) {
+          w *= we.type_boost[pType];
         }
       }
     }

@@ -201,6 +201,7 @@ function main(): void {
       ...activeEvts.timeEvents.map(e => e.label[locale] ?? e.label.en),
       ...activeEvts.dayEvents.map(e => e.label[locale] ?? e.label.en),
       ...activeEvts.streakEvents.map(e => e.label[locale] ?? e.label.en),
+      ...activeEvts.weatherEvents.map(e => `${e.emoji} ${e.label[locale] ?? e.label.en}`),
     ];
     for (const label of eventLabels) {
       messages.push(`🎪 ${label}`);
@@ -225,6 +226,16 @@ function main(): void {
   if (!result.acquired) {
     process.stderr.write(`tokenmon session-start: lock timeout, session ${sessionId} not registered. XP may not be tracked.\n`);
   }
+
+  // Refresh weather cache (async, fire-and-forget)
+  try {
+    const gc = readGlobalConfig();
+    if (gc.weather_enabled && gc.weather_location) {
+      import('../core/weather.js').then(({ refreshWeatherIfStale }) => {
+        refreshWeatherIfStale(gc.weather_location).catch(() => {});
+      }).catch(() => {});
+    }
+  } catch { /* ignore weather errors */ }
 
   // Play cry async (fire and forget)
   try {
