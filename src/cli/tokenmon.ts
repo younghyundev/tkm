@@ -384,8 +384,9 @@ function cmdConfigSet(key: string, value: string): void {
     gc.weather_location = value;
     gc.weather_enabled = true;
     writeGlobalConfig(gc);
-    refreshWeatherIfStale(value).then(() => {
+    refreshWeatherIfStale(value).then((ok) => {
       success(t('weather.location_set', { location: value }));
+      if (!ok) warn(t('weather.fetch_failed'));
     }).catch(() => {
       warn(t('weather.fetch_failed'));
     });

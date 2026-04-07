@@ -77,7 +77,7 @@ export function readWeatherCache(): WeatherCache | null {
 export function writeWeatherCache(cache: WeatherCache): void {
   const dir = dirname(WEATHER_CACHE_PATH);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  const tmpPath = WEATHER_CACHE_PATH + '.tmp';
+  const tmpPath = WEATHER_CACHE_PATH + `.tmp.${process.pid}`;
   writeFileSync(tmpPath, JSON.stringify(cache, null, 2), 'utf-8');
   renameSync(tmpPath, WEATHER_CACHE_PATH);
 }
@@ -115,11 +115,12 @@ export function fetchWeather(location: string): Promise<WeatherCache | null> {
 
 // ── Refresh if stale ──
 
-export async function refreshWeatherIfStale(location: string): Promise<void> {
+export async function refreshWeatherIfStale(location: string): Promise<boolean> {
   const cache = readWeatherCache();
-  if (cache && Date.now() - cache.fetched_at < SOFT_TTL) return;
+  if (cache && cache.location === location && Date.now() - cache.fetched_at < SOFT_TTL) return true;
   const fresh = await fetchWeather(location);
-  if (fresh) writeWeatherCache(fresh);
+  if (fresh) { writeWeatherCache(fresh); return true; }
+  return false;
 }
 
 // ── Get active weather event (for encounter system) ──
