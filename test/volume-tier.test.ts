@@ -68,3 +68,18 @@ describe('getVolumeTierByName', () => {
     assert.equal(getVolumeTierByName('bogus').name, 'normal');
   });
 });
+
+describe('delayed tier application (concept)', () => {
+  it('pending_tier from previous turn determines multipliers, not current deltaTokens', () => {
+    const pendingTier = getVolumeTierByName('heated');
+    const currentTier = getVolumeTier(50000); // intense
+    assert.equal(pendingTier.xpMultiplier, 1.5);
+    assert.notEqual(currentTier.xpMultiplier, pendingTier.xpMultiplier);
+  });
+
+  it('null pending_tier defaults to normal multipliers', () => {
+    const pendingTier = getVolumeTierByName(null);
+    assert.equal(pendingTier.xpMultiplier, 1.0);
+    assert.equal(pendingTier.encounterMultiplier, 1.0);
+  });
+});

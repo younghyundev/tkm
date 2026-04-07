@@ -15,7 +15,7 @@ import { syncPokedexFromUnlocked, markShinyCaught } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
 import { addItem, randInt } from '../core/items.js';
 import { getRegionDropMessage } from '../core/region-messages.js';
-import { getVolumeTier } from '../core/volume-tier.js';
+import { getVolumeTier, getVolumeTierByName } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
 import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import { isShinyKey, toBaseId, toShinyKey } from '../core/shiny-utils.js';
@@ -189,13 +189,15 @@ async function main(): Promise<void> {
 
     const restMult = state.rest_bonus?.multiplier ?? 1.0;
 
-    // Volume tier based on tokens consumed this turn
-    const tier = getVolumeTier(deltaTokens);
+    // Delayed tier: read previous turn's pending_tier for this turn's multipliers
+    const appliedTier = getVolumeTierByName(state.pending_tier);
+    // Compute NEW tier from this turn's deltaTokens (stored for next turn)
+    const currentTier = getVolumeTier(deltaTokens);
 
     // Calculate XP — common + gen xp_bonus, then tier multiplier
     const tokensPerXp = Math.max(1, config.tokens_per_xp);
     const xpBonus = config.xp_bonus_multiplier + Math.max(0, state.xp_bonus_multiplier - 1.0) + commonState.xp_bonus_multiplier;
-    const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus * tier.xpMultiplier));
+    const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus * appliedTier.xpMultiplier));
     // All party members receive the full XP (not divided)
     const xpPerPokemon = Math.max(1, xpTotal);
 
@@ -291,10 +293,9 @@ async function main(): Promise<void> {
     // Sync common trigger counters
     commonState.total_tokens_consumed += deltaTokens;
 
-    // Tier notification message (flavor text only, no numbers)
-    if (tier.name !== 'normal') {
-      messages.push(t(`tier.${tier.name}`));
-    }
+    // Store new tier for next turn's application (status bar reads this)
+    // Note: appliedTier (from previous pending_tier) controls this turn's XP, encounter rate, AND rarity weights
+    state.pending_tier = currentTier.name === 'normal' ? null : currentTier.name;
 
     // Check gen-specific achievements (pass commonState for cross-state encounter_rate_bonus writes)
     const achEvents2 = checkAchievements(state, config, commonState);
@@ -316,7 +317,7 @@ async function main(): Promise<void> {
 
     // Random encounter + battle (with volume tier and commonState)
     try {
-      const battleResult = processEncounter(state, config, tier, commonState, restMult);
+      const battleResult = processEncounter(state, config, appliedTier, commonState, restMult);
       if (battleResult) {
         state.last_battle = battleResult;
         const battleMsg = formatEncounterMessage(battleResult);
