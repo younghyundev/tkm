@@ -221,6 +221,11 @@ function main(): void {
     }
   }
 
+  // === Tier preview line (independent, always shown when non-normal) ===
+  if (state.pending_tier) {
+    console.log(t(`tier.${state.pending_tier}`));
+  }
+
   // === Info line rendering ===
   // info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level'
   const infoParts: string[] = [];
