@@ -44,3 +44,9 @@ export function getVolumeTier(deltaTokens: number): VolumeTier {
 export function getLegendaryPoolMultiplier(tier: VolumeTier): number {
   return tier.rarityWeights.legendary / NORMAL_LEGENDARY_WEIGHT;
 }
+
+export function getVolumeTierByName(name: string | null | undefined): VolumeTier {
+  if (!name) return TIERS[0];
+  const found = TIERS.find(t => t.name === name);
+  return found ?? TIERS[0];
+}
