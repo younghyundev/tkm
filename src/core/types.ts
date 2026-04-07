@@ -230,6 +230,7 @@ export interface State {
     multiplier: number;
     turns_remaining: number;
   };
+  pending_tier?: string | null;
 }
 
 export interface Config {
