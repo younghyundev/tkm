@@ -17,7 +17,7 @@ import { addItem, randInt } from '../core/items.js';
 import { getRegionDropMessage } from '../core/region-messages.js';
 import { getVolumeTier, getVolumeTierByName } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
-import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
+import { setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import { isShinyKey, toBaseId, toShinyKey } from '../core/shiny-utils.js';
 import { recordXp, recordBattle, recordCatch, recordEncounter, recordShinyEncounter, recordShinyCatch, recordShinyEscaped } from '../core/stats.js';
 
@@ -81,24 +81,9 @@ async function main(): Promise<void> {
   const input = JSON.parse(readStdin()) as HookInput;
   const sessionId = input.session_id ?? '';
 
-  // Determine which generation this stop hook operates on.
-  // Use activeGen (from global-config) — this respects mid-session gen switches.
-  // If no session ID, also fall back to activeGen.
-  const activeGen = getActiveGeneration();
-  const resolvedGen = getSessionGeneration(sessionId);
-
-  // If user switched gen mid-session, update the session binding to match
-  if (resolvedGen !== null && resolvedGen !== activeGen && sessionId) {
-    const genMap = readSessionGenMap();
-    if (genMap[sessionId]) {
-      genMap[sessionId].generation = activeGen;
-      genMap[sessionId].last_seen = new Date().toISOString();
-      writeSessionGenMap(genMap);
-    }
-  }
-
-  // Always use activeGen — the gen variable is passed explicitly to all read/write calls
-  const gen = activeGen;
+  // Always use the globally active generation.
+  // Gen switch is a global operation — all sessions follow it immediately.
+  const gen = getActiveGeneration();
   setActiveGenerationCache(gen);
 
   const output: HookOutput = { continue: true };
