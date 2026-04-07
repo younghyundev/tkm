@@ -31,7 +31,14 @@ Run this command to list all available generations:
 "${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh" "${CLAUDE_PLUGIN_ROOT}/src/cli/tokenmon.ts" gen list
 ```
 
-Use AskUserQuestion to let the user pick from the output. Show ALL generations from the command output — do NOT hardcode options.
+Show the full `gen list` output to the user first. Then use AskUserQuestion:
+- Question: "어떤 세대로 플레이하시겠습니까? Gen 1 (관동) ~ Gen 9 (팔데아) 중 선택할 수 있습니다."
+- Options (3 popular + 1 manual entry):
+  1. Gen 4 — 신오 (Sinnoh) — or the currently active gen if different
+  2. Gen 1 — 관동 (Kanto)
+  3. Gen 9 — 팔데아 (Paldea)
+  4. "다른 세대 선택 (Gen 2~8)" with description "gen2, gen3, gen5, gen6, gen7, gen8 중 입력"
+- If the user picks option 4, use their typed gen ID (e.g., `gen5`). The built-in "Other" option also remains available.
 
 ## Step 2: Language Selection
 

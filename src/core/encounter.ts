@@ -113,9 +113,11 @@ export function selectWildPokemon(state: State, config: Config, tier?: VolumeTie
 
   // Use tier rarity weights if provided, otherwise default
   const weights = tier?.rarityWeights ?? pokemonDB.rarity_weights;
+  const [minLv, maxLv] = region.level_range;
   const pool = region.pokemon_pool
     .map(name => pokemonDB.pokemon[name])
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter(p => getMinWildLevel(p.name) <= maxLv);
 
   if (pool.length === 0) return null;
 
@@ -123,7 +125,6 @@ export function selectWildPokemon(state: State, config: Config, tier?: VolumeTie
   const events = getActiveEvents(state);
 
   // Legendary pool substitution — scales with tier
-  const [minLv, maxLv] = region.level_range;
   const legendaryPoolChance = tier ? Math.min(1.0, 0.02 * getLegendaryPoolMultiplier(tier)) : 0.02;
   if (state.legendary_pool.length > 0 && Math.random() < legendaryPoolChance) {
     const legendaryPick = state.legendary_pool[Math.floor(Math.random() * state.legendary_pool.length)];
@@ -136,7 +137,6 @@ export function selectWildPokemon(state: State, config: Config, tier?: VolumeTie
     const rarePool = pool.filter(p => p.rarity === 'rare' || p.rarity === 'legendary' || p.rarity === 'mythical');
     if (rarePool.length > 0) {
       const pick = rarePool[Math.floor(Math.random() * rarePool.length)];
-      const [minLv, maxLv] = region.level_range;
       return { name: pick.name, level: rollWildLevel(pick.name, minLv, maxLv), shiny: rollShiny() };
     }
   }

@@ -1515,7 +1515,7 @@ function cmdSetup(args: string[]): void {
 
     const starterResult = withLock(() => {
       const freshConfig = readConfig(gen);
-      const freshState = readState();
+      const freshState = readState(gen);
       const pData = pokemonDB.pokemon[starterKey];
 
       freshConfig.party = [starterKey];
@@ -1536,7 +1536,7 @@ function cmdSetup(args: string[]): void {
       if (!freshState.unlocked.includes(starterKey)) {
         freshState.unlocked.push(starterKey);
       }
-      writeState(freshState);
+      writeState(freshState, gen);
     });
     if (!starterResult.acquired) {
       error('Failed to acquire lock for starter selection');

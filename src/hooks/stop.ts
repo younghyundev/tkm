@@ -83,8 +83,18 @@ async function main(): Promise<void> {
 
   // Resolve and lock this hook to the session's bound generation
   const resolvedGen = getSessionGeneration(sessionId);
-  if (resolvedGen !== null) {
+  const activeGen = getActiveGeneration();
+  if (resolvedGen !== null && resolvedGen === activeGen) {
     setActiveGenerationCache(resolvedGen);
+  } else if (resolvedGen !== null && resolvedGen !== activeGen) {
+    // User switched gen mid-session (via `gen switch` or `setup`) — rebind
+    const genMap = readSessionGenMap();
+    if (genMap[sessionId]) {
+      genMap[sessionId].generation = activeGen;
+      genMap[sessionId].last_seen = new Date().toISOString();
+      writeSessionGenMap(genMap);
+    }
+    setActiveGenerationCache(activeGen);
   } else if (sessionId) {
     // No gen binding — could be a race with session-start or a genuine issue
     // Fail closed: skip mutations to prevent cross-gen corruption
