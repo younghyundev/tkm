@@ -17,7 +17,9 @@ import { getEventsDB, getRegionsDB, getPokedexRewardsDB } from '../core/pokemon-
 import { getTypeMasterProgress } from '../core/pokedex-rewards.js';
 import { t, initLocale, getLocale } from '../i18n/index.js';
 import { withLock, withLockRetry } from '../core/lock.js';
-import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCache, PLUGIN_ROOT } from '../core/paths.js';
+import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCache, PLUGIN_ROOT, GLOBAL_CONFIG_PATH, DATA_DIR } from '../core/paths.js';
+import { execSync } from 'node:child_process';
+import { detectRenderer } from '../core/detect-renderer.js';
 import { isShinyKey, toBaseId } from '../core/shiny-utils.js';
 import type { ExpGroup, EvolutionContext } from '../core/types.js';
 
@@ -1374,6 +1376,210 @@ function cmdPartySuggest(): void {
   }
 }
 
+function cmdSetup(args: string[]): void {
+  // ── Flag parsing ──
+  let gen = '', lang = '', starter = '';
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--gen' && args[i + 1]) gen = args[++i];
+    else if (args[i] === '--lang' && args[i + 1]) lang = args[++i];
+    else if (args[i] === '--starter' && args[i + 1]) starter = args[++i];
+  }
+  if (!gen || !lang || !starter) {
+    error('Usage: tokenmon setup --gen <gen_id> --lang <en|ko> --starter <pokemon_id>');
+    process.exit(1);
+  }
+
+  // ── Upfront validation ──
+  if (lang !== 'en' && lang !== 'ko') {
+    error(`Invalid language "${lang}". Must be "en" or "ko".`);
+    process.exit(1);
+  }
+
+  const gensDB = getGenerationsDB();
+  if (!gensDB.generations[gen]) {
+    const available = Object.keys(gensDB.generations).join(', ');
+    error(`Invalid generation "${gen}". Available: ${available}`);
+    process.exit(1);
+  }
+
+  const starterNum = parseInt(starter, 10);
+  if (isNaN(starterNum) || starterNum <= 0) {
+    error(`Invalid starter "${starter}". Must be a numeric Pokémon ID.`);
+    process.exit(1);
+  }
+
+  // ── Step 1: Check migration state ──
+  console.log(`${CYAN}[1/7] Checking migration state...${RESET}`);
+  if (!existsSync(GLOBAL_CONFIG_PATH)) {
+    // Check for legacy files (state/config exist but no global-config)
+    const legacyState = join(DATA_DIR, 'state.json');
+    const legacyConfig = join(DATA_DIR, 'config.json');
+    if (existsSync(legacyState) && !existsSync(join(DATA_DIR, gen, 'state.json'))) {
+      // Legacy install without global-config — create default
+      const gc = readGlobalConfig(); // returns DEFAULT_GLOBAL_CONFIG when file missing
+      writeGlobalConfig(gc);
+      console.log(`  ${GREEN}Created global-config.json (fresh)${RESET}`);
+    } else {
+      // Fresh install
+      const gc = readGlobalConfig();
+      writeGlobalConfig(gc);
+      console.log(`  ${GREEN}Created global-config.json (fresh)${RESET}`);
+    }
+  } else {
+    console.log(`  ${GRAY}global-config.json exists — skipped${RESET}`);
+  }
+
+  // ── Step 2: Switch generation ──
+  console.log(`${CYAN}[2/7] Switching generation...${RESET}`);
+  const currentGlobalConfig = readGlobalConfig();
+  if (currentGlobalConfig.active_generation === gen) {
+    console.log(`  ${GRAY}Already on ${gen} — skipped${RESET}`);
+  } else {
+    const switchResult = withLock(() => {
+      const freshGc = readGlobalConfig();
+      freshGc.active_generation = gen;
+      writeGlobalConfig(freshGc);
+      clearActiveGenerationCache();
+      setActiveGenerationCache(gen);
+      invalidateGenCache();
+    });
+    if (!switchResult.acquired) {
+      error('Failed to acquire lock for gen switch');
+      process.exit(1);
+    }
+    console.log(`  ${GREEN}Set active generation to ${gen}${RESET}`);
+  }
+
+  // ── Step 3: Set language ──
+  console.log(`${CYAN}[3/7] Setting language...${RESET}`);
+  const gcForLang = readGlobalConfig();
+  if (gcForLang.language === lang) {
+    console.log(`  ${GRAY}Already ${lang} — skipped${RESET}`);
+  } else {
+    const langResult = withLock(() => {
+      const freshGc = readGlobalConfig();
+      freshGc.language = lang;
+      writeGlobalConfig(freshGc);
+    });
+    if (!langResult.acquired) {
+      error('Failed to acquire lock for language set');
+      process.exit(1);
+    }
+    console.log(`  ${GREEN}Set language to ${lang}${RESET}`);
+  }
+  initLocale(lang, readGlobalConfig().voice_tone);
+
+  // ── Step 4: Configure statusline ──
+  console.log(`${CYAN}[4/7] Configuring statusline...${RESET}`);
+  try {
+    execSync(`"${PLUGIN_ROOT}/bin/tsx-resolve.sh" "${PLUGIN_ROOT}/src/setup/setup-statusline.ts"`, {
+      stdio: 'inherit',
+      env: { ...process.env, CLAUDE_PLUGIN_ROOT: PLUGIN_ROOT, CLAUDE_PLUGIN_DATA: DATA_DIR },
+    });
+  } catch {
+    warn('  Statusline setup had an issue (non-fatal)');
+  }
+
+  // ── Step 5: Auto-detect renderer ──
+  console.log(`${CYAN}[5/7] Auto-detecting renderer...${RESET}`);
+  const config5 = readConfig(gen);
+  if (config5.renderer && config5.renderer !== 'braille') {
+    console.log(`  ${GRAY}Renderer already set to ${config5.renderer} — skipped${RESET}`);
+  } else {
+    const detection = detectRenderer();
+    const rendererResult = withLock(() => {
+      const freshConfig = readConfig(gen);
+      freshConfig.renderer = detection.recommended;
+      writeConfig(freshConfig, gen);
+    });
+    if (!rendererResult.acquired) {
+      error('Failed to acquire lock for renderer config');
+      process.exit(1);
+    }
+    console.log(`  ${GREEN}Set renderer to ${detection.recommended}${RESET}`);
+  }
+
+  // ── Step 6: Select starter ──
+  console.log(`${CYAN}[6/7] Selecting starter...${RESET}`);
+  const config6 = readConfig(gen);
+  if (config6.starter_chosen) {
+    console.log(`  ${GRAY}Starter already chosen — skipped${RESET}`);
+  } else {
+    const pokemonDB = getPokemonDB();
+    const starterKey = starter;
+
+    if (!pokemonDB.pokemon[starterKey]) {
+      error(`Pokémon ID "${starter}" not found in ${gen} database.`);
+      process.exit(1);
+    }
+
+    const starterResult = withLock(() => {
+      const freshConfig = readConfig(gen);
+      const freshState = readState();
+      const pData = pokemonDB.pokemon[starterKey];
+
+      freshConfig.party = [starterKey];
+      freshConfig.starter_chosen = true;
+      writeConfig(freshConfig, gen);
+
+      if (!freshState.pokemon[starterKey]) {
+        const starterLevel = 5;
+        const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
+        freshState.pokemon[starterKey] = {
+          id: pData?.id ?? 0,
+          xp: levelToXp(starterLevel, expGroup),
+          level: starterLevel,
+          friendship: 0,
+          ev: 0,
+        };
+      }
+      if (!freshState.unlocked.includes(starterKey)) {
+        freshState.unlocked.push(starterKey);
+      }
+      writeState(freshState);
+    });
+    if (!starterResult.acquired) {
+      error('Failed to acquire lock for starter selection');
+      process.exit(1);
+    }
+    console.log(`  ${GREEN}Chose ${getPokemonName(starterKey)} as starter${RESET}`);
+  }
+
+  // ── Step 7: Apply defaults ──
+  console.log(`${CYAN}[7/7] Applying defaults...${RESET}`);
+  const defaultsResult = withLock(() => {
+    const freshConfig = readConfig(gen);
+    freshConfig.sprite_mode = 'all';
+    freshConfig.info_mode = 'ace_full';
+
+    // Auto-configure sound based on environment
+    const isSSH = !!(process.env.SSH_CONNECTION || process.env.SSH_CLIENT || process.env.SSH_TTY);
+    const isDocker = existsSync('/.dockerenv');
+    const isWSL = !!(process.env.WSL_DISTRO_NAME || process.env.WSLENV);
+
+    if (isWSL) {
+      freshConfig.cry_enabled = true;
+      freshConfig.relay_audio = false;
+    } else if (isSSH || isDocker) {
+      freshConfig.cry_enabled = false;
+      freshConfig.relay_audio = true;
+    } else {
+      freshConfig.cry_enabled = true;
+      freshConfig.relay_audio = false;
+    }
+
+    writeConfig(freshConfig, gen);
+  });
+  if (!defaultsResult.acquired) {
+    error('Failed to acquire lock for defaults');
+    process.exit(1);
+  }
+  console.log(`  ${GREEN}Applied default settings${RESET}`);
+
+  console.log('');
+  success('Setup complete!');
+}
+
 function genRegionName(regionName: string | { en: string; ko: string }): string {
   if (typeof regionName === 'string') return regionName;
   return regionName[getLocale() as 'en' | 'ko'] ?? regionName.en;
@@ -1602,6 +1808,9 @@ switch (command) {
   }
   case 'gen':
     cmdGen(args[1], args[2]);
+    break;
+  case 'setup':
+    cmdSetup(args.slice(1));
     break;
   case 'guide':
     cmdGuide(args[1]);
