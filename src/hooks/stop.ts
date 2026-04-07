@@ -81,37 +81,30 @@ async function main(): Promise<void> {
   const input = JSON.parse(readStdin()) as HookInput;
   const sessionId = input.session_id ?? '';
 
-  // Resolve and lock this hook to the session's bound generation
-  const resolvedGen = getSessionGeneration(sessionId);
+  // Determine which generation this stop hook operates on.
+  // Use activeGen (from global-config) — this respects mid-session gen switches.
+  // If no session ID, also fall back to activeGen.
   const activeGen = getActiveGeneration();
-  if (resolvedGen !== null && resolvedGen === activeGen) {
-    setActiveGenerationCache(resolvedGen);
-  } else if (resolvedGen !== null && resolvedGen !== activeGen) {
-    // User switched gen mid-session (via `gen switch` or `setup`) — rebind
+  const resolvedGen = getSessionGeneration(sessionId);
+
+  // If user switched gen mid-session, update the session binding to match
+  if (resolvedGen !== null && resolvedGen !== activeGen && sessionId) {
     const genMap = readSessionGenMap();
     if (genMap[sessionId]) {
       genMap[sessionId].generation = activeGen;
       genMap[sessionId].last_seen = new Date().toISOString();
       writeSessionGenMap(genMap);
     }
-    setActiveGenerationCache(activeGen);
-  } else if (sessionId) {
-    // No gen binding — could be a race with session-start or a genuine issue
-    // Fail closed: skip mutations to prevent cross-gen corruption
-    // Only warn if this looks like a real miss (not a brand-new session)
-    process.stderr.write(`tokenmon stop: no gen binding for session ${sessionId}, skipping XP\n`);
-    playCry();
-    console.log(JSON.stringify({ continue: true }));
-    return;
-  } else {
-    // No session ID at all — legacy fallback
-    setActiveGenerationCache(getActiveGeneration());
   }
+
+  // Always use activeGen — the gen variable is passed explicitly to all read/write calls
+  const gen = activeGen;
+  setActiveGenerationCache(gen);
 
   const output: HookOutput = { continue: true };
 
   // Pre-lock: read config for early exit check (benign TOCTOU — worst case: enter lock unnecessarily)
-  const configCheck = readConfig();
+  const configCheck = readConfig(gen);
   const globalConfig = readGlobalConfig();
   const needsVoiceToneMigration = (globalConfig.voice_tone as string) === 'classic';
   if (needsVoiceToneMigration) globalConfig.voice_tone = 'claude';
@@ -144,8 +137,8 @@ async function main(): Promise<void> {
   const achievementMessages: string[] = [];
 
   const result = withLockRetry(() => {
-    const config = readConfig();
-    const state = readState();
+    const config = readConfig(gen);
+    const state = readState(gen);
     const genMap = readSessionGenMap();
 
     // Clear previous battle/tip result (only show for one turn)
@@ -167,7 +160,7 @@ async function main(): Promise<void> {
       state.last_session_tokens = pruneSessionTokens(state.last_session_tokens, activeIds);
       commonState.last_turn_ts = Date.now();
       writeCommonState(commonState);
-      writeState(state);
+      writeState(state, gen);
       return 'first_stop';
     }
 
@@ -439,8 +432,8 @@ async function main(): Promise<void> {
 
     state.last_achievement = achievementMessages.length > 0 ? achievementMessages.join('\n') : null;
 
-    writeState(state);
-    writeConfig(config);
+    writeState(state, gen);
+    writeConfig(config, gen);
     writeCommonState(commonState);
 
     return 'done';
