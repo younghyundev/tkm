@@ -78,4 +78,37 @@ describe('ppBar', () => {
     assert.ok(result);
     assert.ok(result.includes('0%'));
   });
+
+  it('returns null when used_percentage is not a number', () => {
+    const data: StdinData = {
+      rate_limits: {
+        five_hour: { used_percentage: undefined as any, resets_at: 0 },
+      },
+    };
+    assert.equal(ppBar(data), null);
+  });
+
+  it('shows minutes when remaining time < 1h', () => {
+    const futureTs = Math.floor(Date.now() / 1000) + 2700; // +45m
+    const data: StdinData = {
+      rate_limits: {
+        five_hour: { used_percentage: 80, resets_at: futureTs },
+      },
+    };
+    const result = ppBar(data);
+    assert.ok(result);
+    assert.ok(result.includes('(~45m)'));
+  });
+
+  it('shows floor hours for > 1h remaining', () => {
+    const futureTs = Math.floor(Date.now() / 1000) + 7260; // 2h01m
+    const data: StdinData = {
+      rate_limits: {
+        five_hour: { used_percentage: 30, resets_at: futureTs },
+      },
+    };
+    const result = ppBar(data);
+    assert.ok(result);
+    assert.ok(result.includes('(~2h)'));
+  });
 });
