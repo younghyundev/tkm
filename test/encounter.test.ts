@@ -168,7 +168,7 @@ describe('encounter', () => {
     });
 
     it('catches new pokemon on victory', () => {
-      const state = makeState();
+      const state = makeState({ items: { pokeball: 500 } });
       const config = makeConfig();
       let caught = false;
       for (let i = 0; i < 500; i++) {

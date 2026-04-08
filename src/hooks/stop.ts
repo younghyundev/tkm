@@ -13,7 +13,7 @@ import { playCry } from '../audio/play-cry.js';
 import { playSfx } from '../audio/play-sfx.js';
 import { syncPokedexFromUnlocked, markShinyCaught } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
-import { addItem, randInt } from '../core/items.js';
+import { addItem, randInt, getDropRateMultiplier } from '../core/items.js';
 import { getRegionDropMessage } from '../core/region-messages.js';
 import { getVolumeTier, getVolumeTierByName } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
@@ -384,10 +384,11 @@ async function main(): Promise<void> {
       if (tip) state.last_tip = tip;
     }
 
-    // Non-battle turn ball drop: 20% chance, 1~5 balls (region-specific message)
+    // Non-battle turn ball drop: 10% base chance, 1~3 balls (soft-capped by inventory)
     state.last_drop = null;
-    if (!state.last_battle && Math.random() < 0.20) {
-      const dropCount = randInt(1, 5);
+    const dropRate = 0.10 * getDropRateMultiplier(state);
+    if (!state.last_battle && Math.random() < dropRate) {
+      const dropCount = randInt(1, 3);
       addItem(state, 'pokeball', dropCount);
       const gen = getActiveGeneration();
       const regionMsg = getRegionDropMessage(gen, config.current_region, globalConfig.voice_tone as 'claude' | 'pokemon', (config.language ?? 'en') as 'ko' | 'en');

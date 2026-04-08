@@ -1,7 +1,7 @@
 import { getPokemonDB, getPokemonName } from './pokemon-data.js';
 import { getRawTypeMultiplier, applyTypeDampening } from './type-chart.js';
 import { markSeen, markCaught } from './pokedex.js';
-import { rollItemDrop, getItemCount, useItem } from './items.js';
+import { getItemCount, useItem } from './items.js';
 import { getTypeMasterXpMultiplier } from './pokedex-rewards.js';
 import { levelToXp } from './xp.js';
 import { t } from '../i18n/index.js';
@@ -306,9 +306,6 @@ export function resolveBattle(
     }
   }
 
-  // Item drop (after catch check — dropped balls are for next battle)
-  const ballDrop = rollItemDrop(state, won);
-
   const defenderKey = (caught && wild.shiny) ? toShinyKey(wild.name) : wild.name;
   return {
     attacker,
@@ -320,7 +317,6 @@ export function resolveBattle(
     caught,
     typeMultiplier,
     ballCost,
-    ballDrop,
     shiny: wild.shiny,
   };
 }
@@ -353,18 +349,12 @@ export function formatBattleMessage(result: BattleResult): string {
       // Won but couldn't catch — not enough balls
       msg += ` ${t('battle.need_balls', { defender: defenderName })}`;
     }
-    if (result.ballDrop) {
-      msg += ` 🔴×${result.ballDrop}`;
-    }
     return prefix + msg;
   }
 
   let msg = t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
   if (isShiny) {
     msg += t('battle.shiny_escaped', { pokemon: defenderName });
-  }
-  if (result.ballDrop) {
-    msg += ` 🔴×${result.ballDrop}`;
   }
   return prefix + msg;
 }
