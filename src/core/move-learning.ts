@@ -24,8 +24,9 @@ export function checkMoveLearn(
   oldLevel: number,
   newLevel: number,
   currentMoves: number[],
+  generation?: string,
 ): MoveLearnResult {
-  const pool = getPokemonMovePool(pokemonId);
+  const pool = getPokemonMovePool(pokemonId, generation);
   const moves = [...currentMoves];
   let learned: number | null = null;
   let replaced: number | null = null;
@@ -45,9 +46,9 @@ export function checkMoveLearn(
       // Find the weakest move currently known
       const movesWithPower = moves.map((id) => ({
         id,
-        power: getMoveData(id)?.power ?? 0,
+        power: getMoveData(id, generation)?.power ?? 0,
       }));
-      const newPower = getMoveData(entry.moveId)?.power ?? 0;
+      const newPower = getMoveData(entry.moveId, generation)?.power ?? 0;
       const weakest = movesWithPower.reduce((min, m) =>
         m.power < min.power ? m : min,
       );
@@ -68,6 +69,6 @@ export function checkMoveLearn(
  * Assign initial moves to a pokemon that has none.
  * Wrapper around assignDefaultMoves from moves.ts.
  */
-export function initializeMoves(pokemonId: number, level: number): number[] {
-  return assignDefaultMoves(pokemonId, level);
+export function initializeMoves(pokemonId: number, level: number, generation?: string): number[] {
+  return assignDefaultMoves(pokemonId, level, generation);
 }
