@@ -11,7 +11,7 @@
       "name": "tkm",
       "source": "./",
       "description": "Spend tokens, train Pokémon, and turn Claude Code sessions into a progression loop with party growth, encounters, achievements, and a Braille-first status line",
-      "version": "0.5.11",
+      "version": "0.5.12",
       "category": "productivity",
       "tags": [
         "gamification",
