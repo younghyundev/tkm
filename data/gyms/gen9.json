@@ -1,0 +1,116 @@
+{
+  "gyms": [
+    {
+      "id": 1,
+      "leader": "Katy",
+      "leaderKo": "카에데",
+      "type": "bug",
+      "badge": "bug",
+      "badgeKo": "버그배지",
+      "region": "gen9",
+      "team": [
+        { "species": 919, "level": 12, "moves": [450, 98, 141, 679] },
+        { "species": 917, "level": 13, "moves": [450, 522, 141, 33] },
+        { "species": 216, "level": 15, "moves": [10, 154, 44, 163] }
+      ]
+    },
+    {
+      "id": 2,
+      "leader": "Brassius",
+      "leaderKo": "콜사",
+      "type": "grass",
+      "badge": "grass",
+      "badgeKo": "그래스배지",
+      "region": "gen9",
+      "team": [
+        { "species": 548, "level": 17, "moves": [345, 72, 71, 237] },
+        { "species": 928, "level": 18, "moves": [33, 345, 402, 71] },
+        { "species": 185, "level": 20, "moves": [88, 317, 189, 29] }
+      ]
+    },
+    {
+      "id": 3,
+      "leader": "Iono",
+      "leaderKo": "나모",
+      "type": "electric",
+      "badge": "electric",
+      "badgeKo": "일렉트릭배지",
+      "region": "gen9",
+      "team": [
+        { "species": 940, "level": 22, "moves": [84, 16, 98, 209] },
+        { "species": 939, "level": 24, "moves": [85, 352, 435, 209] },
+        { "species": 404, "level": 26, "moves": [209, 422, 44, 528] }
+      ]
+    },
+    {
+      "id": 4,
+      "leader": "Kofu",
+      "leaderKo": "하이다이",
+      "type": "water",
+      "badge": "water",
+      "badgeKo": "워터배지",
+      "region": "gen9",
+      "team": [
+        { "species": 976, "level": 28, "moves": [534, 94, 98, 163] },
+        { "species": 961, "level": 29, "moves": [29, 55, 328, 127] },
+        { "species": 740, "level": 31, "moves": [8, 370, 152, 127] }
+      ]
+    },
+    {
+      "id": 5,
+      "leader": "Larry",
+      "leaderKo": "아오키",
+      "type": "normal",
+      "badge": "normal",
+      "badgeKo": "노말배지",
+      "region": "gen9",
+      "team": [
+        { "species": 775, "level": 33, "moves": [34, 23, 263, 98] },
+        { "species": 982, "level": 35, "moves": [304, 29, 91, 34] },
+        { "species": 398, "level": 37, "moves": [413, 370, 98, 332] }
+      ]
+    },
+    {
+      "id": 6,
+      "leader": "Ryme",
+      "leaderKo": "라이무",
+      "type": "ghost",
+      "badge": "ghost",
+      "badgeKo": "고스트배지",
+      "region": "gen9",
+      "team": [
+        { "species": 778, "level": 38, "moves": [421, 583, 425, 163] },
+        { "species": 354, "level": 40, "moves": [247, 425, 389, 194] },
+        { "species": 849, "level": 42, "moves": [304, 188, 85, 34] }
+      ]
+    },
+    {
+      "id": 7,
+      "leader": "Tulip",
+      "leaderKo": "리프",
+      "type": "psychic",
+      "badge": "psychic",
+      "badgeKo": "사이킥배지",
+      "region": "gen9",
+      "team": [
+        { "species": 981, "level": 44, "moves": [94, 242, 326, 29] },
+        { "species": 282, "level": 45, "moves": [94, 585, 605, 473] },
+        { "species": 671, "level": 47, "moves": [585, 94, 412, 345] }
+      ]
+    },
+    {
+      "id": 8,
+      "leader": "Grusha",
+      "leaderKo": "그루샤",
+      "type": "ice",
+      "badge": "ice",
+      "badgeKo": "아이스배지",
+      "region": "gen9",
+      "team": [
+        { "species": 873, "level": 48, "moves": [58, 405, 556, 196] },
+        { "species": 614, "level": 50, "moves": [556, 276, 8, 163] },
+        { "species": 334, "level": 52, "moves": [58, 406, 585, 196] }
+      ]
+    }
+  ]
+}

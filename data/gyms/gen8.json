@@ -1,0 +1,114 @@
+{
+  "gyms": [
+    {
+      "id": 1,
+      "leader": "Milo",
+      "leaderKo": "야로우",
+      "type": "grass",
+      "badge": "grass",
+      "badgeKo": "그래스배지",
+      "region": "gen8",
+      "team": [
+        { "species": 829, "level": 12, "moves": [75, 345, 229, 71] },
+        { "species": 830, "level": 15, "moves": [412, 345, 202, 34] }
+      ]
+    },
+    {
+      "id": 2,
+      "leader": "Nessa",
+      "leaderKo": "루리나",
+      "type": "water",
+      "badge": "water",
+      "badgeKo": "워터배지",
+      "region": "gen8",
+      "team": [
+        { "species": 118, "level": 17, "moves": [55, 30, 127, 98] },
+        { "species": 834, "level": 20, "moves": [710, 157, 44, 127] }
+      ]
+    },
+    {
+      "id": 3,
+      "leader": "Kabu",
+      "leaderKo": "카부",
+      "type": "fire",
+      "badge": "fire",
+      "badgeKo": "파이어배지",
+      "region": "gen8",
+      "team": [
+        { "species": 38, "level": 22, "moves": [53, 237, 129, 315] },
+        { "species": 59, "level": 24, "moves": [53, 245, 44, 126] },
+        { "species": 851, "level": 26, "moves": [53, 680, 141, 436] }
+      ]
+    },
+    {
+      "id": 4,
+      "leader": "Bea",
+      "leaderKo": "사이토우",
+      "type": "fighting",
+      "badge": "fighting",
+      "badgeKo": "파이팅배지",
+      "region": "gen8",
+      "team": [
+        { "species": 675, "level": 28, "moves": [370, 242, 280, 776] },
+        { "species": 68, "level": 29, "moves": [370, 238, 282, 276] },
+        { "species": 865, "level": 31, "moves": [370, 348, 280, 413] }
+      ]
+    },
+    {
+      "id": 5,
+      "leader": "Opal",
+      "leaderKo": "포프라",
+      "type": "fairy",
+      "badge": "fairy",
+      "badgeKo": "페어리배지",
+      "region": "gen8",
+      "team": [
+        { "species": 303, "level": 33, "moves": [583, 442, 242, 44] },
+        { "species": 468, "level": 35, "moves": [585, 403, 605, 237] },
+        { "species": 869, "level": 37, "moves": [605, 577, 585, 94] }
+      ]
+    },
+    {
+      "id": 6,
+      "leader": "Gordie",
+      "leaderKo": "마쿠와",
+      "type": "rock",
+      "badge": "rock",
+      "badgeKo": "록배지",
+      "region": "gen8",
+      "team": [
+        { "species": 689, "level": 38, "moves": [157, 444, 163, 127] },
+        { "species": 874, "level": 40, "moves": [157, 34, 444, 776] },
+        { "species": 839, "level": 42, "moves": [444, 53, 317, 34] }
+      ]
+    },
+    {
+      "id": 7,
+      "leader": "Piers",
+      "leaderKo": "네즈",
+      "type": "dark",
+      "badge": "dark",
+      "badgeKo": "다크배지",
+      "region": "gen8",
+      "team": [
+        { "species": 560, "level": 43, "moves": [242, 370, 398, 29] },
+        { "species": 435, "level": 45, "moves": [399, 389, 188, 440] },
+        { "species": 862, "level": 47, "moves": [400, 370, 282, 242] }
+      ]
+    },
+    {
+      "id": 8,
+      "leader": "Raihan",
+      "leaderKo": "키바나",
+      "type": "dragon",
+      "badge": "dragon",
+      "badgeKo": "드래곤배지",
+      "region": "gen8",
+      "team": [
+        { "species": 330, "level": 48, "moves": [89, 337, 406, 444] },
+        { "species": 526, "level": 50, "moves": [444, 89, 157, 63] },
+        { "species": 884, "level": 52, "moves": [430, 406, 85, 34] }
+      ]
+    }
+  ]
+}
