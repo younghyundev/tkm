@@ -7,7 +7,8 @@ import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGloba
 import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName, resolveNameToId, getDisplayName } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
-import { getCompletion, getPokedexList, syncPokedexFromUnlocked } from '../core/pokedex.js';
+import { getCompletion, getPokedexList, syncPokedexFromUnlocked, getRegionSummary } from '../core/pokedex.js';
+import { getBoxList } from '../core/box.js';
 import { getCurrentRegion, getRegionList, moveToRegion } from '../core/regions.js';
 import { renderGuide, renderGuideIndex } from '../core/guide.js';
 import { getEligibleBranches, applyBranchEvolution } from '../core/evolution.js';
@@ -37,6 +38,30 @@ const success = (s: string) => console.log(`${GREEN}${s}${RESET}`);
 const warn = (s: string) => console.log(`${YELLOW}${s}${RESET}`);
 const error = (s: string) => console.error(`${RED}${s}${RESET}`);
 const bold = (s: string) => console.log(`${BOLD}${s}${RESET}`);
+
+/**
+ * Parse --flag and --key value pairs from argv.
+ * Boolean flags: --caught, --uncaught, --shiny, --summary
+ * Value flags: --type fire, --region 1, --rarity rare, --stage 0, --sort level, --search keyword
+ */
+function parseFilterArgs(
+  argv: string[],
+  supported: Record<string, 'boolean' | 'value'>,
+): Record<string, string | true> {
+  const result: Record<string, string | true> = {};
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (!arg.startsWith('--')) continue;
+    const key = arg.slice(2);
+    if (!(key in supported)) continue;
+    if (supported[key] === 'boolean') {
+      result[key] = true;
+    } else if (i + 1 < argv.length && !argv[i + 1].startsWith('--')) {
+      result[key] = argv[++i];
+    }
+  }
+  return result;
+}
 
 function resolvePokemonArg(name: string): string {
   const pokemonDB = getPokemonDB();
@@ -459,56 +484,102 @@ function cmdConfigSet(key: string, value: string): void {
   success(t('cli.config.set_success', { key, value }));
 }
 
-function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string): void {
+function cmdPokedex(): void {
   const state = readState();
   const pokemonDB = getPokemonDB();
   syncPokedexFromUnlocked(state);
 
-  // Detail view for single pokemon
-  if (pokemonName && pokemonName !== '--type' && pokemonName !== '--region' && pokemonName !== '--rarity') {
-    const pData = pokemonDB.pokemon[toBaseId(pokemonName)];
-    if (!pData) {
-      error(t('cli.pokedex.not_found', { name: pokemonName }));
-      process.exit(1);
-    }
+  const allArgs = process.argv.slice(2);
+  // Skip the 'pokedex' command itself
+  const cmdArgs = allArgs.slice(1);
 
-    const pdex = state.pokedex?.[toBaseId(pokemonName)];
-    const statusIcon = pdex?.caught ? `${GREEN}●${RESET}` : pdex?.seen ? `${YELLOW}◐${RESET}` : `${GRAY}○${RESET}`;
-    const statusText = pdex?.caught ? t('cli.pokedex.status_caught') : pdex?.seen ? t('cli.pokedex.status_seen') : t('cli.pokedex.status_unknown');
+  // Parse all flags
+  const parsed = parseFilterArgs(cmdArgs, {
+    type: 'value', region: 'value', rarity: 'value', stage: 'value',
+    caught: 'boolean', uncaught: 'boolean', shiny: 'boolean', summary: 'boolean',
+    search: 'value',
+  });
 
-    bold(`=== ${pokemonName} (#${pData.id}) ===`);
+  // Summary view mode
+  if (parsed.summary) {
+    const summary = getRegionSummary(state);
+    bold(t('cli.pokedex.summary_title'));
     console.log('');
-    console.log(`  ${t('cli.pokedex.detail_status', { icon: statusIcon, status: statusText })}`);
-    console.log(`  ${t('cli.pokedex.detail_type', { types: pData.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join(' / ') })}`);
-    console.log(`  ${t('cli.pokedex.detail_rarity', { rarity: pData.rarity })}`);
-    console.log(`  ${t('cli.pokedex.detail_region', { region: getRegionName(pData.region) })}`);
-    console.log(`  ${t('cli.pokedex.detail_exp_group', { group: pData.exp_group })}`);
-    console.log(`  ${t('cli.pokedex.detail_catch_rate', { rate: pData.catch_rate })}`);
-    console.log(`  ${t('cli.pokedex.detail_base_stats', { hp: pData.base_stats.hp, atk: pData.base_stats.attack, def: pData.base_stats.defense, spd: pData.base_stats.speed })}`);
-    console.log(`  ${t('cli.pokedex.detail_line', { line: pData.line.map((id: string) => getPokemonName(id)).join(' → ') })}`);
-    if (pData.evolves_at) console.log(`  ${t('cli.pokedex.detail_evolves_at', { level: pData.evolves_at })}`);
-    if (pData.evolves_condition) console.log(`  ${t('cli.pokedex.detail_evolves_cond', { cond: pData.evolves_condition })}`);
-    if (pdex?.first_seen) console.log(`  ${t('cli.pokedex.detail_first_seen', { date: pdex.first_seen })}`);
-    const shinyCaught = pdex?.shiny_caught ?? false;
-    if (shinyCaught) {
-      console.log(`  ${t('cli.pokedex.shiny_caught')}`);
+    let totalCaught = 0, totalAll = 0;
+    for (const s of summary) {
+      const pct = s.total > 0 ? Math.round(s.caught / s.total * 100) : 0;
+      console.log(t('cli.pokedex.summary_row', { region: getRegionName(String(s.regionId)), caught: s.caught, total: s.total, pct }));
+      totalCaught += s.caught;
+      totalAll += s.total;
     }
-
-    if (state.pokemon[pokemonName]) {
-      const ps = state.pokemon[pokemonName];
-      console.log(`  ${t('cli.pokedex.detail_current_level', { level: ps.level, xp: formatNumber(ps.xp) })}`);
-    }
+    const totalPct = totalAll > 0 ? Math.round(totalCaught / totalAll * 100) : 0;
+    console.log('');
+    bold(t('cli.pokedex.summary_total', { caught: totalCaught, total: totalAll, pct: totalPct }));
     return;
   }
 
-  // Parse filters
-  const filters: { type?: string; region?: string; rarity?: string } = {};
-  const allArgs = process.argv.slice(2);
-  for (let i = 1; i < allArgs.length; i++) {
-    if (allArgs[i] === '--type' && allArgs[i + 1]) { filters.type = allArgs[++i]; }
-    else if (allArgs[i] === '--region' && allArgs[i + 1]) { filters.region = allArgs[++i]; }
-    else if (allArgs[i] === '--rarity' && allArgs[i + 1]) { filters.rarity = allArgs[++i]; }
+  // Detail view: first arg (if not a flag) is treated as pokemon name
+  const firstArg = cmdArgs[0];
+  if (firstArg && !firstArg.startsWith('--') && !parsed.search) {
+    // Try to resolve as pokemon name/ID
+    const resolved = resolveNameToId(firstArg);
+    if (resolved) {
+      const pokemonName = resolved;
+      const pData = pokemonDB.pokemon[toBaseId(pokemonName)];
+      if (pData) {
+        const pdex = state.pokedex?.[toBaseId(pokemonName)];
+        const statusIcon = pdex?.caught ? `${GREEN}●${RESET}` : pdex?.seen ? `${YELLOW}◐${RESET}` : `${GRAY}○${RESET}`;
+        const statusText = pdex?.caught ? t('cli.pokedex.status_caught') : pdex?.seen ? t('cli.pokedex.status_seen') : t('cli.pokedex.status_unknown');
+
+        bold(`=== ${getPokemonName(pokemonName)} (#${pData.id}) ===`);
+        console.log('');
+        console.log(`  ${t('cli.pokedex.detail_status', { icon: statusIcon, status: statusText })}`);
+        console.log(`  ${t('cli.pokedex.detail_type', { types: pData.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join(' / ') })}`);
+        console.log(`  ${t('cli.pokedex.detail_rarity', { rarity: pData.rarity })}`);
+        console.log(`  ${t('cli.pokedex.detail_region', { region: getRegionName(pData.region) })}`);
+        console.log(`  ${t('cli.pokedex.detail_exp_group', { group: pData.exp_group })}`);
+        console.log(`  ${t('cli.pokedex.detail_catch_rate', { rate: pData.catch_rate })}`);
+        console.log(`  ${t('cli.pokedex.detail_base_stats', { hp: pData.base_stats.hp, atk: pData.base_stats.attack, def: pData.base_stats.defense, spd: pData.base_stats.speed })}`);
+        console.log(`  ${t('cli.pokedex.detail_line', { line: pData.line.map((id: string) => getPokemonName(id)).join(' → ') })}`);
+        if (pData.evolves_at) console.log(`  ${t('cli.pokedex.detail_evolves_at', { level: pData.evolves_at })}`);
+        if (pData.evolves_condition) console.log(`  ${t('cli.pokedex.detail_evolves_cond', { cond: pData.evolves_condition })}`);
+        if (pdex?.first_seen) console.log(`  ${t('cli.pokedex.detail_first_seen', { date: pdex.first_seen })}`);
+        if (pdex?.shiny_caught) {
+          console.log(`  ${t('cli.pokedex.shiny_caught')}`);
+        }
+        if (state.pokemon[pokemonName]) {
+          const ps = state.pokemon[pokemonName];
+          console.log(`  ${t('cli.pokedex.detail_current_level', { level: ps.level, xp: formatNumber(ps.xp) })}`);
+        }
+        return;
+      }
+    }
+    // Not a known pokemon — show error
+    error(t('cli.pokedex.not_found', { name: firstArg }));
+    process.exit(1);
   }
+
+  // Build filter object
+  const filters: import('../core/pokedex.js').PokedexFilter = {};
+  if (parsed.type) filters.type = parsed.type as string;
+  if (parsed.region) filters.region = parsed.region as string;
+  if (parsed.rarity) filters.rarity = parsed.rarity as string;
+  if (parsed.stage !== undefined) {
+    const stageNum = Number(parsed.stage);
+    if (![0, 1, 2].includes(stageNum)) {
+      error('--stage must be 0, 1, or 2.');
+      process.exit(1);
+    }
+    filters.stage = stageNum;
+  }
+  if (parsed.caught && parsed.uncaught) {
+    error('Cannot use --caught and --uncaught together.');
+    process.exit(1);
+  }
+  if (parsed.caught) filters.status = 'caught';
+  else if (parsed.uncaught) filters.status = 'uncaught';
+  if (parsed.shiny) filters.shiny = true;
+  if (parsed.search) filters.keyword = parsed.search as string;
 
   // List view
   const completion = getCompletion(state);
@@ -518,16 +589,31 @@ function cmdPokedex(pokemonName?: string, filterKey?: string, filterVal?: string
   console.log(t('cli.pokedex.list_summary', { seen: completion.seen, caught: completion.caught, total: completion.total, seenPct: completion.seenPct, caughtPct: completion.caughtPct }));
   console.log('');
 
-  const filterDesc = Object.entries(filters).map(([k, v]) => `${k}=${v}`).join(', ');
-  if (filterDesc) info(t('cli.pokedex.filter', { filter: filterDesc }));
+  // Show active filter description
+  const filterParts: string[] = [];
+  if (filters.type) filterParts.push(`type=${filters.type}`);
+  if (filters.region) filterParts.push(`region=${filters.region}`);
+  if (filters.rarity) filterParts.push(`rarity=${filters.rarity}`);
+  if (filters.stage !== undefined) filterParts.push(t('cli.pokedex.filter_stage', { stage: filters.stage }));
+  if (filters.status === 'caught') filterParts.push(t('cli.pokedex.filter_caught'));
+  if (filters.status === 'uncaught') filterParts.push(t('cli.pokedex.filter_uncaught'));
+  if (filters.shiny) filterParts.push(t('cli.pokedex.filter_shiny'));
+  if (filters.keyword) filterParts.push(t('cli.pokedex.filter_search', { keyword: filters.keyword }));
+  if (filterParts.length > 0) info(t('cli.pokedex.filter', { filter: filterParts.join(', ') }));
+
+  if (list.length === 0) {
+    console.log(t('cli.pokedex.no_results'));
+    return;
+  }
 
   for (const entry of list) {
     const icon = entry.status === 'caught' ? `${GREEN}●${RESET}`
       : entry.status === 'seen' ? `${YELLOW}◐${RESET}`
       : `${GRAY}○${RESET}`;
     const typeStr = entry.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
-    const nameDisplay = entry.status === 'unknown' ? `${GRAY}???${RESET}` : entry.name;
-    console.log(`  ${icon} #${String(entry.id).padStart(4, '0')} ${nameDisplay.padEnd(8)} ${typeStr} ${GRAY}${entry.rarity}${RESET}`);
+    const nameDisplay = entry.status === 'unknown' ? `${GRAY}???${RESET}` : getPokemonName(entry.name);
+    const shinyTag = entry.shinyCaught ? ` ${YELLOW}★${RESET}` : '';
+    console.log(`  ${icon} #${String(entry.id).padStart(4, '0')} ${nameDisplay.padEnd(8)} ${typeStr} ${GRAY}${entry.rarity}${RESET}${shinyTag}`);
   }
 
   // Show type master progress when --type filter is used or list is unfiltered
@@ -1242,47 +1328,63 @@ function cmdLegendary(action?: string): void {
   }
 }
 
-function cmdBox(sortBy?: string): void {
+function cmdBox(): void {
   const state = readState();
   const config = readConfig();
   const pokemonDB = getPokemonDB();
 
-  // All owned pokemon not in party
-  const boxPokemon = state.unlocked
-    .filter(name => !config.party.includes(name) && state.pokemon[name])
-    .map(name => {
-      const pData = pokemonDB.pokemon[toBaseId(name)];
-      const ps = state.pokemon[name];
-      return {
-        name,
-        level: ps?.level ?? 1,
-        types: pData?.types ?? [],
-        rarity: pData?.rarity ?? 'common',
-        evolutionReady: ps?.evolution_ready ?? false,
-      };
-    });
+  const allArgs = process.argv.slice(2);
+  const cmdArgs = allArgs.slice(1);
+
+  const parsed = parseFilterArgs(cmdArgs, {
+    sort: 'value', type: 'value', rarity: 'value', stage: 'value',
+    shiny: 'boolean', search: 'value',
+  });
+
+  const filters: import('../core/box.js').BoxFilter = {};
+  if (parsed.type) filters.type = parsed.type as string;
+  if (parsed.rarity) filters.rarity = parsed.rarity as string;
+  if (parsed.stage !== undefined) {
+    const stageNum = Number(parsed.stage);
+    if (![0, 1, 2].includes(stageNum)) {
+      error('--stage must be 0, 1, or 2.');
+      process.exit(1);
+    }
+    filters.stage = stageNum;
+  }
+  if (parsed.shiny) filters.shiny = true;
+  if (parsed.search) filters.keyword = parsed.search as string;
+
+  const sortBy = parsed.sort as string | undefined;
+  const hasFilters = Object.keys(filters).length > 0;
+  const boxPokemon = getBoxList(state, config, hasFilters ? filters : undefined, sortBy);
 
   bold(t('cli.box.header'));
   console.log('');
 
-  if (boxPokemon.length === 0) {
-    warn(t('cli.box.empty'));
-    return;
-  }
+  // Show active filters
+  const filterParts: string[] = [];
+  if (filters.type) filterParts.push(`type=${filters.type}`);
+  if (filters.rarity) filterParts.push(`rarity=${filters.rarity}`);
+  if (filters.stage !== undefined) filterParts.push(`stage=${filters.stage}`);
+  if (filters.shiny) filterParts.push(t('cli.pokedex.filter_shiny'));
+  if (filters.keyword) filterParts.push(t('cli.pokedex.filter_search', { keyword: filters.keyword }));
+  if (filterParts.length > 0) info(t('cli.box.filter', { filter: filterParts.join(', ') }));
 
-  // Sort
-  if (sortBy === 'level') {
-    boxPokemon.sort((a, b) => b.level - a.level);
-  } else if (sortBy === 'type') {
-    boxPokemon.sort((a, b) => a.types[0]?.localeCompare(b.types[0] ?? '') ?? 0);
-  } else if (sortBy === 'name') {
-    boxPokemon.sort((a, b) => a.name.localeCompare(b.name));
+  if (boxPokemon.length === 0) {
+    if (hasFilters) {
+      console.log(t('cli.box.no_results'));
+    } else {
+      warn(t('cli.box.empty'));
+    }
+    return;
   }
 
   for (const p of boxPokemon) {
     const typeStr = p.types.map((tp: string) => `${pokemonDB.type_colors[tp] ?? ''}${tp}${RESET}`).join('/');
     const evoTag = p.evolutionReady ? ` ${YELLOW}${t('cli.box.can_evolve')}${RESET}` : '';
-    console.log(`  ${getPokemonName(p.name)} Lv.${p.level} ${typeStr}${evoTag}`);
+    const shinyTag = p.isShiny ? ` ${YELLOW}${t('cli.box.shiny_tag')}${RESET}` : '';
+    console.log(`  ${getPokemonName(p.name)} Lv.${p.level} ${typeStr} ${GRAY}${p.rarity}${RESET}${shinyTag}${evoTag}`);
   }
   console.log('');
   info(t('cli.box.sort_hint'));
@@ -1822,7 +1924,7 @@ switch (command) {
     cmdLegendary(args.slice(1).join(' ') || undefined);
     break;
   case 'box':
-    cmdBox(args[1] === '--sort' ? args[2] : undefined);
+    cmdBox();
     break;
   case 'star': {
     const { execSync } = await import('child_process');
@@ -1859,7 +1961,7 @@ switch (command) {
     cmdGuide(args[1]);
     break;
   case 'pokedex':
-    cmdPokedex(args[1], args[2], args[3]);
+    cmdPokedex();
     break;
   case 'config':
     if (args[1] === 'set') cmdConfigSet(args[2], args[3]);

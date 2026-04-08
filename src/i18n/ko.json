@@ -81,6 +81,15 @@
   "cli.pokedex.list_title": "=== 포켓몬 도감 ===",
   "cli.pokedex.list_summary": "  발견: {seen}/{total} ({seenPct}%)  포획: {caught}/{total} ({caughtPct}%)",
   "cli.pokedex.filter": "  필터: {filter}",
+  "cli.pokedex.filter_caught": "포획된 포켓몬만",
+  "cli.pokedex.filter_uncaught": "미포획 포켓몬만",
+  "cli.pokedex.filter_stage": "진화 단계 {stage}",
+  "cli.pokedex.filter_shiny": "색이 다른 포켓몬만",
+  "cli.pokedex.filter_search": "이름에 \"{keyword}\" 포함",
+  "cli.pokedex.summary_title": "=== 지역별 도감 현황 ===",
+  "cli.pokedex.summary_row": "  {region}: {caught}/{total} 포획 ({pct}%)",
+  "cli.pokedex.summary_total": "  합계: {caught}/{total} ({pct}%)",
+  "cli.pokedex.no_results": "  필터에 맞는 포켓몬이 없습니다.",
 
   "cli.items.header": "[ 아이템 ]",
   "cli.items.empty": "  아이템이 없습니다.",
@@ -463,8 +472,11 @@
 
   "cli.box.header": "[ 박스 ]",
   "cli.box.empty": "  박스가 비어 있습니다.",
-  "cli.box.sort_hint": "--sort level|type|name 으로 정렬 가능.",
+  "cli.box.sort_hint": "--sort level|type|name|rarity 로 정렬. --search 로 이름 검색 가능.",
   "cli.box.can_evolve": "[진화 가능]",
+  "cli.box.filter": "  필터: {filter}",
+  "cli.box.no_results": "  필터에 맞는 포켓몬이 없습니다.",
+  "cli.box.shiny_tag": "★",
 
   "cli.party.swap_usage": "사용법: tokenmon party swap <슬롯> <포켓몬>",
   "cli.party.swap_invalid_slot": "잘못된 슬롯 번호입니다. (1-{max})",

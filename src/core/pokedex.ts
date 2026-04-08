@@ -1,4 +1,4 @@
-import { getPokemonDB } from './pokemon-data.js';
+import { getPokemonDB, getPokemonName } from './pokemon-data.js';
 import { isShinyKey, toBaseId } from './shiny-utils.js';
 import type { State, PokedexEntry } from './types.js';
 
@@ -105,22 +105,35 @@ export function getCompletion(state: State): PokedexCompletion {
   };
 }
 
+export interface PokedexFilter {
+  type?: string;
+  region?: string;
+  rarity?: string;
+  stage?: number;
+  status?: 'caught' | 'uncaught';
+  shiny?: boolean;
+  keyword?: string;
+}
+
 export interface PokedexListEntry {
   name: string;
   id: number;
   types: string[];
   rarity: string;
   region: string;
+  stage: number;
+  shinyCaught: boolean;
   status: 'caught' | 'seen' | 'unknown';
 }
 
 /**
  * Get all pokemon with their pokedex status.
- * Optionally filter by type, region, or rarity.
+ * Optionally filter by type, region, rarity, stage, status, shiny, keyword.
+ * All filters combine with AND logic.
  */
 export function getPokedexList(
   state: State,
-  filters?: { type?: string; region?: string; rarity?: string },
+  filters?: PokedexFilter,
 ): PokedexListEntry[] {
   const db = getPokemonDB();
   const entries: PokedexListEntry[] = [];
@@ -130,11 +143,21 @@ export function getPokedexList(
     if (filters?.type && !pData.types.includes(filters.type)) continue;
     if (filters?.region && pData.region !== filters.region) continue;
     if (filters?.rarity && pData.rarity !== filters.rarity) continue;
+    if (filters?.stage !== undefined && pData.stage !== filters.stage) continue;
+    if (filters?.keyword) {
+      const kw = filters.keyword.toLowerCase();
+      const displayName = getPokemonName(name).toLowerCase();
+      if (!name.includes(kw) && !displayName.includes(kw)) continue;
+    }
 
     const pdex = state.pokedex?.[name];
     let status: 'caught' | 'seen' | 'unknown' = 'unknown';
     if (pdex?.caught) status = 'caught';
     else if (pdex?.seen) status = 'seen';
+
+    if (filters?.status === 'caught' && status !== 'caught') continue;
+    if (filters?.status === 'uncaught' && status === 'caught') continue;
+    if (filters?.shiny && !pdex?.shiny_caught) continue;
 
     entries.push({
       name,
@@ -142,9 +165,40 @@ export function getPokedexList(
       types: pData.types,
       rarity: pData.rarity,
       region: pData.region,
+      stage: pData.stage,
+      shinyCaught: pdex?.shiny_caught ?? false,
       status,
     });
   }
 
   return entries;
+}
+
+export interface RegionSummaryEntry {
+  regionId: string;
+  total: number;
+  seen: number;
+  caught: number;
+}
+
+/**
+ * Get per-region pokedex completion summary.
+ */
+export function getRegionSummary(state: State): RegionSummaryEntry[] {
+  const db = getPokemonDB();
+  const regionMap = new Map<string, { total: number; seen: number; caught: number }>();
+
+  for (const [name, pData] of Object.entries(db.pokemon)) {
+    const r = pData.region;
+    if (!regionMap.has(r)) regionMap.set(r, { total: 0, seen: 0, caught: 0 });
+    const entry = regionMap.get(r)!;
+    entry.total++;
+    const pdex = state.pokedex?.[name];
+    if (pdex?.seen) entry.seen++;
+    if (pdex?.caught) entry.caught++;
+  }
+
+  return Array.from(regionMap.entries())
+    .sort(([a], [b]) => Number(a) - Number(b))
+    .map(([regionId, counts]) => ({ regionId, ...counts }));
 }

@@ -81,6 +81,15 @@
   "cli.pokedex.list_title": "=== Pokedex ===",
   "cli.pokedex.list_summary": "  Seen: {seen}/{total} ({seenPct}%)  Caught: {caught}/{total} ({caughtPct}%)",
   "cli.pokedex.filter": "  Filter: {filter}",
+  "cli.pokedex.filter_caught": "Caught only",
+  "cli.pokedex.filter_uncaught": "Uncaught only",
+  "cli.pokedex.filter_stage": "Stage {stage}",
+  "cli.pokedex.filter_shiny": "Shiny only",
+  "cli.pokedex.filter_search": "Name contains \"{keyword}\"",
+  "cli.pokedex.summary_title": "=== Region Progress ===",
+  "cli.pokedex.summary_row": "  {region}: {caught}/{total} caught ({pct}%)",
+  "cli.pokedex.summary_total": "  Total: {caught}/{total} ({pct}%)",
+  "cli.pokedex.no_results": "  No pokemon match the filters.",
 
   "cli.items.header": "[ Items ]",
   "cli.items.empty": "  No items.",
@@ -463,8 +472,11 @@
 
   "cli.box.header": "[ Box ]",
   "cli.box.empty": "  Box is empty.",
-  "cli.box.sort_hint": "Use --sort level|type|name to sort.",
+  "cli.box.sort_hint": "Use --sort level|type|name|rarity to sort. Use --search to filter by name.",
   "cli.box.can_evolve": "[Evolve Ready]",
+  "cli.box.filter": "  Filter: {filter}",
+  "cli.box.no_results": "  No pokemon match the filters.",
+  "cli.box.shiny_tag": "★",
 
   "cli.party.swap_usage": "Usage: tokenmon party swap <slot> <pokemon>",
   "cli.party.swap_invalid_slot": "Invalid slot number. (1-{max})",
