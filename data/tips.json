@@ -28,6 +28,13 @@
     "template_key": "tip.battle_xp_loss"
   },
   {
+    "id": "battle_ball_loss",
+    "category": "battle",
+    "template": "💡 높은 레벨 포켓몬에게 지면 몬스터볼을 잃을 수 있다! 레벨 차이가 클수록 더 많이!",
+    "dynamic": false,
+    "template_key": "tip.battle_ball_loss"
+  },
+  {
     "id": "battle_rare_bonus",
     "category": "battle",
     "template": "💡 희귀한 야생 포켓몬일수록 승리 시 XP 보너스가 큽니다",

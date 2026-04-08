@@ -276,12 +276,12 @@ export function resolveBattle(
   // Mark pokemon as seen
   markSeen(state, wild.name);
 
-  // On defeat: lose pokeballs proportional to level gap (higher level = more loss)
+  // On defeat: lose pokeballs proportional to level gap (higher level = more loss, max 5)
   let ballCost = 0;
   if (!won) {
     const levelGap = Math.max(0, wild.level - attackerLevel);
-    // 0-4 gap: 0 balls, 5-14: 1, 15-24: 2, 25+: 3
-    const lossCount = levelGap < 5 ? 0 : Math.min(3, Math.floor(levelGap / 10) + 1);
+    // 0-4: 0, 5-9: 1, 10-14: 2, 15-19: 3, 20-24: 4, 25+: 5
+    const lossCount = levelGap < 5 ? 0 : Math.min(5, Math.ceil(levelGap / 5));
     if (lossCount > 0) {
       const available = getItemCount(state, 'pokeball');
       const actualLoss = Math.min(lossCount, available);
@@ -367,7 +367,7 @@ export function formatBattleMessage(result: BattleResult): string {
 
   let msg = t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
   if (result.ballCost > 0) {
-    msg += ` (🔴-${result.ballCost})`;
+    msg += '\n' + t('battle.lose_balls', { count: result.ballCost });
   }
   if (isShiny) {
     msg += t('battle.shiny_escaped', { pokemon: defenderName });
