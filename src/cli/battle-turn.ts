@@ -10,7 +10,7 @@
  *   npx tsx src/cli/battle-turn.ts --action 6        # surrender
  *   npx tsx src/cli/battle-turn.ts --end             # clean up
  */
-import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync, renameSync } from 'fs';
 import { join, dirname } from 'path';
 import { createBattlePokemon, createBattleState, resolveTurn, getActivePokemon, hasAlivePokemon } from '../core/turn-battle.js';
 import { selectAiAction } from '../core/gym-ai.js';
@@ -165,6 +165,7 @@ interface BattleStateFile {
   stateDir: string;
   playerPartyNames: string[];
   lastHit?: LastHit | null;
+  sessionId?: string;
 }
 
 function readBattleState(): BattleStateFile | null {
@@ -179,7 +180,9 @@ function readBattleState(): BattleStateFile | null {
 function writeBattleState(bsf: BattleStateFile): void {
   const dir = dirname(BATTLE_STATE_PATH);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  writeFileSync(BATTLE_STATE_PATH, JSON.stringify(bsf, null, 2), 'utf-8');
+  const tmpPath = BATTLE_STATE_PATH + '.tmp';
+  writeFileSync(tmpPath, JSON.stringify(bsf, null, 2), 'utf-8');
+  renameSync(tmpPath, BATTLE_STATE_PATH);
 }
 
 function deleteBattleState(): void {
@@ -276,8 +279,21 @@ function handleInit(): void {
     process.exit(1);
   }
 
-  const state: State = JSON.parse(readFileSync(statePath, 'utf-8'));
-  const config: Config = JSON.parse(readFileSync(configPath, 'utf-8'));
+  let state: State;
+  try {
+    state = JSON.parse(readFileSync(statePath, 'utf-8'));
+  } catch (err) {
+    output({ status: 'error', messages: [`Failed to parse state: ${statePath}`] });
+    process.exit(1);
+  }
+
+  let config: Config;
+  try {
+    config = JSON.parse(readFileSync(configPath, 'utf-8'));
+  } catch (err) {
+    output({ status: 'error', messages: [`Failed to parse config: ${configPath}`] });
+    process.exit(1);
+  }
 
   // Load pokemon DB
   let db: ReturnType<typeof getPokemonDB>;
@@ -366,6 +382,7 @@ function handleInit(): void {
     generation,
     stateDir,
     playerPartyNames,
+    sessionId: process.env.CLAUDE_SESSION_ID || process.pid.toString(),
   };
   writeBattleState(bsf);
 
@@ -400,6 +417,11 @@ function handleAction(): void {
   const bsf = readBattleState();
   if (!bsf) {
     output({ status: 'error', messages: ['No active battle. Use --init to start one.'] });
+    process.exit(1);
+  }
+
+  if (bsf.sessionId && bsf.sessionId !== (process.env.CLAUDE_SESSION_ID || process.pid.toString())) {
+    output({ status: 'error', messages: ['다른 세션의 배틀이 진행 중입니다.'] });
     process.exit(1);
   }
 
@@ -670,12 +692,25 @@ function handleEnd(): void {
   output({ status: 'ended', messages: ['Battle state cleared.'] });
 }
 
+// ── Signal Handlers ──
+
+function setupSignalHandlers(): void {
+  const cleanup = () => {
+    deleteBattleState();
+    process.exit(1);
+  };
+  process.on('SIGINT', cleanup);
+  process.on('SIGTERM', cleanup);
+}
+
 // ── Main ──
 
 function main(): void {
   // Initialize locale so getPokemonName returns Korean names when language is 'ko'
   const globalConfig = readGlobalConfig();
   initLocale(globalConfig.language);
+
+  setupSignalHandlers();
 
   try {
     if (hasFlag('init')) {
