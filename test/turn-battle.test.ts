@@ -1,0 +1,454 @@
+import { describe, it, beforeEach } from 'node:test';
+import assert from 'node:assert/strict';
+import { initLocale } from '../src/i18n/index.js';
+import {
+  calculateHp,
+  calculateStat,
+  createBattlePokemon,
+  calculateDamage,
+  getEffectivenessMessage,
+  checkAccuracy,
+  createBattleState,
+  getActivePokemon,
+  hasAlivePokemon,
+  resolveTurn,
+} from '../src/core/turn-battle.js';
+import type { BattlePokemon, BattleMove, MoveData, BattleState } from '../src/core/types.js';
+
+initLocale('ko');
+
+// ── Test helpers ──
+
+function makeMoveData(overrides: Partial<MoveData> = {}): MoveData {
+  return {
+    id: 1,
+    name: 'tackle',
+    nameKo: '몸통박치기',
+    nameEn: 'Tackle',
+    type: 'normal',
+    category: 'physical',
+    power: 40,
+    accuracy: 100,
+    pp: 35,
+    ...overrides,
+  };
+}
+
+function makeFireMove(overrides: Partial<MoveData> = {}): MoveData {
+  return makeMoveData({
+    id: 2,
+    name: 'ember',
+    nameKo: '불꽃세례',
+    nameEn: 'Ember',
+    type: 'fire',
+    category: 'special',
+    power: 40,
+    accuracy: 100,
+    pp: 25,
+    ...overrides,
+  });
+}
+
+function makeWaterMove(overrides: Partial<MoveData> = {}): MoveData {
+  return makeMoveData({
+    id: 3,
+    name: 'water_gun',
+    nameKo: '물대포',
+    nameEn: 'Water Gun',
+    type: 'water',
+    category: 'special',
+    power: 40,
+    accuracy: 100,
+    pp: 25,
+    ...overrides,
+  });
+}
+
+function makeTestPokemon(overrides: Partial<BattlePokemon> = {}): BattlePokemon {
+  return {
+    id: 1,
+    name: '1',
+    displayName: 'Attacker',
+    types: ['normal'],
+    level: 50,
+    maxHp: 120,
+    currentHp: 120,
+    attack: 60,
+    defense: 50,
+    spAttack: 55,
+    spDefense: 50,
+    speed: 70,
+    moves: [{ data: makeMoveData(), currentPp: 35 }],
+    fainted: false,
+    ...overrides,
+  };
+}
+
+// ── Tests ──
+
+describe('calculateHp', () => {
+  it('calculates HP for base 45 level 50', () => {
+    assert.equal(calculateHp(45, 50), 105);
+  });
+
+  it('calculates HP for base 100 level 100', () => {
+    // floor((2 * 100 * 100) / 100) + 100 + 10 = 200 + 100 + 10 = 310
+    assert.equal(calculateHp(100, 100), 310);
+  });
+});
+
+describe('calculateStat', () => {
+  it('calculates stat for base 55 level 50', () => {
+    assert.equal(calculateStat(55, 50), 60);
+  });
+
+  it('calculates stat for base 100 level 100', () => {
+    // floor((2 * 100 * 100) / 100) + 5 = 200 + 5 = 205
+    assert.equal(calculateStat(100, 100), 205);
+  });
+});
+
+describe('createBattlePokemon', () => {
+  it('creates a BattlePokemon with correct stats', () => {
+    const moves: MoveData[] = [makeMoveData()];
+    const bp = createBattlePokemon(
+      {
+        id: 4,
+        types: ['fire'],
+        level: 50,
+        baseStats: { hp: 39, attack: 52, defense: 43, speed: 65 },
+        displayName: 'Charmander',
+      },
+      moves,
+    );
+    assert.equal(bp.maxHp, calculateHp(39, 50));
+    assert.equal(bp.currentHp, bp.maxHp);
+    assert.equal(bp.attack, calculateStat(52, 50));
+    assert.equal(bp.defense, calculateStat(43, 50));
+    // sp_attack/sp_defense fallback to attack/defense
+    assert.equal(bp.spAttack, calculateStat(52, 50));
+    assert.equal(bp.spDefense, calculateStat(43, 50));
+    assert.equal(bp.speed, calculateStat(65, 50));
+    assert.equal(bp.moves.length, 1);
+    assert.equal(bp.moves[0].currentPp, 35);
+    assert.equal(bp.fainted, false);
+    assert.equal(bp.displayName, 'Charmander');
+  });
+
+  it('uses sp_attack/sp_defense when provided', () => {
+    const bp = createBattlePokemon(
+      {
+        id: 4,
+        types: ['fire'],
+        level: 50,
+        baseStats: { hp: 39, attack: 52, defense: 43, speed: 65, sp_attack: 80, sp_defense: 70 },
+      },
+      [makeMoveData()],
+    );
+    assert.equal(bp.spAttack, calculateStat(80, 50));
+    assert.equal(bp.spDefense, calculateStat(70, 50));
+  });
+});
+
+describe('calculateDamage', () => {
+  it('returns 0 for status moves (power 0)', () => {
+    const attacker = makeTestPokemon();
+    const defender = makeTestPokemon({ displayName: 'Defender' });
+    const statusMove: BattleMove = {
+      data: makeMoveData({ power: 0 }),
+      currentPp: 10,
+    };
+    assert.equal(calculateDamage(attacker, defender, statusMove), 0);
+  });
+
+  it('STAB bonus produces higher damage than non-STAB', () => {
+    const attacker = makeTestPokemon({ types: ['fire'], attack: 100, spAttack: 100 });
+    const defender = makeTestPokemon({ types: ['normal'], defense: 50, spDefense: 50 });
+    const fireMove: BattleMove = { data: makeFireMove(), currentPp: 25 };
+    const normalMove: BattleMove = {
+      data: makeMoveData({ type: 'water', category: 'special', power: 40 }),
+      currentPp: 25,
+    };
+
+    // Run many trials to compare average damage
+    let stabTotal = 0;
+    let nonStabTotal = 0;
+    const trials = 200;
+    for (let i = 0; i < trials; i++) {
+      stabTotal += calculateDamage(attacker, defender, fireMove);
+      nonStabTotal += calculateDamage(attacker, defender, normalMove);
+    }
+    assert.ok(
+      stabTotal > nonStabTotal,
+      `STAB avg ${stabTotal / trials} should exceed non-STAB avg ${nonStabTotal / trials}`,
+    );
+  });
+
+  it('type effectiveness 2x (water vs fire)', () => {
+    const attacker = makeTestPokemon({ types: ['water'], spAttack: 80 });
+    const defender = makeTestPokemon({ types: ['fire'], spDefense: 50 });
+    const waterMove: BattleMove = { data: makeWaterMove(), currentPp: 25 };
+
+    // Non-effective baseline: same move against normal type
+    const neutralDef = makeTestPokemon({ types: ['normal'], spDefense: 50 });
+
+    let seTotal = 0;
+    let neutralTotal = 0;
+    const trials = 200;
+    for (let i = 0; i < trials; i++) {
+      seTotal += calculateDamage(attacker, defender, waterMove);
+      neutralTotal += calculateDamage(attacker, neutralDef, waterMove);
+    }
+    // Super effective should be roughly 2x neutral
+    const ratio = seTotal / neutralTotal;
+    assert.ok(ratio > 1.8 && ratio < 2.2, `SE/neutral ratio ${ratio} should be ~2.0`);
+  });
+
+  it('always returns at least 1 damage for powered moves', () => {
+    const attacker = makeTestPokemon({ attack: 1 });
+    const defender = makeTestPokemon({ defense: 999 });
+    const move: BattleMove = { data: makeMoveData({ power: 10 }), currentPp: 10 };
+    const dmg = calculateDamage(attacker, defender, move);
+    assert.ok(dmg >= 1);
+  });
+});
+
+describe('getEffectivenessMessage', () => {
+  it('returns effect_super for water vs fire', () => {
+    assert.equal(getEffectivenessMessage('water', ['fire']), 'effect_super');
+  });
+
+  it('returns effect_not_very for water vs grass', () => {
+    assert.equal(getEffectivenessMessage('water', ['grass']), 'effect_not_very');
+  });
+
+  it('returns effect_immune for normal vs ghost', () => {
+    assert.equal(getEffectivenessMessage('normal', ['ghost']), 'effect_immune');
+  });
+
+  it('returns null for neutral matchup', () => {
+    assert.equal(getEffectivenessMessage('normal', ['normal']), null);
+  });
+});
+
+describe('checkAccuracy', () => {
+  it('returns true for always-hit moves (accuracy <= 0)', () => {
+    const move: BattleMove = { data: makeMoveData({ accuracy: 0 }), currentPp: 10 };
+    // Should always return true
+    for (let i = 0; i < 50; i++) {
+      assert.equal(checkAccuracy(move), true);
+    }
+  });
+
+  it('returns boolean for normal accuracy moves', () => {
+    const move: BattleMove = { data: makeMoveData({ accuracy: 50 }), currentPp: 10 };
+    const result = checkAccuracy(move);
+    assert.equal(typeof result, 'boolean');
+  });
+});
+
+describe('createBattleState', () => {
+  it('creates a valid initial battle state', () => {
+    const p1 = makeTestPokemon({ displayName: 'Player1' });
+    const o1 = makeTestPokemon({ displayName: 'Opp1' });
+    const state = createBattleState([p1], [o1]);
+    assert.equal(state.player.pokemon.length, 1);
+    assert.equal(state.opponent.pokemon.length, 1);
+    assert.equal(state.player.activeIndex, 0);
+    assert.equal(state.opponent.activeIndex, 0);
+    assert.equal(state.turn, 0);
+    assert.equal(state.phase, 'select_action');
+    assert.equal(state.winner, null);
+  });
+});
+
+describe('getActivePokemon / hasAlivePokemon', () => {
+  it('getActivePokemon returns the pokemon at activeIndex', () => {
+    const p1 = makeTestPokemon({ displayName: 'A' });
+    const p2 = makeTestPokemon({ displayName: 'B' });
+    const team = { pokemon: [p1, p2], activeIndex: 1 };
+    assert.equal(getActivePokemon(team).displayName, 'B');
+  });
+
+  it('hasAlivePokemon returns true when at least one alive', () => {
+    const p1 = makeTestPokemon({ fainted: true });
+    const p2 = makeTestPokemon({ fainted: false });
+    assert.equal(hasAlivePokemon({ pokemon: [p1, p2], activeIndex: 0 }), true);
+  });
+
+  it('hasAlivePokemon returns false when all fainted', () => {
+    const p1 = makeTestPokemon({ fainted: true });
+    assert.equal(hasAlivePokemon({ pokemon: [p1], activeIndex: 0 }), false);
+  });
+});
+
+describe('resolveTurn', () => {
+  let state: BattleState;
+
+  beforeEach(() => {
+    const playerPoke = makeTestPokemon({
+      displayName: '피카츄',
+      types: ['electric'],
+      speed: 90,
+      maxHp: 200,
+      currentHp: 200,
+      moves: [
+        { data: makeMoveData({ nameKo: '전광석화', type: 'normal', power: 40 }), currentPp: 30 },
+        { data: makeMoveData({ nameKo: '10만볼트', type: 'electric', power: 90, category: 'special' }), currentPp: 15 },
+      ],
+    });
+    const opponentPoke = makeTestPokemon({
+      displayName: '파이리',
+      types: ['fire'],
+      speed: 60,
+      maxHp: 150,
+      currentHp: 150,
+      moves: [
+        { data: makeFireMove({ nameKo: '불꽃세례' }), currentPp: 25 },
+      ],
+    });
+    state = createBattleState([playerPoke], [opponentPoke]);
+  });
+
+  it('faster pokemon attacks first', () => {
+    // Player speed 90 > opponent speed 60 → player attacks first
+    const result = resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+    // First message should be from player (피카츄)
+    assert.ok(
+      result.messages[0].includes('피카츄'),
+      `First message "${result.messages[0]}" should be from faster pokemon 피카츄`,
+    );
+  });
+
+  it('switch has priority over move', () => {
+    // Add a second player pokemon for switching
+    const backup = makeTestPokemon({
+      displayName: '이상해씨',
+      types: ['grass'],
+      speed: 40,
+    });
+    state.player.pokemon.push(backup);
+
+    const result = resolveTurn(
+      state,
+      { type: 'switch', pokemonIndex: 1 },
+      { type: 'move', moveIndex: 0 },
+    );
+    // Switch message should come before attack message
+    const switchIdx = result.messages.findIndex((m) => m.includes('교체'));
+    const attackIdx = result.messages.findIndex((m) => m.includes('파이리'));
+    assert.ok(switchIdx >= 0, 'Should have switch message');
+    assert.ok(attackIdx >= 0, 'Should have attack message');
+    assert.ok(switchIdx < attackIdx, 'Switch should happen before move');
+  });
+
+  it('fainted pokemon triggers phase change to fainted_switch', () => {
+    // Give player a backup pokemon; set active HP low to guarantee faint
+    const backup = makeTestPokemon({ displayName: '꼬부기', types: ['water'] });
+    state.player.pokemon.push(backup);
+    // Set player active to 1 HP so opponent's attack faints them
+    getActivePokemon(state.player).currentHp = 1;
+
+    // Opponent goes first to faint the player by giving them higher speed
+    getActivePokemon(state.opponent).speed = 999;
+
+    const result = resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.ok(result.playerFainted, 'Player pokemon should have fainted');
+    assert.equal(state.phase, 'fainted_switch');
+  });
+
+  it('surrender ends battle with winner = opponent', () => {
+    const result = resolveTurn(
+      state,
+      { type: 'surrender' },
+      { type: 'move', moveIndex: 0 },
+    );
+    assert.equal(state.phase, 'battle_end');
+    assert.equal(state.winner, 'opponent');
+    assert.ok(result.messages.some((m) => m.includes('항복')));
+  });
+
+  it('struggle when all moves have 0 PP', () => {
+    // Drain all PP
+    const playerPoke = getActivePokemon(state.player);
+    for (const move of playerPoke.moves) {
+      move.currentPp = 0;
+    }
+
+    const result = resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.ok(
+      result.messages.some((m) => m.includes('발버둥')),
+      'Should contain struggle message',
+    );
+  });
+
+  it('opponent fainted with no more pokemon = player wins', () => {
+    // Set opponent to 1 HP
+    getActivePokemon(state.opponent).currentHp = 1;
+
+    const result = resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.ok(result.opponentFainted, 'Opponent should have fainted');
+    assert.equal(state.phase, 'battle_end');
+    assert.equal(state.winner, 'player');
+  });
+
+  it('opponent fainted with backup stays select_action', () => {
+    // Add backup opponent
+    const backup = makeTestPokemon({ displayName: '꼬부기', types: ['water'] });
+    state.opponent.pokemon.push(backup);
+    // Set active opponent to 1 HP
+    getActivePokemon(state.opponent).currentHp = 1;
+
+    const result = resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.ok(result.opponentFainted, 'Opponent active should faint');
+    assert.equal(state.phase, 'select_action');
+    assert.equal(state.winner, null);
+  });
+
+  it('PP decrements on move use', () => {
+    const playerPoke = getActivePokemon(state.player);
+    const ppBefore = playerPoke.moves[0].currentPp;
+
+    resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.equal(playerPoke.moves[0].currentPp, ppBefore - 1);
+  });
+
+  it('turn counter increments', () => {
+    assert.equal(state.turn, 0);
+    resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+    assert.equal(state.turn, 1);
+  });
+});
