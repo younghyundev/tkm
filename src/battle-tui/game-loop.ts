@@ -63,9 +63,18 @@ function handleActionKey(game: GameLoop, key: string): void {
     const moveIndex = num - 1;
     const move = player.moves[moveIndex];
     if (!move) return; // no such move slot
-    if (move.currentPp <= 0) return; // no PP left
 
-    const playerAction: TurnAction = { type: 'move', moveIndex };
+    // Before rejecting a 0-PP move, check if ALL moves are depleted
+    const allDepleted = player.moves.every(m => m.currentPp <= 0);
+    let playerAction: TurnAction;
+    if (allDepleted) {
+      // Force through — engine will use Struggle
+      playerAction = { type: 'move', moveIndex: 0 };
+    } else if (move.currentPp <= 0) {
+      return; // Only reject if other moves are available
+    } else {
+      playerAction = { type: 'move', moveIndex };
+    }
     const opponent = getActivePokemon(game.battleState.opponent);
     const opponentAction = selectAiAction(opponent, player);
 
