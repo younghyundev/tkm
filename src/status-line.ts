@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, readlinkSync } from 'fs';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
 import { readConfig, readGlobalConfig } from './core/config.js';
@@ -12,6 +12,7 @@ import { t, initLocale } from './i18n/index.js';
 import { readWeatherCache, WEATHER_LABELS, type WeatherCondition } from './core/weather.js';
 import { ppBar } from './core/pp.js';
 import type { ExpGroup, StdinData } from './core/types.js';
+import { determineTier, SPRITE_WIDTH, SPRITE_COL_WIDTH } from './core/layout.js';
 
 interface SignatureMove {
   move: string;
@@ -93,30 +94,63 @@ function loadSprite(pokemonId: number, isShiny: boolean = false): string[] {
 }
 
 function visibleLength(s: string): number {
-  // Strip ANSI escape codes, then count characters
-  // Unicode braille/CJK characters may be double-width in some terminals
   const stripped = s.replace(/\x1b\[[^m]*m/g, '');
   let len = 0;
   for (const ch of stripped) {
-    const cp = ch.codePointAt(0) ?? 0;
-    // CJK, braille, and fullwidth characters take 2 columns
-    if (
-      (cp >= 0x2800 && cp <= 0x28FF) || // Braille
-      (cp >= 0x1100 && cp <= 0x115F) || // Hangul Jamo
-      (cp >= 0x2E80 && cp <= 0x9FFF) || // CJK
-      (cp >= 0xAC00 && cp <= 0xD7AF) || // Hangul Syllables
-      (cp >= 0xF900 && cp <= 0xFAFF) || // CJK Compatibility
-      (cp >= 0xFE10 && cp <= 0xFE6F) || // CJK Forms
-      (cp >= 0xFF01 && cp <= 0xFF60) || // Fullwidth
-      (cp >= 0xFFE0 && cp <= 0xFFE6) || // Fullwidth
-      (cp >= 0x20000 && cp <= 0x2FA1F)   // CJK Extension
-    ) {
-      len += 2;
-    } else {
-      len += 1;
-    }
+    len += charWidth(ch.codePointAt(0) ?? 0);
   }
   return len;
+}
+
+/** Get terminal column width of a single character (0, 1, or 2). */
+function charWidth(cp: number): number {
+  // Zero-width: variation selectors, combining marks, ZWJ
+  if (
+    (cp >= 0xFE00 && cp <= 0xFE0F) || (cp >= 0x200B && cp <= 0x200D) ||
+    (cp >= 0x20D0 && cp <= 0x20FF) || cp === 0xFEFF
+  ) return 0;
+  // Double-width: CJK, Hangul, Emoji, Fullwidth
+  if (
+    (cp >= 0x1100 && cp <= 0x115F) || (cp >= 0x2E80 && cp <= 0x9FFF) ||
+    (cp >= 0xAC00 && cp <= 0xD7AF) || (cp >= 0xF900 && cp <= 0xFAFF) ||
+    (cp >= 0xFE10 && cp <= 0xFE6F) || (cp >= 0xFF01 && cp <= 0xFF60) ||
+    (cp >= 0xFFE0 && cp <= 0xFFE6) || (cp >= 0x1F000 && cp <= 0x1FAFF) ||
+    (cp >= 0x2700 && cp <= 0x27BF) || // Dingbats
+    (cp >= 0x2600 && cp <= 0x26FF && cp !== 0x2605 && cp !== 0x2606) || // Misc Symbols (★☆ are 1-wide)
+    (cp >= 0x20000 && cp <= 0x2FA1F)
+  ) return 2;
+  return 1;
+}
+
+/** Wrap a string at character boundaries to fit within maxWidth terminal columns. */
+function charWrap(s: string, maxWidth: number): string {
+  if (maxWidth <= 0 || visibleLength(s) <= maxWidth) return s;
+  const lines: string[] = [];
+  let lineLen = 0;
+  let line = '';
+  let remaining = s;
+  const ansiRe = /\x1b\[[^m]*m/;
+  while (remaining.length > 0) {
+    const match = remaining.match(ansiRe);
+    if (match && match.index === 0) {
+      line += match[0];
+      remaining = remaining.slice(match[0].length);
+      continue;
+    }
+    const ch = remaining[0];
+    const cp = ch.codePointAt(0) ?? 0;
+    const w = charWidth(cp);
+    if (w > 0 && lineLen + w > maxWidth) {
+      lines.push(line.includes('\x1b[') ? line + '\x1b[0m' : line);
+      line = '';
+      lineLen = 0;
+    }
+    lineLen += w;
+    line += ch;
+    remaining = remaining.slice(1);
+  }
+  if (line) lines.push(line);
+  return lines.join('\n');
 }
 
 function wrapPrint(parts: string[], maxWidth: number): void {
@@ -168,6 +202,45 @@ function scatterWeatherParticles(line: string, condition: WeatherCondition): str
   });
 }
 
+function detectTermWidth(): number {
+  // Read per-session term-width file written by status-wrapper.mjs
+  try {
+    const dataDir = process.env.CLAUDE_PLUGIN_DATA ?? '';
+    if (!dataDir) return 0;
+    const pane = (process.env.TMUX_PANE ?? '').replace('%', '');
+    // Try pane-specific file first (tmux), then TTY-based (non-tmux), then fallback
+    const suffixes = [pane, ''].filter(Boolean);
+    if (!pane) {
+      // Find TTY from ancestor to match wrapper's file naming
+      try {
+        let pid = process.ppid;
+        for (let i = 0; i < 5 && pid > 1; i++) {
+          try {
+            const target = readlinkSync(`/proc/${pid}/fd/0`);
+            if (target.startsWith('/dev/')) {
+              suffixes.unshift(target.replace(/\//g, '-').replace(/^-/, ''));
+              break;
+            }
+          } catch { /* skip */ }
+          try {
+            const stat = readFileSync(`/proc/${pid}/stat`, 'utf8');
+            pid = parseInt(stat.split(') ')[1]?.split(' ')[1] ?? '0', 10);
+          } catch { break; }
+        }
+      } catch { /* ignore */ }
+      suffixes.push('fallback');
+    }
+    for (const s of suffixes) {
+      const widthFile = join(dataDir, `term-width-${s}`);
+      if (existsSync(widthFile)) {
+        const cols = parseInt(readFileSync(widthFile, 'utf8').trim(), 10);
+        if (cols > 0) return cols;
+      }
+    }
+  } catch { /* ignore */ }
+  return 0;
+}
+
 function main(): void {
   const config = readConfig();
   initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
@@ -187,7 +260,15 @@ function main(): void {
   const session = readSession();
   const pokemonDB = getPokemonDB();
   const contextTokensUsed = state.context_tokens_used ?? 0;
-  const termWidth = process.stdout.columns || 80;
+  const termWidth = process.stdout.columns
+    || parseInt(process.env.COLUMNS || '', 10)
+    || detectTermWidth()
+    || 80;
+
+  // Helper: print text with character-level wrapping
+  const printWidth = Math.max(10, termWidth - 10); // margin for Claude Code status bar padding
+  const print = (s: string) => console.log(charWrap(s, printWidth));
+
   const spriteMode = config.sprite_mode ?? 'all';
   const infoMode = config.info_mode ?? 'ace_full';
 
@@ -217,7 +298,13 @@ function main(): void {
       }
     }
   } catch { /* ignore */ }
-  const footer = `🎮${genRegion} ${genSuffix} 📍${regionName}${weatherInfo}${itemInfo}${restInfo}`;
+  // Footer adapts to tier (computed later, using a function)
+  const buildFooter = (t: number) => {
+    if (t >= 4) return '';                                                     // tier 4: no footer
+    if (t === 3) return `📍${regionName}${itemInfo}`;                          // tier 3: region + balls only
+    if (t === 2) return `🎮${genRegion} 📍${regionName}${itemInfo}${restInfo}`; // tier 2: drop gen suffix
+    return `🎮${genRegion} ${genSuffix} 📍${regionName}${weatherInfo}${itemInfo}${restInfo}`; // tier 1: full
+  };
 
   // Build per-pokemon data
   const pokeData: Array<{
@@ -242,41 +329,44 @@ function main(): void {
     });
   }
 
-  // === Sprite rendering ===
-  // sprite_mode: 'all' | 'ace_only' | 'emoji_all' | 'emoji_ace'
-  const showSprites = spriteMode === 'all' || spriteMode === 'ace_only';
+  // === Sprite rendering (responsive 4-tier layout) ===
+  const tier = determineTier(termWidth, pokeData.length, spriteMode);
 
-  if (showSprites) {
+  if (tier <= 3) {
     const spriteEntries: string[][] = [];
     for (let i = 0; i < pokeData.length; i++) {
       const p = pokeData[i];
-      if (spriteMode === 'all' || i === 0) {
+      // Tier 1-2: all sprites. Tier 3: ace only (i === 0)
+      if (tier <= 2 || i === 0) {
         const isShinySprite = isShinyKey(p.speciesId);
         spriteEntries.push(loadSprite(p.pokemonId, isShinySprite));
       }
     }
 
-    // Braille: row-by-row grid rendering
-    const SPRITE_WIDTH = 20;
     const isBlankLine = (line: string) => line.replace(/\x1b\[[^m]*m/g, '').replace(/[\s\u2800]/g, '').length === 0;
-    const spritesPerRow = Math.max(1, Math.floor(termWidth / (SPRITE_WIDTH + 1)));
+    const rawSpritesPerRow = Math.max(1, Math.floor(termWidth / SPRITE_COL_WIDTH));
+    // Tier 2: cap to balanced rows (e.g. 3 for 6 party → 2x3, not 5+1)
+    const spritesPerRow = tier === 1 ? rawSpritesPerRow
+      : tier === 2 ? Math.min(rawSpritesPerRow, Math.ceil(pokeData.length / 2))
+      : 1; // Tier 3: single sprite
 
-    // Weather particle overlay
+    // Weather particle overlay — only for tier 1-2 (full sprite grids)
     let weatherCondition: WeatherCondition | null = null;
-    try {
-      const gc = readGlobalConfig();
-      if (gc.weather_enabled) {
-        const cache = readWeatherCache();
-        if (cache && Date.now() - cache.fetched_at < 60 * 60 * 1000) {
-          weatherCondition = cache.condition;
+    if (tier <= 2) {
+      try {
+        const gc = readGlobalConfig();
+        if (gc.weather_enabled) {
+          const cache = readWeatherCache();
+          if (cache && Date.now() - cache.fetched_at < 60 * 60 * 1000) {
+            weatherCondition = cache.condition;
+          }
         }
-      }
-    } catch { /* ignore */ }
+      } catch { /* ignore */ }
+    }
 
     for (let gi = 0; gi < spriteEntries.length; gi += spritesPerRow) {
       const group = spriteEntries.slice(gi, gi + spritesPerRow);
       const maxRows = Math.max(...group.map(s => s.length), 0);
-      // Adaptive vertical range: first/last row where any sprite has content
       let firstRow = maxRows, lastRow = 0;
       for (const s of group) {
         for (let r = 0; r < s.length; r++) {
@@ -299,23 +389,23 @@ function main(): void {
 
   // === Achievement line (independent, always shown if present) ===
   if (state.last_achievement) {
-    console.log(state.last_achievement);
+    print(state.last_achievement);
   }
 
   // === Battle result / Drop / Tip line ===
   if (state.last_battle) {
     const battleMsg = formatBattleMessage(state.last_battle);
-    if (battleMsg) console.log(battleMsg);
+    if (battleMsg) print(battleMsg);
   } else if (state.last_drop) {
-    console.log(state.last_drop);
+    print(state.last_drop);
   } else if (state.last_tip) {
-    console.log(state.last_tip.text);
+    print(state.last_tip.text);
   } else {
     // Show evolution_ready hint for party pokemon with pending branching evolution
     for (const pokemonName of config.party) {
       const pState = state.pokemon[pokemonName];
       if (pState?.evolution_ready) {
-        console.log(t('statusline.evolution_ready', { pokemon: getPokemonName(pokemonName) }));
+        print(t('statusline.evolution_ready', { pokemon: getPokemonName(pokemonName) }));
         break;
       }
     }
@@ -323,7 +413,7 @@ function main(): void {
 
   // === Tier preview line (independent, always shown when non-normal) ===
   if (state.pending_tier) {
-    console.log(t(`tier.${state.pending_tier}`));
+    print(t(`tier.${state.pending_tier}`));
   }
 
   // === Info line rendering ===
@@ -336,11 +426,6 @@ function main(): void {
     const { bar, pct } = xpBar(p.xp, p.level, p.expGroup);
     const emoji = getEmoji(p.types);
 
-    // Sprite prefix for non-sprite modes
-    const prefix = (!showSprites)
-      ? (spriteMode === 'emoji_all' || (spriteMode === 'emoji_ace' && isAce)) ? `${emoji} ` : ''
-      : '';
-
     const isShiny = isShinyKey(p.speciesId);
     const shinyPrefix = isShiny ? '★' : '';
     const displayName = `${shinyPrefix}${p.name}`;
@@ -348,40 +433,66 @@ function main(): void {
     // PP = remaining context tokens expressed as move PP for ace pokemon
     const baseId = parseInt(toBaseId(p.speciesId), 10);
     const sigMove = SIGNATURE_MOVES[baseId];
-    const ppSuffix = (isAce && sigMove && sigMove.pp > 0)
+    const ppFull = (isAce && sigMove && sigMove.pp > 0)
       ? ` ${sigMove.move_ko} PP:${calcPp(sigMove.pp, contextTokensUsed)}/${sigMove.pp}`
       : '';
+    const ppShort = (isAce && sigMove && sigMove.pp > 0)
+      ? ` PP:${calcPp(sigMove.pp, contextTokensUsed)}/${sigMove.pp}`
+      : '';
+    const ppSuffix = tier <= 1 ? ppFull : ppShort;
 
     let info: string;
-    switch (infoMode) {
-      case 'all_full':
-        info = `${prefix}${displayName} Lv.${p.level} [${bar}] ${pct}%${ppSuffix}${p.agentLabel}`;
-        break;
-      case 'name_level':
-        info = `${prefix}${displayName} Lv.${p.level}${ppSuffix}${p.agentLabel}`;
-        break;
-      case 'ace_level':
-        info = isAce
-          ? `${prefix}${displayName} Lv.${p.level}${ppSuffix}${p.agentLabel}`
-          : `${prefix}${displayName}${p.agentLabel}`;
-        break;
-      case 'ace_full':
-      default:
-        info = isAce
-          ? `${prefix}${displayName} Lv.${p.level} [${bar}] ${pct}%${ppSuffix}${p.agentLabel}`
-          : `${prefix}${displayName} Lv.${p.level}${p.agentLabel}`;
-        break;
+
+    // Tier 2+: drop "Lv." prefix, just show number
+    const lv = tier >= 2 ? `${p.level}` : `Lv.${p.level}`;
+
+    if (tier === 4) {
+      // Tier 4: compact emoji — "🌿 52"
+      const showEmoji = spriteMode !== 'emoji_ace' || isAce;
+      info = showEmoji ? `${emoji} ${lv}` : `${lv}`;
+    } else if (tier === 3) {
+      // Tier 3: ace compact, non-ace emoji+name+level (no sprite for them)
+      info = isAce
+        ? `${displayName} ${lv}${ppSuffix}${p.agentLabel}`
+        : `${emoji} ${displayName} ${lv}${p.agentLabel}`;
+    } else if (tier === 2) {
+      // Tier 2: all name+level (sprites visible but levels aren't), ace gets PP
+      info = isAce
+        ? `${displayName} ${lv}${ppSuffix}${p.agentLabel}`
+        : `${displayName} ${lv}${p.agentLabel}`;
+    } else {
+      // Tier 1 (wide): full info per info_mode
+      switch (infoMode) {
+        case 'all_full':
+          info = `${displayName} Lv.${p.level} [${bar}] ${pct}%${ppSuffix}${p.agentLabel}`;
+          break;
+        case 'name_level':
+          info = `${displayName} Lv.${p.level}${ppSuffix}${p.agentLabel}`;
+          break;
+        case 'ace_level':
+          info = isAce
+            ? `${displayName} Lv.${p.level}${ppSuffix}${p.agentLabel}`
+            : `${displayName}${p.agentLabel}`;
+          break;
+        case 'ace_full':
+        default:
+          info = isAce
+            ? `${displayName} Lv.${p.level} [${bar}] ${pct}%${ppSuffix}${p.agentLabel}`
+            : `${displayName} Lv.${p.level}${p.agentLabel}`;
+          break;
+      }
     }
     infoParts.push(info);
   }
 
-  if (config.pp_enabled && stdinData) {
+  if (tier <= 1 && config.pp_enabled && stdinData) {
     const pp = ppBar(stdinData);
     if (pp) infoParts.push(pp);
   }
 
-  infoParts.push(footer);
-  wrapPrint(infoParts, termWidth);
+  const footerStr = buildFooter(tier);
+  if (footerStr) infoParts.push(footerStr);
+  wrapPrint(infoParts, printWidth);
 }
 
 try {
