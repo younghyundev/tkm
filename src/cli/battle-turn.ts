@@ -15,7 +15,8 @@ import { join, dirname } from 'path';
 import { createBattlePokemon, createBattleState, resolveTurn, getActivePokemon, hasAlivePokemon } from '../core/turn-battle.js';
 import { selectAiAction } from '../core/gym-ai.js';
 import { getGymById, awardGymVictory } from '../core/gym.js';
-import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
+import { getPokemonDB, getPokemonName, speciesIdToGeneration } from '../core/pokemon-data.js';
+import { getActiveGeneration } from '../core/paths.js';
 import { initLocale } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
 import { withLockRetry } from '../core/lock.js';
@@ -43,22 +44,10 @@ function hasFlag(name: string): boolean {
 
 // ── Pokemon Name Resolution (cross-gen) ──
 
-function speciesIdToGen(id: number): string {
-  if (id <= 151) return 'gen1';
-  if (id <= 251) return 'gen2';
-  if (id <= 386) return 'gen3';
-  if (id <= 493) return 'gen4';
-  if (id <= 649) return 'gen5';
-  if (id <= 721) return 'gen6';
-  if (id <= 809) return 'gen7';
-  if (id <= 905) return 'gen8';
-  return 'gen9';
-}
-
 function getDisplayName(speciesId: number, currentGen: string): string {
   let name = getPokemonName(speciesId, currentGen);
   if (name === String(speciesId)) {
-    name = getPokemonName(speciesId, speciesIdToGen(speciesId));
+    name = getPokemonName(speciesId, speciesIdToGeneration(speciesId));
   }
   return name;
 }
@@ -260,7 +249,7 @@ function detectLastHit(
 
 function handleInit(): void {
   const gymIdStr = getArg('gym');
-  const generation = getArg('gen') || 'gen4';
+  const generation = getArg('gen') || getActiveGeneration();
   const stateDir = getArg('state-dir') || STATE_DIR;
   const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || join(import.meta.dirname, '..', '..');
 

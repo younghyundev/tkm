@@ -5,7 +5,8 @@ import { SHOW_CURSOR } from './ansi.js';
 import { startGameLoop } from './game-loop.js';
 import { createBattlePokemon } from '../core/turn-battle.js';
 import { getGymById, awardGymVictory } from '../core/gym.js';
-import { getPokemonName, getPokemonDB } from '../core/pokemon-data.js';
+import { getPokemonName, getPokemonDB, speciesIdToGeneration } from '../core/pokemon-data.js';
+import { getActiveGeneration } from '../core/paths.js';
 import { initLocale } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
 import type { State, Config, MoveData, GymData } from '../core/types.js';
@@ -111,23 +112,11 @@ function getMovesForPokemon(speciesId: number, level: number, types: string[]): 
 
 // ── Pokemon Name Resolution (cross-gen) ──
 
-function speciesIdToGen(id: number): string {
-  if (id <= 151) return 'gen1';
-  if (id <= 251) return 'gen2';
-  if (id <= 386) return 'gen3';
-  if (id <= 493) return 'gen4';
-  if (id <= 649) return 'gen5';
-  if (id <= 721) return 'gen6';
-  if (id <= 809) return 'gen7';
-  if (id <= 905) return 'gen8';
-  return 'gen9';
-}
-
 function getDisplayName(speciesId: number, currentGen: string): string {
   // Try current gen first, then the species' native gen
   let name = getPokemonName(speciesId, currentGen);
   if (name === String(speciesId)) {
-    name = getPokemonName(speciesId, speciesIdToGen(speciesId));
+    name = getPokemonName(speciesId, speciesIdToGeneration(speciesId));
   }
   return name;
 }
@@ -140,7 +129,7 @@ function main(): void {
   initLocale(globalConfig.language);
 
   const gymIdStr = getArg('gym');
-  const generation = getArg('gen') || 'gen4';
+  const generation = getArg('gen') || getActiveGeneration();
   const stateDir = getArg('state-dir') || join(process.env.HOME || '', '.claude', 'tokenmon');
   const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || join(import.meta.dirname, '..', '..');
 

@@ -163,6 +163,18 @@ export function getPokedexRewardsDB(gen?: string): PokedexRewardsDB {
   return _pokedexRewardsDBCache[g];
 }
 
+// ── Species-to-generation lookup (data-driven) ──
+
+export function speciesIdToGeneration(speciesId: number): string {
+  const genDB = getGenerationsDB();
+  for (const [genId, genData] of Object.entries(genDB.generations)) {
+    const [start, end] = genData.pokemon_range;
+    if (speciesId >= start && speciesId <= end) return genId;
+  }
+  // Fallback to last known gen
+  return genDB.default_generation || 'gen9';
+}
+
 // ── i18n helpers ──
 
 interface GameI18nData {
