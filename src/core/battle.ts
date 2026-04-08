@@ -276,9 +276,22 @@ export function resolveBattle(
   // Mark pokemon as seen
   markSeen(state, wild.name);
 
+  // On defeat: lose pokeballs proportional to level gap (higher level = more loss)
+  let ballCost = 0;
+  if (!won) {
+    const levelGap = Math.max(0, wild.level - attackerLevel);
+    // 0-4 gap: 0 balls, 5-14: 1, 15-24: 2, 25+: 3
+    const lossCount = levelGap < 5 ? 0 : Math.min(3, Math.floor(levelGap / 10) + 1);
+    if (lossCount > 0) {
+      const available = getItemCount(state, 'pokeball');
+      const actualLoss = Math.min(lossCount, available);
+      for (let i = 0; i < actualLoss; i++) useItem(state, 'pokeball');
+      ballCost = actualLoss;
+    }
+  }
+
   // Catch on victory (requires pokeballs based on catch_rate)
   let caught = false;
-  let ballCost = 0;
   if (won) {
     const alreadyCaught = state.pokedex[wild.name]?.caught ?? false;
     const alreadyShinyCaught = state.pokedex[wild.name]?.shiny_caught ?? false;
@@ -353,6 +366,9 @@ export function formatBattleMessage(result: BattleResult): string {
   }
 
   let msg = t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
+  if (result.ballCost > 0) {
+    msg += ` (🔴-${result.ballCost})`;
+  }
   if (isShiny) {
     msg += t('battle.shiny_escaped', { pokemon: defenderName });
   }

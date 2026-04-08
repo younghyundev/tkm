@@ -330,7 +330,8 @@ function main(): void {
   }
 
   // === Sprite rendering (responsive 4-tier layout) ===
-  const tier = determineTier(termWidth, pokeData.length, spriteMode);
+  // Use printWidth for tier selection so sprites fit in the same budget as text
+  const tier = determineTier(printWidth, pokeData.length, spriteMode);
 
   if (tier <= 3) {
     const spriteEntries: string[][] = [];
@@ -344,7 +345,7 @@ function main(): void {
     }
 
     const isBlankLine = (line: string) => line.replace(/\x1b\[[^m]*m/g, '').replace(/[\s\u2800]/g, '').length === 0;
-    const rawSpritesPerRow = Math.max(1, Math.floor(termWidth / SPRITE_COL_WIDTH));
+    const rawSpritesPerRow = Math.max(1, Math.floor(printWidth / SPRITE_COL_WIDTH));
     // Tier 2: cap to balanced rows (e.g. 3 for 6 party → 2x3, not 5+1)
     const spritesPerRow = tier === 1 ? rawSpritesPerRow
       : tier === 2 ? Math.min(rawSpritesPerRow, Math.ceil(pokeData.length / 2))
