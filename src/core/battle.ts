@@ -18,6 +18,13 @@ export function getBallCost(catchRate: number): number {
   return Math.max(1, Math.ceil(Math.exp(4.5 * (1 - catchRate / 255))));
 }
 
+/** Calculate pokeball loss on battle defeat based on level gap. Max 5. */
+export function defeatBallLoss(wildLevel: number, attackerLevel: number): number {
+  const levelGap = Math.max(0, wildLevel - attackerLevel);
+  // 0-4: 0, 5: 1, 6-10: 2, 11-15: 3, 16-20: 4, 21+: 5
+  return levelGap < 5 ? 0 : Math.min(5, Math.ceil(levelGap / 5));
+}
+
 function sigmoid(x: number): number {
   return 1 / (1 + Math.exp(-x));
 }
@@ -276,12 +283,10 @@ export function resolveBattle(
   // Mark pokemon as seen
   markSeen(state, wild.name);
 
-  // On defeat: lose pokeballs proportional to level gap (higher level = more loss, max 5)
+  // On defeat: lose pokeballs proportional to level gap
   let ballCost = 0;
   if (!won) {
-    const levelGap = Math.max(0, wild.level - attackerLevel);
-    // 0-4: 0, 5-9: 1, 10-14: 2, 15-19: 3, 20-24: 4, 25+: 5
-    const lossCount = levelGap < 5 ? 0 : Math.min(5, Math.ceil(levelGap / 5));
+    const lossCount = defeatBallLoss(wild.level, attackerLevel);
     if (lossCount > 0) {
       const available = getItemCount(state, 'pokeball');
       const actualLoss = Math.min(lossCount, available);

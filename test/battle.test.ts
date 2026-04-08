@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeState as _makeState, makeConfig as _makeConfig } from './helpers.js';
-import { calculateWinRate, calculateBattleXp, selectBattlePokemon, calculatePartyMultiplier, resolveBattle, formatBattleMessage } from '../src/core/battle.js';
+import { calculateWinRate, calculateBattleXp, selectBattlePokemon, calculatePartyMultiplier, resolveBattle, formatBattleMessage, defeatBallLoss } from '../src/core/battle.js';
 import { getTypeEffectiveness, getRawTypeMultiplier, applyTypeDampening } from '../src/core/type-chart.js';
 import { initLocale } from '../src/i18n/index.js';
 
@@ -501,6 +501,39 @@ describe('battle', () => {
       const msg = formatBattleMessage(legacyResult);
       assert.equal(typeof msg, 'string');
       assert.ok(!msg.includes('✦'), `"✦" should not appear when shiny is undefined: ${msg}`);
+    });
+  });
+
+  describe('defeatBallLoss', () => {
+    it('0 loss when level gap <= 4', () => {
+      assert.equal(defeatBallLoss(20, 20), 0); // gap 0
+      assert.equal(defeatBallLoss(24, 20), 0); // gap 4
+      assert.equal(defeatBallLoss(10, 20), 0); // attacker higher
+    });
+
+    it('1 ball at gap 5', () => {
+      assert.equal(defeatBallLoss(25, 20), 1); // gap 5, ceil(5/5)=1
+    });
+
+    it('2 balls at gap 6-10', () => {
+      assert.equal(defeatBallLoss(29, 20), 2); // gap 9, ceil(9/5)=2
+      assert.equal(defeatBallLoss(30, 20), 2); // gap 10, ceil(10/5)=2
+    });
+
+    it('3 balls at gap 11-15', () => {
+      assert.equal(defeatBallLoss(34, 20), 3); // gap 14, ceil(14/5)=3
+      assert.equal(defeatBallLoss(35, 20), 3); // gap 15, ceil(15/5)=3
+    });
+
+    it('4 balls at gap 16-20', () => {
+      assert.equal(defeatBallLoss(39, 20), 4); // gap 19, ceil(19/5)=4
+      assert.equal(defeatBallLoss(40, 20), 4); // gap 20, ceil(20/5)=4
+    });
+
+    it('5 balls (max) at gap 21+', () => {
+      assert.equal(defeatBallLoss(44, 20), 5); // gap 24, ceil(24/5)=5
+      assert.equal(defeatBallLoss(45, 20), 5); // gap 25, capped
+      assert.equal(defeatBallLoss(100, 20), 5); // gap 80, capped
     });
   });
 });
