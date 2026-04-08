@@ -52,7 +52,7 @@ function parseJsonl(filePath: string): { tokens: number; lastCacheTokens: number
         total += (usage.output_tokens as number) || 0;
         // Explicitly NOT counting cache_creation_input_tokens or cache_read_input_tokens for XP
         const cacheRead = (usage.cache_read_input_tokens as number) || 0;
-        if (cacheRead > 0) lastCacheTokens = cacheRead;
+        if (cacheRead > 0) lastCacheTokens = Math.max(lastCacheTokens, cacheRead);
       }
     } catch {
       // Skip malformed lines

@@ -31,6 +31,11 @@ function loadSignatureMoves(): Record<string, SignatureMove> {
   }
 }
 
+// Lazy-loaded once at module level to avoid re-parsing 9k-line JSON on every status render
+const SIGNATURE_MOVES: Record<string, SignatureMove> = loadSignatureMoves();
+
+// claude-sonnet/opus 200k, haiku 200k — hardcoded to 200k as a safe default.
+// Actual remaining is approximate; PP serves as a relative pressure indicator, not exact count.
 const MAX_CONTEXT = 200000;
 
 function calcPp(maxPp: number, contextTokensUsed: number): number {
@@ -142,7 +147,6 @@ function main(): void {
   const state = readState();
   const session = readSession();
   const pokemonDB = getPokemonDB();
-  const signatureMoves = loadSignatureMoves();
   const contextTokensUsed = state.context_tokens_used ?? 0;
   const termWidth = process.stdout.columns || 80;
   const spriteMode = config.sprite_mode ?? 'all';
@@ -276,7 +280,7 @@ function main(): void {
 
     // PP = remaining context tokens expressed as move PP for ace pokemon
     const baseId = parseInt(toBaseId(p.speciesId), 10);
-    const sigMove = signatureMoves[baseId];
+    const sigMove = SIGNATURE_MOVES[baseId];
     const ppSuffix = (isAce && sigMove && sigMove.pp > 0)
       ? ` ${sigMove.move_ko} PP:${calcPp(sigMove.pp, contextTokensUsed)}/${sigMove.pp}`
       : '';

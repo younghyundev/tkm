@@ -2052,13 +2052,13 @@
     "damage_class": "physical"
   },
   "229": {
-    "move": "feint-attack",
-    "move_ko": "속여때리기",
-    "move_en": "Feint Attack",
-    "power": 60,
-    "pp": 20,
+    "move": "dark-pulse",
+    "move_ko": "악의파동",
+    "move_en": "Dark Pulse",
+    "power": 80,
+    "pp": 15,
     "type": "dark",
-    "damage_class": "physical"
+    "damage_class": "special"
   },
   "230": {
     "move": "wave-crash",
@@ -2484,12 +2484,12 @@
     "damage_class": "physical"
   },
   "277": {
-    "move": "quick-attack",
-    "move_ko": "전광석화",
-    "move_en": "Quick Attack",
-    "power": 40,
-    "pp": 30,
-    "type": "normal",
+    "move": "aerial-ace",
+    "move_ko": "제비반환",
+    "move_en": "Aerial Ace",
+    "power": 60,
+    "pp": 20,
+    "type": "flying",
     "damage_class": "physical"
   },
   "278": {
@@ -3438,31 +3438,31 @@
     "damage_class": "special"
   },
   "383": {
-    "move": "mud-shot",
-    "move_ko": "머드숏",
-    "move_en": "Mud Shot",
-    "power": 55,
-    "pp": 15,
+    "move": "precipice-blades",
+    "move_ko": "단애의칼",
+    "move_en": "Precipice Blades",
+    "power": 120,
+    "pp": 10,
     "type": "ground",
-    "damage_class": "special"
+    "damage_class": "physical"
   },
   "384": {
-    "move": "twister",
-    "move_ko": "회오리",
-    "move_en": "Twister",
-    "power": 40,
-    "pp": 20,
-    "type": "dragon",
-    "damage_class": "special"
+    "move": "dragon-ascent",
+    "move_ko": "화룡점정",
+    "move_en": "Dragon Ascent",
+    "power": 120,
+    "pp": 5,
+    "type": "flying",
+    "damage_class": "physical"
   },
   "385": {
-    "move": "meteor-mash",
-    "move_ko": "코멧펀치",
-    "move_en": "Meteor Mash",
-    "power": 90,
-    "pp": 10,
+    "move": "doom-desire",
+    "move_ko": "파멸의소원",
+    "move_en": "Doom Desire",
+    "power": 140,
+    "pp": 5,
     "type": "steel",
-    "damage_class": "physical"
+    "damage_class": "special"
   },
   "386": {
     "move": "zen-headbutt",
@@ -4383,13 +4383,13 @@
     "damage_class": "physical"
   },
   "488": {
-    "move": "confusion",
-    "move_ko": "염동력",
-    "move_en": "Confusion",
-    "power": 50,
-    "pp": 25,
+    "move": "lunar-dance",
+    "move_ko": "초승달춤",
+    "move_en": "Lunar Dance",
+    "power": null,
+    "pp": 10,
     "type": "psychic",
-    "damage_class": "special"
+    "damage_class": "status"
   },
   "489": {
     "move": "whirlpool",
@@ -5724,13 +5724,13 @@
     "damage_class": "special"
   },
   "637": {
-    "move": "leech-life",
-    "move_ko": "흡혈",
-    "move_en": "Leech Life",
+    "move": "fire-dance",
+    "move_ko": "불꽃춤",
+    "move_en": "Fiery Dance",
     "power": 80,
     "pp": 10,
-    "type": "bug",
-    "damage_class": "physical"
+    "type": "fire",
+    "damage_class": "special"
   },
   "638": {
     "move": "metal-claw",
@@ -6435,13 +6435,13 @@
     "damage_class": "special"
   },
   "716": {
-    "move": "moonblast",
-    "move_ko": "문포스",
-    "move_en": "Moonblast",
-    "power": 95,
-    "pp": 15,
+    "move": "geomancy",
+    "move_ko": "지오컨트롤",
+    "move_en": "Geomancy",
+    "power": null,
+    "pp": 10,
     "type": "fairy",
-    "damage_class": "special"
+    "damage_class": "status"
   },
   "717": {
     "move": "snarl",
@@ -6660,13 +6660,13 @@
     "damage_class": "physical"
   },
   "741": {
-    "move": "double-slap",
-    "move_ko": "연속뺨치기",
-    "move_en": "Double Slap",
-    "power": 15,
+    "move": "heat-wave",
+    "move_ko": "열풍",
+    "move_en": "Heat Wave",
+    "power": 95,
     "pp": 10,
-    "type": "normal",
-    "damage_class": "physical"
+    "type": "fire",
+    "damage_class": "special"
   },
   "742": {
     "move": "struggle-bug",
@@ -7983,21 +7983,21 @@
     "damage_class": "physical"
   },
   "888": {
-    "move": "moonblast",
-    "move_ko": "문포스",
-    "move_en": "Moonblast",
-    "power": 95,
-    "pp": 15,
-    "type": "fairy",
-    "damage_class": "special"
+    "move": "behemoth-blade",
+    "move_ko": "거수참",
+    "move_en": "Behemoth Blade",
+    "power": 100,
+    "pp": 5,
+    "type": "steel",
+    "damage_class": "physical"
   },
   "889": {
-    "move": "close-combat",
-    "move_ko": "인파이트",
-    "move_en": "Close Combat",
-    "power": 120,
+    "move": "behemoth-bash",
+    "move_ko": "거수탄",
+    "move_en": "Behemoth Bash",
+    "power": 100,
     "pp": 5,
-    "type": "fighting",
+    "type": "steel",
     "damage_class": "physical"
   },
   "890": {
@@ -8109,13 +8109,13 @@
     "damage_class": "physical"
   },
   "902": {
-    "move": "aqua-jet",
-    "move_ko": "아쿠아제트",
-    "move_en": "Aqua Jet",
-    "power": 40,
-    "pp": 20,
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
     "type": "water",
-    "damage_class": "physical"
+    "damage_class": "special"
   },
   "903": {
     "move": "close-combat",
