@@ -5,7 +5,7 @@ import { SHOW_CURSOR } from './ansi.js';
 import { startGameLoop } from './game-loop.js';
 import { createBattlePokemon } from '../core/turn-battle.js';
 import { getGymById, awardGymVictory } from '../core/gym.js';
-import { getPokemonName, getPokemonDB } from '../core/pokemon-data.js';
+import { getPokemonName, getPokemonDB, speciesIdToGeneration } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
@@ -102,7 +102,15 @@ function main(): void {
 
   // Build gym team
   const gymTeam = gym.team.map((gp) => {
-    const pData = db.pokemon[String(gp.species)];
+    let pData = db.pokemon[String(gp.species)];
+    if (!pData) {
+      // Cross-gen lookup: gym pokemon might be from a different generation
+      const nativeGen = speciesIdToGeneration(gp.species);
+      if (nativeGen !== generation) {
+        const nativeDb = getPokemonDB(nativeGen);
+        pData = nativeDb.pokemon[String(gp.species)];
+      }
+    }
     const types = pData?.types ?? ['normal'];
     const baseStats = pData?.base_stats ?? { hp: 50, attack: 50, defense: 50, speed: 50 };
     const displayName = getDisplayName(gp.species, generation);

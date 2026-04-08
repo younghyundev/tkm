@@ -8,6 +8,8 @@ import type { BattleState, GymData } from './types.js';
 // ── Constants ──
 
 export const STATE_DIR = join(process.env.HOME || '', '.claude', 'tokenmon');
+// Battle state is stored at a fixed location (not per-gen) because
+// only one battle can be active at a time across all generations.
 export const BATTLE_STATE_PATH = join(STATE_DIR, 'battle-state.json');
 
 // ── Types ──
@@ -43,8 +45,14 @@ export function writeBattleState(bsf: BattleStateFile): void {
   const dir = dirname(BATTLE_STATE_PATH);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   const tmpPath = BATTLE_STATE_PATH + '.tmp';
-  writeFileSync(tmpPath, JSON.stringify(bsf, null, 2), 'utf-8');
-  renameSync(tmpPath, BATTLE_STATE_PATH);
+  try {
+    writeFileSync(tmpPath, JSON.stringify(bsf, null, 2), 'utf-8');
+    renameSync(tmpPath, BATTLE_STATE_PATH);
+  } catch (err) {
+    // Clean up temp file on failure
+    try { unlinkSync(tmpPath); } catch {}
+    throw err;
+  }
 }
 
 export function deleteBattleState(): void {

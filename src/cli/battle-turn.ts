@@ -15,7 +15,7 @@ import { join } from 'path';
 import { createBattlePokemon, createBattleState, resolveTurn, getActivePokemon, hasAlivePokemon } from '../core/turn-battle.js';
 import { selectAiAction } from '../core/gym-ai.js';
 import { getGymById, awardGymVictory } from '../core/gym.js';
-import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
+import { getPokemonDB, getPokemonName, speciesIdToGeneration } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale, t } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
@@ -198,7 +198,15 @@ function handleInit(): void {
 
   // Build gym team
   const gymTeam = gym.team.map((gp) => {
-    const pData = db.pokemon[String(gp.species)];
+    let pData = db.pokemon[String(gp.species)];
+    if (!pData) {
+      // Cross-gen lookup: gym pokemon might be from a different generation
+      const nativeGen = speciesIdToGeneration(gp.species);
+      if (nativeGen !== generation) {
+        const nativeDb = getPokemonDB(nativeGen);
+        pData = nativeDb.pokemon[String(gp.species)];
+      }
+    }
     const types = pData?.types ?? ['normal'];
     const baseStats = pData?.base_stats ?? { hp: 50, attack: 50, defense: 50, speed: 50 };
     const displayName = getDisplayName(gp.species, generation);
@@ -237,7 +245,7 @@ function handleInit(): void {
     generation,
     stateDir,
     playerPartyNames,
-    sessionId: process.env.CLAUDE_SESSION_ID || process.pid.toString(),
+    sessionId: process.env.CLAUDE_SESSION_ID || undefined,
   };
   writeBattleState(bsf);
 
@@ -275,7 +283,10 @@ function handleAction(): void {
     process.exit(1);
   }
 
-  if (bsf.sessionId && bsf.sessionId !== (process.env.CLAUDE_SESSION_ID || process.pid.toString())) {
+  // Session ownership check: only enforce when CLAUDE_SESSION_ID env var exists.
+  // Each CLI invocation is a new process (different PID), so PID-based checks
+  // would always fail. Skip check entirely for single-user CLI usage.
+  if (bsf.sessionId && process.env.CLAUDE_SESSION_ID && bsf.sessionId !== process.env.CLAUDE_SESSION_ID) {
     output({ status: 'error', messages: [t('battle.other_session')] });
     process.exit(1);
   }
@@ -558,7 +569,7 @@ function handleEnd(): void {
 
 function setupSignalHandlers(): void {
   const cleanup = () => {
-    deleteBattleState();
+    // Don't delete battle state — let user resume or --end manually
     process.exit(1);
   };
   process.on('SIGINT', cleanup);
