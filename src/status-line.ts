@@ -284,10 +284,114 @@ function detectTermWidth(): number {
   return 0;
 }
 
+// === Battle Mode HP Bar ===
+function hpBar(current: number, max: number, width: number = 10): string {
+  const ratio = Math.max(0, current / max);
+  const filled = Math.round(ratio * width);
+  const empty = width - filled;
+  // Green > 50%, Yellow > 20%, Red <= 20%
+  const color = ratio > 0.5 ? '\x1b[32m' : ratio > 0.2 ? '\x1b[33m' : '\x1b[31m';
+  return `${color}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`;
+}
+
+// === Battle Mode Renderer ===
+function renderBattleMode(battleData: {
+  battleState: {
+    player: { pokemon: Array<{ id: number; name: string; displayName: string; types: string[]; level: number; maxHp: number; currentHp: number; fainted: boolean }>; activeIndex: number };
+    opponent: { pokemon: Array<{ id: number; name: string; displayName: string; types: string[]; level: number; maxHp: number; currentHp: number; fainted: boolean }>; activeIndex: number };
+    turn: number;
+    phase: string;
+    winner: string | null;
+  };
+  gym: { leader: string; leaderKo: string; type: string; badge: string; badgeKo: string };
+  generation: string;
+}): void {
+  const { battleState, gym } = battleData;
+  const oppMon = battleState.opponent.pokemon[battleState.opponent.activeIndex];
+  const playerMon = battleState.player.pokemon[battleState.player.activeIndex];
+
+  if (!oppMon || !playerMon) return;
+
+  const termWidth = process.stdout.columns
+    || parseInt(process.env.COLUMNS || '', 10)
+    || detectTermWidth()
+    || 80;
+  const printWidth = Math.max(10, termWidth - 10);
+
+  // Load sprites for both pokemon
+  const oppSprite = loadSprite(oppMon.id);
+  const playerSprite = loadSprite(playerMon.id);
+
+  // Render sprites side by side
+  const maxRows = Math.max(oppSprite.length, playerSprite.length);
+  const isBlankLine = (line: string) => line.replace(/\x1b\[[^m]*m/g, '').replace(/[\s\u2800]/g, '').length === 0;
+
+  // Find first/last non-blank rows across both sprites
+  let firstRow = maxRows;
+  let lastRow = 0;
+  for (const sprite of [oppSprite, playerSprite]) {
+    for (let r = 0; r < sprite.length; r++) {
+      if (!isBlankLine(sprite[r])) {
+        firstRow = Math.min(firstRow, r);
+        lastRow = Math.max(lastRow, r);
+      }
+    }
+  }
+
+  // Gap between sprites (braille blanks)
+  const gap = '\u2800'.repeat(Math.max(2, Math.floor((printWidth - SPRITE_WIDTH * 2) / 2)));
+
+  for (let row = firstRow; row <= lastRow; row++) {
+    const oppLine = oppSprite[row] ?? '';
+    const playerLine = playerSprite[row] ?? '';
+    // Pad opponent sprite to SPRITE_WIDTH
+    const oppVisible = oppLine.replace(/\x1b\[[^m]*m/g, '').length;
+    const oppPadded = oppVisible < SPRITE_WIDTH ? oppLine + '\u2800'.repeat(SPRITE_WIDTH - oppVisible) : oppLine;
+    // Pad player sprite to SPRITE_WIDTH
+    const playerVisible = playerLine.replace(/\x1b\[[^m]*m/g, '').length;
+    const playerPadded = playerVisible < SPRITE_WIDTH ? playerLine + '\u2800'.repeat(SPRITE_WIDTH - playerVisible) : playerLine;
+    console.log(oppPadded + gap + playerPadded);
+  }
+
+  // Info lines below sprites
+  const oppInfo = `${oppMon.displayName} Lv.${oppMon.level}`;
+  const playerInfo = `${playerMon.displayName} Lv.${playerMon.level}`;
+  const oppHp = `HP ${hpBar(oppMon.currentHp, oppMon.maxHp)} ${oppMon.currentHp}/${oppMon.maxHp}`;
+  const playerHp = `HP ${hpBar(playerMon.currentHp, playerMon.maxHp)} ${playerMon.currentHp}/${playerMon.maxHp}`;
+
+  // Pad info lines to align with sprites
+  const padTo = (s: string, targetWidth: number): string => {
+    const vLen = visibleLength(s);
+    return vLen < targetWidth ? s + ' '.repeat(targetWidth - vLen) : s;
+  };
+
+  const colWidth = SPRITE_WIDTH;
+  const gapStr = ' '.repeat(Math.max(2, Math.floor((printWidth - colWidth * 2) / 2)));
+
+  console.log(padTo(oppInfo, colWidth) + gapStr + playerInfo);
+  console.log(padTo(oppHp, colWidth) + gapStr + playerHp);
+
+  // Gym info bottom line
+  const gymLine = `\u2800\u2800\u2800\u2800\u2800\u2800\u2800\u2800⚔️ ${gym.leaderKo}의 체육관 — ${gym.type}`;
+  console.log(charWrap(gymLine, printWidth));
+}
+
 function main(): void {
   const config = readConfig();
   initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
   const stdinData = readStdin();
+
+  // === Battle Mode Check ===
+  const battleStatePath = join(process.env.HOME || '', '.claude', 'tokenmon', 'battle-state.json');
+  if (existsSync(battleStatePath)) {
+    try {
+      const battleData = JSON.parse(readFileSync(battleStatePath, 'utf-8'));
+      renderBattleMode(battleData);
+      process.exit(0); // Don't render normal status line
+    } catch {
+      // Invalid battle state, fall through to normal rendering
+    }
+  }
 
   if (!config.starter_chosen) {
     console.log(t('statusline.no_starter'));
