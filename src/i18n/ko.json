@@ -514,5 +514,8 @@
   "exp_group.fast": "빠름",
   "exp_group.slow": "느림",
   "exp_group.erratic": "불규칙",
-  "exp_group.fluctuating": "변동"
+  "exp_group.fluctuating": "변동",
+
+  "weather.location_set": "날씨 위치가 {location}(으)로 설정되었습니다. 매 세션마다 업데이트됩니다.",
+  "weather.fetch_failed": "날씨 데이터를 가져올 수 없습니다. 다음 세션에 재시도합니다."
 }

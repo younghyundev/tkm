@@ -360,10 +360,19 @@ export interface HookOutput {
 
 export type VoiceTone = 'claude' | 'pokemon';
 
+export interface WeatherEvent {
+  condition: string;
+  type_boost: Record<string, number>;
+  label: { en: string; ko: string };
+  emoji: string;
+}
+
 export interface GlobalConfig {
   active_generation: string;
   language: 'ko' | 'en';
   voice_tone: VoiceTone;
+  weather_enabled: boolean;
+  weather_location: string;
 }
 
 export interface GenerationData {

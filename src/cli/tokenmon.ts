@@ -21,6 +21,7 @@ import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCac
 import { execSync } from 'node:child_process';
 import { detectRenderer } from '../core/detect-renderer.js';
 import { isShinyKey, toBaseId } from '../core/shiny-utils.js';
+import { readWeatherCache, WEATHER_LABELS, refreshWeatherIfStale, type WeatherCondition } from '../core/weather.js';
 import type { ExpGroup, EvolutionContext } from '../core/types.js';
 
 // ANSI color helpers
@@ -120,6 +121,21 @@ function cmdStatus(): void {
 
   // Region
   console.log(t('cli.status.stat_region', { region: getRegionName(config.current_region ?? '1') }));
+
+  // Weather
+  const gc = readGlobalConfig();
+  if (gc.weather_enabled) {
+    try {
+      const cache = readWeatherCache();
+      if (cache && Date.now() - cache.fetched_at < 60 * 60 * 1000) {
+        const labels = WEATHER_LABELS[cache.condition as WeatherCondition];
+        if (labels) {
+          const locale = config.language ?? 'en';
+          console.log(`  ${labels.emoji} ${labels[locale] ?? labels.en}`);
+        }
+      }
+    } catch { /* ignore */ }
+  }
 
   // Shiny stats
   if (state.shiny_catch_count > 0) {
@@ -359,8 +375,33 @@ function cmdConfigSet(key: string, value: string): void {
     console.log(t('cli.config.key_pp_enabled'));
     console.log(t('cli.config.help_renderer'));
     console.log(t('cli.config.key_voice_tone'));
+    console.log('  weather_location     string   City for weather data (e.g. Seoul)');
+    console.log('  weather_enabled      boolean  Enable weather-based type boosts');
 
     process.exit(1);
+  }
+
+  // weather_location is stored in GlobalConfig
+  if (key === 'weather_location') {
+    const gc = readGlobalConfig();
+    gc.weather_location = value;
+    writeGlobalConfig(gc);
+    success(t('weather.location_set', { location: value }));
+    refreshWeatherIfStale(value).catch(() => {});
+    return;
+  }
+
+  // weather_enabled is stored in GlobalConfig
+  if (key === 'weather_enabled') {
+    if (value !== 'true' && value !== 'false') {
+      error(t('cli.config.bool_error'));
+      process.exit(1);
+    }
+    const gc = readGlobalConfig();
+    gc.weather_enabled = value === 'true';
+    writeGlobalConfig(gc);
+    success(t('cli.config.set_success', { key, value }));
+    return;
   }
 
   // voice_tone is stored in GlobalConfig, not per-gen Config
@@ -1047,6 +1088,7 @@ function cmdDashboard(): void {
     ...events.timeEvents.map(e => e.label[locale] ?? e.label.en),
     ...events.dayEvents.map(e => e.label[locale] ?? e.label.en),
     ...events.streakEvents.map(e => e.label[locale] ?? e.label.en),
+    ...events.weatherEvents.map(e => `${e.emoji} ${e.label[locale] ?? e.label.en}`),
   ];
   if (allEvents.length === 0) {
     row(t('cli.dashboard.events_none'));

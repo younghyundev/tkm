@@ -514,5 +514,8 @@
   "exp_group.fast": "Fast",
   "exp_group.slow": "Slow",
   "exp_group.erratic": "Erratic",
-  "exp_group.fluctuating": "Fluctuating"
+  "exp_group.fluctuating": "Fluctuating",
+
+  "weather.location_set": "Weather location set to {location}. Weather will update each session.",
+  "weather.fetch_failed": "Could not fetch weather data. Will retry next session."
 }

@@ -7,6 +7,8 @@ const DEFAULT_GLOBAL_CONFIG: GlobalConfig = {
   active_generation: 'gen4',
   language: 'en',
   voice_tone: 'claude',
+  weather_enabled: false,
+  weather_location: '',
 };
 
 const DEFAULT_CONFIG: Config = {
