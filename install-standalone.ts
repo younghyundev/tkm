@@ -175,6 +175,7 @@ for (const [event, command] of Object.entries(hookMap)) {
   // Add new tokenmon hook
   if (!settings.hooks[event]) settings.hooks[event] = [];
   settings.hooks[event].push({
+    matcher: '',
     hooks: [{ type: 'command', command }],
   });
 }
