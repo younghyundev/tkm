@@ -9,6 +9,7 @@
  *   moves.ts <name> swap <slot> <moveId> — swap a move slot
  */
 import { readState, writeState } from '../core/state.js';
+import { withLockRetry } from '../core/lock.js';
 import { readConfig } from '../core/config.js';
 import { getMoveData, getPokemonMovePool, assignDefaultMoves } from '../core/moves.js';
 import { getPokemonName, getPokemonDB, resolveNameToId, getDisplayName } from '../core/pokemon-data.js';
@@ -172,9 +173,24 @@ function swapMove(pokemonId: string, slot: number, moveId: number): void {
   const newMove = getMoveData(moveId);
   const displayName = getDisplayName(pokemonId, pState.nickname);
 
-  moves[slot - 1] = moveId;
-  pState.moves = moves;
-  writeState(state, gen);
+  // Lock-protected state mutation to avoid lost updates from concurrent hooks
+  const lockResult = withLockRetry(() => {
+    const freshState = readState(gen);
+    const freshPState = freshState.pokemon[pokemonId];
+    if (!freshPState) return;
+    const freshMoves = freshPState.moves ?? assignDefaultMoves(freshPState.id, freshPState.level);
+    while (freshMoves.length < slot) {
+      freshMoves.push(0);
+    }
+    freshMoves[slot - 1] = moveId;
+    freshPState.moves = freshMoves;
+    writeState(freshState, gen);
+  });
+
+  if (!lockResult.acquired) {
+    console.error(`  ${RED}상태 잠금을 획득하지 못했습니다. 다시 시도해 주세요.${RESET}`);
+    process.exit(1);
+  }
 
   const oldName = oldMove ? (oldMove.nameKo || oldMove.name) : '(없음)';
   const newName = newMove ? (newMove.nameKo || newMove.name) : `ID:${moveId}`;

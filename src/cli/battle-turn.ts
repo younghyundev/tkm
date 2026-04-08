@@ -18,6 +18,8 @@ import { getGymById, awardGymVictory } from '../core/gym.js';
 import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
 import { initLocale } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
+import { withLockRetry } from '../core/lock.js';
+import { readState, writeState } from '../core/state.js';
 import type { State, Config, MoveData, GymData, BattleState, BattlePokemon, TurnAction } from '../core/types.js';
 
 // ── Constants ──
@@ -630,17 +632,24 @@ function handleFaintedSwitch(battleState: BattleState, messages: string[]): void
 // ── Victory ──
 
 function handleVictory(bsf: BattleStateFile, messages: string[]): void {
-  const { battleState, gym, generation, stateDir, playerPartyNames } = bsf;
-
-  // Load & update state
-  const genDir = join(stateDir, generation);
-  const statePath = join(genDir, 'state.json');
-  const state: State = JSON.parse(readFileSync(statePath, 'utf-8'));
+  const { battleState, gym, generation, playerPartyNames } = bsf;
 
   messages.push(`${gym.leaderKo}에게 승리했다!`);
 
-  const victoryResult = awardGymVictory(state, gym, playerPartyNames);
-  writeFileSync(statePath, JSON.stringify(state, null, 2), 'utf-8');
+  // Re-read state inside lock to avoid overwriting hook changes
+  const lockResult = withLockRetry(() => {
+    const freshState = readState(generation);
+    const result = awardGymVictory(freshState, gym, playerPartyNames);
+    writeState(freshState, generation);
+    return result;
+  });
+
+  if (!lockResult.acquired) {
+    output({ status: 'error', messages: ['Failed to acquire state lock for victory update.'] });
+    process.exit(1);
+  }
+
+  const victoryResult = lockResult.value;
 
   // Clean up battle state
   deleteBattleState();
