@@ -90,6 +90,7 @@ export function makeConfig(overrides: Partial<Config> = {}): Config {
     info_mode: 'ace_full',
     tips_enabled: true,
     notifications_enabled: true,
+    pp_enabled: true,
     language: 'ko' as const,
     renderer: 'braille' as const,
     ...overrides,

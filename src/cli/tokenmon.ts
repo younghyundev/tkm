@@ -356,6 +356,7 @@ function cmdConfigSet(key: string, value: string): void {
     console.log('  relay_sound_root     string   Symlink name in PEON_DIR for tokenmon sounds');
     console.log(t('cli.config.key_tips_enabled'));
     console.log(t('cli.config.key_notifications'));
+    console.log(t('cli.config.key_pp_enabled'));
     console.log(t('cli.config.help_renderer'));
     console.log(t('cli.config.key_voice_tone'));
 
@@ -380,7 +381,7 @@ function cmdConfigSet(key: string, value: string): void {
   const config = readConfig();
   const numericKeys = ['tokens_per_xp', 'max_party_size', 'peon_ping_port'];
   const floatKeys = ['volume', 'xp_bonus_multiplier'];
-  const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration', 'relay_audio', 'tips_enabled', 'notifications_enabled'];
+  const boolKeys = ['sprite_enabled', 'cry_enabled', 'peon_ping_integration', 'relay_audio', 'tips_enabled', 'notifications_enabled', 'pp_enabled'];
   const stringEnumKeys: Record<string, string[]> = {
     sprite_mode: ['all', 'ace_only', 'emoji_all', 'emoji_ace'],
     info_mode:   ['ace_full', 'name_level', 'all_full', 'ace_level'],
