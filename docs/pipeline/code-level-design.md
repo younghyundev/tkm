@@ -50,23 +50,22 @@ function readStdin(): StdinData | null
 ```typescript
 export function ppBar(
   stdinData: StdinData,
-  lang: 'ko' | 'en',
   blocks?: number  // default: 6
 ): string | null
 ```
 - rate_limits.five_hour 없으면 null
 - remaining = 100 - used_percentage, clamp [0, 100]
 - filled/empty 블록 (xpBar 패턴)
-- label = t('statusline.pp_label')
-- resets_at → (~Xh) 계산, 0 이하면 생략
-- 반환: `${label} [${bar}] ${remaining}%${timeStr}`
+- label = t('statusline.pp_label') — locale은 initLocale()로 설정된 global state 사용
+- resets_at → (~Xh) 또는 (~Xm) 계산, 0 이하면 생략
+- 반환: `${label}[${bar}] ${remaining}%${timeStr}`
 
 ### main() 변경
 1. 시작 직후 `const stdinData = readStdin()`
 2. `infoParts.push(footer)` 직전에 PP 삽입:
 ```typescript
 if (config.pp_enabled && stdinData) {
-  const pp = ppBar(stdinData, lang);
+  const pp = ppBar(stdinData);
   if (pp) infoParts.push(pp);
 }
 ```

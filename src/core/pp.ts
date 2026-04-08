@@ -1,4 +1,5 @@
 import type { StdinData } from './types.js';
+import { t } from '../i18n/index.js';
 
 export function ppBar(stdinData: StdinData, blocks: number = 6): string | null {
   const fiveHour = stdinData.rate_limits?.five_hour;
@@ -24,5 +25,6 @@ export function ppBar(stdinData: StdinData, blocks: number = 6): string | null {
     }
   }
 
-  return `🔋[${bar}] ${remaining}%${timeStr}`;
+  const label = t('statusline.pp_label');
+  return `${label}[${bar}] ${remaining}%${timeStr}`;
 }
