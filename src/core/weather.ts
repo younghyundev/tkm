@@ -88,6 +88,8 @@ export function fetchWeather(location: string): Promise<WeatherCache | null> {
   return new Promise((resolve) => {
     const url = `https://wttr.in/${encodeURIComponent(location)}?format=j1`;
     const req = https.get(url, { headers: { 'User-Agent': 'tokenmon' } }, (res) => {
+      if (res.statusCode !== 200) { res.resume(); resolve(null); return; }
+      res.setEncoding('utf-8');
       let data = '';
       res.on('data', (chunk: string) => { data += chunk; });
       res.on('end', () => {

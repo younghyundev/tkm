@@ -101,14 +101,15 @@ function wrapPrint(parts: string[], maxWidth: number): void {
 
 // ── Weather particle effects ──
 
+// All particle chars must be braille (U+2800–28FF, width 2) to preserve SPRITE_WIDTH alignment
 const WEATHER_PARTICLES: Record<WeatherCondition, { chars: string[]; color: string; density: number }> = {
-  rain:         { chars: ['/', '/', '╱', '│'],        color: '\x1b[34m',  density: 0.12 },
-  thunderstorm: { chars: ['/', '╱', '⚡', '│'],       color: '\x1b[33m',  density: 0.15 },
-  snow:         { chars: ['*', '·', '◦', '∘'],        color: '\x1b[97m',  density: 0.10 },
-  fog:          { chars: ['░', '░', '·', '·'],         color: '\x1b[90m',  density: 0.20 },
-  sandstorm:    { chars: ['·', '∙', '.', '⠁'],        color: '\x1b[33m',  density: 0.14 },
-  clear:        { chars: ['·', '✦', '˙'],              color: '\x1b[93m',  density: 0.05 },
-  cloudy:       { chars: ['~', '·', '○'],              color: '\x1b[90m',  density: 0.06 },
+  rain:         { chars: ['⠡', '⠑', '⠊', '⠉'],        color: '\x1b[34m',  density: 0.12 },
+  thunderstorm: { chars: ['⠡', '⠑', '⠋', '⠛'],        color: '\x1b[33m',  density: 0.15 },
+  snow:         { chars: ['⠁', '⠈', '⠐', '⠂'],        color: '\x1b[97m',  density: 0.10 },
+  fog:          { chars: ['⠤', '⠤', '⠒', '⠒'],         color: '\x1b[90m',  density: 0.20 },
+  sandstorm:    { chars: ['⠁', '⠂', '⠄', '⠐'],        color: '\x1b[33m',  density: 0.14 },
+  clear:        { chars: ['⠁', '⠈', '⠐'],              color: '\x1b[93m',  density: 0.05 },
+  cloudy:       { chars: ['⠒', '⠤', '⠶'],              color: '\x1b[90m',  density: 0.06 },
 };
 
 function scatterWeatherParticles(line: string, condition: WeatherCondition): string {
