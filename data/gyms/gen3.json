@@ -3,7 +3,7 @@
     {
       "id": 1,
       "leader": "Roxanne",
-      "leaderKo": "쓰쓰지",
+      "leaderKo": "원규",
       "type": "rock",
       "badge": "stone",
       "badgeKo": "스톤배지",
@@ -16,7 +16,7 @@
     {
       "id": 2,
       "leader": "Brawly",
-      "leaderKo": "토우키",
+      "leaderKo": "철구",
       "type": "fighting",
       "badge": "knuckle",
       "badgeKo": "너클배지",
@@ -29,7 +29,7 @@
     {
       "id": 3,
       "leader": "Wattson",
-      "leaderKo": "테센",
+      "leaderKo": "암페어",
       "type": "electric",
       "badge": "dynamo",
       "badgeKo": "다이나모배지",
@@ -42,7 +42,7 @@
     {
       "id": 4,
       "leader": "Flannery",
-      "leaderKo": "아스나",
+      "leaderKo": "민지",
       "type": "fire",
       "badge": "heat",
       "badgeKo": "히트배지",
@@ -55,7 +55,7 @@
     {
       "id": 5,
       "leader": "Norman",
-      "leaderKo": "센리",
+      "leaderKo": "종길",
       "type": "normal",
       "badge": "balance",
       "badgeKo": "밸런스배지",
@@ -68,7 +68,7 @@
     {
       "id": 6,
       "leader": "Winona",
-      "leaderKo": "나기",
+      "leaderKo": "은송",
       "type": "flying",
       "badge": "feather",
       "badgeKo": "페더배지",
@@ -95,7 +95,7 @@
     {
       "id": 8,
       "leader": "Wallace",
-      "leaderKo": "미쿠리",
+      "leaderKo": "윤진",
       "type": "water",
       "badge": "rain",
       "badgeKo": "레인배지",

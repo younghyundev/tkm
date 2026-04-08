@@ -3,7 +3,7 @@
     {
       "id": 1,
       "leader": "Roark",
-      "leaderKo": "효우타",
+      "leaderKo": "강석",
       "type": "rock",
       "badge": "coal",
       "badgeKo": "콜배지",
@@ -17,7 +17,7 @@
     {
       "id": 2,
       "leader": "Gardenia",
-      "leaderKo": "나타네",
+      "leaderKo": "유채",
       "type": "grass",
       "badge": "forest",
       "badgeKo": "포레스트배지",
@@ -30,7 +30,7 @@
     {
       "id": 3,
       "leader": "Maylene",
-      "leaderKo": "스모모",
+      "leaderKo": "자두",
       "type": "fighting",
       "badge": "cobble",
       "badgeKo": "코블배지",
@@ -44,7 +44,7 @@
     {
       "id": 4,
       "leader": "Crasher Wake",
-      "leaderKo": "막시멈가면",
+      "leaderKo": "맥실러",
       "type": "water",
       "badge": "fen",
       "badgeKo": "펜배지",
@@ -72,7 +72,7 @@
     {
       "id": 6,
       "leader": "Byron",
-      "leaderKo": "토우간",
+      "leaderKo": "동관",
       "type": "steel",
       "badge": "mine",
       "badgeKo": "마인배지",
@@ -86,7 +86,7 @@
     {
       "id": 7,
       "leader": "Candice",
-      "leaderKo": "스즈나",
+      "leaderKo": "무청",
       "type": "ice",
       "badge": "icicle",
       "badgeKo": "아이시클배지",

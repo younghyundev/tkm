@@ -3,7 +3,7 @@
     {
       "id": 1,
       "leader": "Katy",
-      "leaderKo": "카에데",
+      "leaderKo": "단풍",
       "type": "bug",
       "badge": "bug",
       "badgeKo": "버그배지",
@@ -31,7 +31,7 @@
     {
       "id": 3,
       "leader": "Iono",
-      "leaderKo": "나모",
+      "leaderKo": "모야모",
       "type": "electric",
       "badge": "electric",
       "badgeKo": "일렉트릭배지",
@@ -45,7 +45,7 @@
     {
       "id": 4,
       "leader": "Kofu",
-      "leaderKo": "하이다이",
+      "leaderKo": "곤포",
       "type": "water",
       "badge": "water",
       "badgeKo": "워터배지",
@@ -59,7 +59,7 @@
     {
       "id": 5,
       "leader": "Larry",
-      "leaderKo": "아오키",
+      "leaderKo": "청목",
       "type": "normal",
       "badge": "normal",
       "badgeKo": "노말배지",
@@ -73,7 +73,7 @@
     {
       "id": 6,
       "leader": "Ryme",
-      "leaderKo": "라이무",
+      "leaderKo": "라임",
       "type": "ghost",
       "badge": "ghost",
       "badgeKo": "고스트배지",
@@ -87,7 +87,7 @@
     {
       "id": 7,
       "leader": "Tulip",
-      "leaderKo": "리프",
+      "leaderKo": "리파",
       "type": "psychic",
       "badge": "psychic",
       "badgeKo": "사이킥배지",

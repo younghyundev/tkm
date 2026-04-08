@@ -16,7 +16,7 @@
     {
       "id": 2,
       "leader": "Lana",
-      "leaderKo": "스이렌",
+      "leaderKo": "수련",
       "type": "water",
       "badge": "waterium",
       "badgeKo": "물Z배지",
@@ -29,7 +29,7 @@
     {
       "id": 3,
       "leader": "Kiawe",
-      "leaderKo": "카키",
+      "leaderKo": "키아웨",
       "type": "fire",
       "badge": "firium",
       "badgeKo": "불꽃Z배지",
@@ -81,7 +81,7 @@
     {
       "id": 7,
       "leader": "Mina",
-      "leaderKo": "미나",
+      "leaderKo": "말리화",
       "type": "fairy",
       "badge": "fairium",
       "badgeKo": "페어리Z배지",

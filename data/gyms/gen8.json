@@ -3,7 +3,7 @@
     {
       "id": 1,
       "leader": "Milo",
-      "leaderKo": "야로우",
+      "leaderKo": "아킬",
       "type": "grass",
       "badge": "grass",
       "badgeKo": "그래스배지",
@@ -16,7 +16,7 @@
     {
       "id": 2,
       "leader": "Nessa",
-      "leaderKo": "루리나",
+      "leaderKo": "야청",
       "type": "water",
       "badge": "water",
       "badgeKo": "워터배지",
@@ -29,7 +29,7 @@
     {
       "id": 3,
       "leader": "Kabu",
-      "leaderKo": "카부",
+      "leaderKo": "순무",
       "type": "fire",
       "badge": "fire",
       "badgeKo": "파이어배지",
@@ -43,7 +43,7 @@
     {
       "id": 4,
       "leader": "Bea",
-      "leaderKo": "사이토우",
+      "leaderKo": "채두",
       "type": "fighting",
       "badge": "fighting",
       "badgeKo": "파이팅배지",
@@ -57,7 +57,7 @@
     {
       "id": 5,
       "leader": "Opal",
-      "leaderKo": "포프라",
+      "leaderKo": "포플러",
       "type": "fairy",
       "badge": "fairy",
       "badgeKo": "페어리배지",
@@ -85,7 +85,7 @@
     {
       "id": 7,
       "leader": "Piers",
-      "leaderKo": "네즈",
+      "leaderKo": "두송",
       "type": "dark",
       "badge": "dark",
       "badgeKo": "다크배지",
@@ -99,7 +99,7 @@
     {
       "id": 8,
       "leader": "Raihan",
-      "leaderKo": "키바나",
+      "leaderKo": "금랑",
       "type": "dragon",
       "badge": "dragon",
       "badgeKo": "드래곤배지",

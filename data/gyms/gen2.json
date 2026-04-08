@@ -3,10 +3,10 @@
     {
       "id": 1,
       "leader": "Falkner",
-      "leaderKo": "하야토",
+      "leaderKo": "비상",
       "type": "flying",
       "badge": "zephyr",
-      "badgeKo": "제피르배지",
+      "badgeKo": "윙배지",
       "region": "gen2",
       "team": [
         { "species": 16, "level": 13, "moves": [33, 16, 98, 189] },
@@ -16,7 +16,7 @@
     {
       "id": 2,
       "leader": "Bugsy",
-      "leaderKo": "츠쿠시",
+      "leaderKo": "호일",
       "type": "bug",
       "badge": "hive",
       "badgeKo": "인섹트배지",
@@ -29,7 +29,7 @@
     {
       "id": 3,
       "leader": "Whitney",
-      "leaderKo": "아카네",
+      "leaderKo": "꼭두",
       "type": "normal",
       "badge": "plain",
       "badgeKo": "레귤러배지",
@@ -42,7 +42,7 @@
     {
       "id": 4,
       "leader": "Morty",
-      "leaderKo": "마츠바",
+      "leaderKo": "유빈",
       "type": "ghost",
       "badge": "fog",
       "badgeKo": "팬텀배지",
@@ -56,7 +56,7 @@
     {
       "id": 5,
       "leader": "Chuck",
-      "leaderKo": "시지마",
+      "leaderKo": "사도",
       "type": "fighting",
       "badge": "storm",
       "badgeKo": "쇼크배지",
@@ -69,7 +69,7 @@
     {
       "id": 6,
       "leader": "Jasmine",
-      "leaderKo": "미강",
+      "leaderKo": "규리",
       "type": "steel",
       "badge": "mineral",
       "badgeKo": "스틸배지",
@@ -82,7 +82,7 @@
     {
       "id": 7,
       "leader": "Pryce",
-      "leaderKo": "야나기",
+      "leaderKo": "류옹",
       "type": "ice",
       "badge": "glacier",
       "badgeKo": "아이스배지",
@@ -96,7 +96,7 @@
     {
       "id": 8,
       "leader": "Clair",
-      "leaderKo": "이부키",
+      "leaderKo": "이향",
       "type": "dragon",
       "badge": "rising",
       "badgeKo": "라이징배지",
