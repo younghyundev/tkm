@@ -1,4 +1,5 @@
 import { existsSync, readFileSync, readlinkSync } from 'fs';
+import { execSync } from 'child_process';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
 import { readConfig, readGlobalConfig } from './core/config.js';
@@ -203,41 +204,83 @@ function scatterWeatherParticles(line: string, condition: WeatherCondition): str
 }
 
 function detectTermWidth(): number {
-  // Read per-session term-width file written by status-wrapper.mjs
+  // 1. Read per-session term-width file written by status-wrapper.mjs (if present)
   try {
     const dataDir = process.env.CLAUDE_PLUGIN_DATA ?? '';
-    if (!dataDir) return 0;
-    const pane = (process.env.TMUX_PANE ?? '').replace('%', '');
-    // Try pane-specific file first (tmux), then TTY-based (non-tmux), then fallback
-    const suffixes = [pane, ''].filter(Boolean);
-    if (!pane) {
-      // Find TTY from ancestor to match wrapper's file naming
-      try {
-        let pid = process.ppid;
-        for (let i = 0; i < 5 && pid > 1; i++) {
-          try {
-            const target = readlinkSync(`/proc/${pid}/fd/0`);
-            if (target.startsWith('/dev/')) {
-              suffixes.unshift(target.replace(/\//g, '-').replace(/^-/, ''));
-              break;
-            }
-          } catch { /* skip */ }
-          try {
-            const stat = readFileSync(`/proc/${pid}/stat`, 'utf8');
-            pid = parseInt(stat.split(') ')[1]?.split(' ')[1] ?? '0', 10);
-          } catch { break; }
+    if (dataDir) {
+      const pane = (process.env.TMUX_PANE ?? '').replace('%', '');
+      const suffixes = [pane, ''].filter(Boolean);
+      if (!pane) {
+        try {
+          let pid = process.ppid;
+          for (let i = 0; i < 5 && pid > 1; i++) {
+            try {
+              const target = readlinkSync(`/proc/${pid}/fd/0`);
+              if (target.startsWith('/dev/')) {
+                suffixes.unshift(target.replace(/\//g, '-').replace(/^-/, ''));
+                break;
+              }
+            } catch { /* skip */ }
+            try {
+              const stat = readFileSync(`/proc/${pid}/stat`, 'utf8');
+              pid = parseInt(stat.split(') ')[1]?.split(' ')[1] ?? '0', 10);
+            } catch { break; }
+          }
+        } catch { /* ignore */ }
+        suffixes.push('fallback');
+      }
+      for (const s of suffixes) {
+        const widthFile = join(dataDir, `term-width-${s}`);
+        if (existsSync(widthFile)) {
+          const cols = parseInt(readFileSync(widthFile, 'utf8').trim(), 10);
+          if (cols > 0) return cols;
         }
-      } catch { /* ignore */ }
-      suffixes.push('fallback');
-    }
-    for (const s of suffixes) {
-      const widthFile = join(dataDir, `term-width-${s}`);
-      if (existsSync(widthFile)) {
-        const cols = parseInt(readFileSync(widthFile, 'utf8').trim(), 10);
-        if (cols > 0) return cols;
       }
     }
   } catch { /* ignore */ }
+
+  // 2. Active detection: tmux pane width query
+  const tmuxPane = process.env.TMUX_PANE;
+  if (tmuxPane) {
+    try {
+      const cols = execSync(`tmux display-message -t ${tmuxPane} -p '#{pane_width}'`, {
+        encoding: 'utf8', timeout: 300, stdio: ['pipe', 'pipe', 'pipe']
+      }).trim();
+      const n = parseInt(cols, 10);
+      if (n > 0) return n;
+    } catch { /* tmux not available */ }
+  }
+
+  // 3. Active detection: /dev/tty (works even when stdout is piped)
+  try {
+    const out = execSync('stty size < /dev/tty', {
+      encoding: 'utf8', timeout: 300, shell: '/bin/sh'
+    }).trim();
+    const cols = parseInt(out.split(/\s+/)[1] ?? '', 10);
+    if (cols > 0) return cols;
+  } catch { /* /dev/tty not available */ }
+
+  // 4. Walk ancestor proc tree for TTY fd
+  try {
+    let pid = process.ppid;
+    for (let i = 0; i < 5 && pid > 1; i++) {
+      try {
+        const target = readlinkSync(`/proc/${pid}/fd/0`);
+        if (target.startsWith('/dev/pts/') || target.startsWith('/dev/tty')) {
+          const out = execSync(`stty size < /proc/${pid}/fd/0`, {
+            encoding: 'utf8', timeout: 300, shell: '/bin/sh'
+          }).trim();
+          const cols = parseInt(out.split(/\s+/)[1] ?? '', 10);
+          if (cols > 0) return cols;
+        }
+      } catch { /* skip */ }
+      try {
+        const stat = readFileSync(`/proc/${pid}/stat`, 'utf8');
+        pid = parseInt(stat.split(') ')[1]?.split(' ')[1] ?? '0', 10);
+      } catch { break; }
+    }
+  } catch { /* ignore */ }
+
   return 0;
 }
 
