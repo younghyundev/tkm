@@ -63,6 +63,7 @@ export function makeState(overrides: Partial<State> = {}): State {
     shiny_encounter_count: 0,
     shiny_catch_count: 0,
     shiny_escaped_count: 0,
+    gym_badges: [],
     ...overrides,
   };
 }
