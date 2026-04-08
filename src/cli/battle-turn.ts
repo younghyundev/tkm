@@ -10,23 +10,26 @@
  *   npx tsx src/cli/battle-turn.ts --action 6        # surrender
  *   npx tsx src/cli/battle-turn.ts --end             # clean up
  */
-import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync, renameSync } from 'fs';
-import { join, dirname } from 'path';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { join } from 'path';
 import { createBattlePokemon, createBattleState, resolveTurn, getActivePokemon, hasAlivePokemon } from '../core/turn-battle.js';
 import { selectAiAction } from '../core/gym-ai.js';
 import { getGymById, awardGymVictory } from '../core/gym.js';
-import { getPokemonDB, getPokemonName, speciesIdToGeneration } from '../core/pokemon-data.js';
+import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
-import { initLocale } from '../i18n/index.js';
+import { initLocale, t } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
 import { withLockRetry } from '../core/lock.js';
 import { readState, writeState } from '../core/state.js';
+import {
+  STATE_DIR,
+  readBattleState,
+  writeBattleState,
+  deleteBattleState,
+} from '../core/battle-state-io.js';
+import { fallbackMoves, loadMovesData, getLoadedMovesDB, getMovesForPokemon, getDisplayName } from '../core/battle-setup.js';
+import type { BattleStateFile, LastHit } from '../core/battle-state-io.js';
 import type { State, Config, MoveData, GymData, BattleState, BattlePokemon, TurnAction } from '../core/types.js';
-
-// ── Constants ──
-
-const STATE_DIR = join(process.env.HOME || '', '.claude', 'tokenmon');
-const BATTLE_STATE_PATH = join(STATE_DIR, 'battle-state.json');
 
 // ── CLI Arg Parsing ──
 
@@ -40,146 +43,6 @@ function getArg(name: string): string | undefined {
 
 function hasFlag(name: string): boolean {
   return process.argv.slice(2).includes(`--${name}`);
-}
-
-// ── Pokemon Name Resolution (cross-gen) ──
-
-function getDisplayName(speciesId: number, currentGen: string): string {
-  let name = getPokemonName(speciesId, currentGen);
-  if (name === String(speciesId)) {
-    name = getPokemonName(speciesId, speciesIdToGeneration(speciesId));
-  }
-  return name;
-}
-
-// ── Fallback Moves ──
-
-function fallbackMoves(types: string[], level: number): MoveData[] {
-  return types.map((t, i) => ({
-    id: 9000 + i,
-    name: `${t}-attack`,
-    nameKo: `${t} 공격`,
-    nameEn: `${t} Attack`,
-    type: t,
-    category: 'physical' as const,
-    power: Math.min(40 + level, 100),
-    accuracy: 100,
-    pp: 20,
-  }));
-}
-
-// ── Move Loading ──
-
-interface MovesDB {
-  [id: string]: MoveData;
-}
-
-interface PokemonMovesDB {
-  [speciesId: string]: { pool: Array<{ moveId: number; learnLevel: number }> };
-}
-
-let movesDB: MovesDB | null = null;
-let pokemonMovesDB: PokemonMovesDB | null = null;
-
-function loadMovesData(pluginRoot: string): void {
-  const movesPath = join(pluginRoot, 'data', 'moves.json');
-  const pokemonMovesPath = join(pluginRoot, 'data', 'pokemon-moves.json');
-
-  if (existsSync(movesPath)) {
-    try {
-      movesDB = JSON.parse(readFileSync(movesPath, 'utf-8'));
-    } catch { /* ignore */ }
-  }
-
-  if (existsSync(pokemonMovesPath)) {
-    try {
-      pokemonMovesDB = JSON.parse(readFileSync(pokemonMovesPath, 'utf-8'));
-    } catch { /* ignore */ }
-  }
-}
-
-function getMovesForPokemon(speciesId: number, level: number, types: string[]): MoveData[] {
-  if (!movesDB || !pokemonMovesDB) {
-    return fallbackMoves(types, level);
-  }
-
-  const pool = pokemonMovesDB[String(speciesId)];
-  if (!pool || !pool.pool || pool.pool.length === 0) {
-    return fallbackMoves(types, level);
-  }
-
-  // Get moves learnable at or below current level, sorted by learn level desc
-  const learnable = pool.pool
-    .filter((entry) => entry.learnLevel <= level)
-    .sort((a, b) => b.learnLevel - a.learnLevel);
-
-  const moves: MoveData[] = [];
-  const seen = new Set<number>();
-
-  for (const entry of learnable) {
-    if (seen.has(entry.moveId)) continue;
-    const moveData = movesDB[String(entry.moveId)];
-    if (!moveData) continue;
-    seen.add(entry.moveId);
-    moves.push(moveData);
-    if (moves.length >= 4) break;
-  }
-
-  // Minimum 2 moves guarantee — pull from full pool if needed
-  if (moves.length < 2) {
-    const allByLevel = [...pool.pool].sort((a, b) => a.learnLevel - b.learnLevel);
-    for (const entry of allByLevel) {
-      if (seen.has(entry.moveId)) continue;
-      const moveData = movesDB[String(entry.moveId)];
-      if (!moveData) continue;
-      seen.add(entry.moveId);
-      moves.push(moveData);
-      if (moves.length >= 4) break;
-    }
-  }
-
-  return moves.length > 0 ? moves : fallbackMoves(types, level);
-}
-
-// ── Battle State File ──
-
-interface LastHit {
-  target: 'player' | 'opponent';
-  damage: number;
-  effectiveness: 'super' | 'normal' | 'not_very' | 'immune';
-}
-
-interface BattleStateFile {
-  battleState: BattleState;
-  gym: GymData;
-  generation: string;
-  stateDir: string;
-  playerPartyNames: string[];
-  lastHit?: LastHit | null;
-  sessionId?: string;
-}
-
-function readBattleState(): BattleStateFile | null {
-  if (!existsSync(BATTLE_STATE_PATH)) return null;
-  try {
-    return JSON.parse(readFileSync(BATTLE_STATE_PATH, 'utf-8'));
-  } catch {
-    return null;
-  }
-}
-
-function writeBattleState(bsf: BattleStateFile): void {
-  const dir = dirname(BATTLE_STATE_PATH);
-  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  const tmpPath = BATTLE_STATE_PATH + '.tmp';
-  writeFileSync(tmpPath, JSON.stringify(bsf, null, 2), 'utf-8');
-  renameSync(tmpPath, BATTLE_STATE_PATH);
-}
-
-function deleteBattleState(): void {
-  if (existsSync(BATTLE_STATE_PATH)) {
-    try { unlinkSync(BATTLE_STATE_PATH); } catch { /* ignore */ }
-  }
 }
 
 // ── Output Helpers ──
@@ -341,9 +204,10 @@ function handleInit(): void {
     const displayName = getDisplayName(gp.species, generation);
 
     let moves: MoveData[];
-    if (gp.moves && gp.moves.length > 0 && movesDB) {
+    const mdb = getLoadedMovesDB();
+    if (gp.moves && gp.moves.length > 0 && mdb) {
       moves = gp.moves
-        .map((mId) => movesDB![String(mId)])
+        .map((mId) => mdb[String(mId)])
         .filter((m): m is MoveData => !!m);
       if (moves.length === 0) {
         moves = getMovesForPokemon(gp.species, gp.level, types);
@@ -384,9 +248,9 @@ function handleInit(): void {
   output({
     status: 'ongoing',
     messages: [
-      `${gym.leaderKo}이(가) 승부를 걸어왔다!`,
-      `${gym.leaderKo}은(는) ${opponentActive.displayName}을(를) 내보냈다!`,
-      `가라, ${playerActive.displayName}!`,
+      t('battle.gym_challenge', { leader: gym.leaderKo }),
+      t('battle.send_out', { leader: gym.leaderKo, pokemon: opponentActive.displayName }),
+      t('battle.go', { pokemon: playerActive.displayName }),
     ],
     menu: buildMenu(playerActive),
     opponent: pokemonInfo(opponentActive),
@@ -412,7 +276,7 @@ function handleAction(): void {
   }
 
   if (bsf.sessionId && bsf.sessionId !== (process.env.CLAUDE_SESSION_ID || process.pid.toString())) {
-    output({ status: 'error', messages: ['다른 세션의 배틀이 진행 중입니다.'] });
+    output({ status: 'error', messages: [t('battle.other_session')] });
     process.exit(1);
   }
 
@@ -504,7 +368,7 @@ function handleAction(): void {
       const oldName = getActivePokemon(battleState.opponent).displayName;
       battleState.opponent.activeIndex = nextIdx;
       const newActive = getActivePokemon(battleState.opponent);
-      messages.push(`${gym.leaderKo}은(는) ${newActive.displayName}을(를) 내보냈다!`);
+      messages.push(t('battle.send_out', { leader: gym.leaderKo, pokemon: newActive.displayName }));
     }
   }
 
@@ -544,7 +408,7 @@ function handleSwitchMenu(battleState: BattleState): void {
     const o = getActivePokemon(battleState.opponent);
     output({
       status: 'ongoing',
-      messages: ['교체할 수 있는 포켓몬이 없다!'],
+      messages: [t('battle.no_switch')],
       menu: buildMenu(p),
       opponent: pokemonInfo(o),
       player: pokemonInfo(p),
@@ -556,7 +420,7 @@ function handleSwitchMenu(battleState: BattleState): void {
 
   output({
     status: 'switch_menu',
-    messages: ['교체할 포켓몬을 선택하세요:'],
+    messages: [t('battle.select_switch')],
     switchOptions: switchOptions.map(({ index, name, level, hp, maxHp }) => ({
       index, name, level, hp, maxHp,
     })),
@@ -575,7 +439,7 @@ function handleFaintedSwitch(battleState: BattleState, messages: string[]): void
     // Should not happen (battle_end would have triggered), but handle gracefully
     output({
       status: 'defeat',
-      messages: [...messages, '모든 포켓몬이 쓰러졌다...'],
+      messages: [...messages, t('battle.all_fainted')],
       badge: null,
       opponent: pokemonInfo(getActivePokemon(battleState.opponent)),
       player: pokemonInfo(getActivePokemon(battleState.player)),
@@ -588,7 +452,7 @@ function handleFaintedSwitch(battleState: BattleState, messages: string[]): void
     battleState.player.activeIndex = switchOptions[0].index;
     battleState.phase = 'select_action';
     const newActive = getActivePokemon(battleState.player);
-    messages.push(`가라, ${newActive.displayName}!`);
+    messages.push(t('battle.go', { pokemon: newActive.displayName }));
 
     // Re-save after auto-switch
     const bsf = readBattleState()!;

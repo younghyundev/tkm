@@ -5,10 +5,11 @@ import { SHOW_CURSOR } from './ansi.js';
 import { startGameLoop } from './game-loop.js';
 import { createBattlePokemon } from '../core/turn-battle.js';
 import { getGymById, awardGymVictory } from '../core/gym.js';
-import { getPokemonName, getPokemonDB, speciesIdToGeneration } from '../core/pokemon-data.js';
+import { getPokemonName, getPokemonDB } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
+import { fallbackMoves, loadMovesData, getLoadedMovesDB, getMovesForPokemon, getDisplayName } from '../core/battle-setup.js';
 import type { State, Config, MoveData, GymData } from '../core/types.js';
 
 // ── CLI Arg Parsing ──
@@ -19,106 +20,6 @@ function getArg(name: string): string | undefined {
   const idx = args.indexOf(flag);
   if (idx === -1 || idx + 1 >= args.length) return undefined;
   return args[idx + 1];
-}
-
-// ── Fallback Moves ──
-
-function fallbackMoves(types: string[], level: number): MoveData[] {
-  return types.map((t, i) => ({
-    id: 9000 + i,
-    name: `${t}-attack`,
-    nameKo: `${t} 공격`,
-    nameEn: `${t} Attack`,
-    type: t,
-    category: 'physical' as const,
-    power: Math.min(40 + level, 100),
-    accuracy: 100,
-    pp: 20,
-  }));
-}
-
-// ── Move Loading ──
-
-interface MovesDB {
-  [id: string]: MoveData;
-}
-
-interface PokemonMovesDB {
-  [speciesId: string]: { pool: Array<{ moveId: number; learnLevel: number }> };
-}
-
-let movesDB: MovesDB | null = null;
-let pokemonMovesDB: PokemonMovesDB | null = null;
-
-function loadMovesData(pluginRoot: string): void {
-  const movesPath = join(pluginRoot, 'data', 'moves.json');
-  const pokemonMovesPath = join(pluginRoot, 'data', 'pokemon-moves.json');
-
-  if (existsSync(movesPath)) {
-    try {
-      movesDB = JSON.parse(readFileSync(movesPath, 'utf-8'));
-    } catch { /* ignore */ }
-  }
-
-  if (existsSync(pokemonMovesPath)) {
-    try {
-      pokemonMovesDB = JSON.parse(readFileSync(pokemonMovesPath, 'utf-8'));
-    } catch { /* ignore */ }
-  }
-}
-
-function getMovesForPokemon(speciesId: number, level: number, types: string[]): MoveData[] {
-  if (!movesDB || !pokemonMovesDB) {
-    return fallbackMoves(types, level);
-  }
-
-  const pool = pokemonMovesDB[String(speciesId)];
-  if (!pool || !pool.pool || pool.pool.length === 0) {
-    return fallbackMoves(types, level);
-  }
-
-  // Get moves learnable at or below current level, sorted by learn level desc
-  const learnable = pool.pool
-    .filter((entry) => entry.learnLevel <= level)
-    .sort((a, b) => b.learnLevel - a.learnLevel);
-
-  const moves: MoveData[] = [];
-  const seen = new Set<number>();
-
-  for (const entry of learnable) {
-    if (seen.has(entry.moveId)) continue;
-    const moveData = movesDB[String(entry.moveId)];
-    if (!moveData) continue;
-    seen.add(entry.moveId);
-    moves.push(moveData);
-    if (moves.length >= 4) break;
-  }
-
-  // If not enough moves at current level, include from full pool (ignore level req)
-  if (moves.length < 2) {
-    const allByLevel = [...pool.pool].sort((a, b) => a.learnLevel - b.learnLevel);
-    for (const entry of allByLevel) {
-      if (seen.has(entry.moveId)) continue;
-      const moveData = movesDB[String(entry.moveId)];
-      if (!moveData) continue;
-      seen.add(entry.moveId);
-      moves.push(moveData);
-      if (moves.length >= 4) break;
-    }
-  }
-
-  return moves.length > 0 ? moves : fallbackMoves(types, level);
-}
-
-// ── Pokemon Name Resolution (cross-gen) ──
-
-function getDisplayName(speciesId: number, currentGen: string): string {
-  // Try current gen first, then the species' native gen
-  let name = getPokemonName(speciesId, currentGen);
-  if (name === String(speciesId)) {
-    name = getPokemonName(speciesId, speciesIdToGeneration(speciesId));
-  }
-  return name;
 }
 
 // ── Main ──
@@ -208,9 +109,10 @@ function main(): void {
 
     // Try to load specific gym moves first, then fall back
     let moves: MoveData[];
-    if (gp.moves && gp.moves.length > 0 && movesDB) {
+    const mdb = getLoadedMovesDB();
+    if (gp.moves && gp.moves.length > 0 && mdb) {
       moves = gp.moves
-        .map((mId) => movesDB![String(mId)])
+        .map((mId) => mdb[String(mId)])
         .filter((m): m is MoveData => !!m);
       if (moves.length === 0) {
         moves = getMovesForPokemon(gp.species, gp.level, types);
