@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import type { GymData, State } from './types.js';
 import { PLUGIN_ROOT } from './paths.js';
@@ -11,10 +11,21 @@ export function loadGymData(generation: string): GymData[] {
   if (cached) return cached;
 
   const filePath = join(PLUGIN_ROOT, 'data', 'gyms', `${generation}.json`);
-  const raw = JSON.parse(readFileSync(filePath, 'utf-8'));
-  const gyms: GymData[] = raw.gyms;
-  gymCache.set(generation, gyms);
-  return gyms;
+  if (!existsSync(filePath)) return [];
+  try {
+    const data = JSON.parse(readFileSync(filePath, 'utf-8'));
+    const gyms: GymData[] = data.gyms ?? [];
+    // Validate: every gym must have at least 1 team member
+    for (const gym of gyms) {
+      if (!gym.team || gym.team.length === 0) {
+        throw new Error(`Gym "${gym.badge}" has no team members in ${generation}.json`);
+      }
+    }
+    gymCache.set(generation, gyms);
+    return gyms;
+  } catch {
+    return [];
+  }
 }
 
 /** Get the next uncleared gym. Returns null if all cleared. */
@@ -45,6 +56,10 @@ export function awardGymVictory(
   gym: GymData,
   participatingPokemon: string[],
 ): GymVictoryResult {
+  if (gym.team.length === 0) {
+    return { xpAwarded: 0, badgeEarned: false, badge: gym.badge };
+  }
+
   const badges = state.gym_badges ?? [];
   const alreadyHasBadge = badges.includes(gym.badge);
 

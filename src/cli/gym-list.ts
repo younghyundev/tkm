@@ -52,16 +52,21 @@ try {
   console.log(`  ${BOLD}🏟️  ${genLabel} 체육관${RESET}`);
   console.log();
 
+  if (gyms.length === 0) {
+    console.log(`  ${GRAY}체육관 데이터가 없습니다.${RESET}`);
+  }
+
   for (const gym of gyms) {
     const cleared = badges.includes(gym.badge);
     const icon = cleared ? `${GREEN}✅` : `${GRAY}⬜`;
     const tc = typeColor(gym.type);
     const leaderDisplay = gym.leaderKo || gym.leader;
     const badgeDisplay = gym.badgeKo || gym.badge;
-    const maxLevel = Math.max(...gym.team.map(p => p.level));
+    const maxLevel = gym.team.length > 0 ? Math.max(...gym.team.map(p => p.level)) : 0;
+    const levelDisplay = maxLevel > 0 ? `${GRAY}Lv.${maxLevel}${RESET}` : '';
 
     console.log(
-      `  ${icon} ${RESET}${BOLD}${gym.id}.${RESET} ${leaderDisplay} ${GRAY}(${tc}${gym.type}${GRAY})${RESET} — ${badgeDisplay} ${GRAY}Lv.${maxLevel}${RESET}`,
+      `  ${icon} ${RESET}${BOLD}${gym.id}.${RESET} ${leaderDisplay} ${GRAY}(${tc}${gym.type}${GRAY})${RESET} — ${badgeDisplay} ${levelDisplay}`,
     );
   }
 
