@@ -152,6 +152,7 @@
   "cli.notifications.clear_hint": "tokenmon notifications clear 로 알림을 모두 삭제할 수 있습니다.",
 
   "cli.config.key_notifications": "  notifications_enabled - 알림 표시 true/false",
+  "cli.config.key_pp_enabled": "  pp_enabled           - AI대타출동(PP) 표시 true/false",
 
   "cli.help.cmd_evolve": "  evolve              진화 대기 포켓몬 목록",
   "cli.help.cmd_evolve_pokemon": "  evolve <이름>       포켓몬 진화 (분기 선택)",
@@ -330,6 +331,7 @@
 
   "statusline.no_starter": "[스타터를 선택하세요: /tkm:tkm starter]",
   "statusline.party_empty": "[파티가 비어있습니다]",
+  "statusline.pp_label": "🔋",
 
   "setup.statusline.already_set": "  ✓ tokenmon statusLine 이미 설정됨 (건너뜀)",
   "setup.statusline.wrapper_updated": "  ✓ tokenmon 래퍼 최신 버전으로 갱신됨",
@@ -361,9 +363,9 @@
   "hook.evolution": "✨ {pokemon:이/가} {newPokemon}(으)로 진화했습니다!",
   "hook.party_join": "🎊 {pokemon:이/가} 파티에 합류했습니다!",
 
-  "tier.heated": "풀숲이 크게 흔들리고 있다...",
-  "tier.intense": "주변에 수상한 기운이 감돌고 있다...",
-  "tier.legendary": "공기 속에 강한 에너지가 차오른다!",
+  "tier.heated": "풀숲이 크게 흔들리고 있다... (다음 턴 조우율 1.5x, XP 1.5x)",
+  "tier.intense": "주변에 수상한 기운이 감돌고 있다... (다음 턴 조우율 2.5x, XP 2.5x)",
+  "tier.legendary": "공기 속에 강한 에너지가 차오른다! (다음 턴 조우율 4x, XP 5x)",
 
   "tip.volume_xp": "한번에 많은 토큰을 사용하면 경험치를 더 많이 받을 수 있다고 한다.",
   "tip.volume_encounter": "긴 작업을 하면 야생 포켓몬이 더 자주 나타나는 것 같다.",

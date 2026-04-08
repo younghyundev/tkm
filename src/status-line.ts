@@ -10,7 +10,8 @@ import { shiftAnsiHue } from './sprites/shiny.js';
 import { isShinyKey, toBaseId } from './core/shiny-utils.js';
 import { t, initLocale } from './i18n/index.js';
 import { readWeatherCache, WEATHER_LABELS, type WeatherCondition } from './core/weather.js';
-import type { ExpGroup } from './core/types.js';
+import { ppBar } from './core/pp.js';
+import type { ExpGroup, StdinData } from './core/types.js';
 
 const TYPE_EMOJI: Record<string, string> = {
   'grass': '🌿', 'fire': '🔥', 'water': '💧', 'electric': '⚡', 'fighting': '🥊',
@@ -28,6 +29,15 @@ function xpBar(currentXp: number, level: number, group: ExpGroup, blocks: number
   const filled = Math.min(blocks, Math.floor(xpInLevel / xpNeeded * blocks));
   const empty = blocks - filled;
   return { bar: '█'.repeat(filled) + '░'.repeat(empty), pct };
+}
+
+function readStdin(): StdinData | null {
+  try {
+    const data = readFileSync(0, 'utf-8');
+    return JSON.parse(data) as StdinData;
+  } catch {
+    return null;
+  }
 }
 
 function getEmoji(types: string[]): string {
@@ -129,6 +139,7 @@ function scatterWeatherParticles(line: string, condition: WeatherCondition): str
 function main(): void {
   const config = readConfig();
   initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
+  const stdinData = readStdin();
 
   if (!config.starter_chosen) {
     console.log(t('statusline.no_starter'));
@@ -277,6 +288,11 @@ function main(): void {
     }
   }
 
+  // === Tier preview line (independent, always shown when non-normal) ===
+  if (state.pending_tier) {
+    console.log(t(`tier.${state.pending_tier}`));
+  }
+
   // === Info line rendering ===
   // info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level'
   const infoParts: string[] = [];
@@ -316,6 +332,11 @@ function main(): void {
         break;
     }
     infoParts.push(info);
+  }
+
+  if (config.pp_enabled && stdinData) {
+    const pp = ppBar(stdinData);
+    if (pp) infoParts.push(pp);
   }
 
   infoParts.push(footer);

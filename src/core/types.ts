@@ -230,6 +230,7 @@ export interface State {
     multiplier: number;
     turns_remaining: number;
   };
+  pending_tier?: string | null;
 }
 
 export interface Config {
@@ -257,6 +258,7 @@ export interface Config {
   info_mode: 'ace_full' | 'name_level' | 'all_full' | 'ace_level';
   tips_enabled: boolean;
   notifications_enabled: boolean;
+  pp_enabled: boolean;
   language: 'ko' | 'en';
 }
 
@@ -422,4 +424,27 @@ export interface CommonState {
   error_count: number;
   permission_count: number;
   last_turn_ts?: number;
+}
+
+// ── Stdin data from Claude Code ──
+
+export interface RateLimitWindow {
+  used_percentage: number;
+  resets_at: number;
+}
+
+export interface StdinRateLimits {
+  five_hour?: RateLimitWindow;
+  seven_day?: RateLimitWindow;
+}
+
+export interface StdinContextWindow {
+  used_percentage: number;
+  remaining_percentage: number;
+  context_window_size: number;
+}
+
+export interface StdinData {
+  rate_limits?: StdinRateLimits;
+  context_window?: StdinContextWindow;
 }

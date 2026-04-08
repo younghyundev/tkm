@@ -15,7 +15,7 @@ import { syncPokedexFromUnlocked, markShinyCaught } from '../core/pokedex.js';
 import { processEncounter, formatEncounterMessage } from '../core/encounter.js';
 import { addItem, randInt } from '../core/items.js';
 import { getRegionDropMessage } from '../core/region-messages.js';
-import { getVolumeTier } from '../core/volume-tier.js';
+import { getVolumeTier, getVolumeTierByName } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
 import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import { isShinyKey, toBaseId, toShinyKey } from '../core/shiny-utils.js';
@@ -81,27 +81,30 @@ async function main(): Promise<void> {
   const input = JSON.parse(readStdin()) as HookInput;
   const sessionId = input.session_id ?? '';
 
-  // Resolve and lock this hook to the session's bound generation
+  // Determine which generation this stop hook operates on.
+  // Use activeGen (from global-config) — this respects mid-session gen switches.
+  // If no session ID, also fall back to activeGen.
+  const activeGen = getActiveGeneration();
   const resolvedGen = getSessionGeneration(sessionId);
-  if (resolvedGen !== null) {
-    setActiveGenerationCache(resolvedGen);
-  } else if (sessionId) {
-    // No gen binding — could be a race with session-start or a genuine issue
-    // Fail closed: skip mutations to prevent cross-gen corruption
-    // Only warn if this looks like a real miss (not a brand-new session)
-    process.stderr.write(`tokenmon stop: no gen binding for session ${sessionId}, skipping XP\n`);
-    playCry();
-    console.log(JSON.stringify({ continue: true }));
-    return;
-  } else {
-    // No session ID at all — legacy fallback
-    setActiveGenerationCache(getActiveGeneration());
+
+  // If user switched gen mid-session, update the session binding to match
+  if (resolvedGen !== null && resolvedGen !== activeGen && sessionId) {
+    const genMap = readSessionGenMap();
+    if (genMap[sessionId]) {
+      genMap[sessionId].generation = activeGen;
+      genMap[sessionId].last_seen = new Date().toISOString();
+      writeSessionGenMap(genMap);
+    }
   }
+
+  // Always use activeGen — the gen variable is passed explicitly to all read/write calls
+  const gen = activeGen;
+  setActiveGenerationCache(gen);
 
   const output: HookOutput = { continue: true };
 
   // Pre-lock: read config for early exit check (benign TOCTOU — worst case: enter lock unnecessarily)
-  const configCheck = readConfig();
+  const configCheck = readConfig(gen);
   const globalConfig = readGlobalConfig();
   const needsVoiceToneMigration = (globalConfig.voice_tone as string) === 'classic';
   if (needsVoiceToneMigration) globalConfig.voice_tone = 'claude';
@@ -134,8 +137,8 @@ async function main(): Promise<void> {
   const achievementMessages: string[] = [];
 
   const result = withLockRetry(() => {
-    const config = readConfig();
-    const state = readState();
+    const config = readConfig(gen);
+    const state = readState(gen);
     const genMap = readSessionGenMap();
 
     // Clear previous battle/tip result (only show for one turn)
@@ -157,7 +160,7 @@ async function main(): Promise<void> {
       state.last_session_tokens = pruneSessionTokens(state.last_session_tokens, activeIds);
       commonState.last_turn_ts = Date.now();
       writeCommonState(commonState);
-      writeState(state);
+      writeState(state, gen);
       return 'first_stop';
     }
 
@@ -189,13 +192,15 @@ async function main(): Promise<void> {
 
     const restMult = state.rest_bonus?.multiplier ?? 1.0;
 
-    // Volume tier based on tokens consumed this turn
-    const tier = getVolumeTier(deltaTokens);
+    // Delayed tier: read previous turn's pending_tier for this turn's multipliers
+    const appliedTier = getVolumeTierByName(state.pending_tier);
+    // Compute NEW tier from this turn's deltaTokens (stored for next turn)
+    const currentTier = getVolumeTier(deltaTokens);
 
     // Calculate XP — common + gen xp_bonus, then tier multiplier
     const tokensPerXp = Math.max(1, config.tokens_per_xp);
     const xpBonus = config.xp_bonus_multiplier + Math.max(0, state.xp_bonus_multiplier - 1.0) + commonState.xp_bonus_multiplier;
-    const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus * tier.xpMultiplier));
+    const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus * appliedTier.xpMultiplier));
     // All party members receive the full XP (not divided)
     const xpPerPokemon = Math.max(1, xpTotal);
 
@@ -291,10 +296,9 @@ async function main(): Promise<void> {
     // Sync common trigger counters
     commonState.total_tokens_consumed += deltaTokens;
 
-    // Tier notification message (flavor text only, no numbers)
-    if (tier.name !== 'normal') {
-      messages.push(t(`tier.${tier.name}`));
-    }
+    // Store new tier for next turn's application (status bar reads this)
+    // Note: appliedTier (from previous pending_tier) controls this turn's XP, encounter rate, AND rarity weights
+    state.pending_tier = currentTier.name === 'normal' ? null : currentTier.name;
 
     // Check gen-specific achievements (pass commonState for cross-state encounter_rate_bonus writes)
     const achEvents2 = checkAchievements(state, config, commonState);
@@ -316,7 +320,7 @@ async function main(): Promise<void> {
 
     // Random encounter + battle (with volume tier and commonState)
     try {
-      const battleResult = processEncounter(state, config, tier, commonState, restMult);
+      const battleResult = processEncounter(state, config, appliedTier, commonState, restMult);
       if (battleResult) {
         state.last_battle = battleResult;
         const battleMsg = formatEncounterMessage(battleResult);
@@ -428,8 +432,8 @@ async function main(): Promise<void> {
 
     state.last_achievement = achievementMessages.length > 0 ? achievementMessages.join('\n') : null;
 
-    writeState(state);
-    writeConfig(config);
+    writeState(state, gen);
+    writeConfig(config, gen);
     writeCommonState(commonState);
 
     return 'done';

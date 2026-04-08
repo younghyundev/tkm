@@ -33,6 +33,7 @@ const DEFAULT_CONFIG: Config = {
   info_mode: 'ace_full',
   tips_enabled: true,
   notifications_enabled: true,
+  pp_enabled: true,
   language: 'en' as const,
 };
 

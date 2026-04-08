@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getVolumeTier, getLegendaryPoolMultiplier } from '../src/core/volume-tier.js';
+import { getVolumeTier, getLegendaryPoolMultiplier, getVolumeTierByName } from '../src/core/volume-tier.js';
 
 describe('getVolumeTier', () => {
   describe('boundary: Normal (0–9999)', () => {
@@ -52,4 +52,34 @@ describe('getLegendaryPoolMultiplier', () => {
   it('Heated → 3.0', () => assert.equal(getLegendaryPoolMultiplier(getVolumeTier(10000)), 3.0));
   it('Intense → 10.0', () => assert.equal(getLegendaryPoolMultiplier(getVolumeTier(40000)), 10.0));
   it('Legendary → 20.0', () => assert.equal(getLegendaryPoolMultiplier(getVolumeTier(100000)), 20.0));
+});
+
+describe('getVolumeTierByName', () => {
+  it('returns correct tier for each name', () => {
+    assert.equal(getVolumeTierByName('normal').xpMultiplier, 1.0);
+    assert.equal(getVolumeTierByName('heated').xpMultiplier, 1.5);
+    assert.equal(getVolumeTierByName('intense').xpMultiplier, 2.5);
+    assert.equal(getVolumeTierByName('legendary').xpMultiplier, 5.0);
+  });
+
+  it('returns normal tier for null/undefined/unknown', () => {
+    assert.equal(getVolumeTierByName(null).name, 'normal');
+    assert.equal(getVolumeTierByName(undefined).name, 'normal');
+    assert.equal(getVolumeTierByName('bogus').name, 'normal');
+  });
+});
+
+describe('delayed tier application (concept)', () => {
+  it('pending_tier from previous turn determines multipliers, not current deltaTokens', () => {
+    const pendingTier = getVolumeTierByName('heated');
+    const currentTier = getVolumeTier(50000); // intense
+    assert.equal(pendingTier.xpMultiplier, 1.5);
+    assert.notEqual(currentTier.xpMultiplier, pendingTier.xpMultiplier);
+  });
+
+  it('null pending_tier defaults to normal multipliers', () => {
+    const pendingTier = getVolumeTierByName(null);
+    assert.equal(pendingTier.xpMultiplier, 1.0);
+    assert.equal(pendingTier.encounterMultiplier, 1.0);
+  });
 });

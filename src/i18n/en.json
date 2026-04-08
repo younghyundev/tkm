@@ -152,6 +152,7 @@
   "cli.notifications.clear_hint": "Use tokenmon notifications clear to dismiss all.",
 
   "cli.config.key_notifications": "  notifications_enabled - Show notifications true/false",
+  "cli.config.key_pp_enabled": "  pp_enabled           - Show PP (Substitute) meter true/false",
 
   "cli.help.cmd_evolve": "  evolve              List evolution-ready Pokemon",
   "cli.help.cmd_evolve_pokemon": "  evolve <name>       Evolve a Pokemon (branch selection)",
@@ -330,6 +331,7 @@
 
   "statusline.no_starter": "[Choose a starter: /tkm:tkm starter]",
   "statusline.party_empty": "[Party is empty]",
+  "statusline.pp_label": "🔋",
 
   "setup.statusline.already_set": "  ✓ tokenmon statusLine already configured (skipped)",
   "setup.statusline.wrapper_updated": "  ✓ tokenmon wrapper updated to latest version",
@@ -361,9 +363,9 @@
   "hook.evolution": "✨ {pokemon} evolved into {newPokemon}!",
   "hook.party_join": "🎊 {pokemon} joined the party!",
 
-  "tier.heated": "The tall grass is rustling intensely...",
-  "tier.intense": "Something seems to be lurking nearby...",
-  "tier.legendary": "The air is crackling with powerful energy!",
+  "tier.heated": "The tall grass is rustling intensely... (Next: encounter 1.5x, XP 1.5x)",
+  "tier.intense": "Something seems to be lurking nearby... (Next: encounter 2.5x, XP 2.5x)",
+  "tier.legendary": "The air is crackling with powerful energy! (Next: encounter 4x, XP 5x)",
 
   "tip.volume_xp": "Using more tokens at once seems to yield more experience points.",
   "tip.volume_encounter": "Wild Pokémon appear more often during longer tasks.",

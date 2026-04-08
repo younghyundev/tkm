@@ -361,9 +361,9 @@
   "hook.evolution": "✨ What? {pokemon} evolved into {newPokemon}!",
   "hook.party_join": "✨ {pokemon} joined the team!",
 
-  "tier.heated": "The tall grass is rustling intensely...",
-  "tier.intense": "Something seems to be lurking nearby...",
-  "tier.legendary": "The air is crackling with powerful energy!",
+  "tier.heated": "The tall grass is rustling intensely... (Next: encounter 1.5x, XP 1.5x)",
+  "tier.intense": "Something seems to be lurking nearby... (Next: encounter 2.5x, XP 2.5x)",
+  "tier.legendary": "The air is crackling with powerful energy! (Next: encounter 4x, XP 5x)",
 
   "tip.volume_xp": "They say using more tokens at once yields more Exp. Points.",
   "tip.volume_encounter": "Rumor has it wild Pokemon appear more often during longer tasks.",

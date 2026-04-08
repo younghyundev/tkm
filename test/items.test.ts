@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeState } from './helpers.js';
-import { addItem, useItem, getItemCount, rollItemDrop, randInt } from '../src/core/items.js';
+import { addItem, useItem, getItemCount, rollItemDrop, randInt, getDropRateMultiplier } from '../src/core/items.js';
 
 describe('items', () => {
   it('addItem increments count', () => {
@@ -62,7 +62,7 @@ describe('items', () => {
       assert.equal(getItemCount(state, 'retry_token'), 0, 'Should not drop retry_token');
     });
 
-    it('victory drop quantity is 1-5', () => {
+    it('victory drop quantity is 1-3', () => {
       // Force a drop by running many times, collect all drop counts
       const drops: number[] = [];
       for (let i = 0; i < 500; i++) {
@@ -73,7 +73,7 @@ describe('items', () => {
       }
       assert.ok(drops.length > 0, 'Should have at least one drop in 500 tries');
       for (const d of drops) {
-        assert.ok(d >= 1 && d <= 5, `Victory drop count out of range [1,5]: ${d}`);
+        assert.ok(d >= 1 && d <= 3, `Victory drop count out of range [1,3]: ${d}`);
       }
     });
 
@@ -87,7 +87,7 @@ describe('items', () => {
       assert.ok(getItemCount(state, 'pokeball') > 0);
     });
 
-    it('loss drop quantity is 1-2', () => {
+    it('loss drop quantity is 1', () => {
       const drops: number[] = [];
       for (let i = 0; i < 500; i++) {
         const state = makeState();
@@ -97,8 +97,20 @@ describe('items', () => {
       }
       assert.ok(drops.length > 0, 'Should have at least one drop in 500 tries');
       for (const d of drops) {
-        assert.ok(d >= 1 && d <= 2, `Loss drop count out of range [1,2]: ${d}`);
+        assert.equal(d, 1, `Loss drop count should always be 1, got: ${d}`);
       }
+    });
+
+    it('soft cap reduces drop rate at high inventory', () => {
+      let lowDrops = 0;
+      let highDrops = 0;
+      const trials = 2000;
+      for (let i = 0; i < trials; i++) {
+        if (rollItemDrop(makeState({ items: { pokeball: 0 } }), true) > 0) lowDrops++;
+        if (rollItemDrop(makeState({ items: { pokeball: 400 } }), true) > 0) highDrops++;
+      }
+      assert.ok(highDrops < lowDrops, `High inventory (${highDrops}) should have fewer drops than low (${lowDrops})`);
+      assert.ok(highDrops < trials * 0.10, `High inventory drops (${highDrops}) should be under 10% of trials`);
     });
 
     it('returns 0 when no drop occurs (eventually)', () => {
@@ -112,6 +124,31 @@ describe('items', () => {
         }
       }
       assert.ok(gotZero, 'Should return 0 when no drop (70% of the time)');
+    });
+  });
+
+  describe('getDropRateMultiplier', () => {
+    it('returns 1.0 for 0-99 balls', () => {
+      assert.equal(getDropRateMultiplier(makeState({ items: {} })), 1.0);
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 0 } })), 1.0);
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 50 } })), 1.0);
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 99 } })), 1.0);
+    });
+
+    it('returns 0.5 for 100-199 balls', () => {
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 100 } })), 0.5);
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 150 } })), 0.5);
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 199 } })), 0.5);
+    });
+
+    it('returns 0.25 for 200-299 balls', () => {
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 200 } })), 0.25);
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 299 } })), 0.25);
+    });
+
+    it('returns 0.1 for 300+ balls', () => {
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 300 } })), 0.1);
+      assert.equal(getDropRateMultiplier(makeState({ items: { pokeball: 500 } })), 0.1);
     });
   });
 });

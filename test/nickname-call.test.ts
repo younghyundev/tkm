@@ -1,5 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { setActiveGenerationCache } from '../src/core/paths.js';
+setActiveGenerationCache('gen4');
 
 import { resolveNameToId, getDisplayName, getPokemonName } from '../src/core/pokemon-data.js';
 

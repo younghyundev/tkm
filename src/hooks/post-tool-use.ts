@@ -34,8 +34,8 @@ function main(): void {
 
   const output: HookOutput = { continue: true };
 
-  // 15% chance to drop 1~2 balls
-  if (Math.random() >= 0.15) {
+  // 10% chance to drop 1~2 balls
+  if (Math.random() >= 0.10) {
     console.log(JSON.stringify(output));
     return;
   }
