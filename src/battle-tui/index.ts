@@ -91,7 +91,43 @@ function getMovesForPokemon(speciesId: number, level: number, types: string[]): 
     if (moves.length >= 4) break;
   }
 
+  // If not enough moves at current level, include from full pool (ignore level req)
+  if (moves.length < 2) {
+    const allByLevel = [...pool.pool].sort((a, b) => a.learnLevel - b.learnLevel);
+    for (const entry of allByLevel) {
+      if (seen.has(entry.moveId)) continue;
+      const moveData = movesDB[String(entry.moveId)];
+      if (!moveData) continue;
+      seen.add(entry.moveId);
+      moves.push(moveData);
+      if (moves.length >= 4) break;
+    }
+  }
+
   return moves.length > 0 ? moves : fallbackMoves(types, level);
+}
+
+// ── Pokemon Name Resolution (cross-gen) ──
+
+function speciesIdToGen(id: number): string {
+  if (id <= 151) return 'gen1';
+  if (id <= 251) return 'gen2';
+  if (id <= 386) return 'gen3';
+  if (id <= 493) return 'gen4';
+  if (id <= 649) return 'gen5';
+  if (id <= 721) return 'gen6';
+  if (id <= 809) return 'gen7';
+  if (id <= 905) return 'gen8';
+  return 'gen9';
+}
+
+function getDisplayName(speciesId: number, currentGen: string): string {
+  // Try current gen first, then the species' native gen
+  let name = getPokemonName(speciesId, currentGen);
+  if (name === String(speciesId)) {
+    name = getPokemonName(speciesId, speciesIdToGen(speciesId));
+  }
+  return name;
 }
 
 // ── Main ──
@@ -173,7 +209,7 @@ function main(): void {
     const pData = db.pokemon[String(gp.species)];
     const types = pData?.types ?? ['normal'];
     const baseStats = pData?.base_stats ?? { hp: 50, attack: 50, defense: 50, speed: 50 };
-    const displayName = getPokemonName(gp.species, generation);
+    const displayName = getDisplayName(gp.species, generation);
 
     // Try to load specific gym moves first, then fall back
     let moves: MoveData[];
