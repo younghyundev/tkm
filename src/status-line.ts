@@ -286,7 +286,7 @@ function detectTermWidth(): number {
 
 // === Battle Mode HP Bar ===
 function hpBar(current: number, max: number, width: number = 10): string {
-  const ratio = Math.max(0, current / max);
+  const ratio = Math.max(0, Math.min(1, current / max));
   const filled = Math.round(ratio * width);
   const empty = width - filled;
   // Green > 50%, Yellow > 20%, Red <= 20%

@@ -474,11 +474,11 @@ function handleFaintedSwitch(battleState: BattleState, messages: string[]): void
 
   output({
     status: 'fainted_switch',
-    messages: [...messages, '다음 포켓몬을 선택하세요:'],
+    messages: [...messages, t('battle.select_next')],
     switchOptions: switchOptions.map(({ index, name, level, hp, maxHp }) => ({
       index, name, level, hp, maxHp,
     })),
-    questionContext: `⚔️ vs ${getActivePokemon(battleState.opponent).displayName} — 다음 포켓몬을 선택하세요`,
+    questionContext: `⚔️ vs ${getActivePokemon(battleState.opponent).displayName} — ${t('battle.select_next')}`,
   });
 }
 
@@ -487,7 +487,7 @@ function handleFaintedSwitch(battleState: BattleState, messages: string[]): void
 function handleVictory(bsf: BattleStateFile, messages: string[]): void {
   const { battleState, gym, generation, playerPartyNames } = bsf;
 
-  messages.push(`${gym.leaderKo}에게 승리했다!`);
+  messages.push(t('battle.victory', { leader: gym.leaderKo }));
 
   // Re-read state inside lock to avoid overwriting hook changes
   const lockResult = withLockRetry(() => {
@@ -533,7 +533,7 @@ function handleDefeat(bsf: BattleStateFile, messages: string[]): void {
     writeFileSync(statePath, JSON.stringify(state, null, 2), 'utf-8');
   }
 
-  messages.push(`${gym.leaderKo}에게 패배했다...`);
+  messages.push(t('battle.defeat', { leader: gym.leaderKo }));
 
   // Clean up battle state
   deleteBattleState();
