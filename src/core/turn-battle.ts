@@ -71,7 +71,7 @@ export function calculateDamage(
   if (!power || power <= 0) return 0;
 
   const atk = move.data.category === 'physical' ? attacker.attack : attacker.spAttack;
-  const def = move.data.category === 'physical' ? defender.defense : defender.spDefense;
+  const def = Math.max(1, move.data.category === 'physical' ? defender.defense : defender.spDefense);
 
   const base = Math.floor(
     ((2 * attacker.level / 5 + 2) * power * atk) / def / 50 + 2,
@@ -82,6 +82,9 @@ export function calculateDamage(
   for (const defType of defender.types) {
     typeEff *= getTypeEffectiveness(move.data.type, defType);
   }
+
+  // Type immunity: 0 damage bypasses minimum damage floor
+  if (typeEff === 0) return 0;
 
   const random = 0.85 + Math.random() * 0.15;
   return Math.max(1, Math.floor(base * stab * typeEff * random));
@@ -149,6 +152,10 @@ function executeSwitch(
   targetIndex: number,
   messages: string[],
 ): void {
+  // Reject invalid switch targets
+  if (targetIndex < 0 || targetIndex >= team.pokemon.length || team.pokemon[targetIndex].fainted) {
+    return;
+  }
   const old = getActivePokemon(team);
   team.activeIndex = targetIndex;
   const next = getActivePokemon(team);
@@ -192,6 +199,11 @@ function executeMove(
 
   const hasUsableMoves = attacker.moves.some((m) => m.currentPp > 0);
   if (!hasUsableMoves) {
+    move = STRUGGLE_MOVE;
+    isStruggle = true;
+    messages.push(`${attacker.displayName}은(는) 발버둥쳤다!`);
+  } else if (moveIndex < 0 || moveIndex >= attacker.moves.length) {
+    // Invalid moveIndex → treat as struggle
     move = STRUGGLE_MOVE;
     isStruggle = true;
     messages.push(`${attacker.displayName}은(는) 발버둥쳤다!`);

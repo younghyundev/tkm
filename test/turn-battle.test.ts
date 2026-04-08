@@ -451,4 +451,46 @@ describe('resolveTurn', () => {
     );
     assert.equal(state.turn, 1);
   });
+
+  it('invalid moveIndex does not crash (triggers struggle)', () => {
+    const result = resolveTurn(
+      state,
+      { type: 'move', moveIndex: 99 },
+      { type: 'move', moveIndex: 0 },
+    );
+    // Should not throw; player uses struggle due to invalid index
+    assert.ok(
+      result.messages.some((m) => m.includes('발버둥')),
+      'Invalid moveIndex should trigger struggle',
+    );
+  });
+
+  it('invalid switchIndex does not crash', () => {
+    const result = resolveTurn(
+      state,
+      { type: 'switch', pokemonIndex: -1 },
+      { type: 'move', moveIndex: 0 },
+    );
+    // Should not throw; invalid switch is silently skipped
+    assert.ok(Array.isArray(result.messages));
+  });
+});
+
+describe('calculateDamage edge cases', () => {
+  it('zero defense stat produces finite damage', () => {
+    const attacker = makeTestPokemon({ attack: 60 });
+    const defender = makeTestPokemon({ defense: 0 });
+    const move: BattleMove = { data: makeMoveData({ power: 40 }), currentPp: 10 };
+    const dmg = calculateDamage(attacker, defender, move);
+    assert.ok(Number.isFinite(dmg), `Damage should be finite, got ${dmg}`);
+    assert.ok(dmg >= 1, `Damage should be at least 1, got ${dmg}`);
+  });
+
+  it('immune type matchup deals exactly 0 damage', () => {
+    const attacker = makeTestPokemon({ types: ['normal'], attack: 100 });
+    const defender = makeTestPokemon({ types: ['ghost'], defense: 50 });
+    const move: BattleMove = { data: makeMoveData({ type: 'normal', power: 40 }), currentPp: 10 };
+    const dmg = calculateDamage(attacker, defender, move);
+    assert.equal(dmg, 0, `Immune matchup should deal 0 damage, got ${dmg}`);
+  });
 });
