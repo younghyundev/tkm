@@ -16,6 +16,8 @@ import { createBattlePokemon, createBattleState, resolveTurn, getActivePokemon, 
 import { selectAiAction } from '../core/gym-ai.js';
 import { getGymById, awardGymVictory } from '../core/gym.js';
 import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
+import { initLocale } from '../i18n/index.js';
+import { readGlobalConfig } from '../core/config.js';
 import type { State, Config, MoveData, GymData, BattleState, BattlePokemon, TurnAction } from '../core/types.js';
 
 // ── Constants ──
@@ -150,12 +152,19 @@ function getMovesForPokemon(speciesId: number, level: number, types: string[]): 
 
 // ── Battle State File ──
 
+interface LastHit {
+  target: 'player' | 'opponent';
+  damage: number;
+  effectiveness: 'super' | 'normal' | 'not_very' | 'immune';
+}
+
 interface BattleStateFile {
   battleState: BattleState;
   gym: GymData;
   generation: string;
   stateDir: string;
   playerPartyNames: string[];
+  lastHit?: LastHit | null;
 }
 
 function readBattleState(): BattleStateFile | null {
@@ -208,6 +217,38 @@ function buildMenu(player: BattlePokemon): string {
 
 function output(data: Record<string, unknown>): void {
   console.log(JSON.stringify(data));
+}
+
+function buildQuestionContext(player: BattlePokemon, opponent: BattlePokemon): string {
+  return `⚔️ vs ${opponent.displayName} Lv.${opponent.level} HP:${opponent.currentHp}/${opponent.maxHp} | ${player.displayName} Lv.${player.level} HP:${player.currentHp}/${player.maxHp}`;
+}
+
+function detectLastHit(
+  messages: string[],
+  playerHpBefore: number,
+  opponentHpBefore: number,
+  playerHpAfter: number,
+  opponentHpAfter: number,
+): LastHit | null {
+  // Determine effectiveness from messages
+  let effectiveness: LastHit['effectiveness'] = 'normal';
+  for (const msg of messages) {
+    if (msg.includes('효과가 굉장했다')) { effectiveness = 'super'; break; }
+    if (msg.includes('효과가 별로인')) { effectiveness = 'not_very'; break; }
+    if (msg.includes('효과가 없는')) { effectiveness = 'immune'; break; }
+  }
+
+  const opponentDamage = opponentHpBefore - opponentHpAfter;
+  const playerDamage = playerHpBefore - playerHpAfter;
+
+  // Return the most recent significant hit (prefer opponent taking damage = player attacked)
+  if (opponentDamage > 0) {
+    return { target: 'opponent', damage: opponentDamage, effectiveness };
+  }
+  if (playerDamage > 0) {
+    return { target: 'player', damage: playerDamage, effectiveness };
+  }
+  return null;
 }
 
 // ── Init Flow ──
@@ -343,6 +384,7 @@ function handleInit(): void {
     opponent: pokemonInfo(opponentActive),
     player: pokemonInfo(playerActive),
     badge: null,
+    questionContext: buildQuestionContext(playerActive, opponentActive),
   });
 }
 
@@ -406,6 +448,10 @@ function handleAction(): void {
   const playerActive = getActivePokemon(battleState.player);
   const opponentActive = getActivePokemon(battleState.opponent);
 
+  // Record HP before turn for lastHit detection
+  const playerHpBefore = playerActive.currentHp;
+  const opponentHpBefore = opponentActive.currentHp;
+
   let aiAction: TurnAction;
   if (playerAction.type === 'surrender') {
     aiAction = { type: 'move', moveIndex: 0 };
@@ -416,6 +462,16 @@ function handleAction(): void {
   // Resolve turn
   const turnResult = resolveTurn(battleState, playerAction, aiAction);
   const messages = [...turnResult.messages];
+
+  // Detect lastHit from HP changes
+  const lastHit = detectLastHit(
+    messages,
+    playerHpBefore,
+    opponentHpBefore,
+    playerActive.currentHp,
+    opponentActive.currentHp,
+  );
+  bsf.lastHit = lastHit;
 
   // Post-turn handling
   if (battleState.phase === 'battle_end') {
@@ -458,6 +514,8 @@ function handleAction(): void {
     opponent: pokemonInfo(currentOpponent),
     player: pokemonInfo(currentPlayer),
     badge: null,
+    lastHit: lastHit ?? undefined,
+    questionContext: buildQuestionContext(currentPlayer, currentOpponent),
   });
 }
 
@@ -469,13 +527,16 @@ function handleSwitchMenu(battleState: BattleState): void {
     .filter((opt) => opt.index !== battleState.player.activeIndex && !opt.fainted);
 
   if (switchOptions.length === 0) {
+    const p = getActivePokemon(battleState.player);
+    const o = getActivePokemon(battleState.opponent);
     output({
       status: 'ongoing',
       messages: ['교체할 수 있는 포켓몬이 없다!'],
-      menu: buildMenu(getActivePokemon(battleState.player)),
-      opponent: pokemonInfo(getActivePokemon(battleState.opponent)),
-      player: pokemonInfo(getActivePokemon(battleState.player)),
+      menu: buildMenu(p),
+      opponent: pokemonInfo(o),
+      player: pokemonInfo(p),
       badge: null,
+      questionContext: buildQuestionContext(p, o),
     });
     return;
   }
@@ -486,6 +547,7 @@ function handleSwitchMenu(battleState: BattleState): void {
     switchOptions: switchOptions.map(({ index, name, level, hp, maxHp }) => ({
       index, name, level, hp, maxHp,
     })),
+    questionContext: buildQuestionContext(getActivePokemon(battleState.player), getActivePokemon(battleState.opponent)),
   });
 }
 
@@ -520,13 +582,15 @@ function handleFaintedSwitch(battleState: BattleState, messages: string[]): void
     bsf.battleState = battleState;
     writeBattleState(bsf);
 
+    const opp = getActivePokemon(battleState.opponent);
     output({
       status: 'ongoing',
       messages,
       menu: buildMenu(newActive),
-      opponent: pokemonInfo(getActivePokemon(battleState.opponent)),
+      opponent: pokemonInfo(opp),
       player: pokemonInfo(newActive),
       badge: null,
+      questionContext: buildQuestionContext(newActive, opp),
     });
     return;
   }
@@ -537,6 +601,7 @@ function handleFaintedSwitch(battleState: BattleState, messages: string[]): void
     switchOptions: switchOptions.map(({ index, name, level, hp, maxHp }) => ({
       index, name, level, hp, maxHp,
     })),
+    questionContext: `⚔️ vs ${getActivePokemon(battleState.opponent).displayName} — 다음 포켓몬을 선택하세요`,
   });
 }
 
@@ -608,6 +673,10 @@ function handleEnd(): void {
 // ── Main ──
 
 function main(): void {
+  // Initialize locale so getPokemonName returns Korean names when language is 'ko'
+  const globalConfig = readGlobalConfig();
+  initLocale(globalConfig.language);
+
   try {
     if (hasFlag('init')) {
       handleInit();

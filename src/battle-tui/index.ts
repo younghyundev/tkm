@@ -6,6 +6,8 @@ import { startGameLoop } from './game-loop.js';
 import { createBattlePokemon } from '../core/turn-battle.js';
 import { getGymById, awardGymVictory } from '../core/gym.js';
 import { getPokemonName, getPokemonDB } from '../core/pokemon-data.js';
+import { initLocale } from '../i18n/index.js';
+import { readGlobalConfig } from '../core/config.js';
 import type { State, Config, MoveData, GymData } from '../core/types.js';
 
 // ── CLI Arg Parsing ──
@@ -133,6 +135,10 @@ function getDisplayName(speciesId: number, currentGen: string): string {
 // ── Main ──
 
 function main(): void {
+  // Initialize locale so getPokemonName returns Korean names when language is 'ko'
+  const globalConfig = readGlobalConfig();
+  initLocale(globalConfig.language);
+
   const gymIdStr = getArg('gym');
   const generation = getArg('gen') || 'gen4';
   const stateDir = getArg('state-dir') || join(process.env.HOME || '', '.claude', 'tokenmon');
