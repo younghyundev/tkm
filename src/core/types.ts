@@ -11,6 +11,8 @@ export interface BaseStats {
   attack: number;
   defense: number;
   speed: number;
+  sp_attack?: number;
+  sp_defense?: number;
 }
 
 export interface BranchEvolution {
@@ -75,6 +77,7 @@ export interface PokemonState {
   call_count?: number;
   evolution_ready?: boolean;
   evolution_options?: string[];
+  moves?: number[];
 }
 
 export type NotificationType = 'evolution_ready' | 'region_unlocked' | 'achievement_near' | 'legendary_unlocked';
@@ -232,6 +235,7 @@ export interface State {
   };
   pending_tier?: string | null;
   context_tokens_used?: number;
+  gym_badges?: string[];
 }
 
 export interface Config {
@@ -447,4 +451,88 @@ export interface StdinContextWindow {
 export interface StdinData {
   rate_limits?: StdinRateLimits;
   context_window?: StdinContextWindow;
+}
+
+// ── Battle System Types ──
+
+export type MoveCategory = 'physical' | 'special';
+
+export interface MoveData {
+  id: number;
+  name: string;
+  nameKo: string;
+  nameEn: string;
+  type: string;
+  category: MoveCategory;
+  power: number;
+  accuracy: number;
+  pp: number;
+}
+
+export interface PokemonMovePool {
+  pool: Array<{ moveId: number; learnLevel: number }>;
+}
+
+export interface BattleMove {
+  data: MoveData;
+  currentPp: number;
+}
+
+export interface BattlePokemon {
+  id: number;
+  name: string;
+  displayName: string;
+  types: string[];
+  level: number;
+  maxHp: number;
+  currentHp: number;
+  attack: number;
+  defense: number;
+  spAttack: number;
+  spDefense: number;
+  speed: number;
+  moves: BattleMove[];
+  fainted: boolean;
+}
+
+export interface BattleTeam {
+  pokemon: BattlePokemon[];
+  activeIndex: number;
+}
+
+export type TurnAction =
+  | { type: 'move'; moveIndex: number }
+  | { type: 'switch'; pokemonIndex: number }
+  | { type: 'surrender' };
+
+export interface TurnResult {
+  messages: string[];
+  playerFainted: boolean;
+  opponentFainted: boolean;
+}
+
+export interface BattleState {
+  player: BattleTeam;
+  opponent: BattleTeam;
+  turn: number;
+  log: string[];
+  phase: 'select_action' | 'resolve_turn' | 'fainted_switch' | 'battle_end';
+  winner: 'player' | 'opponent' | null;
+}
+
+export interface GymData {
+  id: number;
+  leader: string;
+  leaderKo: string;
+  type: string;
+  badge: string;
+  badgeKo: string;
+  team: GymPokemon[];
+  region: string;
+}
+
+export interface GymPokemon {
+  species: number;
+  level: number;
+  moves: number[];
 }

@@ -1,0 +1,111 @@
+{
+  "gyms": [
+    {
+      "id": 1,
+      "leader": "Falkner",
+      "leaderKo": "비상",
+      "type": "flying",
+      "badge": "zephyr",
+      "badgeKo": "윙배지",
+      "region": "gen2",
+      "team": [
+        { "species": 16, "level": 13, "moves": [33, 16, 98, 189] },
+        { "species": 17, "level": 15, "moves": [16, 17, 98, 29] }
+      ]
+    },
+    {
+      "id": 2,
+      "leader": "Bugsy",
+      "leaderKo": "호일",
+      "type": "bug",
+      "badge": "hive",
+      "badgeKo": "인섹트배지",
+      "region": "gen2",
+      "team": [
+        { "species": 11, "level": 16, "moves": [33, 106, 210, 310] },
+        { "species": 123, "level": 19, "moves": [210, 98, 17, 404] }
+      ]
+    },
+    {
+      "id": 3,
+      "leader": "Whitney",
+      "leaderKo": "꼭두",
+      "type": "normal",
+      "badge": "plain",
+      "badgeKo": "레귤러배지",
+      "region": "gen2",
+      "team": [
+        { "species": 35, "level": 22, "moves": [1, 574, 585, 29] },
+        { "species": 241, "level": 25, "moves": [34, 23, 263, 38] }
+      ]
+    },
+    {
+      "id": 4,
+      "leader": "Morty",
+      "leaderKo": "유빈",
+      "type": "ghost",
+      "badge": "fog",
+      "badgeKo": "팬텀배지",
+      "region": "gen2",
+      "team": [
+        { "species": 92, "level": 27, "moves": [122, 93, 92, 237] },
+        { "species": 93, "level": 29, "moves": [247, 93, 389, 92] },
+        { "species": 94, "level": 31, "moves": [247, 94, 399, 63] }
+      ]
+    },
+    {
+      "id": 5,
+      "leader": "Chuck",
+      "leaderKo": "사도",
+      "type": "fighting",
+      "badge": "storm",
+      "badgeKo": "쇼크배지",
+      "region": "gen2",
+      "team": [
+        { "species": 57, "level": 33, "moves": [238, 2, 249, 98] },
+        { "species": 62, "level": 36, "moves": [66, 127, 237, 409] }
+      ]
+    },
+    {
+      "id": 6,
+      "leader": "Jasmine",
+      "leaderKo": "규리",
+      "type": "steel",
+      "badge": "mineral",
+      "badgeKo": "스틸배지",
+      "region": "gen2",
+      "team": [
+        { "species": 81, "level": 38, "moves": [84, 85, 209, 430] },
+        { "species": 208, "level": 42, "moves": [442, 231, 88, 89] }
+      ]
+    },
+    {
+      "id": 7,
+      "leader": "Pryce",
+      "leaderKo": "류옹",
+      "type": "ice",
+      "badge": "glacier",
+      "badgeKo": "아이스배지",
+      "region": "gen2",
+      "team": [
+        { "species": 86, "level": 43, "moves": [55, 62, 29, 196] },
+        { "species": 87, "level": 45, "moves": [58, 57, 62, 196] },
+        { "species": 221, "level": 47, "moves": [58, 89, 36, 556] }
+      ]
+    },
+    {
+      "id": 8,
+      "leader": "Clair",
+      "leaderKo": "이향",
+      "type": "dragon",
+      "badge": "rising",
+      "badgeKo": "라이징배지",
+      "region": "gen2",
+      "team": [
+        { "species": 148, "level": 48, "moves": [225, 406, 85, 239] },
+        { "species": 148, "level": 49, "moves": [225, 406, 58, 239] },
+        { "species": 230, "level": 52, "moves": [406, 56, 58, 63] }
+      ]
+    }
+  ]
+}

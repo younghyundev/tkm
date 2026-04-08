@@ -1,0 +1,111 @@
+{
+  "gyms": [
+    {
+      "id": 1,
+      "leader": "Cilan",
+      "leaderKo": "덴트",
+      "type": "grass",
+      "badge": "trio",
+      "badgeKo": "트리오배지",
+      "region": "gen5",
+      "team": [
+        { "species": 506, "level": 12, "moves": [33, 44, 29, 98] },
+        { "species": 512, "level": 15, "moves": [22, 402, 10, 141] }
+      ]
+    },
+    {
+      "id": 2,
+      "leader": "Lenora",
+      "leaderKo": "알로에",
+      "type": "normal",
+      "badge": "basic",
+      "badgeKo": "베이직배지",
+      "region": "gen5",
+      "team": [
+        { "species": 507, "level": 17, "moves": [33, 44, 36, 29] },
+        { "species": 505, "level": 20, "moves": [242, 29, 237, 63] }
+      ]
+    },
+    {
+      "id": 3,
+      "leader": "Burgh",
+      "leaderKo": "아티",
+      "type": "bug",
+      "badge": "insect",
+      "badgeKo": "비틀배지",
+      "region": "gen5",
+      "team": [
+        { "species": 544, "level": 23, "moves": [398, 450, 40, 205] },
+        { "species": 542, "level": 26, "moves": [404, 348, 210, 163] }
+      ]
+    },
+    {
+      "id": 4,
+      "leader": "Elesa",
+      "leaderKo": "카밀레",
+      "type": "electric",
+      "badge": "bolt",
+      "badgeKo": "볼트배지",
+      "region": "gen5",
+      "team": [
+        { "species": 587, "level": 28, "moves": [85, 332, 98, 521] },
+        { "species": 523, "level": 31, "moves": [85, 528, 172, 98] }
+      ]
+    },
+    {
+      "id": 5,
+      "leader": "Clay",
+      "leaderKo": "야콘",
+      "type": "ground",
+      "badge": "quake",
+      "badgeKo": "퀘이크배지",
+      "region": "gen5",
+      "team": [
+        { "species": 552, "level": 33, "moves": [89, 242, 328, 44] },
+        { "species": 530, "level": 36, "moves": [89, 529, 232, 444] }
+      ]
+    },
+    {
+      "id": 6,
+      "leader": "Skyla",
+      "leaderKo": "풍란",
+      "type": "flying",
+      "badge": "jet",
+      "badgeKo": "제트배지",
+      "region": "gen5",
+      "team": [
+        { "species": 528, "level": 38, "moves": [403, 93, 332, 29] },
+        { "species": 521, "level": 40, "moves": [403, 98, 369, 332] },
+        { "species": 581, "level": 42, "moves": [403, 57, 542, 332] }
+      ]
+    },
+    {
+      "id": 7,
+      "leader": "Brycen",
+      "leaderKo": "담죽",
+      "type": "ice",
+      "badge": "freeze",
+      "badgeKo": "프리즈배지",
+      "region": "gen5",
+      "team": [
+        { "species": 583, "level": 43, "moves": [58, 196, 524, 237] },
+        { "species": 615, "level": 45, "moves": [58, 556, 573, 196] },
+        { "species": 614, "level": 47, "moves": [556, 276, 8, 163] }
+      ]
+    },
+    {
+      "id": 8,
+      "leader": "Drayden",
+      "leaderKo": "사간",
+      "type": "dragon",
+      "badge": "legend",
+      "badgeKo": "레전드배지",
+      "region": "gen5",
+      "team": [
+        { "species": 621, "level": 48, "moves": [337, 242, 163, 276] },
+        { "species": 330, "level": 50, "moves": [89, 337, 406, 444] },
+        { "species": 612, "level": 52, "moves": [337, 200, 89, 163] }
+      ]
+    }
+  ]
+}

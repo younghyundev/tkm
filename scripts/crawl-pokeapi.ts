@@ -283,6 +283,8 @@ async function main() {
         attack: statMap['attack'] || 0,
         defense: statMap['defense'] || 0,
         speed: statMap['speed'] || 0,
+        sp_attack: statMap['special-attack'] || 0,
+        sp_defense: statMap['special-defense'] || 0,
       };
       const bst = base_stats.hp + base_stats.attack + base_stats.defense + base_stats.speed
         + (statMap['special-attack'] || 0) + (statMap['special-defense'] || 0);

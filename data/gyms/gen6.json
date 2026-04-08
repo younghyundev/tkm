@@ -1,0 +1,113 @@
+{
+  "gyms": [
+    {
+      "id": 1,
+      "leader": "Viola",
+      "leaderKo": "비올라",
+      "type": "bug",
+      "badge": "bug",
+      "badgeKo": "버그배지",
+      "region": "gen6",
+      "team": [
+        { "species": 283, "level": 12, "moves": [55, 145, 450, 98] },
+        { "species": 666, "level": 15, "moves": [405, 522, 16, 237] }
+      ]
+    },
+    {
+      "id": 2,
+      "leader": "Grant",
+      "leaderKo": "자크로",
+      "type": "rock",
+      "badge": "cliff",
+      "badgeKo": "클리프배지",
+      "region": "gen6",
+      "team": [
+        { "species": 698, "level": 17, "moves": [62, 246, 36, 196] },
+        { "species": 696, "level": 20, "moves": [44, 157, 88, 246] }
+      ]
+    },
+    {
+      "id": 3,
+      "leader": "Korrina",
+      "leaderKo": "코르니",
+      "type": "fighting",
+      "badge": "rumble",
+      "badgeKo": "럼블배지",
+      "region": "gen6",
+      "team": [
+        { "species": 619, "level": 22, "moves": [370, 98, 369, 490] },
+        { "species": 67, "level": 24, "moves": [280, 249, 66, 2] },
+        { "species": 701, "level": 26, "moves": [560, 332, 370, 98] }
+      ]
+    },
+    {
+      "id": 4,
+      "leader": "Ramos",
+      "leaderKo": "후쿠지",
+      "type": "grass",
+      "badge": "plant",
+      "badgeKo": "플랜트배지",
+      "region": "gen6",
+      "team": [
+        { "species": 189, "level": 28, "moves": [332, 412, 72, 345] },
+        { "species": 673, "level": 31, "moves": [402, 34, 412, 438] }
+      ]
+    },
+    {
+      "id": 5,
+      "leader": "Clemont",
+      "leaderKo": "시트론",
+      "type": "electric",
+      "badge": "voltage",
+      "badgeKo": "볼테이지배지",
+      "region": "gen6",
+      "team": [
+        { "species": 587, "level": 33, "moves": [85, 332, 521, 98] },
+        { "species": 82, "level": 35, "moves": [85, 430, 435, 209] },
+        { "species": 695, "level": 37, "moves": [85, 435, 237, 157] }
+      ]
+    },
+    {
+      "id": 6,
+      "leader": "Valerie",
+      "leaderKo": "마슈",
+      "type": "fairy",
+      "badge": "fairy",
+      "badgeKo": "페어리배지",
+      "region": "gen6",
+      "team": [
+        { "species": 303, "level": 38, "moves": [583, 442, 242, 44] },
+        { "species": 122, "level": 40, "moves": [94, 605, 60, 93] },
+        { "species": 700, "level": 42, "moves": [585, 98, 577, 129] }
+      ]
+    },
+    {
+      "id": 7,
+      "leader": "Olympia",
+      "leaderKo": "고지카",
+      "type": "psychic",
+      "badge": "psychic",
+      "badgeKo": "사이킥배지",
+      "region": "gen6",
+      "team": [
+        { "species": 561, "level": 44, "moves": [94, 403, 237, 326] },
+        { "species": 199, "level": 45, "moves": [94, 57, 63, 428] },
+        { "species": 678, "level": 47, "moves": [94, 473, 605, 399] }
+      ]
+    },
+    {
+      "id": 8,
+      "leader": "Wulfric",
+      "leaderKo": "우르프",
+      "type": "ice",
+      "badge": "iceberg",
+      "badgeKo": "아이스버그배지",
+      "region": "gen6",
+      "team": [
+        { "species": 460, "level": 48, "moves": [59, 452, 412, 196] },
+        { "species": 615, "level": 50, "moves": [58, 556, 573, 237] },
+        { "species": 713, "level": 52, "moves": [556, 665, 242, 34] }
+      ]
+    }
+  ]
+}
