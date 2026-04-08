@@ -6,6 +6,7 @@ import {
   fg256, renderHpBar, hLine, center, typeColor,
 } from './ansi.js';
 import { getActivePokemon } from '../core/turn-battle.js';
+import { t } from '../i18n/index.js';
 import type { BattleState, BattlePokemon, GymData } from '../core/types.js';
 
 const WIDTH = 50;
@@ -130,7 +131,7 @@ function formatMoveEntry(
 
 function renderSwitchMenu(state: BattleState): string {
   const rows: string[] = [];
-  rows.push(`  ${BOLD}교체할 포켓몬을 선택하세요:${RESET}`);
+  rows.push(`  ${BOLD}${t('battle.select_switch')}${RESET}`);
 
   const team = state.player.pokemon;
   for (let i = 0; i < team.length; i++) {
@@ -148,7 +149,7 @@ function renderSwitchMenu(state: BattleState): string {
 export function renderSurrenderConfirm(): string {
   const lines: string[] = [];
   lines.push('');
-  lines.push(`  ${BOLD}정말 항복하시겠습니까?${RESET}`);
+  lines.push(`  ${BOLD}${t('battle.surrender_confirm')}${RESET}`);
   lines.push(`  ${BOLD}1${RESET}. 예    ${BOLD}2${RESET}. 아니오`);
   lines.push('');
   return lines.join('\n');
@@ -183,7 +184,7 @@ export function renderBattleEnd(
   lines.push('');
   lines.push(doubleLine());
   lines.push('');
-  lines.push(center(`${DIM}아무 키나 눌러서 나가기${RESET}`, WIDTH));
+  lines.push(center(`${DIM}${t('battle.press_any_key')}${RESET}`, WIDTH));
   lines.push('');
 
   return lines.join('\n');

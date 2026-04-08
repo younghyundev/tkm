@@ -363,8 +363,8 @@ function renderBattleMode(battleData: {
   const playerHitMark = lastHit?.target === 'player' ? ' 💥' : '';
 
   // Fainted indicator
-  const oppFaintedMark = oppFainted ? ' [쓰러짐]' : '';
-  const playerFaintedMark = playerFainted ? ' [쓰러짐]' : '';
+  const oppFaintedMark = oppFainted ? ` ${t('battle.fainted_label')}` : '';
+  const playerFaintedMark = playerFainted ? ` ${t('battle.fainted_label')}` : '';
 
   // Info lines below sprites
   const oppInfo = `${oppMon.displayName} Lv.${oppMon.level}${oppHitMark}${oppFaintedMark}`;

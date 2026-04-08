@@ -5,7 +5,11 @@ import { PLUGIN_ROOT } from './paths.js';
 
 const gymCache = new Map<string, GymData[]>();
 
-/** Load gym data for a generation. */
+/**
+ * Load gym data for a generation.
+ * Note: generation is determined by filename (genN.json).
+ * The 'region' field in records is informational and should match the filename.
+ */
 export function loadGymData(generation: string): GymData[] {
   const cached = gymCache.get(generation);
   if (cached) return cached;
