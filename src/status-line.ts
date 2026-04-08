@@ -4,12 +4,39 @@ import { readState, readSession } from './core/state.js';
 import { readConfig, readGlobalConfig } from './core/config.js';
 import { getPokemonDB, getPokemonName, getRegionName, getGenerationsDB, getDisplayName } from './core/pokemon-data.js';
 import { levelToXp, xpToLevel } from './core/xp.js';
-import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, getActiveGeneration } from './core/paths.js';
+import { SPRITES_BRAILLE_DIR, SPRITES_TERMINAL_DIR, getActiveGeneration, PLUGIN_ROOT } from './core/paths.js';
 import { formatBattleMessage } from './core/battle.js';
 import { shiftAnsiHue } from './sprites/shiny.js';
 import { isShinyKey, toBaseId } from './core/shiny-utils.js';
 import { t, initLocale } from './i18n/index.js';
 import type { ExpGroup } from './core/types.js';
+
+interface SignatureMove {
+  move: string;
+  move_ko: string;
+  move_en: string;
+  power: number | null;
+  pp: number;
+  type: string;
+  damage_class: string;
+}
+
+function loadSignatureMoves(): Record<string, SignatureMove> {
+  const path = join(PLUGIN_ROOT, 'data', 'pokemon-signature-moves.json');
+  if (!existsSync(path)) return {};
+  try {
+    return JSON.parse(readFileSync(path, 'utf-8')) as Record<string, SignatureMove>;
+  } catch {
+    return {};
+  }
+}
+
+const MAX_CONTEXT = 200000;
+
+function calcPp(maxPp: number, contextTokensUsed: number): number {
+  const ratio = Math.max(0, 1 - contextTokensUsed / MAX_CONTEXT);
+  return Math.max(0, Math.floor(ratio * maxPp));
+}
 
 const TYPE_EMOJI: Record<string, string> = {
   'grass': '🌿', 'fire': '🔥', 'water': '💧', 'electric': '⚡', 'fighting': '🥊',
@@ -115,6 +142,8 @@ function main(): void {
   const state = readState();
   const session = readSession();
   const pokemonDB = getPokemonDB();
+  const signatureMoves = loadSignatureMoves();
+  const contextTokensUsed = state.context_tokens_used ?? 0;
   const termWidth = process.stdout.columns || 80;
   const spriteMode = config.sprite_mode ?? 'all';
   const infoMode = config.info_mode ?? 'ace_full';
@@ -244,23 +273,31 @@ function main(): void {
     const isShiny = isShinyKey(p.speciesId);
     const shinyPrefix = isShiny ? '★' : '';
     const displayName = `${shinyPrefix}${p.name}`;
+
+    // PP = remaining context tokens expressed as move PP for ace pokemon
+    const baseId = parseInt(toBaseId(p.speciesId), 10);
+    const sigMove = signatureMoves[baseId];
+    const ppSuffix = (isAce && sigMove && sigMove.pp > 0)
+      ? ` ${sigMove.move_ko} PP:${calcPp(sigMove.pp, contextTokensUsed)}/${sigMove.pp}`
+      : '';
+
     let info: string;
     switch (infoMode) {
       case 'all_full':
-        info = `${prefix}${displayName} Lv.${p.level} [${bar}] ${pct}%${p.agentLabel}`;
+        info = `${prefix}${displayName} Lv.${p.level} [${bar}] ${pct}%${ppSuffix}${p.agentLabel}`;
         break;
       case 'name_level':
-        info = `${prefix}${displayName} Lv.${p.level}${p.agentLabel}`;
+        info = `${prefix}${displayName} Lv.${p.level}${ppSuffix}${p.agentLabel}`;
         break;
       case 'ace_level':
         info = isAce
-          ? `${prefix}${displayName} Lv.${p.level}${p.agentLabel}`
+          ? `${prefix}${displayName} Lv.${p.level}${ppSuffix}${p.agentLabel}`
           : `${prefix}${displayName}${p.agentLabel}`;
         break;
       case 'ace_full':
       default:
         info = isAce
-          ? `${prefix}${displayName} Lv.${p.level} [${bar}] ${pct}%${p.agentLabel}`
+          ? `${prefix}${displayName} Lv.${p.level} [${bar}] ${pct}%${ppSuffix}${p.agentLabel}`
           : `${prefix}${displayName} Lv.${p.level}${p.agentLabel}`;
         break;
     }

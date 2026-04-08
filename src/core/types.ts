@@ -231,6 +231,7 @@ export interface State {
     turns_remaining: number;
   };
   pending_tier?: string | null;
+  context_tokens_used?: number;
 }
 
 export interface Config {

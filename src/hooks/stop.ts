@@ -36,9 +36,10 @@ function readStdin(): string {
   }
 }
 
-function parseJsonl(filePath: string): number {
+function parseJsonl(filePath: string): { tokens: number; lastCacheTokens: number } {
   const content = readFileSync(filePath, 'utf-8');
   let total = 0;
+  let lastCacheTokens = 0;
   for (const line of content.split('\n')) {
     const trimmed = line.trim();
     if (!trimmed) continue;
@@ -49,13 +50,15 @@ function parseJsonl(filePath: string): number {
       if (usage) {
         total += (usage.input_tokens as number) || 0;
         total += (usage.output_tokens as number) || 0;
-        // Explicitly NOT counting cache_creation_input_tokens or cache_read_input_tokens
+        // Explicitly NOT counting cache_creation_input_tokens or cache_read_input_tokens for XP
+        const cacheRead = (usage.cache_read_input_tokens as number) || 0;
+        if (cacheRead > 0) lastCacheTokens = cacheRead;
       }
     } catch {
       // Skip malformed lines
     }
   }
-  return total;
+  return { tokens: total, lastCacheTokens };
 }
 
 function findJsonlFile(sessionId: string): string | null {
@@ -119,8 +122,11 @@ async function main(): Promise<void> {
   // Pre-lock: parse JSONL (read-only, no race condition)
   const jsonlFile = findJsonlFile(sessionId);
   let totalTokens = 0;
+  let lastCacheTokens = 0;
   if (jsonlFile) {
-    totalTokens = parseJsonl(jsonlFile);
+    const parsed = parseJsonl(jsonlFile);
+    totalTokens = parsed.tokens;
+    lastCacheTokens = parsed.lastCacheTokens;
   }
 
   // Pre-lock: load guide module (read-only module load)
@@ -292,6 +298,7 @@ async function main(): Promise<void> {
     const activeIds = new Set(Object.keys(genMap));
     state.last_session_tokens = pruneSessionTokens(state.last_session_tokens, activeIds);
     state.total_tokens_consumed += deltaTokens;
+    if (lastCacheTokens > 0) state.context_tokens_used = lastCacheTokens;
 
     // Sync common trigger counters
     commonState.total_tokens_consumed += deltaTokens;

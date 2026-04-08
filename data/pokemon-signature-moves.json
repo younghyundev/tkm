@@ -1,0 +1,9227 @@
+{
+  "1": {
+    "move": "vine-whip",
+    "move_ko": "덩굴채찍",
+    "move_en": "Vine Whip",
+    "power": 45,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "2": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "3": {
+    "move": "power-whip",
+    "move_ko": "파워휩",
+    "move_en": "Power Whip",
+    "power": 120,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "4": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "5": {
+    "move": "flame-burst",
+    "move_ko": "불꽃튀기기",
+    "move_en": "Flame Burst",
+    "power": 70,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "6": {
+    "move": "flare-blitz",
+    "move_ko": "플레어드라이브",
+    "move_en": "Flare Blitz",
+    "power": 120,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "7": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "8": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "9": {
+    "move": "wave-crash",
+    "move_ko": "웨이브태클",
+    "move_en": "Wave Crash",
+    "power": 120,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "10": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "11": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "12": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "13": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "14": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "15": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "16": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "17": {
+    "move": "razor-wind",
+    "move_ko": "칼바람",
+    "move_en": "Razor Wind",
+    "power": 80,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "18": {
+    "move": "razor-wind",
+    "move_ko": "칼바람",
+    "move_en": "Razor Wind",
+    "power": 80,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "19": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "20": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "21": {
+    "move": "fury-attack",
+    "move_ko": "마구찌르기",
+    "move_en": "Fury Attack",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "22": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "23": {
+    "move": "poison-sting",
+    "move_ko": "독침",
+    "move_en": "Poison Sting",
+    "power": 15,
+    "pp": 35,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "24": {
+    "move": "sludge-bomb",
+    "move_ko": "오물폭탄",
+    "move_en": "Sludge Bomb",
+    "power": 90,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "25": {
+    "move": "thunderbolt",
+    "move_ko": "10만볼트",
+    "move_en": "Thunderbolt",
+    "power": 90,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "26": {
+    "move": "thunder",
+    "move_ko": "번개",
+    "move_en": "Thunder",
+    "power": 110,
+    "pp": 10,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "27": {
+    "move": "sand-tomb",
+    "move_ko": "모래지옥",
+    "move_en": "Sand Tomb",
+    "power": 35,
+    "pp": 15,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "28": {
+    "move": "dig",
+    "move_ko": "구멍파기",
+    "move_en": "Dig",
+    "power": 80,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "29": {
+    "move": "poison-sting",
+    "move_ko": "독침",
+    "move_en": "Poison Sting",
+    "power": 15,
+    "pp": 35,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "30": {
+    "move": "poison-fang",
+    "move_ko": "독엄니",
+    "move_en": "Poison Fang",
+    "power": 50,
+    "pp": 15,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "31": {
+    "move": "sludge-wave",
+    "move_ko": "오물웨이브",
+    "move_en": "Sludge Wave",
+    "power": 95,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "32": {
+    "move": "poison-sting",
+    "move_ko": "독침",
+    "move_en": "Poison Sting",
+    "power": 15,
+    "pp": 35,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "33": {
+    "move": "poison-jab",
+    "move_ko": "독찌르기",
+    "move_en": "Poison Jab",
+    "power": 80,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "34": {
+    "move": "sludge-wave",
+    "move_ko": "오물웨이브",
+    "move_en": "Sludge Wave",
+    "power": 95,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "35": {
+    "move": "draining-kiss",
+    "move_ko": "드레인키스",
+    "move_en": "Draining Kiss",
+    "power": 50,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "36": {
+    "move": "moonblast",
+    "move_ko": "문포스",
+    "move_en": "Moonblast",
+    "power": 95,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "37": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "38": {
+    "move": "incinerate",
+    "move_ko": "불태우기",
+    "move_en": "Incinerate",
+    "power": 60,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "39": {
+    "move": "body-slam",
+    "move_ko": "누르기",
+    "move_en": "Body Slam",
+    "power": 85,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "40": {
+    "move": "double-edge",
+    "move_ko": "이판사판태클",
+    "move_en": "Double-Edge",
+    "power": 120,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "41": {
+    "move": "poison-fang",
+    "move_ko": "독엄니",
+    "move_en": "Poison Fang",
+    "power": 50,
+    "pp": 15,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "42": {
+    "move": "cross-poison",
+    "move_ko": "크로스포이즌",
+    "move_en": "Cross Poison",
+    "power": 70,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "43": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "44": {
+    "move": "giga-drain",
+    "move_ko": "기가드레인",
+    "move_en": "Giga Drain",
+    "power": 75,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "45": {
+    "move": "petal-dance",
+    "move_ko": "꽃잎댄스",
+    "move_en": "Petal Dance",
+    "power": 120,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "46": {
+    "move": "fury-cutter",
+    "move_ko": "연속자르기",
+    "move_en": "Fury Cutter",
+    "power": 40,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "47": {
+    "move": "x-scissor",
+    "move_ko": "시저크로스",
+    "move_en": "X-Scissor",
+    "power": 80,
+    "pp": 15,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "48": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "49": {
+    "move": "leech-life",
+    "move_ko": "흡혈",
+    "move_en": "Leech Life",
+    "power": 80,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "50": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "51": {
+    "move": "dig",
+    "move_ko": "구멍파기",
+    "move_en": "Dig",
+    "power": 80,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "52": {
+    "move": "fury-swipes",
+    "move_ko": "마구할퀴기",
+    "move_en": "Fury Swipes",
+    "power": 18,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "53": {
+    "move": "slash",
+    "move_ko": "베어가르기",
+    "move_en": "Slash",
+    "power": 70,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "54": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "55": {
+    "move": "surf",
+    "move_ko": "파도타기",
+    "move_en": "Surf",
+    "power": 90,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "56": {
+    "move": "karate-chop",
+    "move_ko": "태권당수",
+    "move_en": "Karate Chop",
+    "power": 50,
+    "pp": 25,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "57": {
+    "move": "cross-chop",
+    "move_ko": "크로스촙",
+    "move_en": "Cross Chop",
+    "power": 100,
+    "pp": 5,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "58": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "59": {
+    "move": "fire-fang",
+    "move_ko": "불꽃엄니",
+    "move_en": "Fire Fang",
+    "power": 65,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "60": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "61": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "62": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "63": {
+    "move": "headbutt",
+    "move_ko": "박치기",
+    "move_en": "Headbutt",
+    "power": 70,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "64": {
+    "move": "zen-headbutt",
+    "move_ko": "사념의박치기",
+    "move_en": "Zen Headbutt",
+    "power": 80,
+    "pp": 15,
+    "type": "psychic",
+    "damage_class": "physical"
+  },
+  "65": {
+    "move": "future-sight",
+    "move_ko": "미래예지",
+    "move_en": "Future Sight",
+    "power": 120,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "66": {
+    "move": "mach-punch",
+    "move_ko": "마하펀치",
+    "move_en": "Mach Punch",
+    "power": 40,
+    "pp": 30,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "67": {
+    "move": "wake-up-slap",
+    "move_ko": "잠깨움뺨치기",
+    "move_en": "Wake-Up Slap",
+    "power": 70,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "68": {
+    "move": "close-combat",
+    "move_ko": "인파이트",
+    "move_en": "Close Combat",
+    "power": 120,
+    "pp": 5,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "69": {
+    "move": "vine-whip",
+    "move_ko": "덩굴채찍",
+    "move_en": "Vine Whip",
+    "power": 45,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "70": {
+    "move": "razor-leaf",
+    "move_ko": "잎날가르기",
+    "move_en": "Razor Leaf",
+    "power": 55,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "71": {
+    "move": "leaf-storm",
+    "move_ko": "리프스톰",
+    "move_en": "Leaf Storm",
+    "power": 130,
+    "pp": 5,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "72": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "73": {
+    "move": "brine",
+    "move_ko": "소금물",
+    "move_en": "Brine",
+    "power": 65,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "74": {
+    "move": "rock-blast",
+    "move_ko": "락블레스트",
+    "move_en": "Rock Blast",
+    "power": 25,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "75": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "76": {
+    "move": "stone-edge",
+    "move_ko": "스톤에지",
+    "move_en": "Stone Edge",
+    "power": 100,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "77": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "78": {
+    "move": "flame-wheel",
+    "move_ko": "화염자동차",
+    "move_en": "Flame Wheel",
+    "power": 60,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "79": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "80": {
+    "move": "surf",
+    "move_ko": "파도타기",
+    "move_en": "Surf",
+    "power": 90,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "81": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "82": {
+    "move": "discharge",
+    "move_ko": "방전",
+    "move_en": "Discharge",
+    "power": 80,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "83": {
+    "move": "fury-attack",
+    "move_ko": "마구찌르기",
+    "move_en": "Fury Attack",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "84": {
+    "move": "fury-attack",
+    "move_ko": "마구찌르기",
+    "move_en": "Fury Attack",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "85": {
+    "move": "uproar",
+    "move_ko": "소란피기",
+    "move_en": "Uproar",
+    "power": 90,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "86": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "87": {
+    "move": "waterfall",
+    "move_ko": "폭포오르기",
+    "move_en": "Waterfall",
+    "power": 80,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "88": {
+    "move": "smog",
+    "move_ko": "스모그",
+    "move_en": "Smog",
+    "power": 30,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "89": {
+    "move": "sludge-bomb",
+    "move_ko": "오물폭탄",
+    "move_en": "Sludge Bomb",
+    "power": 90,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "90": {
+    "move": "clamp",
+    "move_ko": "껍질끼우기",
+    "move_en": "Clamp",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "91": {
+    "move": "razor-shell",
+    "move_ko": "셸블레이드",
+    "move_en": "Razor Shell",
+    "power": 75,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "92": {
+    "move": "lick",
+    "move_ko": "핥기",
+    "move_en": "Lick",
+    "power": 30,
+    "pp": 30,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "93": {
+    "move": "hex",
+    "move_ko": "병상첨병",
+    "move_en": "Hex",
+    "power": 65,
+    "pp": 10,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "94": {
+    "move": "shadow-ball",
+    "move_ko": "섀도볼",
+    "move_en": "Shadow Ball",
+    "power": 80,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "95": {
+    "move": "rollout",
+    "move_ko": "구르기",
+    "move_en": "Rollout",
+    "power": 30,
+    "pp": 20,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "96": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "97": {
+    "move": "psyshock",
+    "move_ko": "사이코쇼크",
+    "move_en": "Psyshock",
+    "power": 80,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "98": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "99": {
+    "move": "brine",
+    "move_ko": "소금물",
+    "move_en": "Brine",
+    "power": 65,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "100": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "101": {
+    "move": "discharge",
+    "move_ko": "방전",
+    "move_en": "Discharge",
+    "power": 80,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "102": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "103": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "104": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "105": {
+    "move": "stomping-tantrum",
+    "move_ko": "분함의발구르기",
+    "move_en": "Stomping Tantrum",
+    "power": 75,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "106": {
+    "move": "low-sweep",
+    "move_ko": "로킥",
+    "move_en": "Low Sweep",
+    "power": 65,
+    "pp": 20,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "107": {
+    "move": "focus-punch",
+    "move_ko": "힘껏펀치",
+    "move_en": "Focus Punch",
+    "power": 150,
+    "pp": 20,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "108": {
+    "move": "bind",
+    "move_ko": "조이기",
+    "move_en": "Bind",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "109": {
+    "move": "smog",
+    "move_ko": "스모그",
+    "move_en": "Smog",
+    "power": 30,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "110": {
+    "move": "sludge-bomb",
+    "move_ko": "오물폭탄",
+    "move_en": "Sludge Bomb",
+    "power": 90,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "111": {
+    "move": "bulldoze",
+    "move_ko": "땅고르기",
+    "move_en": "Bulldoze",
+    "power": 60,
+    "pp": 20,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "112": {
+    "move": "drill-run",
+    "move_ko": "드릴라이너",
+    "move_en": "Drill Run",
+    "power": 80,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "113": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "114": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "115": {
+    "move": "comet-punch",
+    "move_ko": "연속펀치",
+    "move_en": "Comet Punch",
+    "power": 18,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "116": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "117": {
+    "move": "brine",
+    "move_ko": "소금물",
+    "move_en": "Brine",
+    "power": 65,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "118": {
+    "move": "water-pulse",
+    "move_ko": "물의파동",
+    "move_en": "Water Pulse",
+    "power": 60,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "119": {
+    "move": "waterfall",
+    "move_ko": "폭포오르기",
+    "move_en": "Waterfall",
+    "power": 80,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "120": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "121": {
+    "move": "brine",
+    "move_ko": "소금물",
+    "move_en": "Brine",
+    "power": 65,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "122": {
+    "move": "zen-headbutt",
+    "move_ko": "사념의박치기",
+    "move_en": "Zen Headbutt",
+    "power": 80,
+    "pp": 15,
+    "type": "psychic",
+    "damage_class": "physical"
+  },
+  "123": {
+    "move": "fury-cutter",
+    "move_ko": "연속자르기",
+    "move_en": "Fury Cutter",
+    "power": 40,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "124": {
+    "move": "ice-punch",
+    "move_ko": "냉동펀치",
+    "move_en": "Ice Punch",
+    "power": 75,
+    "pp": 15,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "125": {
+    "move": "thunder-punch",
+    "move_ko": "번개펀치",
+    "move_en": "Thunder Punch",
+    "power": 75,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "126": {
+    "move": "fire-punch",
+    "move_ko": "불꽃펀치",
+    "move_en": "Fire Punch",
+    "power": 75,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "127": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "128": {
+    "move": "rage",
+    "move_ko": "분노",
+    "move_en": "Rage",
+    "power": 20,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "129": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "130": {
+    "move": "waterfall",
+    "move_ko": "폭포오르기",
+    "move_en": "Waterfall",
+    "power": 80,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "131": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "132": {
+    "move": "transform",
+    "move_ko": "변신",
+    "move_en": "Transform",
+    "power": null,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "status"
+  },
+  "133": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "134": {
+    "move": "muddy-water",
+    "move_ko": "탁류",
+    "move_en": "Muddy Water",
+    "power": 90,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "135": {
+    "move": "thunder",
+    "move_ko": "번개",
+    "move_en": "Thunder",
+    "power": 110,
+    "pp": 10,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "136": {
+    "move": "flare-blitz",
+    "move_ko": "플레어드라이브",
+    "move_en": "Flare Blitz",
+    "power": 120,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "137": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "138": {
+    "move": "rock-blast",
+    "move_ko": "락블레스트",
+    "move_en": "Rock Blast",
+    "power": 25,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "139": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "140": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "141": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "142": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "143": {
+    "move": "chip-away",
+    "move_ko": "야금야금",
+    "move_en": "Chip Away",
+    "power": 70,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "144": {
+    "move": "powder-snow",
+    "move_ko": "눈싸라기",
+    "move_en": "Powder Snow",
+    "power": 40,
+    "pp": 25,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "145": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "146": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "147": {
+    "move": "twister",
+    "move_ko": "회오리",
+    "move_en": "Twister",
+    "power": 40,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "148": {
+    "move": "dragon-tail",
+    "move_ko": "드래곤테일",
+    "move_en": "Dragon Tail",
+    "power": 60,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "149": {
+    "move": "outrage",
+    "move_ko": "역린",
+    "move_en": "Outrage",
+    "power": 120,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "150": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "151": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "152": {
+    "move": "razor-leaf",
+    "move_ko": "잎날가르기",
+    "move_en": "Razor Leaf",
+    "power": 55,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "153": {
+    "move": "magical-leaf",
+    "move_ko": "메지컬리프",
+    "move_en": "Magical Leaf",
+    "power": 60,
+    "pp": 20,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "154": {
+    "move": "petal-dance",
+    "move_ko": "꽃잎댄스",
+    "move_en": "Petal Dance",
+    "power": 120,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "155": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "156": {
+    "move": "lava-plume",
+    "move_ko": "분연",
+    "move_en": "Lava Plume",
+    "power": 80,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "157": {
+    "move": "eruption",
+    "move_ko": "분화",
+    "move_en": "Eruption",
+    "power": 150,
+    "pp": 5,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "158": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "159": {
+    "move": "aqua-tail",
+    "move_ko": "아쿠아테일",
+    "move_en": "Aqua Tail",
+    "power": 90,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "160": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "161": {
+    "move": "fury-swipes",
+    "move_ko": "마구할퀴기",
+    "move_en": "Fury Swipes",
+    "power": 18,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "162": {
+    "move": "hyper-voice",
+    "move_ko": "하이퍼보이스",
+    "move_en": "Hyper Voice",
+    "power": 90,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "163": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "164": {
+    "move": "uproar",
+    "move_ko": "소란피기",
+    "move_en": "Uproar",
+    "power": 90,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "165": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "166": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "167": {
+    "move": "infestation",
+    "move_ko": "엉겨붙기",
+    "move_en": "Infestation",
+    "power": 20,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "168": {
+    "move": "leech-life",
+    "move_ko": "흡혈",
+    "move_en": "Leech Life",
+    "power": 80,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "169": {
+    "move": "cross-poison",
+    "move_ko": "크로스포이즌",
+    "move_en": "Cross Poison",
+    "power": 70,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "170": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "171": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "172": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "173": {
+    "move": "disarming-voice",
+    "move_ko": "차밍보이스",
+    "move_en": "Disarming Voice",
+    "power": 40,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "174": {
+    "move": "pound",
+    "move_ko": "막치기",
+    "move_en": "Pound",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "175": {
+    "move": "fairy-wind",
+    "move_ko": "요정의바람",
+    "move_en": "Fairy Wind",
+    "power": 40,
+    "pp": 30,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "176": {
+    "move": "draining-kiss",
+    "move_ko": "드레인키스",
+    "move_en": "Draining Kiss",
+    "power": 50,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "177": {
+    "move": "stored-power",
+    "move_ko": "어시스트파워",
+    "move_en": "Stored Power",
+    "power": 20,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "178": {
+    "move": "psychic",
+    "move_ko": "사이코키네시스",
+    "move_en": "Psychic",
+    "power": 90,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "179": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "180": {
+    "move": "discharge",
+    "move_ko": "방전",
+    "move_en": "Discharge",
+    "power": 80,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "181": {
+    "move": "zap-cannon",
+    "move_ko": "전자포",
+    "move_en": "Zap Cannon",
+    "power": 120,
+    "pp": 5,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "182": {
+    "move": "leaf-storm",
+    "move_ko": "리프스톰",
+    "move_en": "Leaf Storm",
+    "power": 130,
+    "pp": 5,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "183": {
+    "move": "aqua-tail",
+    "move_ko": "아쿠아테일",
+    "move_en": "Aqua Tail",
+    "power": 90,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "184": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "185": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "186": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "187": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "188": {
+    "move": "giga-drain",
+    "move_ko": "기가드레인",
+    "move_en": "Giga Drain",
+    "power": 75,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "189": {
+    "move": "giga-drain",
+    "move_ko": "기가드레인",
+    "move_en": "Giga Drain",
+    "power": 75,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "190": {
+    "move": "fury-swipes",
+    "move_ko": "마구할퀴기",
+    "move_en": "Fury Swipes",
+    "power": 18,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "191": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "192": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "193": {
+    "move": "silver-wind",
+    "move_ko": "은빛바람",
+    "move_en": "Silver Wind",
+    "power": 60,
+    "pp": 5,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "194": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "195": {
+    "move": "aqua-tail",
+    "move_ko": "아쿠아테일",
+    "move_en": "Aqua Tail",
+    "power": 90,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "196": {
+    "move": "future-sight",
+    "move_ko": "미래예지",
+    "move_en": "Future Sight",
+    "power": 120,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "197": {
+    "move": "foul-play",
+    "move_ko": "속임수",
+    "move_en": "Foul Play",
+    "power": 95,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "198": {
+    "move": "pursuit",
+    "move_ko": "따라가때리기",
+    "move_en": "Pursuit",
+    "power": 40,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "199": {
+    "move": "surf",
+    "move_ko": "파도타기",
+    "move_en": "Surf",
+    "power": 90,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "200": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "201": {
+    "move": "hidden-power",
+    "move_ko": "잠재파워",
+    "move_en": "Hidden Power",
+    "power": 60,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "202": {
+    "move": "mirror-coat",
+    "move_ko": "미러코트",
+    "move_en": "Mirror Coat",
+    "power": null,
+    "pp": 20,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "203": {
+    "move": "double-hit",
+    "move_ko": "더블어택",
+    "move_en": "Double Hit",
+    "power": 35,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "204": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "205": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "206": {
+    "move": "rage",
+    "move_ko": "분노",
+    "move_en": "Rage",
+    "power": 20,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "207": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "208": {
+    "move": "iron-tail",
+    "move_ko": "아이언테일",
+    "move_en": "Iron Tail",
+    "power": 100,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "209": {
+    "move": "play-rough",
+    "move_ko": "치근거리기",
+    "move_en": "Play Rough",
+    "power": 90,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "physical"
+  },
+  "210": {
+    "move": "play-rough",
+    "move_ko": "치근거리기",
+    "move_en": "Play Rough",
+    "power": 90,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "physical"
+  },
+  "211": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "212": {
+    "move": "x-scissor",
+    "move_ko": "시저크로스",
+    "move_en": "X-Scissor",
+    "power": 80,
+    "pp": 15,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "213": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "214": {
+    "move": "pin-missile",
+    "move_ko": "바늘미사일",
+    "move_en": "Pin Missile",
+    "power": 25,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "215": {
+    "move": "feint-attack",
+    "move_ko": "속여때리기",
+    "move_en": "Feint Attack",
+    "power": 60,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "216": {
+    "move": "fury-swipes",
+    "move_ko": "마구할퀴기",
+    "move_en": "Fury Swipes",
+    "power": 18,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "217": {
+    "move": "slash",
+    "move_ko": "베어가르기",
+    "move_en": "Slash",
+    "power": 70,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "218": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "219": {
+    "move": "lava-plume",
+    "move_ko": "분연",
+    "move_en": "Lava Plume",
+    "power": 80,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "220": {
+    "move": "powder-snow",
+    "move_ko": "눈싸라기",
+    "move_en": "Powder Snow",
+    "power": 40,
+    "pp": 25,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "221": {
+    "move": "ice-fang",
+    "move_ko": "얼음엄니",
+    "move_en": "Ice Fang",
+    "power": 65,
+    "pp": 15,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "222": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "223": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "224": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "225": {
+    "move": "drill-peck",
+    "move_ko": "회전부리",
+    "move_en": "Drill Peck",
+    "power": 80,
+    "pp": 20,
+    "type": "flying",
+    "damage_class": "physical"
+  },
+  "226": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "227": {
+    "move": "metal-claw",
+    "move_ko": "메탈크로우",
+    "move_en": "Metal Claw",
+    "power": 50,
+    "pp": 35,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "228": {
+    "move": "comeuppance",
+    "move_ko": "앙갚음",
+    "move_en": "Comeuppance",
+    "power": 1,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "229": {
+    "move": "feint-attack",
+    "move_ko": "속여때리기",
+    "move_en": "Feint Attack",
+    "power": 60,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "230": {
+    "move": "wave-crash",
+    "move_ko": "웨이브태클",
+    "move_en": "Wave Crash",
+    "power": 120,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "231": {
+    "move": "bulldoze",
+    "move_ko": "땅고르기",
+    "move_en": "Bulldoze",
+    "power": 60,
+    "pp": 20,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "232": {
+    "move": "stomping-tantrum",
+    "move_ko": "분함의발구르기",
+    "move_en": "Stomping Tantrum",
+    "power": 75,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "233": {
+    "move": "tri-attack",
+    "move_ko": "트라이어택",
+    "move_en": "Tri Attack",
+    "power": 80,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "234": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "235": {
+    "move": "sketch",
+    "move_ko": "스케치",
+    "move_en": "Sketch",
+    "power": null,
+    "pp": 1,
+    "type": "normal",
+    "damage_class": "status"
+  },
+  "236": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "237": {
+    "move": "close-combat",
+    "move_ko": "인파이트",
+    "move_en": "Close Combat",
+    "power": 120,
+    "pp": 5,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "238": {
+    "move": "powder-snow",
+    "move_ko": "눈싸라기",
+    "move_en": "Powder Snow",
+    "power": 40,
+    "pp": 25,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "239": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "240": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "241": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "242": {
+    "move": "last-resort",
+    "move_ko": "뒀다쓰기",
+    "move_en": "Last Resort",
+    "power": 140,
+    "pp": 5,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "243": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "244": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "245": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "246": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "247": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "248": {
+    "move": "stone-edge",
+    "move_ko": "스톤에지",
+    "move_en": "Stone Edge",
+    "power": 100,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "249": {
+    "move": "extrasensory",
+    "move_ko": "신통력",
+    "move_en": "Extrasensory",
+    "power": 80,
+    "pp": 20,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "250": {
+    "move": "sacred-fire",
+    "move_ko": "성스러운불꽃",
+    "move_en": "Sacred Fire",
+    "power": 100,
+    "pp": 5,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "251": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "252": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "253": {
+    "move": "leaf-blade",
+    "move_ko": "리프블레이드",
+    "move_en": "Leaf Blade",
+    "power": 90,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "254": {
+    "move": "leaf-storm",
+    "move_ko": "리프스톰",
+    "move_en": "Leaf Storm",
+    "power": 130,
+    "pp": 5,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "255": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "256": {
+    "move": "flamethrower",
+    "move_ko": "화염방사",
+    "move_en": "Flamethrower",
+    "power": 90,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "257": {
+    "move": "flare-blitz",
+    "move_ko": "플레어드라이브",
+    "move_en": "Flare Blitz",
+    "power": 120,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "258": {
+    "move": "whirlpool",
+    "move_ko": "바다회오리",
+    "move_en": "Whirlpool",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "259": {
+    "move": "surf",
+    "move_ko": "파도타기",
+    "move_en": "Surf",
+    "power": 90,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "260": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "261": {
+    "move": "bite",
+    "move_ko": "물기",
+    "move_en": "Bite",
+    "power": 60,
+    "pp": 25,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "262": {
+    "move": "assurance",
+    "move_ko": "승부굳히기",
+    "move_en": "Assurance",
+    "power": 60,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "263": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "264": {
+    "move": "slash",
+    "move_ko": "베어가르기",
+    "move_en": "Slash",
+    "power": 70,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "265": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "266": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "267": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "268": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "269": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "270": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "271": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "272": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "273": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "274": {
+    "move": "leaf-blade",
+    "move_ko": "리프블레이드",
+    "move_en": "Leaf Blade",
+    "power": 90,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "275": {
+    "move": "leaf-storm",
+    "move_ko": "리프스톰",
+    "move_en": "Leaf Storm",
+    "power": 130,
+    "pp": 5,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "276": {
+    "move": "quick-attack",
+    "move_ko": "전광석화",
+    "move_en": "Quick Attack",
+    "power": 40,
+    "pp": 30,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "277": {
+    "move": "quick-attack",
+    "move_ko": "전광석화",
+    "move_en": "Quick Attack",
+    "power": 40,
+    "pp": 30,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "278": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "279": {
+    "move": "brine",
+    "move_ko": "소금물",
+    "move_en": "Brine",
+    "power": 65,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "280": {
+    "move": "stored-power",
+    "move_ko": "어시스트파워",
+    "move_en": "Stored Power",
+    "power": 20,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "281": {
+    "move": "psychic",
+    "move_ko": "사이코키네시스",
+    "move_en": "Psychic",
+    "power": 90,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "282": {
+    "move": "future-sight",
+    "move_ko": "미래예지",
+    "move_en": "Future Sight",
+    "power": 120,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "283": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "284": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "285": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "286": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "287": {
+    "move": "scratch",
+    "move_ko": "할퀴기",
+    "move_en": "Scratch",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "288": {
+    "move": "slash",
+    "move_ko": "베어가르기",
+    "move_en": "Slash",
+    "power": 70,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "289": {
+    "move": "mega-kick",
+    "move_ko": "메가톤킥",
+    "move_en": "Mega Kick",
+    "power": 120,
+    "pp": 5,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "290": {
+    "move": "leech-life",
+    "move_ko": "흡혈",
+    "move_en": "Leech Life",
+    "power": 80,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "291": {
+    "move": "leech-life",
+    "move_ko": "흡혈",
+    "move_en": "Leech Life",
+    "power": 80,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "292": {
+    "move": "leech-life",
+    "move_ko": "흡혈",
+    "move_en": "Leech Life",
+    "power": 80,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "293": {
+    "move": "pound",
+    "move_ko": "막치기",
+    "move_en": "Pound",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "294": {
+    "move": "uproar",
+    "move_ko": "소란피기",
+    "move_en": "Uproar",
+    "power": 90,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "295": {
+    "move": "hyper-beam",
+    "move_ko": "파괴광선",
+    "move_en": "Hyper Beam",
+    "power": 150,
+    "pp": 5,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "296": {
+    "move": "arm-thrust",
+    "move_ko": "손바닥치기",
+    "move_en": "Arm Thrust",
+    "power": 15,
+    "pp": 20,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "297": {
+    "move": "vital-throw",
+    "move_ko": "받아던지기",
+    "move_en": "Vital Throw",
+    "power": 70,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "298": {
+    "move": "slam",
+    "move_ko": "힘껏치기",
+    "move_en": "Slam",
+    "power": 80,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "299": {
+    "move": "rock-blast",
+    "move_ko": "락블레스트",
+    "move_en": "Rock Blast",
+    "power": 25,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "300": {
+    "move": "double-slap",
+    "move_ko": "연속뺨치기",
+    "move_en": "Double Slap",
+    "power": 15,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "301": {
+    "move": "facade",
+    "move_ko": "객기",
+    "move_en": "Facade",
+    "power": 70,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "302": {
+    "move": "feint-attack",
+    "move_ko": "속여때리기",
+    "move_en": "Feint Attack",
+    "power": 60,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "303": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "304": {
+    "move": "metal-claw",
+    "move_ko": "메탈크로우",
+    "move_en": "Metal Claw",
+    "power": 50,
+    "pp": 35,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "305": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "306": {
+    "move": "iron-tail",
+    "move_ko": "아이언테일",
+    "move_en": "Iron Tail",
+    "power": 100,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "307": {
+    "move": "force-palm",
+    "move_ko": "발경",
+    "move_en": "Force Palm",
+    "power": 60,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "308": {
+    "move": "force-palm",
+    "move_ko": "발경",
+    "move_en": "Force Palm",
+    "power": 60,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "309": {
+    "move": "shock-wave",
+    "move_ko": "전격파",
+    "move_en": "Shock Wave",
+    "power": 60,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "310": {
+    "move": "thunder-fang",
+    "move_ko": "번개엄니",
+    "move_en": "Thunder Fang",
+    "power": 65,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "311": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "312": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "313": {
+    "move": "infestation",
+    "move_ko": "엉겨붙기",
+    "move_en": "Infestation",
+    "power": 20,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "314": {
+    "move": "infestation",
+    "move_ko": "엉겨붙기",
+    "move_en": "Infestation",
+    "power": 20,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "315": {
+    "move": "energy-ball",
+    "move_ko": "에너지볼",
+    "move_en": "Energy Ball",
+    "power": 90,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "316": {
+    "move": "acid-spray",
+    "move_ko": "애시드봄",
+    "move_en": "Acid Spray",
+    "power": 40,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "317": {
+    "move": "sludge-bomb",
+    "move_ko": "오물폭탄",
+    "move_en": "Sludge Bomb",
+    "power": 90,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "318": {
+    "move": "aqua-jet",
+    "move_ko": "아쿠아제트",
+    "move_en": "Aqua Jet",
+    "power": 40,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "319": {
+    "move": "liquidation",
+    "move_ko": "아쿠아브레이크",
+    "move_en": "Liquidation",
+    "power": 85,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "320": {
+    "move": "whirlpool",
+    "move_ko": "바다회오리",
+    "move_en": "Whirlpool",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "321": {
+    "move": "brine",
+    "move_ko": "소금물",
+    "move_en": "Brine",
+    "power": 65,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "322": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "323": {
+    "move": "flame-burst",
+    "move_ko": "불꽃튀기기",
+    "move_en": "Flame Burst",
+    "power": 70,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "324": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "325": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "326": {
+    "move": "psyshock",
+    "move_ko": "사이코쇼크",
+    "move_en": "Psyshock",
+    "power": 80,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "327": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "328": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "329": {
+    "move": "dig",
+    "move_ko": "구멍파기",
+    "move_en": "Dig",
+    "power": 80,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "330": {
+    "move": "earthquake",
+    "move_ko": "지진",
+    "move_en": "Earthquake",
+    "power": 100,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "331": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "332": {
+    "move": "energy-ball",
+    "move_ko": "에너지볼",
+    "move_en": "Energy Ball",
+    "power": 90,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "333": {
+    "move": "fury-attack",
+    "move_ko": "마구찌르기",
+    "move_en": "Fury Attack",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "334": {
+    "move": "dragon-pulse",
+    "move_ko": "용의파동",
+    "move_en": "Dragon Pulse",
+    "power": 85,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "335": {
+    "move": "scratch",
+    "move_ko": "할퀴기",
+    "move_en": "Scratch",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "336": {
+    "move": "poison-fang",
+    "move_ko": "독엄니",
+    "move_en": "Poison Fang",
+    "power": 50,
+    "pp": 15,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "337": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "338": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "339": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "340": {
+    "move": "muddy-water",
+    "move_ko": "탁류",
+    "move_en": "Muddy Water",
+    "power": 90,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "341": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "342": {
+    "move": "razor-shell",
+    "move_ko": "셸블레이드",
+    "move_en": "Razor Shell",
+    "power": 75,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "343": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "344": {
+    "move": "earth-power",
+    "move_ko": "대지의힘",
+    "move_en": "Earth Power",
+    "power": 90,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "345": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "346": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "347": {
+    "move": "rock-blast",
+    "move_ko": "락블레스트",
+    "move_en": "Rock Blast",
+    "power": 25,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "348": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "349": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "350": {
+    "move": "surf",
+    "move_ko": "파도타기",
+    "move_en": "Surf",
+    "power": 90,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "351": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "352": {
+    "move": "bind",
+    "move_ko": "조이기",
+    "move_en": "Bind",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "353": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "354": {
+    "move": "shadow-ball",
+    "move_ko": "섀도볼",
+    "move_en": "Shadow Ball",
+    "power": 80,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "355": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "356": {
+    "move": "hex",
+    "move_ko": "병상첨병",
+    "move_en": "Hex",
+    "power": 65,
+    "pp": 10,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "357": {
+    "move": "razor-leaf",
+    "move_ko": "잎날가르기",
+    "move_en": "Razor Leaf",
+    "power": 55,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "358": {
+    "move": "psychic",
+    "move_ko": "사이코키네시스",
+    "move_en": "Psychic",
+    "power": 90,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "359": {
+    "move": "pursuit",
+    "move_ko": "따라가때리기",
+    "move_en": "Pursuit",
+    "power": 40,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "360": {
+    "move": "mirror-coat",
+    "move_ko": "미러코트",
+    "move_en": "Mirror Coat",
+    "power": null,
+    "pp": 20,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "361": {
+    "move": "powder-snow",
+    "move_ko": "눈싸라기",
+    "move_en": "Powder Snow",
+    "power": 40,
+    "pp": 25,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "362": {
+    "move": "freeze-dry",
+    "move_ko": "프리즈드라이",
+    "move_en": "Freeze-Dry",
+    "power": 70,
+    "pp": 20,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "363": {
+    "move": "ice-ball",
+    "move_ko": "아이스볼",
+    "move_en": "Ice Ball",
+    "power": 30,
+    "pp": 20,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "364": {
+    "move": "ice-beam",
+    "move_ko": "냉동빔",
+    "move_en": "Ice Beam",
+    "power": 90,
+    "pp": 10,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "365": {
+    "move": "blizzard",
+    "move_ko": "눈보라",
+    "move_en": "Blizzard",
+    "power": 110,
+    "pp": 5,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "366": {
+    "move": "clamp",
+    "move_ko": "껍질끼우기",
+    "move_en": "Clamp",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "367": {
+    "move": "dive",
+    "move_ko": "다이빙",
+    "move_en": "Dive",
+    "power": 80,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "368": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "369": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "370": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "371": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "372": {
+    "move": "dragon-claw",
+    "move_ko": "드래곤크루",
+    "move_en": "Dragon Claw",
+    "power": 80,
+    "pp": 15,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "373": {
+    "move": "outrage",
+    "move_ko": "역린",
+    "move_en": "Outrage",
+    "power": 120,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "374": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "375": {
+    "move": "meteor-mash",
+    "move_ko": "코멧펀치",
+    "move_en": "Meteor Mash",
+    "power": 90,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "376": {
+    "move": "meteor-mash",
+    "move_ko": "코멧펀치",
+    "move_en": "Meteor Mash",
+    "power": 90,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "377": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "378": {
+    "move": "icy-wind",
+    "move_ko": "얼다바람",
+    "move_en": "Icy Wind",
+    "power": 55,
+    "pp": 15,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "379": {
+    "move": "metal-claw",
+    "move_ko": "메탈크로우",
+    "move_en": "Metal Claw",
+    "power": 50,
+    "pp": 35,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "380": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "381": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "382": {
+    "move": "water-pulse",
+    "move_ko": "물의파동",
+    "move_en": "Water Pulse",
+    "power": 60,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "383": {
+    "move": "mud-shot",
+    "move_ko": "머드숏",
+    "move_en": "Mud Shot",
+    "power": 55,
+    "pp": 15,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "384": {
+    "move": "twister",
+    "move_ko": "회오리",
+    "move_en": "Twister",
+    "power": 40,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "385": {
+    "move": "meteor-mash",
+    "move_ko": "코멧펀치",
+    "move_en": "Meteor Mash",
+    "power": 90,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "386": {
+    "move": "zen-headbutt",
+    "move_ko": "사념의박치기",
+    "move_en": "Zen Headbutt",
+    "power": 80,
+    "pp": 15,
+    "type": "psychic",
+    "damage_class": "physical"
+  },
+  "387": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "388": {
+    "move": "giga-drain",
+    "move_ko": "기가드레인",
+    "move_en": "Giga Drain",
+    "power": 75,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "389": {
+    "move": "leaf-storm",
+    "move_ko": "리프스톰",
+    "move_en": "Leaf Storm",
+    "power": 130,
+    "pp": 5,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "390": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "391": {
+    "move": "flamethrower",
+    "move_ko": "화염방사",
+    "move_en": "Flamethrower",
+    "power": 90,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "392": {
+    "move": "raging-fury",
+    "move_ko": "대격분",
+    "move_en": "Raging Fury",
+    "power": 120,
+    "pp": 10,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "393": {
+    "move": "whirlpool",
+    "move_ko": "바다회오리",
+    "move_en": "Whirlpool",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "394": {
+    "move": "brine",
+    "move_ko": "소금물",
+    "move_en": "Brine",
+    "power": 65,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "395": {
+    "move": "wave-crash",
+    "move_ko": "웨이브태클",
+    "move_en": "Wave Crash",
+    "power": 120,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "396": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "397": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "398": {
+    "move": "giga-impact",
+    "move_ko": "기가임팩트",
+    "move_en": "Giga Impact",
+    "power": 150,
+    "pp": 5,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "399": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "400": {
+    "move": "hyper-fang",
+    "move_ko": "필살앞니",
+    "move_en": "Hyper Fang",
+    "power": 80,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "401": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "402": {
+    "move": "x-scissor",
+    "move_ko": "시저크로스",
+    "move_en": "X-Scissor",
+    "power": 80,
+    "pp": 15,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "403": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "404": {
+    "move": "volt-switch",
+    "move_ko": "볼트체인지",
+    "move_en": "Volt Switch",
+    "power": 70,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "405": {
+    "move": "thunder",
+    "move_ko": "번개",
+    "move_en": "Thunder",
+    "power": 110,
+    "pp": 10,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "406": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "407": {
+    "move": "petal-dance",
+    "move_ko": "꽃잎댄스",
+    "move_en": "Petal Dance",
+    "power": 120,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "408": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "409": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "410": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "411": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "412": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "413": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "414": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "415": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "416": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "417": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "418": {
+    "move": "whirlpool",
+    "move_ko": "바다회오리",
+    "move_en": "Whirlpool",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "419": {
+    "move": "liquidation",
+    "move_ko": "아쿠아브레이크",
+    "move_en": "Liquidation",
+    "power": 85,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "420": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "421": {
+    "move": "energy-ball",
+    "move_ko": "에너지볼",
+    "move_en": "Energy Ball",
+    "power": 90,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "422": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "423": {
+    "move": "muddy-water",
+    "move_ko": "탁류",
+    "move_en": "Muddy Water",
+    "power": 90,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "424": {
+    "move": "swift",
+    "move_ko": "스피드스타",
+    "move_en": "Swift",
+    "power": 60,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "425": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "426": {
+    "move": "shadow-ball",
+    "move_ko": "섀도볼",
+    "move_en": "Shadow Ball",
+    "power": 80,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "427": {
+    "move": "double-hit",
+    "move_ko": "더블어택",
+    "move_en": "Double Hit",
+    "power": 35,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "428": {
+    "move": "headbutt",
+    "move_ko": "박치기",
+    "move_en": "Headbutt",
+    "power": 70,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "429": {
+    "move": "shadow-ball",
+    "move_ko": "섀도볼",
+    "move_en": "Shadow Ball",
+    "power": 80,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "430": {
+    "move": "sucker-punch",
+    "move_ko": "기습",
+    "move_en": "Sucker Punch",
+    "power": 70,
+    "pp": 5,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "431": {
+    "move": "fury-swipes",
+    "move_ko": "마구할퀴기",
+    "move_en": "Fury Swipes",
+    "power": 18,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "432": {
+    "move": "retaliate",
+    "move_ko": "원수갚기",
+    "move_en": "Retaliate",
+    "power": 70,
+    "pp": 5,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "433": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "434": {
+    "move": "acid-spray",
+    "move_ko": "애시드봄",
+    "move_en": "Acid Spray",
+    "power": 40,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "435": {
+    "move": "poison-jab",
+    "move_ko": "독찌르기",
+    "move_en": "Poison Jab",
+    "power": 80,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "436": {
+    "move": "flash-cannon",
+    "move_ko": "러스터캐논",
+    "move_en": "Flash Cannon",
+    "power": 80,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "437": {
+    "move": "flash-cannon",
+    "move_ko": "러스터캐논",
+    "move_en": "Flash Cannon",
+    "power": 80,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "438": {
+    "move": "rollout",
+    "move_ko": "구르기",
+    "move_en": "Rollout",
+    "power": 30,
+    "pp": 20,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "439": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "440": {
+    "move": "pound",
+    "move_ko": "막치기",
+    "move_en": "Pound",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "441": {
+    "move": "fury-attack",
+    "move_ko": "마구찌르기",
+    "move_en": "Fury Attack",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "442": {
+    "move": "shadow-sneak",
+    "move_ko": "야습",
+    "move_en": "Shadow Sneak",
+    "power": 40,
+    "pp": 30,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "443": {
+    "move": "twister",
+    "move_ko": "회오리",
+    "move_en": "Twister",
+    "power": 40,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "444": {
+    "move": "dragon-claw",
+    "move_ko": "드래곤크루",
+    "move_en": "Dragon Claw",
+    "power": 80,
+    "pp": 15,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "445": {
+    "move": "outrage",
+    "move_ko": "역린",
+    "move_en": "Outrage",
+    "power": 120,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "446": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "447": {
+    "move": "rock-smash",
+    "move_ko": "바위깨기",
+    "move_en": "Rock Smash",
+    "power": 40,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "448": {
+    "move": "aura-sphere",
+    "move_ko": "파동탄",
+    "move_en": "Aura Sphere",
+    "power": 80,
+    "pp": 20,
+    "type": "fighting",
+    "damage_class": "special"
+  },
+  "449": {
+    "move": "sand-tomb",
+    "move_ko": "모래지옥",
+    "move_en": "Sand Tomb",
+    "power": 35,
+    "pp": 15,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "450": {
+    "move": "dig",
+    "move_ko": "구멍파기",
+    "move_en": "Dig",
+    "power": 80,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "451": {
+    "move": "poison-sting",
+    "move_ko": "독침",
+    "move_en": "Poison Sting",
+    "power": 15,
+    "pp": 35,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "452": {
+    "move": "cross-poison",
+    "move_ko": "크로스포이즌",
+    "move_en": "Cross Poison",
+    "power": 70,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "453": {
+    "move": "poison-sting",
+    "move_ko": "독침",
+    "move_en": "Poison Sting",
+    "power": 15,
+    "pp": 35,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "454": {
+    "move": "poison-jab",
+    "move_ko": "독찌르기",
+    "move_en": "Poison Jab",
+    "power": 80,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "455": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "456": {
+    "move": "whirlpool",
+    "move_ko": "바다회오리",
+    "move_en": "Whirlpool",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "457": {
+    "move": "water-pulse",
+    "move_ko": "물의파동",
+    "move_en": "Water Pulse",
+    "power": 60,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "458": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "459": {
+    "move": "leafage",
+    "move_ko": "나뭇잎",
+    "move_en": "Leafage",
+    "power": 40,
+    "pp": 40,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "460": {
+    "move": "energy-ball",
+    "move_ko": "에너지볼",
+    "move_en": "Energy Ball",
+    "power": 90,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "461": {
+    "move": "night-slash",
+    "move_ko": "깜짝베기",
+    "move_en": "Night Slash",
+    "power": 70,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "462": {
+    "move": "zap-cannon",
+    "move_ko": "전자포",
+    "move_en": "Zap Cannon",
+    "power": 120,
+    "pp": 5,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "463": {
+    "move": "chip-away",
+    "move_ko": "야금야금",
+    "move_en": "Chip Away",
+    "power": 70,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "464": {
+    "move": "earthquake",
+    "move_ko": "지진",
+    "move_en": "Earthquake",
+    "power": 100,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "465": {
+    "move": "energy-ball",
+    "move_ko": "에너지볼",
+    "move_en": "Energy Ball",
+    "power": 90,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "466": {
+    "move": "thunder",
+    "move_ko": "번개",
+    "move_en": "Thunder",
+    "power": 110,
+    "pp": 10,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "467": {
+    "move": "fire-blast",
+    "move_ko": "불대문자",
+    "move_en": "Fire Blast",
+    "power": 110,
+    "pp": 5,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "468": {
+    "move": "moonblast",
+    "move_ko": "문포스",
+    "move_en": "Moonblast",
+    "power": 95,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "469": {
+    "move": "u-turn",
+    "move_ko": "유턴",
+    "move_en": "U-turn",
+    "power": 70,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "470": {
+    "move": "leaf-blade",
+    "move_ko": "리프블레이드",
+    "move_en": "Leaf Blade",
+    "power": 90,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "471": {
+    "move": "blizzard",
+    "move_ko": "눈보라",
+    "move_en": "Blizzard",
+    "power": 110,
+    "pp": 5,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "472": {
+    "move": "earth-power",
+    "move_ko": "대지의힘",
+    "move_en": "Earth Power",
+    "power": 90,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "473": {
+    "move": "blizzard",
+    "move_ko": "눈보라",
+    "move_en": "Blizzard",
+    "power": 110,
+    "pp": 5,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "474": {
+    "move": "hyper-beam",
+    "move_ko": "파괴광선",
+    "move_en": "Hyper Beam",
+    "power": 150,
+    "pp": 5,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "475": {
+    "move": "future-sight",
+    "move_ko": "미래예지",
+    "move_en": "Future Sight",
+    "power": 120,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "476": {
+    "move": "power-gem",
+    "move_ko": "파워젬",
+    "move_en": "Power Gem",
+    "power": 80,
+    "pp": 20,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "477": {
+    "move": "shadow-ball",
+    "move_ko": "섀도볼",
+    "move_en": "Shadow Ball",
+    "power": 80,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "478": {
+    "move": "ice-fang",
+    "move_ko": "얼음엄니",
+    "move_en": "Ice Fang",
+    "power": 65,
+    "pp": 15,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "479": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "480": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "481": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "482": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "483": {
+    "move": "metal-claw",
+    "move_ko": "메탈크로우",
+    "move_en": "Metal Claw",
+    "power": 50,
+    "pp": 35,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "484": {
+    "move": "water-pulse",
+    "move_ko": "물의파동",
+    "move_en": "Water Pulse",
+    "power": 60,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "485": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "486": {
+    "move": "pound",
+    "move_ko": "막치기",
+    "move_en": "Pound",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "487": {
+    "move": "shadow-sneak",
+    "move_ko": "야습",
+    "move_en": "Shadow Sneak",
+    "power": 40,
+    "pp": 30,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "488": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "489": {
+    "move": "whirlpool",
+    "move_ko": "바다회오리",
+    "move_en": "Whirlpool",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "490": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "491": {
+    "move": "pursuit",
+    "move_ko": "따라가때리기",
+    "move_en": "Pursuit",
+    "power": 40,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "492": {
+    "move": "leafage",
+    "move_ko": "나뭇잎",
+    "move_en": "Leafage",
+    "power": 40,
+    "pp": 40,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "493": {
+    "move": "quick-attack",
+    "move_ko": "전광석화",
+    "move_en": "Quick Attack",
+    "power": 40,
+    "pp": 30,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "494": {
+    "move": "stored-power",
+    "move_ko": "어시스트파워",
+    "move_en": "Stored Power",
+    "power": 20,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "495": {
+    "move": "mega-drain",
+    "move_ko": "메가드레인",
+    "move_en": "Mega Drain",
+    "power": 40,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "496": {
+    "move": "giga-drain",
+    "move_ko": "기가드레인",
+    "move_en": "Giga Drain",
+    "power": 75,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "497": {
+    "move": "leaf-storm",
+    "move_ko": "리프스톰",
+    "move_en": "Leaf Storm",
+    "power": 130,
+    "pp": 5,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "498": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "499": {
+    "move": "flamethrower",
+    "move_ko": "화염방사",
+    "move_en": "Flamethrower",
+    "power": 90,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "500": {
+    "move": "flare-blitz",
+    "move_ko": "플레어드라이브",
+    "move_en": "Flare Blitz",
+    "power": 120,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "501": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "502": {
+    "move": "razor-shell",
+    "move_ko": "셸블레이드",
+    "move_en": "Razor Shell",
+    "power": 75,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "503": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "504": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "505": {
+    "move": "hyper-fang",
+    "move_ko": "필살앞니",
+    "move_en": "Hyper Fang",
+    "power": 80,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "506": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "507": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "508": {
+    "move": "giga-impact",
+    "move_ko": "기가임팩트",
+    "move_en": "Giga Impact",
+    "power": 150,
+    "pp": 5,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "509": {
+    "move": "pursuit",
+    "move_ko": "따라가때리기",
+    "move_en": "Pursuit",
+    "power": 40,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "510": {
+    "move": "sucker-punch",
+    "move_ko": "기습",
+    "move_en": "Sucker Punch",
+    "power": 70,
+    "pp": 5,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "511": {
+    "move": "vine-whip",
+    "move_ko": "덩굴채찍",
+    "move_en": "Vine Whip",
+    "power": 45,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "512": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "513": {
+    "move": "incinerate",
+    "move_ko": "불태우기",
+    "move_en": "Incinerate",
+    "power": 60,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "514": {
+    "move": "flame-burst",
+    "move_ko": "불꽃튀기기",
+    "move_en": "Flame Burst",
+    "power": 70,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "515": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "516": {
+    "move": "scald",
+    "move_ko": "열탕",
+    "move_en": "Scald",
+    "power": 80,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "517": {
+    "move": "stored-power",
+    "move_ko": "어시스트파워",
+    "move_en": "Stored Power",
+    "power": 20,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "518": {
+    "move": "zen-headbutt",
+    "move_ko": "사념의박치기",
+    "move_en": "Zen Headbutt",
+    "power": 80,
+    "pp": 15,
+    "type": "psychic",
+    "damage_class": "physical"
+  },
+  "519": {
+    "move": "quick-attack",
+    "move_ko": "전광석화",
+    "move_en": "Quick Attack",
+    "power": 40,
+    "pp": 30,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "520": {
+    "move": "razor-wind",
+    "move_ko": "칼바람",
+    "move_en": "Razor Wind",
+    "power": 80,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "521": {
+    "move": "razor-wind",
+    "move_ko": "칼바람",
+    "move_en": "Razor Wind",
+    "power": 80,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "522": {
+    "move": "shock-wave",
+    "move_ko": "전격파",
+    "move_en": "Shock Wave",
+    "power": 60,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "523": {
+    "move": "discharge",
+    "move_ko": "방전",
+    "move_en": "Discharge",
+    "power": 80,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "524": {
+    "move": "rock-blast",
+    "move_ko": "락블레스트",
+    "move_en": "Rock Blast",
+    "power": 25,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "525": {
+    "move": "power-gem",
+    "move_ko": "파워젬",
+    "move_en": "Power Gem",
+    "power": 80,
+    "pp": 20,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "526": {
+    "move": "stone-edge",
+    "move_ko": "스톤에지",
+    "move_en": "Stone Edge",
+    "power": 100,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "527": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "528": {
+    "move": "psychic",
+    "move_ko": "사이코키네시스",
+    "move_en": "Psychic",
+    "power": 90,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "529": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "530": {
+    "move": "drill-run",
+    "move_ko": "드릴라이너",
+    "move_en": "Drill Run",
+    "power": 80,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "531": {
+    "move": "double-slap",
+    "move_ko": "연속뺨치기",
+    "move_en": "Double Slap",
+    "power": 15,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "532": {
+    "move": "wake-up-slap",
+    "move_ko": "잠깨움뺨치기",
+    "move_en": "Wake-Up Slap",
+    "power": 70,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "533": {
+    "move": "wake-up-slap",
+    "move_ko": "잠깨움뺨치기",
+    "move_en": "Wake-Up Slap",
+    "power": 70,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "534": {
+    "move": "focus-punch",
+    "move_ko": "힘껏펀치",
+    "move_en": "Focus Punch",
+    "power": 150,
+    "pp": 20,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "535": {
+    "move": "bubble",
+    "move_ko": "거품",
+    "move_en": "Bubble",
+    "power": 40,
+    "pp": 30,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "536": {
+    "move": "muddy-water",
+    "move_ko": "탁류",
+    "move_en": "Muddy Water",
+    "power": 90,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "537": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "538": {
+    "move": "revenge",
+    "move_ko": "리벤지",
+    "move_en": "Revenge",
+    "power": 60,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "539": {
+    "move": "double-kick",
+    "move_ko": "두번치기",
+    "move_en": "Double Kick",
+    "power": 30,
+    "pp": 30,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "540": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "541": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "542": {
+    "move": "x-scissor",
+    "move_ko": "시저크로스",
+    "move_en": "X-Scissor",
+    "power": 80,
+    "pp": 15,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "543": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "544": {
+    "move": "steamroller",
+    "move_ko": "하드롤러",
+    "move_en": "Steamroller",
+    "power": 65,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "545": {
+    "move": "megahorn",
+    "move_ko": "메가폰",
+    "move_en": "Megahorn",
+    "power": 120,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "546": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "547": {
+    "move": "giga-drain",
+    "move_ko": "기가드레인",
+    "move_en": "Giga Drain",
+    "power": 75,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "548": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "549": {
+    "move": "energy-ball",
+    "move_ko": "에너지볼",
+    "move_en": "Energy Ball",
+    "power": 90,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "550": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "551": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "552": {
+    "move": "dig",
+    "move_ko": "구멍파기",
+    "move_en": "Dig",
+    "power": 80,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "553": {
+    "move": "earthquake",
+    "move_ko": "지진",
+    "move_en": "Earthquake",
+    "power": 100,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "554": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "555": {
+    "move": "fire-fang",
+    "move_ko": "불꽃엄니",
+    "move_en": "Fire Fang",
+    "power": 65,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "556": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "557": {
+    "move": "fury-cutter",
+    "move_ko": "연속자르기",
+    "move_en": "Fury Cutter",
+    "power": 40,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "558": {
+    "move": "x-scissor",
+    "move_ko": "시저크로스",
+    "move_en": "X-Scissor",
+    "power": 80,
+    "pp": 15,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "559": {
+    "move": "payback",
+    "move_ko": "보복",
+    "move_en": "Payback",
+    "power": 50,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "560": {
+    "move": "crunch",
+    "move_ko": "깨물어부수기",
+    "move_en": "Crunch",
+    "power": 80,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "561": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "562": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "563": {
+    "move": "shadow-claw",
+    "move_ko": "섀도크루",
+    "move_en": "Shadow Claw",
+    "power": 70,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "564": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "565": {
+    "move": "aqua-tail",
+    "move_ko": "아쿠아테일",
+    "move_en": "Aqua Tail",
+    "power": 90,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "566": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "567": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "568": {
+    "move": "acid-spray",
+    "move_ko": "애시드봄",
+    "move_en": "Acid Spray",
+    "power": 40,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "569": {
+    "move": "sludge-bomb",
+    "move_ko": "오물폭탄",
+    "move_en": "Sludge Bomb",
+    "power": 90,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "570": {
+    "move": "pursuit",
+    "move_ko": "따라가때리기",
+    "move_en": "Pursuit",
+    "power": 40,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "571": {
+    "move": "night-slash",
+    "move_ko": "깜짝베기",
+    "move_en": "Night Slash",
+    "power": 70,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "572": {
+    "move": "double-slap",
+    "move_ko": "연속뺨치기",
+    "move_en": "Double Slap",
+    "power": 15,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "573": {
+    "move": "slam",
+    "move_ko": "힘껏치기",
+    "move_en": "Slam",
+    "power": 80,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "574": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "575": {
+    "move": "psyshock",
+    "move_ko": "사이코쇼크",
+    "move_en": "Psyshock",
+    "power": 80,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "576": {
+    "move": "future-sight",
+    "move_ko": "미래예지",
+    "move_en": "Future Sight",
+    "power": 120,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "577": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "578": {
+    "move": "psyshock",
+    "move_ko": "사이코쇼크",
+    "move_en": "Psyshock",
+    "power": 80,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "579": {
+    "move": "future-sight",
+    "move_ko": "미래예지",
+    "move_en": "Future Sight",
+    "power": 120,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "580": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "581": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "582": {
+    "move": "icicle-spear",
+    "move_ko": "고드름침",
+    "move_en": "Icicle Spear",
+    "power": 25,
+    "pp": 30,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "583": {
+    "move": "avalanche",
+    "move_ko": "눈사태",
+    "move_en": "Avalanche",
+    "power": 60,
+    "pp": 10,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "584": {
+    "move": "blizzard",
+    "move_ko": "눈보라",
+    "move_en": "Blizzard",
+    "power": 110,
+    "pp": 5,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "585": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "586": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "587": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "588": {
+    "move": "fury-cutter",
+    "move_ko": "연속자르기",
+    "move_en": "Fury Cutter",
+    "power": 40,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "589": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "590": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "591": {
+    "move": "giga-drain",
+    "move_ko": "기가드레인",
+    "move_en": "Giga Drain",
+    "power": 75,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "592": {
+    "move": "whirlpool",
+    "move_ko": "바다회오리",
+    "move_en": "Whirlpool",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "593": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "594": {
+    "move": "whirlpool",
+    "move_ko": "바다회오리",
+    "move_en": "Whirlpool",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "595": {
+    "move": "fury-cutter",
+    "move_ko": "연속자르기",
+    "move_en": "Fury Cutter",
+    "power": 40,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "596": {
+    "move": "leech-life",
+    "move_ko": "흡혈",
+    "move_en": "Leech Life",
+    "power": 80,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "597": {
+    "move": "pin-missile",
+    "move_ko": "바늘미사일",
+    "move_en": "Pin Missile",
+    "power": 25,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "598": {
+    "move": "power-whip",
+    "move_ko": "파워휩",
+    "move_en": "Power Whip",
+    "power": 120,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "599": {
+    "move": "gear-grind",
+    "move_ko": "기어소서",
+    "move_en": "Gear Grind",
+    "power": 50,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "600": {
+    "move": "mirror-shot",
+    "move_ko": "미러숏",
+    "move_en": "Mirror Shot",
+    "power": 65,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "601": {
+    "move": "mirror-shot",
+    "move_ko": "미러숏",
+    "move_en": "Mirror Shot",
+    "power": 65,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "602": {
+    "move": "charge-beam",
+    "move_ko": "차지빔",
+    "move_en": "Charge Beam",
+    "power": 50,
+    "pp": 10,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "603": {
+    "move": "thunderbolt",
+    "move_ko": "10만볼트",
+    "move_en": "Thunderbolt",
+    "power": 90,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "604": {
+    "move": "zap-cannon",
+    "move_ko": "전자포",
+    "move_en": "Zap Cannon",
+    "power": 120,
+    "pp": 5,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "605": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "606": {
+    "move": "zen-headbutt",
+    "move_ko": "사념의박치기",
+    "move_en": "Zen Headbutt",
+    "power": 80,
+    "pp": 15,
+    "type": "psychic",
+    "damage_class": "physical"
+  },
+  "607": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "608": {
+    "move": "shadow-ball",
+    "move_ko": "섀도볼",
+    "move_en": "Shadow Ball",
+    "power": 80,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "609": {
+    "move": "shadow-ball",
+    "move_ko": "섀도볼",
+    "move_en": "Shadow Ball",
+    "power": 80,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "610": {
+    "move": "dual-chop",
+    "move_ko": "더블촙",
+    "move_en": "Dual Chop",
+    "power": 40,
+    "pp": 15,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "611": {
+    "move": "dragon-claw",
+    "move_ko": "드래곤크루",
+    "move_en": "Dragon Claw",
+    "power": 80,
+    "pp": 15,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "612": {
+    "move": "outrage",
+    "move_ko": "역린",
+    "move_en": "Outrage",
+    "power": 120,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "613": {
+    "move": "powder-snow",
+    "move_ko": "눈싸라기",
+    "move_en": "Powder Snow",
+    "power": 40,
+    "pp": 25,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "614": {
+    "move": "frost-breath",
+    "move_ko": "얼음숨결",
+    "move_en": "Frost Breath",
+    "power": 60,
+    "pp": 10,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "615": {
+    "move": "ice-shard",
+    "move_ko": "얼음뭉치",
+    "move_en": "Ice Shard",
+    "power": 40,
+    "pp": 30,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "616": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "617": {
+    "move": "leech-life",
+    "move_ko": "흡혈",
+    "move_en": "Leech Life",
+    "power": 80,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "618": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "619": {
+    "move": "force-palm",
+    "move_ko": "발경",
+    "move_en": "Force Palm",
+    "power": 60,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "620": {
+    "move": "drain-punch",
+    "move_ko": "드레인펀치",
+    "move_en": "Drain Punch",
+    "power": 75,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "621": {
+    "move": "dragon-tail",
+    "move_ko": "드래곤테일",
+    "move_en": "Dragon Tail",
+    "power": 60,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "622": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "623": {
+    "move": "stomping-tantrum",
+    "move_ko": "분함의발구르기",
+    "move_en": "Stomping Tantrum",
+    "power": 75,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "624": {
+    "move": "feint-attack",
+    "move_ko": "속여때리기",
+    "move_en": "Feint Attack",
+    "power": 60,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "625": {
+    "move": "assurance",
+    "move_ko": "승부굳히기",
+    "move_en": "Assurance",
+    "power": 60,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "626": {
+    "move": "fury-attack",
+    "move_ko": "마구찌르기",
+    "move_en": "Fury Attack",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "627": {
+    "move": "fury-attack",
+    "move_ko": "마구찌르기",
+    "move_en": "Fury Attack",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "628": {
+    "move": "crush-claw",
+    "move_ko": "브레이크크루",
+    "move_en": "Crush Claw",
+    "power": 75,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "629": {
+    "move": "feint-attack",
+    "move_ko": "속여때리기",
+    "move_en": "Feint Attack",
+    "power": 60,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "630": {
+    "move": "knock-off",
+    "move_ko": "탁쳐서떨구기",
+    "move_en": "Knock Off",
+    "power": 65,
+    "pp": 20,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "631": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "632": {
+    "move": "fury-cutter",
+    "move_ko": "연속자르기",
+    "move_en": "Fury Cutter",
+    "power": 40,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "633": {
+    "move": "bite",
+    "move_ko": "물기",
+    "move_en": "Bite",
+    "power": 60,
+    "pp": 25,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "634": {
+    "move": "assurance",
+    "move_ko": "승부굳히기",
+    "move_en": "Assurance",
+    "power": 60,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "635": {
+    "move": "crunch",
+    "move_ko": "깨물어부수기",
+    "move_en": "Crunch",
+    "power": 80,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "636": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "637": {
+    "move": "leech-life",
+    "move_ko": "흡혈",
+    "move_en": "Leech Life",
+    "power": 80,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "638": {
+    "move": "metal-claw",
+    "move_ko": "메탈크로우",
+    "move_en": "Metal Claw",
+    "power": 50,
+    "pp": 35,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "639": {
+    "move": "smack-down",
+    "move_ko": "떨어뜨리기",
+    "move_en": "Smack Down",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "640": {
+    "move": "magical-leaf",
+    "move_ko": "메지컬리프",
+    "move_en": "Magical Leaf",
+    "power": 60,
+    "pp": 20,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "641": {
+    "move": "gust",
+    "move_ko": "바람일으키기",
+    "move_en": "Gust",
+    "power": 40,
+    "pp": 35,
+    "type": "flying",
+    "damage_class": "special"
+  },
+  "642": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "643": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "644": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "645": {
+    "move": "sand-tomb",
+    "move_ko": "모래지옥",
+    "move_en": "Sand Tomb",
+    "power": 35,
+    "pp": 15,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "646": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "647": {
+    "move": "aqua-jet",
+    "move_ko": "아쿠아제트",
+    "move_en": "Aqua Jet",
+    "power": 40,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "648": {
+    "move": "quick-attack",
+    "move_ko": "전광석화",
+    "move_en": "Quick Attack",
+    "power": 40,
+    "pp": 30,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "649": {
+    "move": "fury-cutter",
+    "move_ko": "연속자르기",
+    "move_en": "Fury Cutter",
+    "power": 40,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "650": {
+    "move": "vine-whip",
+    "move_ko": "덩굴채찍",
+    "move_en": "Vine Whip",
+    "power": 45,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "651": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "652": {
+    "move": "wood-hammer",
+    "move_ko": "우드해머",
+    "move_en": "Wood Hammer",
+    "power": 120,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "653": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "654": {
+    "move": "flamethrower",
+    "move_ko": "화염방사",
+    "move_en": "Flamethrower",
+    "power": 90,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "655": {
+    "move": "fire-blast",
+    "move_ko": "불대문자",
+    "move_en": "Fire Blast",
+    "power": 110,
+    "pp": 5,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "656": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "657": {
+    "move": "water-pulse",
+    "move_ko": "물의파동",
+    "move_en": "Water Pulse",
+    "power": 60,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "658": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "659": {
+    "move": "double-slap",
+    "move_ko": "연속뺨치기",
+    "move_en": "Double Slap",
+    "power": 15,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "660": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "661": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "662": {
+    "move": "flame-charge",
+    "move_ko": "니트로차지",
+    "move_en": "Flame Charge",
+    "power": 50,
+    "pp": 20,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "663": {
+    "move": "flare-blitz",
+    "move_ko": "플레어드라이브",
+    "move_en": "Flare Blitz",
+    "power": 120,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "664": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "665": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "666": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "667": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "668": {
+    "move": "fire-fang",
+    "move_ko": "불꽃엄니",
+    "move_en": "Fire Fang",
+    "power": 65,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "669": {
+    "move": "fairy-wind",
+    "move_ko": "요정의바람",
+    "move_en": "Fairy Wind",
+    "power": 40,
+    "pp": 30,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "670": {
+    "move": "moonblast",
+    "move_ko": "문포스",
+    "move_en": "Moonblast",
+    "power": 95,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "671": {
+    "move": "moonblast",
+    "move_ko": "문포스",
+    "move_en": "Moonblast",
+    "power": 95,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "672": {
+    "move": "vine-whip",
+    "move_ko": "덩굴채찍",
+    "move_en": "Vine Whip",
+    "power": 45,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "673": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "674": {
+    "move": "arm-thrust",
+    "move_ko": "손바닥치기",
+    "move_en": "Arm Thrust",
+    "power": 15,
+    "pp": 20,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "675": {
+    "move": "vital-throw",
+    "move_ko": "받아던지기",
+    "move_en": "Vital Throw",
+    "power": 70,
+    "pp": 10,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "676": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "677": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "678": {
+    "move": "psyshock",
+    "move_ko": "사이코쇼크",
+    "move_en": "Psyshock",
+    "power": 80,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "679": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "680": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "681": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "682": {
+    "move": "disarming-voice",
+    "move_ko": "차밍보이스",
+    "move_en": "Disarming Voice",
+    "power": 40,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "683": {
+    "move": "draining-kiss",
+    "move_ko": "드레인키스",
+    "move_en": "Draining Kiss",
+    "power": 50,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "684": {
+    "move": "fairy-wind",
+    "move_ko": "요정의바람",
+    "move_en": "Fairy Wind",
+    "power": 40,
+    "pp": 30,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "685": {
+    "move": "play-rough",
+    "move_ko": "치근거리기",
+    "move_en": "Play Rough",
+    "power": 90,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "physical"
+  },
+  "686": {
+    "move": "payback",
+    "move_ko": "보복",
+    "move_en": "Payback",
+    "power": 50,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "687": {
+    "move": "night-slash",
+    "move_ko": "깜짝베기",
+    "move_en": "Night Slash",
+    "power": 70,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "688": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "689": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "690": {
+    "move": "acid",
+    "move_ko": "용해액",
+    "move_en": "Acid",
+    "power": 40,
+    "pp": 30,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "691": {
+    "move": "sludge-bomb",
+    "move_ko": "오물폭탄",
+    "move_en": "Sludge Bomb",
+    "power": 90,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "692": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "693": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "694": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "695": {
+    "move": "discharge",
+    "move_ko": "방전",
+    "move_en": "Discharge",
+    "power": 80,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "696": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "697": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "698": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "699": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "700": {
+    "move": "moonblast",
+    "move_ko": "문포스",
+    "move_en": "Moonblast",
+    "power": 95,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "701": {
+    "move": "karate-chop",
+    "move_ko": "태권당수",
+    "move_en": "Karate Chop",
+    "power": 50,
+    "pp": 25,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "702": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "703": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "704": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "705": {
+    "move": "dragon-pulse",
+    "move_ko": "용의파동",
+    "move_en": "Dragon Pulse",
+    "power": 85,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "706": {
+    "move": "outrage",
+    "move_ko": "역린",
+    "move_en": "Outrage",
+    "power": 120,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "707": {
+    "move": "mirror-shot",
+    "move_ko": "미러숏",
+    "move_en": "Mirror Shot",
+    "power": 65,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "708": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "709": {
+    "move": "shadow-claw",
+    "move_ko": "섀도크루",
+    "move_en": "Shadow Claw",
+    "power": 70,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "710": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "711": {
+    "move": "phantom-force",
+    "move_ko": "고스트다이브",
+    "move_en": "Phantom Force",
+    "power": 90,
+    "pp": 10,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "712": {
+    "move": "ice-ball",
+    "move_ko": "아이스볼",
+    "move_en": "Ice Ball",
+    "power": 30,
+    "pp": 20,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "713": {
+    "move": "ice-fang",
+    "move_ko": "얼음엄니",
+    "move_en": "Ice Fang",
+    "power": 65,
+    "pp": 15,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "714": {
+    "move": "gust",
+    "move_ko": "바람일으키기",
+    "move_en": "Gust",
+    "power": 40,
+    "pp": 35,
+    "type": "flying",
+    "damage_class": "special"
+  },
+  "715": {
+    "move": "air-cutter",
+    "move_ko": "에어컷터",
+    "move_en": "Air Cutter",
+    "power": 60,
+    "pp": 25,
+    "type": "flying",
+    "damage_class": "special"
+  },
+  "716": {
+    "move": "moonblast",
+    "move_ko": "문포스",
+    "move_en": "Moonblast",
+    "power": 95,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "717": {
+    "move": "snarl",
+    "move_ko": "바크아웃",
+    "move_en": "Snarl",
+    "power": 55,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "special"
+  },
+  "718": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "719": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "720": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "721": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "722": {
+    "move": "leafage",
+    "move_ko": "나뭇잎",
+    "move_en": "Leafage",
+    "power": 40,
+    "pp": 40,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "723": {
+    "move": "magical-leaf",
+    "move_ko": "메지컬리프",
+    "move_en": "Magical Leaf",
+    "power": 60,
+    "pp": 20,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "724": {
+    "move": "leaf-storm",
+    "move_ko": "리프스톰",
+    "move_en": "Leaf Storm",
+    "power": 130,
+    "pp": 5,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "725": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "726": {
+    "move": "flamethrower",
+    "move_ko": "화염방사",
+    "move_en": "Flamethrower",
+    "power": 90,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "727": {
+    "move": "flare-blitz",
+    "move_ko": "플레어드라이브",
+    "move_en": "Flare Blitz",
+    "power": 120,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "728": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "729": {
+    "move": "bubble-beam",
+    "move_ko": "거품광선",
+    "move_en": "Bubble Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "730": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "731": {
+    "move": "fury-attack",
+    "move_ko": "마구찌르기",
+    "move_en": "Fury Attack",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "732": {
+    "move": "hyper-voice",
+    "move_ko": "하이퍼보이스",
+    "move_en": "Hyper Voice",
+    "power": 90,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "733": {
+    "move": "hyper-voice",
+    "move_ko": "하이퍼보이스",
+    "move_en": "Hyper Voice",
+    "power": 90,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "734": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "735": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "736": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "737": {
+    "move": "x-scissor",
+    "move_ko": "시저크로스",
+    "move_en": "X-Scissor",
+    "power": 80,
+    "pp": 15,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "738": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "739": {
+    "move": "rock-smash",
+    "move_ko": "바위깨기",
+    "move_en": "Rock Smash",
+    "power": 40,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "740": {
+    "move": "brick-break",
+    "move_ko": "깨트리다",
+    "move_en": "Brick Break",
+    "power": 75,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "741": {
+    "move": "double-slap",
+    "move_ko": "연속뺨치기",
+    "move_en": "Double Slap",
+    "power": 15,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "742": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "743": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "744": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "745": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "746": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "747": {
+    "move": "poison-sting",
+    "move_ko": "독침",
+    "move_en": "Poison Sting",
+    "power": 15,
+    "pp": 35,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "748": {
+    "move": "poison-jab",
+    "move_ko": "독찌르기",
+    "move_en": "Poison Jab",
+    "power": 80,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "749": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "750": {
+    "move": "bulldoze",
+    "move_ko": "땅고르기",
+    "move_en": "Bulldoze",
+    "power": 60,
+    "pp": 20,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "751": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "752": {
+    "move": "liquidation",
+    "move_ko": "아쿠아브레이크",
+    "move_en": "Liquidation",
+    "power": 85,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "753": {
+    "move": "leafage",
+    "move_ko": "나뭇잎",
+    "move_en": "Leafage",
+    "power": 40,
+    "pp": 40,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "754": {
+    "move": "leaf-blade",
+    "move_ko": "리프블레이드",
+    "move_en": "Leaf Blade",
+    "power": 90,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "755": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "756": {
+    "move": "giga-drain",
+    "move_ko": "기가드레인",
+    "move_en": "Giga Drain",
+    "power": 75,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "757": {
+    "move": "smog",
+    "move_ko": "스모그",
+    "move_en": "Smog",
+    "power": 30,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "758": {
+    "move": "venoshock",
+    "move_ko": "베놈쇼크",
+    "move_en": "Venoshock",
+    "power": 65,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "759": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "760": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "761": {
+    "move": "razor-leaf",
+    "move_ko": "잎날가르기",
+    "move_en": "Razor Leaf",
+    "power": 55,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "762": {
+    "move": "magical-leaf",
+    "move_ko": "메지컬리프",
+    "move_en": "Magical Leaf",
+    "power": 60,
+    "pp": 20,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "763": {
+    "move": "leaf-storm",
+    "move_ko": "리프스톰",
+    "move_en": "Leaf Storm",
+    "power": 130,
+    "pp": 5,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "764": {
+    "move": "draining-kiss",
+    "move_ko": "드레인키스",
+    "move_en": "Draining Kiss",
+    "power": 50,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "765": {
+    "move": "stored-power",
+    "move_ko": "어시스트파워",
+    "move_en": "Stored Power",
+    "power": 20,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "766": {
+    "move": "rock-smash",
+    "move_ko": "바위깨기",
+    "move_en": "Rock Smash",
+    "power": 40,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "767": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "768": {
+    "move": "first-impression",
+    "move_ko": "만나자마자",
+    "move_en": "First Impression",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "769": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "770": {
+    "move": "shadow-ball",
+    "move_ko": "섀도볼",
+    "move_en": "Shadow Ball",
+    "power": 80,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "771": {
+    "move": "counter",
+    "move_ko": "카운터",
+    "move_en": "Counter",
+    "power": null,
+    "pp": 20,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "772": {
+    "move": "rage",
+    "move_ko": "분노",
+    "move_en": "Rage",
+    "power": 20,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "773": {
+    "move": "tri-attack",
+    "move_ko": "트라이어택",
+    "move_en": "Tri Attack",
+    "power": 80,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "774": {
+    "move": "rollout",
+    "move_ko": "구르기",
+    "move_en": "Rollout",
+    "power": 30,
+    "pp": 20,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "775": {
+    "move": "rapid-spin",
+    "move_ko": "고속스핀",
+    "move_en": "Rapid Spin",
+    "power": 50,
+    "pp": 40,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "776": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "777": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "778": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "779": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "780": {
+    "move": "echoed-voice",
+    "move_ko": "에코보이스",
+    "move_en": "Echoed Voice",
+    "power": 40,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "781": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "782": {
+    "move": "dragon-tail",
+    "move_ko": "드래곤테일",
+    "move_en": "Dragon Tail",
+    "power": 60,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "783": {
+    "move": "dragon-claw",
+    "move_ko": "드래곤크루",
+    "move_en": "Dragon Claw",
+    "power": 80,
+    "pp": 15,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "784": {
+    "move": "outrage",
+    "move_ko": "역린",
+    "move_en": "Outrage",
+    "power": 120,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "785": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "786": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "787": {
+    "move": "mega-drain",
+    "move_ko": "메가드레인",
+    "move_en": "Mega Drain",
+    "power": 40,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "788": {
+    "move": "whirlpool",
+    "move_ko": "바다회오리",
+    "move_en": "Whirlpool",
+    "power": 35,
+    "pp": 15,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "789": {
+    "move": "teleport",
+    "move_ko": "순간이동",
+    "move_en": "Teleport",
+    "power": null,
+    "pp": 20,
+    "type": "psychic",
+    "damage_class": "status"
+  },
+  "790": {
+    "move": "teleport",
+    "move_ko": "순간이동",
+    "move_en": "Teleport",
+    "power": null,
+    "pp": 20,
+    "type": "psychic",
+    "damage_class": "status"
+  },
+  "791": {
+    "move": "zen-headbutt",
+    "move_ko": "사념의박치기",
+    "move_en": "Zen Headbutt",
+    "power": 80,
+    "pp": 15,
+    "type": "psychic",
+    "damage_class": "physical"
+  },
+  "792": {
+    "move": "dream-eater",
+    "move_ko": "꿈먹기",
+    "move_en": "Dream Eater",
+    "power": 100,
+    "pp": 15,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "793": {
+    "move": "power-gem",
+    "move_ko": "파워젬",
+    "move_en": "Power Gem",
+    "power": 80,
+    "pp": 20,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "794": {
+    "move": "fell-stinger",
+    "move_ko": "마지막일침",
+    "move_en": "Fell Stinger",
+    "power": 50,
+    "pp": 25,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "795": {
+    "move": "silver-wind",
+    "move_ko": "은빛바람",
+    "move_en": "Silver Wind",
+    "power": 60,
+    "pp": 5,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "796": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "797": {
+    "move": "flash-cannon",
+    "move_ko": "러스터캐논",
+    "move_en": "Flash Cannon",
+    "power": 80,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "798": {
+    "move": "razor-leaf",
+    "move_ko": "잎날가르기",
+    "move_en": "Razor Leaf",
+    "power": 55,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "799": {
+    "move": "bite",
+    "move_ko": "물기",
+    "move_en": "Bite",
+    "power": 60,
+    "pp": 25,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "800": {
+    "move": "stored-power",
+    "move_ko": "어시스트파워",
+    "move_en": "Stored Power",
+    "power": 20,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "801": {
+    "move": "mirror-shot",
+    "move_ko": "미러숏",
+    "move_en": "Mirror Shot",
+    "power": 65,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "802": {
+    "move": "rolling-kick",
+    "move_ko": "돌려차기",
+    "move_en": "Rolling Kick",
+    "power": 60,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "803": {
+    "move": "acid",
+    "move_ko": "용해액",
+    "move_en": "Acid",
+    "power": 40,
+    "pp": 30,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "804": {
+    "move": "poison-jab",
+    "move_ko": "독찌르기",
+    "move_en": "Poison Jab",
+    "power": 80,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "805": {
+    "move": "rock-blast",
+    "move_ko": "락블레스트",
+    "move_en": "Rock Blast",
+    "power": 25,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "806": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "807": {
+    "move": "spark",
+    "move_ko": "스파크",
+    "move_en": "Spark",
+    "power": 65,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "808": {
+    "move": "flash-cannon",
+    "move_ko": "러스터캐논",
+    "move_en": "Flash Cannon",
+    "power": 80,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "809": {
+    "move": "double-iron-bash",
+    "move_ko": "더블펀처",
+    "move_en": "Double Iron Bash",
+    "power": 60,
+    "pp": 5,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "810": {
+    "move": "branch-poke",
+    "move_ko": "가지찌르기",
+    "move_en": "Branch Poke",
+    "power": 40,
+    "pp": 40,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "811": {
+    "move": "razor-leaf",
+    "move_ko": "잎날가르기",
+    "move_en": "Razor Leaf",
+    "power": 55,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "812": {
+    "move": "wood-hammer",
+    "move_ko": "우드해머",
+    "move_en": "Wood Hammer",
+    "power": 120,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "813": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "814": {
+    "move": "flame-charge",
+    "move_ko": "니트로차지",
+    "move_en": "Flame Charge",
+    "power": 50,
+    "pp": 20,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "815": {
+    "move": "pyro-ball",
+    "move_ko": "화염볼",
+    "move_en": "Pyro Ball",
+    "power": 120,
+    "pp": 5,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "816": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "817": {
+    "move": "liquidation",
+    "move_ko": "아쿠아브레이크",
+    "move_en": "Liquidation",
+    "power": 85,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "818": {
+    "move": "hydro-pump",
+    "move_ko": "하이드로펌프",
+    "move_en": "Hydro Pump",
+    "power": 110,
+    "pp": 5,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "819": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "820": {
+    "move": "body-slam",
+    "move_ko": "누르기",
+    "move_en": "Body Slam",
+    "power": 85,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "821": {
+    "move": "peck",
+    "move_ko": "쪼기",
+    "move_en": "Peck",
+    "power": 35,
+    "pp": 35,
+    "type": "flying",
+    "damage_class": "physical"
+  },
+  "822": {
+    "move": "drill-peck",
+    "move_ko": "회전부리",
+    "move_en": "Drill Peck",
+    "power": 80,
+    "pp": 20,
+    "type": "flying",
+    "damage_class": "physical"
+  },
+  "823": {
+    "move": "brave-bird",
+    "move_ko": "브레이브버드",
+    "move_en": "Brave Bird",
+    "power": 120,
+    "pp": 15,
+    "type": "flying",
+    "damage_class": "physical"
+  },
+  "824": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "825": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "826": {
+    "move": "bug-buzz",
+    "move_ko": "벌레의야단법석",
+    "move_en": "Bug Buzz",
+    "power": 90,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "827": {
+    "move": "snarl",
+    "move_ko": "바크아웃",
+    "move_en": "Snarl",
+    "power": 55,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "special"
+  },
+  "828": {
+    "move": "assurance",
+    "move_ko": "승부굳히기",
+    "move_en": "Assurance",
+    "power": 60,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "829": {
+    "move": "leafage",
+    "move_ko": "나뭇잎",
+    "move_en": "Leafage",
+    "power": 40,
+    "pp": 40,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "830": {
+    "move": "leaf-tornado",
+    "move_ko": "그래스믹서",
+    "move_en": "Leaf Tornado",
+    "power": 65,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "831": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "832": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "833": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "834": {
+    "move": "liquidation",
+    "move_ko": "아쿠아브레이크",
+    "move_en": "Liquidation",
+    "power": 85,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "835": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "836": {
+    "move": "wild-charge",
+    "move_ko": "와일드볼트",
+    "move_en": "Wild Charge",
+    "power": 90,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "837": {
+    "move": "rock-blast",
+    "move_ko": "락블레스트",
+    "move_en": "Rock Blast",
+    "power": 25,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "838": {
+    "move": "ancient-power",
+    "move_ko": "원시의힘",
+    "move_en": "Ancient Power",
+    "power": 60,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "special"
+  },
+  "839": {
+    "move": "stone-edge",
+    "move_ko": "스톤에지",
+    "move_en": "Stone Edge",
+    "power": 100,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "840": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "841": {
+    "move": "grav-apple",
+    "move_ko": "G의힘",
+    "move_en": "Grav Apple",
+    "power": 80,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "842": {
+    "move": "energy-ball",
+    "move_ko": "에너지볼",
+    "move_en": "Energy Ball",
+    "power": 90,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "843": {
+    "move": "sand-tomb",
+    "move_ko": "모래지옥",
+    "move_en": "Sand Tomb",
+    "power": 35,
+    "pp": 15,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "844": {
+    "move": "dig",
+    "move_ko": "구멍파기",
+    "move_en": "Dig",
+    "power": 80,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "845": {
+    "move": "peck",
+    "move_ko": "쪼기",
+    "move_en": "Peck",
+    "power": 35,
+    "pp": 35,
+    "type": "flying",
+    "damage_class": "physical"
+  },
+  "846": {
+    "move": "aqua-jet",
+    "move_ko": "아쿠아제트",
+    "move_en": "Aqua Jet",
+    "power": 40,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "847": {
+    "move": "liquidation",
+    "move_ko": "아쿠아브레이크",
+    "move_en": "Liquidation",
+    "power": 85,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "848": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "849": {
+    "move": "discharge",
+    "move_ko": "방전",
+    "move_en": "Discharge",
+    "power": 80,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "850": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "851": {
+    "move": "fire-lash",
+    "move_ko": "불꽃채찍",
+    "move_en": "Fire Lash",
+    "power": 80,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "852": {
+    "move": "rock-smash",
+    "move_ko": "바위깨기",
+    "move_en": "Rock Smash",
+    "power": 40,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "853": {
+    "move": "submission",
+    "move_ko": "지옥의바퀴",
+    "move_en": "Submission",
+    "power": 80,
+    "pp": 20,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "854": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "855": {
+    "move": "shadow-ball",
+    "move_ko": "섀도볼",
+    "move_en": "Shadow Ball",
+    "power": 80,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "856": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "857": {
+    "move": "psychic",
+    "move_ko": "사이코키네시스",
+    "move_en": "Psychic",
+    "power": 90,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "858": {
+    "move": "psychic",
+    "move_ko": "사이코키네시스",
+    "move_en": "Psychic",
+    "power": 90,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "859": {
+    "move": "bite",
+    "move_ko": "물기",
+    "move_en": "Bite",
+    "power": 60,
+    "pp": 25,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "860": {
+    "move": "sucker-punch",
+    "move_ko": "기습",
+    "move_en": "Sucker Punch",
+    "power": 70,
+    "pp": 5,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "861": {
+    "move": "foul-play",
+    "move_ko": "속임수",
+    "move_en": "Foul Play",
+    "power": 95,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "862": {
+    "move": "night-slash",
+    "move_ko": "깜짝베기",
+    "move_en": "Night Slash",
+    "power": 70,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "863": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "864": {
+    "move": "hex",
+    "move_ko": "병상첨병",
+    "move_en": "Hex",
+    "power": 65,
+    "pp": 10,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "865": {
+    "move": "brick-break",
+    "move_ko": "깨트리다",
+    "move_en": "Brick Break",
+    "power": 75,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "866": {
+    "move": "freeze-dry",
+    "move_ko": "프리즈드라이",
+    "move_en": "Freeze-Dry",
+    "power": 70,
+    "pp": 20,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "867": {
+    "move": "earthquake",
+    "move_ko": "지진",
+    "move_en": "Earthquake",
+    "power": 100,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "868": {
+    "move": "draining-kiss",
+    "move_ko": "드레인키스",
+    "move_en": "Draining Kiss",
+    "power": 50,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "869": {
+    "move": "dazzling-gleam",
+    "move_ko": "매지컬샤인",
+    "move_en": "Dazzling Gleam",
+    "power": 80,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "870": {
+    "move": "rock-smash",
+    "move_ko": "바위깨기",
+    "move_en": "Rock Smash",
+    "power": 40,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "871": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "872": {
+    "move": "powder-snow",
+    "move_ko": "눈싸라기",
+    "move_en": "Powder Snow",
+    "power": 40,
+    "pp": 25,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "873": {
+    "move": "aurora-beam",
+    "move_ko": "오로라빔",
+    "move_en": "Aurora Beam",
+    "power": 65,
+    "pp": 20,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "874": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "875": {
+    "move": "powder-snow",
+    "move_ko": "눈싸라기",
+    "move_en": "Powder Snow",
+    "power": 40,
+    "pp": 25,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "876": {
+    "move": "stored-power",
+    "move_ko": "어시스트파워",
+    "move_en": "Stored Power",
+    "power": 20,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "877": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "878": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "879": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "880": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "881": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "882": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "883": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "884": {
+    "move": "metal-claw",
+    "move_ko": "메탈크로우",
+    "move_en": "Metal Claw",
+    "power": 50,
+    "pp": 35,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "885": {
+    "move": "infestation",
+    "move_ko": "엉겨붙기",
+    "move_en": "Infestation",
+    "power": 20,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "886": {
+    "move": "dragon-pulse",
+    "move_ko": "용의파동",
+    "move_en": "Dragon Pulse",
+    "power": 85,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "887": {
+    "move": "dragon-rush",
+    "move_ko": "드래곤다이브",
+    "move_en": "Dragon Rush",
+    "power": 100,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "888": {
+    "move": "moonblast",
+    "move_ko": "문포스",
+    "move_en": "Moonblast",
+    "power": 95,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "889": {
+    "move": "close-combat",
+    "move_ko": "인파이트",
+    "move_en": "Close Combat",
+    "power": 120,
+    "pp": 5,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "890": {
+    "move": "poison-tail",
+    "move_ko": "포이즌테일",
+    "move_en": "Poison Tail",
+    "power": 50,
+    "pp": 25,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "891": {
+    "move": "rock-smash",
+    "move_ko": "바위깨기",
+    "move_en": "Rock Smash",
+    "power": 40,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "892": {
+    "move": "brick-break",
+    "move_ko": "깨트리다",
+    "move_en": "Brick Break",
+    "power": 75,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "893": {
+    "move": "bite",
+    "move_ko": "물기",
+    "move_en": "Bite",
+    "power": 60,
+    "pp": 25,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "894": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "895": {
+    "move": "twister",
+    "move_ko": "회오리",
+    "move_en": "Twister",
+    "power": 40,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "896": {
+    "move": "avalanche",
+    "move_ko": "눈사태",
+    "move_en": "Avalanche",
+    "power": 60,
+    "pp": 10,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "897": {
+    "move": "hex",
+    "move_ko": "병상첨병",
+    "move_en": "Hex",
+    "power": 65,
+    "pp": 10,
+    "type": "ghost",
+    "damage_class": "special"
+  },
+  "898": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "899": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "900": {
+    "move": "x-scissor",
+    "move_ko": "시저크로스",
+    "move_en": "X-Scissor",
+    "power": 80,
+    "pp": 15,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "901": {
+    "move": "headlong-rush",
+    "move_ko": "들이받기",
+    "move_en": "Headlong Rush",
+    "power": 120,
+    "pp": 5,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "902": {
+    "move": "aqua-jet",
+    "move_ko": "아쿠아제트",
+    "move_en": "Aqua Jet",
+    "power": 40,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "903": {
+    "move": "close-combat",
+    "move_ko": "인파이트",
+    "move_en": "Close Combat",
+    "power": 120,
+    "pp": 5,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "904": {
+    "move": "crunch",
+    "move_ko": "깨물어부수기",
+    "move_en": "Crunch",
+    "power": 80,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "905": {
+    "move": "fairy-wind",
+    "move_ko": "요정의바람",
+    "move_en": "Fairy Wind",
+    "power": 40,
+    "pp": 30,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "906": {
+    "move": "leafage",
+    "move_ko": "나뭇잎",
+    "move_en": "Leafage",
+    "power": 40,
+    "pp": 40,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "907": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "908": {
+    "move": "leaf-storm",
+    "move_ko": "리프스톰",
+    "move_en": "Leaf Storm",
+    "power": 130,
+    "pp": 5,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "909": {
+    "move": "ember",
+    "move_ko": "불꽃세례",
+    "move_en": "Ember",
+    "power": 40,
+    "pp": 25,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "910": {
+    "move": "flamethrower",
+    "move_ko": "화염방사",
+    "move_en": "Flamethrower",
+    "power": 90,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "911": {
+    "move": "overheat",
+    "move_ko": "오버히트",
+    "move_en": "Overheat",
+    "power": 130,
+    "pp": 5,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "912": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "913": {
+    "move": "aqua-cutter",
+    "move_ko": "아쿠아커터",
+    "move_en": "Aqua Cutter",
+    "power": 70,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "914": {
+    "move": "wave-crash",
+    "move_ko": "웨이브태클",
+    "move_en": "Wave Crash",
+    "power": 120,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "915": {
+    "move": "tackle",
+    "move_ko": "몸통박치기",
+    "move_en": "Tackle",
+    "power": 40,
+    "pp": 35,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "916": {
+    "move": "take-down",
+    "move_ko": "돌진",
+    "move_en": "Take Down",
+    "power": 90,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "917": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "918": {
+    "move": "skitter-smack",
+    "move_ko": "엄습하는일격",
+    "move_en": "Skitter Smack",
+    "power": 70,
+    "pp": 10,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "919": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "920": {
+    "move": "lunge",
+    "move_ko": "덤벼들기",
+    "move_en": "Lunge",
+    "power": 80,
+    "pp": 15,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "921": {
+    "move": "nuzzle",
+    "move_ko": "볼부비부비",
+    "move_en": "Nuzzle",
+    "power": 20,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "922": {
+    "move": "discharge",
+    "move_ko": "방전",
+    "move_en": "Discharge",
+    "power": 80,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "923": {
+    "move": "double-shock",
+    "move_ko": "전광쌍격",
+    "move_en": "Double Shock",
+    "power": 120,
+    "pp": 5,
+    "type": "electric",
+    "damage_class": "physical"
+  },
+  "924": {
+    "move": "population-bomb",
+    "move_ko": "찍찍베기",
+    "move_en": "Population Bomb",
+    "power": 20,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "925": {
+    "move": "hyper-voice",
+    "move_ko": "하이퍼보이스",
+    "move_en": "Hyper Voice",
+    "power": 90,
+    "pp": 10,
+    "type": "normal",
+    "damage_class": "special"
+  },
+  "926": {
+    "move": "play-rough",
+    "move_ko": "치근거리기",
+    "move_en": "Play Rough",
+    "power": 90,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "physical"
+  },
+  "927": {
+    "move": "play-rough",
+    "move_ko": "치근거리기",
+    "move_en": "Play Rough",
+    "power": 90,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "physical"
+  },
+  "928": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "929": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "930": {
+    "move": "petal-dance",
+    "move_ko": "꽃잎댄스",
+    "move_en": "Petal Dance",
+    "power": 120,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "931": {
+    "move": "fury-attack",
+    "move_ko": "마구찌르기",
+    "move_en": "Fury Attack",
+    "power": 15,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "932": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "933": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "934": {
+    "move": "stone-edge",
+    "move_ko": "스톤에지",
+    "move_en": "Stone Edge",
+    "power": 100,
+    "pp": 5,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "935": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "936": {
+    "move": "lava-plume",
+    "move_ko": "분연",
+    "move_en": "Lava Plume",
+    "power": 80,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "937": {
+    "move": "flare-blitz",
+    "move_ko": "플레어드라이브",
+    "move_en": "Flare Blitz",
+    "power": 120,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "physical"
+  },
+  "938": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "939": {
+    "move": "discharge",
+    "move_ko": "방전",
+    "move_en": "Discharge",
+    "power": 80,
+    "pp": 15,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "940": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "941": {
+    "move": "volt-switch",
+    "move_ko": "볼트체인지",
+    "move_en": "Volt Switch",
+    "power": 70,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "942": {
+    "move": "payback",
+    "move_ko": "보복",
+    "move_en": "Payback",
+    "power": 50,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "943": {
+    "move": "crunch",
+    "move_ko": "깨물어부수기",
+    "move_en": "Crunch",
+    "power": 80,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "944": {
+    "move": "acid-spray",
+    "move_ko": "애시드봄",
+    "move_en": "Acid Spray",
+    "power": 40,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "945": {
+    "move": "poison-jab",
+    "move_ko": "독찌르기",
+    "move_en": "Poison Jab",
+    "power": 80,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "946": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "947": {
+    "move": "giga-drain",
+    "move_ko": "기가드레인",
+    "move_en": "Giga Drain",
+    "power": 75,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "948": {
+    "move": "mud-slap",
+    "move_ko": "진흙뿌리기",
+    "move_en": "Mud-Slap",
+    "power": 20,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "949": {
+    "move": "earth-power",
+    "move_ko": "대지의힘",
+    "move_en": "Earth Power",
+    "power": 90,
+    "pp": 10,
+    "type": "ground",
+    "damage_class": "special"
+  },
+  "950": {
+    "move": "rock-blast",
+    "move_ko": "락블레스트",
+    "move_en": "Rock Blast",
+    "power": 25,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "951": {
+    "move": "bullet-seed",
+    "move_ko": "기관총",
+    "move_en": "Bullet Seed",
+    "power": 25,
+    "pp": 30,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "952": {
+    "move": "seed-bomb",
+    "move_ko": "씨폭탄",
+    "move_en": "Seed Bomb",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "953": {
+    "move": "struggle-bug",
+    "move_ko": "벌레의저항",
+    "move_en": "Struggle Bug",
+    "power": 50,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "special"
+  },
+  "954": {
+    "move": "lunge",
+    "move_ko": "덤벼들기",
+    "move_en": "Lunge",
+    "power": 80,
+    "pp": 15,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "955": {
+    "move": "confusion",
+    "move_ko": "염동력",
+    "move_en": "Confusion",
+    "power": 50,
+    "pp": 25,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "956": {
+    "move": "lumina-crash",
+    "move_ko": "루미나콜리전",
+    "move_en": "Lumina Crash",
+    "power": 80,
+    "pp": 10,
+    "type": "psychic",
+    "damage_class": "special"
+  },
+  "957": {
+    "move": "fairy-wind",
+    "move_ko": "요정의바람",
+    "move_en": "Fairy Wind",
+    "power": 40,
+    "pp": 30,
+    "type": "fairy",
+    "damage_class": "special"
+  },
+  "958": {
+    "move": "play-rough",
+    "move_ko": "치근거리기",
+    "move_en": "Play Rough",
+    "power": 90,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "physical"
+  },
+  "959": {
+    "move": "play-rough",
+    "move_ko": "치근거리기",
+    "move_en": "Play Rough",
+    "power": 90,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "physical"
+  },
+  "960": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "961": {
+    "move": "liquidation",
+    "move_ko": "아쿠아브레이크",
+    "move_en": "Liquidation",
+    "power": 85,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "962": {
+    "move": "peck",
+    "move_ko": "쪼기",
+    "move_en": "Peck",
+    "power": 35,
+    "pp": 35,
+    "type": "flying",
+    "damage_class": "physical"
+  },
+  "963": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "964": {
+    "move": "dive",
+    "move_ko": "다이빙",
+    "move_en": "Dive",
+    "power": 80,
+    "pp": 10,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "965": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "966": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "967": {
+    "move": "breaking-swipe",
+    "move_ko": "와이드브레이커",
+    "move_en": "Breaking Swipe",
+    "power": 60,
+    "pp": 15,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "968": {
+    "move": "iron-head",
+    "move_ko": "아이언헤드",
+    "move_en": "Iron Head",
+    "power": 80,
+    "pp": 15,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "969": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "970": {
+    "move": "rock-slide",
+    "move_ko": "스톤샤워",
+    "move_en": "Rock Slide",
+    "power": 75,
+    "pp": 10,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "971": {
+    "move": "lick",
+    "move_ko": "핥기",
+    "move_en": "Lick",
+    "power": 30,
+    "pp": 30,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "972": {
+    "move": "phantom-force",
+    "move_ko": "고스트다이브",
+    "move_en": "Phantom Force",
+    "power": 90,
+    "pp": 10,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "973": {
+    "move": "peck",
+    "move_ko": "쪼기",
+    "move_en": "Peck",
+    "power": 35,
+    "pp": 35,
+    "type": "flying",
+    "damage_class": "physical"
+  },
+  "974": {
+    "move": "powder-snow",
+    "move_ko": "눈싸라기",
+    "move_en": "Powder Snow",
+    "power": 40,
+    "pp": 25,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "975": {
+    "move": "ice-spinner",
+    "move_ko": "아이스스피너",
+    "move_en": "Ice Spinner",
+    "power": 80,
+    "pp": 15,
+    "type": "ice",
+    "damage_class": "physical"
+  },
+  "976": {
+    "move": "aqua-jet",
+    "move_ko": "아쿠아제트",
+    "move_en": "Aqua Jet",
+    "power": 40,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "977": {
+    "move": "water-gun",
+    "move_ko": "물대포",
+    "move_en": "Water Gun",
+    "power": 40,
+    "pp": 25,
+    "type": "water",
+    "damage_class": "special"
+  },
+  "978": {
+    "move": "dragon-pulse",
+    "move_ko": "용의파동",
+    "move_en": "Dragon Pulse",
+    "power": 85,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "979": {
+    "move": "close-combat",
+    "move_ko": "인파이트",
+    "move_en": "Close Combat",
+    "power": 120,
+    "pp": 5,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "980": {
+    "move": "sludge-wave",
+    "move_ko": "오물웨이브",
+    "move_en": "Sludge Wave",
+    "power": 95,
+    "pp": 10,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "981": {
+    "move": "stomp",
+    "move_ko": "짓밟기",
+    "move_en": "Stomp",
+    "power": 65,
+    "pp": 20,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "982": {
+    "move": "double-edge",
+    "move_ko": "이판사판태클",
+    "move_en": "Double-Edge",
+    "power": 120,
+    "pp": 15,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "983": {
+    "move": "kowtow-cleave",
+    "move_ko": "도각참",
+    "move_en": "Kowtow Cleave",
+    "power": 85,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "physical"
+  },
+  "984": {
+    "move": "bulldoze",
+    "move_ko": "땅고르기",
+    "move_en": "Bulldoze",
+    "power": 60,
+    "pp": 20,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "985": {
+    "move": "play-rough",
+    "move_ko": "치근거리기",
+    "move_en": "Play Rough",
+    "power": 90,
+    "pp": 10,
+    "type": "fairy",
+    "damage_class": "physical"
+  },
+  "986": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "987": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "988": {
+    "move": "bug-bite",
+    "move_ko": "벌레먹음",
+    "move_en": "Bug Bite",
+    "power": 60,
+    "pp": 20,
+    "type": "bug",
+    "damage_class": "physical"
+  },
+  "989": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "990": {
+    "move": "bulldoze",
+    "move_ko": "땅고르기",
+    "move_en": "Bulldoze",
+    "power": 60,
+    "pp": 20,
+    "type": "ground",
+    "damage_class": "physical"
+  },
+  "991": {
+    "move": "powder-snow",
+    "move_ko": "눈싸라기",
+    "move_en": "Powder Snow",
+    "power": 40,
+    "pp": 25,
+    "type": "ice",
+    "damage_class": "special"
+  },
+  "992": {
+    "move": "arm-thrust",
+    "move_ko": "손바닥치기",
+    "move_en": "Arm Thrust",
+    "power": 15,
+    "pp": 20,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "993": {
+    "move": "snarl",
+    "move_ko": "바크아웃",
+    "move_en": "Snarl",
+    "power": 55,
+    "pp": 15,
+    "type": "dark",
+    "damage_class": "special"
+  },
+  "994": {
+    "move": "fire-spin",
+    "move_ko": "회오리불꽃",
+    "move_en": "Fire Spin",
+    "power": 35,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "995": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "996": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "997": {
+    "move": "dragon-tail",
+    "move_ko": "드래곤테일",
+    "move_en": "Dragon Tail",
+    "power": 60,
+    "pp": 10,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "998": {
+    "move": "glaive-rush",
+    "move_ko": "대검돌격",
+    "move_en": "Glaive Rush",
+    "power": 120,
+    "pp": 5,
+    "type": "dragon",
+    "damage_class": "physical"
+  },
+  "999": {
+    "move": "astonish",
+    "move_ko": "놀래키기",
+    "move_en": "Astonish",
+    "power": 30,
+    "pp": 15,
+    "type": "ghost",
+    "damage_class": "physical"
+  },
+  "1000": {
+    "move": "make-it-rain",
+    "move_ko": "골드러시",
+    "move_en": "Make It Rain",
+    "power": 120,
+    "pp": 5,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "1001": {
+    "move": "ruination",
+    "move_ko": "카타스트로피",
+    "move_en": "Ruination",
+    "power": 1,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "special"
+  },
+  "1002": {
+    "move": "ruination",
+    "move_ko": "카타스트로피",
+    "move_en": "Ruination",
+    "power": 1,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "special"
+  },
+  "1003": {
+    "move": "ruination",
+    "move_ko": "카타스트로피",
+    "move_en": "Ruination",
+    "power": 1,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "special"
+  },
+  "1004": {
+    "move": "ruination",
+    "move_ko": "카타스트로피",
+    "move_en": "Ruination",
+    "power": 1,
+    "pp": 10,
+    "type": "dark",
+    "damage_class": "special"
+  },
+  "1005": {
+    "move": "dragon-breath",
+    "move_ko": "용의숨결",
+    "move_en": "Dragon Breath",
+    "power": 60,
+    "pp": 20,
+    "type": "dragon",
+    "damage_class": "special"
+  },
+  "1006": {
+    "move": "spirit-break",
+    "move_ko": "소울크래시",
+    "move_en": "Spirit Break",
+    "power": 75,
+    "pp": 15,
+    "type": "fairy",
+    "damage_class": "physical"
+  },
+  "1007": {
+    "move": "rock-smash",
+    "move_ko": "바위깨기",
+    "move_en": "Rock Smash",
+    "power": 40,
+    "pp": 15,
+    "type": "fighting",
+    "damage_class": "physical"
+  },
+  "1008": {
+    "move": "thunder-shock",
+    "move_ko": "전기쇼크",
+    "move_en": "Thunder Shock",
+    "power": 40,
+    "pp": 30,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "1009": {
+    "move": "aqua-jet",
+    "move_ko": "아쿠아제트",
+    "move_en": "Aqua Jet",
+    "power": 40,
+    "pp": 20,
+    "type": "water",
+    "damage_class": "physical"
+  },
+  "1010": {
+    "move": "magical-leaf",
+    "move_ko": "메지컬리프",
+    "move_en": "Magical Leaf",
+    "power": 60,
+    "pp": 20,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "1011": {
+    "move": "energy-ball",
+    "move_ko": "에너지볼",
+    "move_en": "Energy Ball",
+    "power": 90,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "1012": {
+    "move": "absorb",
+    "move_ko": "흡수",
+    "move_en": "Absorb",
+    "power": 20,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "1013": {
+    "move": "matcha-gotcha",
+    "move_ko": "휘적휘적포",
+    "move_en": "Matcha Gotcha",
+    "power": 80,
+    "pp": 15,
+    "type": "grass",
+    "damage_class": "special"
+  },
+  "1014": {
+    "move": "poison-fang",
+    "move_ko": "독엄니",
+    "move_en": "Poison Fang",
+    "power": 50,
+    "pp": 15,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "1015": {
+    "move": "clear-smog",
+    "move_ko": "클리어스모그",
+    "move_en": "Clear Smog",
+    "power": 50,
+    "pp": 15,
+    "type": "poison",
+    "damage_class": "special"
+  },
+  "1016": {
+    "move": "cross-poison",
+    "move_ko": "크로스포이즌",
+    "move_en": "Cross Poison",
+    "power": 70,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "physical"
+  },
+  "1017": {
+    "move": "vine-whip",
+    "move_ko": "덩굴채찍",
+    "move_en": "Vine Whip",
+    "power": 45,
+    "pp": 25,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "1018": {
+    "move": "flash-cannon",
+    "move_ko": "러스터캐논",
+    "move_en": "Flash Cannon",
+    "power": 80,
+    "pp": 10,
+    "type": "steel",
+    "damage_class": "special"
+  },
+  "1019": {
+    "move": "power-whip",
+    "move_ko": "파워휩",
+    "move_en": "Power Whip",
+    "power": 120,
+    "pp": 10,
+    "type": "grass",
+    "damage_class": "physical"
+  },
+  "1020": {
+    "move": "incinerate",
+    "move_ko": "불태우기",
+    "move_en": "Incinerate",
+    "power": 60,
+    "pp": 15,
+    "type": "fire",
+    "damage_class": "special"
+  },
+  "1021": {
+    "move": "shock-wave",
+    "move_ko": "전격파",
+    "move_en": "Shock Wave",
+    "power": 60,
+    "pp": 20,
+    "type": "electric",
+    "damage_class": "special"
+  },
+  "1022": {
+    "move": "rock-throw",
+    "move_ko": "돌떨구기",
+    "move_en": "Rock Throw",
+    "power": 50,
+    "pp": 15,
+    "type": "rock",
+    "damage_class": "physical"
+  },
+  "1023": {
+    "move": "metal-claw",
+    "move_ko": "메탈크로우",
+    "move_en": "Metal Claw",
+    "power": 50,
+    "pp": 35,
+    "type": "steel",
+    "damage_class": "physical"
+  },
+  "1024": {
+    "move": "rapid-spin",
+    "move_ko": "고속스핀",
+    "move_en": "Rapid Spin",
+    "power": 50,
+    "pp": 40,
+    "type": "normal",
+    "damage_class": "physical"
+  },
+  "1025": {
+    "move": "smog",
+    "move_ko": "스모그",
+    "move_en": "Smog",
+    "power": 30,
+    "pp": 20,
+    "type": "poison",
+    "damage_class": "special"
+  }
+}
