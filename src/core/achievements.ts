@@ -136,10 +136,8 @@ function applyAchievementEffects(achievementId: string, state: State, config: Co
           if (effect.value) {
             const titleStr = String(effect.value);
             if (!state.titles.includes(titleStr)) state.titles.push(titleStr);
-            if (commonState) {
-              if (!commonState.titles) commonState.titles = [];
-              if (!commonState.titles.includes(titleStr)) commonState.titles.push(titleStr);
-            }
+            // Do NOT write per-gen titles to commonState — they are per-gen only.
+            // Only common achievement titles belong in commonState.titles.
           }
           break;
         case 'rare_weight_multiplier':
