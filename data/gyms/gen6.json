@@ -114,8 +114,8 @@
       "leader": "Diantha",
       "leaderKo": "카르네",
       "type": "fairy",
-      "badge": "Champion Badge",
-      "badgeKo": "챔피언배지",
+      "badge": "champion_kalos",
+      "badgeKo": "칼로스 챔피언배지",
       "region": "9",
       "team": [
         { "species": 701, "level": 70, "moves": [370, 403, 512, 583] },

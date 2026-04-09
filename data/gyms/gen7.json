@@ -110,8 +110,8 @@
       "leader": "Kukui",
       "leaderKo": "쿠쿠이",
       "type": "normal",
-      "badge": "Champion Badge",
-      "badgeKo": "챔피언배지",
+      "badge": "champion_alola",
+      "badgeKo": "알로라 챔피언배지",
       "region": "9",
       "team": [
         { "species": 745, "level": 70, "moves": [444, 157, 242, 370] },

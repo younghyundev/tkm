@@ -116,8 +116,8 @@
       "leader": "Cynthia",
       "leaderKo": "난천",
       "type": "normal",
-      "badge": "Champion Badge",
-      "badgeKo": "챔피언배지",
+      "badge": "champion_sinnoh",
+      "badgeKo": "신오 챔피언배지",
       "region": "9",
       "team": [
         { "species": 442, "level": 70, "moves": [247, 399, 94, 425] },

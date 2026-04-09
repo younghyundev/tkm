@@ -117,8 +117,8 @@
       "leader": "Geeta",
       "leaderKo": "테사",
       "type": "normal",
-      "badge": "Champion Badge",
-      "badgeKo": "챔피언배지",
+      "badge": "champion_paldea",
+      "badgeKo": "팔데아 챔피언배지",
       "region": "9",
       "team": [
         { "species": 956, "level": 70, "moves": [94, 427, 399, 412] },

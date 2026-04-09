@@ -112,8 +112,8 @@
       "leader": "Lance",
       "leaderKo": "목호",
       "type": "dragon",
-      "badge": "Champion Badge",
-      "badgeKo": "챔피언배지",
+      "badge": "champion_johto",
+      "badgeKo": "성도 챔피언배지",
       "region": "9",
       "team": [
         { "species": 130, "level": 70, "moves": [127, 89, 242, 56] },

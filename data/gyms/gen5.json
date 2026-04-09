@@ -112,8 +112,8 @@
       "leader": "Alder",
       "leaderKo": "노간주",
       "type": "bug",
-      "badge": "Champion Badge",
-      "badgeKo": "챔피언배지",
+      "badge": "champion_unova",
+      "badgeKo": "하나 챔피언배지",
       "region": "9",
       "team": [
         { "species": 617, "level": 70, "moves": [405, 411, 369, 412] },

@@ -115,8 +115,8 @@
       "leader": "Green",
       "leaderKo": "그린",
       "type": "normal",
-      "badge": "Champion Badge",
-      "badgeKo": "챔피언배지",
+      "badge": "champion_kanto",
+      "badgeKo": "관동 챔피언배지",
       "region": "9",
       "team": [
         { "species": 18, "level": 70, "moves": [413, 403, 332, 63] },

@@ -115,8 +115,8 @@
       "leader": "Leon",
       "leaderKo": "단델",
       "type": "normal",
-      "badge": "Champion Badge",
-      "badgeKo": "챔피언배지",
+      "badge": "champion_galar",
+      "badgeKo": "가라르 챔피언배지",
       "region": "9",
       "team": [
         { "species": 681, "level": 70, "moves": [442, 421, 430, 533] },

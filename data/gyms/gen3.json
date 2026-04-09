@@ -111,8 +111,8 @@
       "leader": "Steven",
       "leaderKo": "성호",
       "type": "steel",
-      "badge": "Champion Badge",
-      "badgeKo": "챔피언배지",
+      "badge": "champion_hoenn",
+      "badgeKo": "호연 챔피언배지",
       "region": "9",
       "team": [
         { "species": 227, "level": 70, "moves": [211, 332, 442, 92] },
