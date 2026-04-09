@@ -8,8 +8,8 @@ import type { State, Config, AchievementEvent, CommonState } from './types.js';
  * Check all achievements against current state.
  * Returns list of newly unlocked achievements.
  */
-export function checkAchievements(state: State, config: Config, commonState?: CommonState): AchievementEvent[] {
-  const db = getAchievementsDB();
+export function checkAchievements(state: State, config: Config, commonState?: CommonState, generation?: string): AchievementEvent[] {
+  const db = getAchievementsDB(generation);
   const pokemonDB = getPokemonDB();
   const events: AchievementEvent[] = [];
 
@@ -98,7 +98,7 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
       }
     }
 
-    applyAchievementEffects(ach.id, state, config, commonState);
+    applyAchievementEffects(ach.id, state, config, commonState, generation);
 
     // For dual-existence IDs (e.g. hundred_k_tokens in both common and gen4),
     // also mark commonState so recalculateCommonEffects includes their effects on restart
@@ -112,8 +112,8 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
   return events;
 }
 
-function applyAchievementEffects(achievementId: string, state: State, config: Config, commonState?: CommonState): void {
-  const db = getAchievementsDB();
+function applyAchievementEffects(achievementId: string, state: State, config: Config, commonState?: CommonState, generation?: string): void {
+  const db = getAchievementsDB(generation);
   const ach = db.achievements.find(a => a.id === achievementId);
 
   // Process structured reward_effects from achievements.json

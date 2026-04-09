@@ -173,7 +173,7 @@ function main(): void {
 
         // Check achievements immediately after badge (pass commonState for encounter_rate_bonus)
         const commonState = readCommonState();
-        const achEvents = victoryResult.badgeEarned ? checkAchievements(freshState, config, commonState) : [];
+        const achEvents = victoryResult.badgeEarned ? checkAchievements(freshState, config, commonState, generation) : [];
 
         // Update common badge aggregates and check common achievements
         let commonAchEvents: ReturnType<typeof checkCommonAchievements> = [];

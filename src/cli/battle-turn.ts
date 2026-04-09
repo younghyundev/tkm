@@ -527,7 +527,7 @@ function handleVictory(bsf: BattleStateFile, messages: string[]): void {
     const result = awardGymVictory(freshState, gym, playerPartyNames);
 
     // Check achievements immediately after badge earned (pass commonState for encounter_rate_bonus)
-    const achEvents = result.badgeEarned ? checkAchievements(freshState, config, commonState) : [];
+    const achEvents = result.badgeEarned ? checkAchievements(freshState, config, commonState, generation) : [];
 
     // Update common badge aggregates and check common achievements
     let commonAchEvents: ReturnType<typeof checkCommonAchievements> = [];
