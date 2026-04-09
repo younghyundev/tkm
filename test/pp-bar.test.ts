@@ -100,7 +100,7 @@ describe('ppBar', () => {
     assert.ok(result.includes('(~45m)'));
   });
 
-  it('shows floor hours for > 1h remaining', () => {
+  it('shows hours and minutes for > 1h remaining', () => {
     const futureTs = Math.floor(Date.now() / 1000) + 7260; // 2h01m
     const data: StdinData = {
       rate_limits: {
@@ -109,6 +109,6 @@ describe('ppBar', () => {
     };
     const result = ppBar(data);
     assert.ok(result);
-    assert.ok(result.includes('(~2h)'));
+    assert.ok(result.includes('(~2h1m)'));
   });
 });

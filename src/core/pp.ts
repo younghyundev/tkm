@@ -20,7 +20,8 @@ export function ppBar(stdinData: StdinData, blocks: number = 6): string | null {
         timeStr = ` (~${mins}m)`;
       } else {
         const hours = Math.floor(remainingSec / 3600);
-        timeStr = ` (~${hours}h)`;
+        const mins = Math.round((remainingSec % 3600) / 60);
+        timeStr = mins > 0 ? ` (~${hours}h${mins}m)` : ` (~${hours}h)`;
       }
     }
   }
