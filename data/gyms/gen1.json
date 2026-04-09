@@ -119,12 +119,12 @@
       "badgeKo": "챔피언배지",
       "region": "9",
       "team": [
-        { "species": 18, "level": 55, "moves": [413, 403, 332, 63] },
-        { "species": 65, "level": 55, "moves": [94, 247, 411, 58] },
-        { "species": 112, "level": 56, "moves": [89, 157, 224, 34] },
-        { "species": 59, "level": 57, "moves": [53, 126, 242, 34] },
-        { "species": 103, "level": 58, "moves": [94, 76, 437, 63] },
-        { "species": 130, "level": 60, "moves": [127, 89, 242, 56] }
+        { "species": 18, "level": 70, "moves": [413, 403, 332, 63] },
+        { "species": 65, "level": 70, "moves": [94, 247, 411, 58] },
+        { "species": 112, "level": 71, "moves": [89, 157, 224, 34] },
+        { "species": 59, "level": 72, "moves": [53, 126, 242, 34] },
+        { "species": 103, "level": 73, "moves": [94, 76, 437, 63] },
+        { "species": 130, "level": 75, "moves": [127, 89, 242, 56] }
       ]
     }
   ]
