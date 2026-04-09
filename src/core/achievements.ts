@@ -130,8 +130,8 @@ function applyAchievementEffects(achievementId: string, state: State, config: Co
           // Flag-only effect — no direct state change needed
           break;
         case 'title':
-          if (effect.value && !state.titles.includes(effect.value as string)) {
-            state.titles.push(effect.value as string);
+          if (effect.value && !state.titles.includes(String(effect.value))) {
+            state.titles.push(String(effect.value));
           }
           break;
         case 'rare_weight_multiplier':

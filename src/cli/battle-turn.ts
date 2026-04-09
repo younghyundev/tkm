@@ -18,7 +18,8 @@ import { getGymById, awardGymVictory, canChallengeGym } from '../core/gym.js';
 import { getPokemonDB, getPokemonName, speciesIdToGeneration } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale, t } from '../i18n/index.js';
-import { readGlobalConfig } from '../core/config.js';
+import { readGlobalConfig, readConfig } from '../core/config.js';
+import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { withLockRetry } from '../core/lock.js';
 import { readState, writeState } from '../core/state.js';
 import {
@@ -520,9 +521,14 @@ function handleVictory(bsf: BattleStateFile, messages: string[]): void {
   // Re-read state inside lock to avoid overwriting hook changes
   const lockResult = withLockRetry(() => {
     const freshState = readState(generation);
+    const config = readConfig();
     const result = awardGymVictory(freshState, gym, playerPartyNames);
+
+    // Check achievements immediately after badge earned
+    const achEvents = result.badgeEarned ? checkAchievements(freshState, config) : [];
+
     writeState(freshState, generation);
-    return result;
+    return { ...result, achEvents, badgeCount: (freshState.gym_badges ?? []).length };
   });
 
   if (!lockResult.acquired) {
@@ -531,6 +537,25 @@ function handleVictory(bsf: BattleStateFile, messages: string[]): void {
   }
 
   const victoryResult = lockResult.value;
+
+  // Badge notification messages
+  if (victoryResult.badgeEarned) {
+    const isChampion = gym.badge.startsWith('champion_');
+    if (isChampion) {
+      messages.push('═══════════════════════════════');
+      messages.push(`  🏆 ${t('gym.champion_victory_header')} 🏆`);
+      messages.push(`  ${t('gym.champion_victory_detail', { region: gym.badgeKo.replace(/ 챔피언배지$/, ''), leader: gym.leaderKo })}`);
+      for (const achEvent of victoryResult.achEvents) {
+        messages.push(`  ${formatAchievementMessage(achEvent)}`);
+      }
+      messages.push('═══════════════════════════════');
+    } else {
+      messages.push(t('gym.badge_earned', { badge: gym.badgeKo, leader: gym.leaderKo, count: victoryResult.badgeCount }));
+      for (const achEvent of victoryResult.achEvents) {
+        messages.push(formatAchievementMessage(achEvent));
+      }
+    }
+  }
 
   // Clean up battle state
   deleteBattleState();
@@ -542,7 +567,10 @@ function handleVictory(bsf: BattleStateFile, messages: string[]): void {
       name: gym.badgeKo,
       earned: victoryResult.badgeEarned,
       xp: victoryResult.xpAwarded,
+      count: victoryResult.badgeCount,
+      total: 8,
     },
+    achievements: victoryResult.achEvents.map(e => ({ id: e.id, name: e.name })),
     opponent: pokemonInfo(getActivePokemon(battleState.opponent)),
     player: pokemonInfo(getActivePokemon(battleState.player)),
   });
