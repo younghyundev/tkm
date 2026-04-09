@@ -14,6 +14,7 @@ import { getPokemonName } from '../core/pokemon-data.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale, t } from '../i18n/index.js';
 import { withLockRetry } from '../core/lock.js';
+import { loadGymData } from '../core/gym.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 
 function readStdin(): string {
@@ -70,6 +71,23 @@ function main(): void {
     // Consistency recalculation (every session start)
     const commonState = readCommonState();
     recalculateCommonEffects(commonState);
+
+    // Recompute badge aggregates from per-gen state (idempotent, every session start)
+    {
+      let totalBadges = 0;
+      let completedGens = 0;
+      for (const genKey of ['gen1','gen2','gen3','gen4','gen5','gen6','gen7','gen8','gen9']) {
+        const genState = readState(genKey);
+        const genBadges = genState.gym_badges ?? [];
+        totalBadges += genBadges.length;
+        const gyms = loadGymData(genKey);
+        if (gyms.length > 0 && gyms.every(g => genBadges.includes(g.badge))) {
+          completedGens++;
+        }
+      }
+      commonState.total_gym_badges = totalBadges;
+      commonState.completed_gym_gens = completedGens;
+    }
 
     const config = readConfig();
 

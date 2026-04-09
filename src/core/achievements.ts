@@ -270,6 +270,10 @@ function applyCommonAchievementEffects(
  * Format achievement event as a notification message.
  */
 export function formatAchievementMessage(event: AchievementEvent): string {
+  if (event.rewardXpDump && event.rewardPokemon) {
+    // XP dump for duplicate — show generic unlock message, not "got pokemon"
+    return t('achievement.unlocked', { name: event.name }) + '!';
+  }
   if (event.rewardPokemon) {
     return t('achievement.unlocked_pokemon', { name: event.name, pokemon: getPokemonName(event.rewardPokemon) });
   }

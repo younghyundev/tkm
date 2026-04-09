@@ -4,13 +4,13 @@ import { join } from 'path';
 import { SHOW_CURSOR } from './ansi.js';
 import { startGameLoop } from './game-loop.js';
 import { createBattlePokemon } from '../core/turn-battle.js';
-import { getGymById, awardGymVictory, canChallengeGym } from '../core/gym.js';
+import { getGymById, awardGymVictory, canChallengeGym, loadGymData } from '../core/gym.js';
 import { getPokemonName, getPokemonDB, speciesIdToGeneration } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale, t } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
-import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
-import { readCommonState, writeCommonState } from '../core/state.js';
+import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../core/achievements.js';
+import { readCommonState, readState, writeCommonState } from '../core/state.js';
 import { withLockRetry } from '../core/lock.js';
 import { fallbackMoves, loadMovesData, getLoadedMovesDB, getMovesForPokemon, getDisplayName } from '../core/battle-setup.js';
 import type { State, Config, MoveData, GymData } from '../core/types.js';
@@ -175,13 +175,37 @@ function main(): void {
         const commonState = readCommonState();
         const achEvents = victoryResult.badgeEarned ? checkAchievements(freshState, config, commonState) : [];
 
+        // Update common badge aggregates and check common achievements
+        let commonAchEvents: ReturnType<typeof checkCommonAchievements> = [];
+        if (victoryResult.badgeEarned) {
+          commonState.total_gym_badges += 1;
+
+          // Check if current gen is now fully complete
+          const gyms = loadGymData(generation);
+          const badges = freshState.gym_badges ?? [];
+          if (gyms.length > 0 && gyms.every(g => badges.includes(g.badge))) {
+            let completedCount = 0;
+            for (const genKey of ['gen1','gen2','gen3','gen4','gen5','gen6','gen7','gen8','gen9']) {
+              const genGyms = loadGymData(genKey);
+              const genState = genKey === generation ? freshState : readState(genKey);
+              const genBadges = genState.gym_badges ?? [];
+              if (genGyms.length > 0 && genGyms.every(g => genBadges.includes(g.badge))) {
+                completedCount++;
+              }
+            }
+            commonState.completed_gym_gens = completedCount;
+          }
+
+          commonAchEvents = checkCommonAchievements(commonState, config, freshState);
+        }
+
         // Save updated state
         writeFileSync(statePath, JSON.stringify(freshState, null, 2), 'utf-8');
         writeCommonState(commonState);
 
         return {
           victoryResult,
-          achEvents,
+          achEvents: [...achEvents, ...commonAchEvents],
           badgeCount: (freshState.gym_badges ?? []).length,
         };
       });

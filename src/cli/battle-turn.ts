@@ -19,9 +19,10 @@ import { getPokemonDB, getPokemonName, speciesIdToGeneration } from '../core/pok
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale, t } from '../i18n/index.js';
 import { readGlobalConfig, readConfig } from '../core/config.js';
-import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
+import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { withLockRetry } from '../core/lock.js';
 import { readState, writeState, readCommonState, writeCommonState } from '../core/state.js';
+import { loadGymData } from '../core/gym.js';
 import {
   STATE_DIR,
   readBattleState,
@@ -528,9 +529,33 @@ function handleVictory(bsf: BattleStateFile, messages: string[]): void {
     // Check achievements immediately after badge earned (pass commonState for encounter_rate_bonus)
     const achEvents = result.badgeEarned ? checkAchievements(freshState, config, commonState) : [];
 
+    // Update common badge aggregates and check common achievements
+    let commonAchEvents: ReturnType<typeof checkCommonAchievements> = [];
+    if (result.badgeEarned) {
+      commonState.total_gym_badges += 1;
+
+      // Check if current gen is now fully complete
+      const gyms = loadGymData(generation);
+      const badges = freshState.gym_badges ?? [];
+      if (gyms.length > 0 && gyms.every(g => badges.includes(g.badge))) {
+        let completedCount = 0;
+        for (const genKey of ['gen1','gen2','gen3','gen4','gen5','gen6','gen7','gen8','gen9']) {
+          const genGyms = loadGymData(genKey);
+          const genState = genKey === generation ? freshState : readState(genKey);
+          const genBadges = genState.gym_badges ?? [];
+          if (genGyms.length > 0 && genGyms.every(g => genBadges.includes(g.badge))) {
+            completedCount++;
+          }
+        }
+        commonState.completed_gym_gens = completedCount;
+      }
+
+      commonAchEvents = checkCommonAchievements(commonState, config, freshState);
+    }
+
     writeState(freshState, generation);
     writeCommonState(commonState);
-    return { ...result, achEvents, badgeCount: (freshState.gym_badges ?? []).length };
+    return { ...result, achEvents: [...achEvents, ...commonAchEvents], badgeCount: (freshState.gym_badges ?? []).length };
   });
 
   if (!lockResult.acquired) {

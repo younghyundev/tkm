@@ -140,47 +140,6 @@ async function main(): Promise<void> {
     // Read common state early (needed for last_turn_ts on all paths)
     const commonState = readCommonState();
 
-    // Backfill gym badge aggregates for existing saves (idempotent)
-    if (commonState.total_gym_badges === 0) {
-      // Migrate legacy "Champion Badge" strings to champion_<region> format
-      const legacyChampionMap: Record<string, string> = {
-        gen1: 'champion_kanto',
-        gen2: 'champion_johto',
-        gen3: 'champion_hoenn',
-        gen4: 'champion_sinnoh',
-        gen5: 'champion_unova',
-        gen6: 'champion_kalos',
-        gen7: 'champion_alola',
-        gen8: 'champion_galar',
-        gen9: 'champion_paldea',
-      };
-
-      let totalBadges = 0;
-      let completedGens = 0;
-      for (const genKey of ['gen1','gen2','gen3','gen4','gen5','gen6','gen7','gen8','gen9']) {
-        const genState = readState(genKey);
-        const badges = genState.gym_badges ?? [];
-
-        // One-time migration: replace legacy "Champion Badge" with champion_<region>
-        const legacyIdx = badges.indexOf('Champion Badge');
-        if (legacyIdx !== -1 && legacyChampionMap[genKey]) {
-          badges[legacyIdx] = legacyChampionMap[genKey];
-          genState.gym_badges = badges;
-          writeState(genState, genKey);
-        }
-
-        totalBadges += badges.length;
-        const gyms = loadGymData(genKey);
-        if (gyms.length > 0 && gyms.every(g => badges.includes(g.badge))) {
-          completedGens++;
-        }
-      }
-      if (totalBadges > 0) {
-        commonState.total_gym_badges = totalBadges;
-        commonState.completed_gym_gens = completedGens;
-      }
-    }
-
     // Delta tracking
     const isFirstStop = !(sessionId in state.last_session_tokens);
     const prevSessionTokens = state.last_session_tokens[sessionId] ?? 0;
