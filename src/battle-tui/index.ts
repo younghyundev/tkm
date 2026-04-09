@@ -7,8 +7,9 @@ import { createBattlePokemon } from '../core/turn-battle.js';
 import { getGymById, awardGymVictory, canChallengeGym } from '../core/gym.js';
 import { getPokemonName, getPokemonDB, speciesIdToGeneration } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
-import { initLocale } from '../i18n/index.js';
+import { initLocale, t } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
+import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { fallbackMoves, loadMovesData, getLoadedMovesDB, getMovesForPokemon, getDisplayName } from '../core/battle-setup.js';
 import type { State, Config, MoveData, GymData } from '../core/types.js';
 
@@ -163,8 +164,31 @@ function main(): void {
       const participatingPokemon = config.party.filter((name) => state.pokemon[name]);
       const victoryResult = awardGymVictory(state, gym, participatingPokemon);
 
+      // Check achievements immediately after badge
+      const achEvents = victoryResult.badgeEarned ? checkAchievements(state, config) : [];
+
       // Save updated state
       writeFileSync(statePath, JSON.stringify(state, null, 2), 'utf-8');
+
+      // Badge notification to stderr (stdout is for JSON)
+      if (victoryResult.badgeEarned) {
+        const badgeCount = (state.gym_badges ?? []).length;
+        const isChampion = gym.badge.startsWith('champion_');
+        if (isChampion) {
+          process.stderr.write('\n═══════════════════════════════\n');
+          process.stderr.write(`  🏆 ${t('gym.champion_victory_header')} 🏆\n`);
+          process.stderr.write(`  ${t('gym.champion_victory_detail', { region: gym.badgeKo.replace(/ 챔피언배지$/, ''), leader: gym.leaderKo })}\n`);
+          for (const achEvent of achEvents) {
+            process.stderr.write(`  ${formatAchievementMessage(achEvent)}\n`);
+          }
+          process.stderr.write('═══════════════════════════════\n');
+        } else {
+          process.stderr.write(`\n${t('gym.badge_earned', { badge: gym.badgeKo, leader: gym.leaderKo, count: badgeCount })}\n`);
+          for (const achEvent of achEvents) {
+            process.stderr.write(`${formatAchievementMessage(achEvent)}\n`);
+          }
+        }
+      }
 
       const output = {
         winner: result.winner,
@@ -174,6 +198,7 @@ function main(): void {
         badgeKo: gym.badgeKo,
         badgeEarned: victoryResult.badgeEarned,
         xpAwarded: victoryResult.xpAwarded,
+        achievements: achEvents.map(e => ({ id: e.id, name: e.name })),
       };
 
       console.log(`\n__BATTLE_RESULT__${JSON.stringify(output)}`);
