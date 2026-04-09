@@ -169,6 +169,16 @@ async function main(): Promise<void> {
       // (no encounters, drops, rest bonus, tier updates, friendship, evolution checks)
       const codexPreCheck = readCodexTotalTokens();
       const codexPrev = commonState.last_codex_tokens_total ?? 0;
+
+      // First Codex read: set baseline only, no XP (prevents historical backlog from flooding XP)
+      if (codexPreCheck > 0 && codexPrev === 0 && commonState.last_codex_tokens_total === undefined) {
+        commonState.last_codex_tokens_total = codexPreCheck;
+        commonState.last_turn_ts = Date.now();
+        writeCommonState(commonState);
+        writeState(state, gen);
+        return 'no_delta';
+      }
+
       const codexDelta = Math.max(0, codexPreCheck - codexPrev);
       const tokensPerXpEarly = Math.max(1, config.tokens_per_xp);
       const codexXpOnly = Math.floor(codexDelta / tokensPerXpEarly);
@@ -317,11 +327,16 @@ async function main(): Promise<void> {
 
     // ── Codex flat XP (no volume tier / rest bonus, normal turn) ──
     const codexTotalTokens = readCodexTotalTokens();
-    // First-stop and no-delta early exits above intentionally skip this block;
-    // any Codex tokens consumed during those turns are deferred to the next qualifying stop.
     const codexPrev = commonState.last_codex_tokens_total ?? 0;
-    const codexDelta = Math.max(0, codexTotalTokens - codexPrev);
+    let codexDelta = 0;
     let codexXpTotal = 0;
+
+    // First Codex read: set baseline only, no XP (prevents historical backlog from flooding XP)
+    if (codexTotalTokens > 0 && codexPrev === 0 && commonState.last_codex_tokens_total === undefined) {
+      commonState.last_codex_tokens_total = codexTotalTokens;
+    } else {
+      codexDelta = Math.max(0, codexTotalTokens - codexPrev);
+    }
 
     if (codexDelta > 0) {
       codexXpTotal = Math.max(0, Math.floor(codexDelta / tokensPerXp));
