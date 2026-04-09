@@ -556,5 +556,33 @@
   "tip.gym_next_info": "🏟️ 다음 체육관: {leaderName} ({type}타입) — 상성을 준비하세요!",
   "tip.gym_badge_progress": "배지를 {badgeCount}개 모았다. 챔피언까지 {remaining}개 남았다고 한다.",
 
-  "gym.champion_badge_required": "모든 배지를 모아야 챔피언에게 도전할 수 있습니다! (현재 배지: {badgeCount}/8)"
+  "gym.champion_badge_required": "모든 배지를 모아야 챔피언에게 도전할 수 있습니다! (현재 배지: {badgeCount}/8)",
+
+  "gym.badge_earned": "🥊 {badge} 획득! ({leader} 격파) [{count}/8]",
+  "gym.champion_victory_header": "챔피언 승리!",
+  "gym.champion_victory_detail": "{region} 챔피언 {leader} 격파!",
+  "gym.title_earned": "칭호 획득: {title}",
+  "gym.reward_pokemon": "보상: {pokemon} 획득!",
+  "gym.reward_xp_dump": "{pokemon}에게 {xp} XP 부여! (Lv.{oldLevel} → Lv.{newLevel})",
+
+  "achievement.first_badge": "첫 번째 배지",
+  "achievement.four_badges": "배지 수집가",
+  "achievement.eight_badges": "체육관 마스터",
+  "achievement.champion": "챔피언",
+  "achievement.total_badges_10": "배지 매니아",
+  "achievement.total_badges_30": "배지 마니아",
+  "achievement.three_gen_champion": "멀티 챔피언",
+  "achievement.all_gen_champion": "포켓몬 마스터",
+
+  "title.champion_kanto": "관동 챔피언",
+  "title.champion_johto": "성도 챔피언",
+  "title.champion_hoenn": "호연 챔피언",
+  "title.champion_sinnoh": "신오 챔피언",
+  "title.champion_unova": "하나 챔피언",
+  "title.champion_kalos": "칼로스 챔피언",
+  "title.champion_alola": "알로라 챔피언",
+  "title.champion_galar": "가라르 챔피언",
+  "title.champion_paldea": "팔데아 챔피언",
+  "title.multi_champion": "멀티 챔피언",
+  "title.pokemon_master": "포켓몬 마스터"
 }

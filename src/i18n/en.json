@@ -556,5 +556,33 @@
   "tip.gym_next_info": "🏟️ Next gym: {leaderName} ({type} type) — prepare your type matchups!",
   "tip.gym_badge_progress": "You've collected {badgeCount} badges. They say {remaining} more until the Champion.",
 
-  "gym.champion_badge_required": "You must collect all 8 badges before challenging the Champion! (Current badges: {badgeCount}/8)"
+  "gym.champion_badge_required": "You must collect all 8 badges before challenging the Champion! (Current badges: {badgeCount}/8)",
+
+  "gym.badge_earned": "🥊 {badge} earned! ({leader} defeated) [{count}/8]",
+  "gym.champion_victory_header": "CHAMPION VICTORY!",
+  "gym.champion_victory_detail": "{region} Champion {leader} defeated!",
+  "gym.title_earned": "Title earned: {title}",
+  "gym.reward_pokemon": "Reward: {pokemon} obtained!",
+  "gym.reward_xp_dump": "{pokemon} gained {xp} XP! (Lv.{oldLevel} → Lv.{newLevel})",
+
+  "achievement.first_badge": "First Badge",
+  "achievement.four_badges": "Badge Collector",
+  "achievement.eight_badges": "Gym Master",
+  "achievement.champion": "Champion",
+  "achievement.total_badges_10": "Badge Enthusiast",
+  "achievement.total_badges_30": "Badge Maniac",
+  "achievement.three_gen_champion": "Multi Champion",
+  "achievement.all_gen_champion": "Pokémon Master",
+
+  "title.champion_kanto": "Kanto Champion",
+  "title.champion_johto": "Johto Champion",
+  "title.champion_hoenn": "Hoenn Champion",
+  "title.champion_sinnoh": "Sinnoh Champion",
+  "title.champion_unova": "Unova Champion",
+  "title.champion_kalos": "Kalos Champion",
+  "title.champion_alola": "Alola Champion",
+  "title.champion_galar": "Galar Champion",
+  "title.champion_paldea": "Paldea Champion",
+  "title.multi_champion": "Multi Champion",
+  "title.pokemon_master": "Pokémon Master"
 }
