@@ -431,6 +431,8 @@ export interface CommonState {
   permission_count: number;
   total_gym_badges: number;
   completed_gym_gens: number;
+  titles: string[];
+  rare_weight_multiplier: number;
   last_turn_ts?: number;
 }
 

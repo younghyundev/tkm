@@ -21,7 +21,7 @@ import { initLocale, t } from '../i18n/index.js';
 import { readGlobalConfig, readConfig } from '../core/config.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { withLockRetry } from '../core/lock.js';
-import { readState, writeState } from '../core/state.js';
+import { readState, writeState, readCommonState, writeCommonState } from '../core/state.js';
 import {
   STATE_DIR,
   readBattleState,
@@ -522,12 +522,14 @@ function handleVictory(bsf: BattleStateFile, messages: string[]): void {
   const lockResult = withLockRetry(() => {
     const freshState = readState(generation);
     const config = readConfig();
+    const commonState = readCommonState();
     const result = awardGymVictory(freshState, gym, playerPartyNames);
 
-    // Check achievements immediately after badge earned
-    const achEvents = result.badgeEarned ? checkAchievements(freshState, config) : [];
+    // Check achievements immediately after badge earned (pass commonState for encounter_rate_bonus)
+    const achEvents = result.badgeEarned ? checkAchievements(freshState, config, commonState) : [];
 
     writeState(freshState, generation);
+    writeCommonState(commonState);
     return { ...result, achEvents, badgeCount: (freshState.gym_badges ?? []).length };
   });
 

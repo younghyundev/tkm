@@ -133,12 +133,20 @@ function applyAchievementEffects(achievementId: string, state: State, config: Co
           // Flag-only effect — no direct state change needed
           break;
         case 'title':
-          if (effect.value && !state.titles.includes(String(effect.value))) {
-            state.titles.push(String(effect.value));
+          if (effect.value) {
+            const titleStr = String(effect.value);
+            if (!state.titles.includes(titleStr)) state.titles.push(titleStr);
+            if (commonState) {
+              if (!commonState.titles) commonState.titles = [];
+              if (!commonState.titles.includes(titleStr)) commonState.titles.push(titleStr);
+            }
           }
           break;
         case 'rare_weight_multiplier':
           state.rare_weight_multiplier = (state.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
+          if (commonState) {
+            commonState.rare_weight_multiplier = (commonState.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
+          }
           break;
         case 'encounter_rate_bonus':
           // Cross-state write: encounter_rate_bonus always goes to commonState
@@ -243,12 +251,16 @@ function applyCommonAchievementEffects(
       case 'unlock_legendary':
         break;
       case 'title':
-        if (effect.value && !state.titles.includes(String(effect.value))) {
-          state.titles.push(String(effect.value));
+        if (effect.value) {
+          const titleStr = String(effect.value);
+          if (!state.titles.includes(titleStr)) state.titles.push(titleStr);
+          if (!commonState.titles) commonState.titles = [];
+          if (!commonState.titles.includes(titleStr)) commonState.titles.push(titleStr);
         }
         break;
       case 'rare_weight_multiplier':
         state.rare_weight_multiplier = (state.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
+        commonState.rare_weight_multiplier = (commonState.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
         break;
     }
   }

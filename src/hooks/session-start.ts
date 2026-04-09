@@ -70,6 +70,17 @@ function main(): void {
         }
       }
     }
+
+    // Materialize cross-gen title and rare_weight_multiplier on every session start
+    // so all gens see common achievement effects
+    if (commonState.titles && commonState.titles.length > 0) {
+      for (const title of commonState.titles) {
+        if (!state.titles.includes(title)) state.titles.push(title);
+      }
+    }
+    if (commonState.rare_weight_multiplier != null && commonState.rare_weight_multiplier !== 1.0) {
+      state.rare_weight_multiplier = commonState.rare_weight_multiplier;
+    }
     initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
     // Re-resolve gen inside lock for new sessions (avoids stale gen if gen switch happened before lock)

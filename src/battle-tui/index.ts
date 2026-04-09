@@ -10,6 +10,7 @@ import { getActiveGeneration } from '../core/paths.js';
 import { initLocale, t } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
+import { readCommonState, writeCommonState } from '../core/state.js';
 import { fallbackMoves, loadMovesData, getLoadedMovesDB, getMovesForPokemon, getDisplayName } from '../core/battle-setup.js';
 import type { State, Config, MoveData, GymData } from '../core/types.js';
 
@@ -164,11 +165,13 @@ function main(): void {
       const participatingPokemon = config.party.filter((name) => state.pokemon[name]);
       const victoryResult = awardGymVictory(state, gym, participatingPokemon);
 
-      // Check achievements immediately after badge
-      const achEvents = victoryResult.badgeEarned ? checkAchievements(state, config) : [];
+      // Check achievements immediately after badge (pass commonState for encounter_rate_bonus)
+      const commonState = readCommonState();
+      const achEvents = victoryResult.badgeEarned ? checkAchievements(state, config, commonState) : [];
 
       // Save updated state
       writeFileSync(statePath, JSON.stringify(state, null, 2), 'utf-8');
+      writeCommonState(commonState);
 
       // Badge notification to stderr (stdout is for JSON)
       if (victoryResult.badgeEarned) {
