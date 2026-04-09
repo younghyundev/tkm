@@ -178,7 +178,7 @@ function wrapPrint(parts: string[], maxWidth: number): void {
 
 // ── Weather particle effects ──
 
-// All particle chars must be braille (U+2800–28FF, width 2) to preserve SPRITE_WIDTH alignment
+// Particle chars use braille (U+2800–28FF) to match sprite char width in all terminals
 const WEATHER_PARTICLES: Record<WeatherCondition, { chars: string[]; color: string; density: number }> = {
   rain:         { chars: ['⠡', '⠑', '⠊', '⠉'],        color: '\x1b[34m',  density: 0.12 },
   thunderstorm: { chars: ['⠡', '⠑', '⠋', '⠛'],        color: '\x1b[33m',  density: 0.15 },
@@ -189,7 +189,7 @@ const WEATHER_PARTICLES: Record<WeatherCondition, { chars: string[]; color: stri
   cloudy:       { chars: ['⠒', '⠤', '⠶'],              color: '\x1b[90m',  density: 0.06 },
 };
 
-function scatterWeatherParticles(line: string, condition: WeatherCondition): string {
+export function scatterWeatherParticles(line: string, condition: WeatherCondition): string {
   const fx = WEATHER_PARTICLES[condition];
   if (!fx || fx.chars.length === 0) return line;
   const RESET = '\x1b[0m';
@@ -430,7 +430,14 @@ function main(): void {
         if (weatherCondition) {
           rowStr = scatterWeatherParticles(rowStr, weatherCondition);
         }
-        console.log(rowStr.replace(/\u2800/g, ' '));
+        // Keep \u2800 (braille blank) in output instead of converting to ASCII space.
+        // In some CJK terminals, non-zero braille (sprite art) and \u2800 are both
+        // rendered at the same width while ASCII space is narrower — mixing them
+        // causes per-row width variance proportional to sprite opacity, which is
+        // invisible without weather but blatant once particles land on random cells.
+        // Keeping every transparent position as \u2800 guarantees uniform row width
+        // regardless of the terminal's actual braille glyph width.
+        console.log(rowStr);
       }
     }
   }
@@ -543,9 +550,14 @@ function main(): void {
   wrapPrint(infoParts, printWidth);
 }
 
-try {
-  main();
-} catch {
-  // Output minimal status on crash to prevent Claude Code from breaking
-  console.log('tokenmon: error');
+// Only run main() when invoked as entry script — avoids side effects on import
+// (tests import scatterWeatherParticles directly).
+const isEntryScript = import.meta.url === `file://${process.argv[1]}`;
+if (isEntryScript) {
+  try {
+    main();
+  } catch {
+    // Output minimal status on crash to prevent Claude Code from breaking
+    console.log('tokenmon: error');
+  }
 }
