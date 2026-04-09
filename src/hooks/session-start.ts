@@ -183,6 +183,13 @@ function main(): void {
       messages.push(formatAchievementMessage(achEvent));
     }
 
+    // Backfill common badge achievements for upgraded saves
+    // (aggregates were recomputed above; per-gen achievements just ran)
+    const backfillCommonAchEvents = checkCommonAchievements(commonState, config, state);
+    for (const achEvent of backfillCommonAchEvents) {
+      messages.push(formatAchievementMessage(achEvent));
+    }
+
     // Sync pokedex and check pokedex rewards
     syncPokedexFromUnlocked(state);
     const locale = config.language ?? 'en';

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { SHOW_CURSOR } from './ansi.js';
 import { startGameLoop } from './game-loop.js';
@@ -10,7 +10,7 @@ import { getActiveGeneration } from '../core/paths.js';
 import { initLocale, t } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
 import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../core/achievements.js';
-import { readCommonState, readState, writeCommonState } from '../core/state.js';
+import { readCommonState, readState, writeCommonState, writeState } from '../core/state.js';
 import { withLockRetry } from '../core/lock.js';
 import { fallbackMoves, loadMovesData, getLoadedMovesDB, getMovesForPokemon, getDisplayName } from '../core/battle-setup.js';
 import type { State, Config, MoveData, GymData } from '../core/types.js';
@@ -166,8 +166,8 @@ function main(): void {
       // Wrap state mutations in global lock to prevent concurrent clobbering
       // with CLI victory path (stop.ts also uses withLockRetry)
       const lockResult = withLockRetry(() => {
-        // Re-read state inside lock to avoid stale data
-        const freshState: State = JSON.parse(readFileSync(statePath, 'utf-8'));
+        // Re-read state inside lock to avoid stale data (use readState for normalization)
+        const freshState = readState(generation);
         const participatingPokemon = config.party.filter((name) => freshState.pokemon[name]);
         const victoryResult = awardGymVictory(freshState, gym, participatingPokemon);
 
@@ -199,8 +199,8 @@ function main(): void {
           commonAchEvents = checkCommonAchievements(commonState, config, freshState);
         }
 
-        // Save updated state
-        writeFileSync(statePath, JSON.stringify(freshState, null, 2), 'utf-8');
+        // Save updated state (use writeState for consistency with readState)
+        writeState(freshState, generation);
         writeCommonState(commonState);
 
         return {
@@ -250,7 +250,7 @@ function main(): void {
       console.log(`\n__BATTLE_RESULT__${JSON.stringify(output)}`);
     } else {
       // Defeat — save state (battle count etc. may matter)
-      writeFileSync(statePath, JSON.stringify(state, null, 2), 'utf-8');
+      writeState(state, generation);
 
       const output = {
         winner: result.winner,
