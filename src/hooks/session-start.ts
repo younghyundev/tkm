@@ -51,6 +51,22 @@ function main(): void {
     if (!commonStateExists()) {
       migrateToCommonState();
     }
+
+    // Migrate legacy "Champion Badge" → champion_<region> for the CURRENT gen immediately
+    // (before any gym lookups). The stop.ts backfill handles all gens, but this ensures
+    // the current gen is correct before getNextGym()/awardGymVictory() run.
+    const legacyChampionMap: Record<string, string> = {
+      gen1: 'champion_kanto', gen2: 'champion_johto', gen3: 'champion_hoenn',
+      gen4: 'champion_sinnoh', gen5: 'champion_unova', gen6: 'champion_kalos',
+      gen7: 'champion_alola', gen8: 'champion_galar', gen9: 'champion_paldea',
+    };
+    const badges = state.gym_badges ?? [];
+    const legacyIdx = badges.indexOf('Champion Badge');
+    if (legacyIdx !== -1 && legacyChampionMap[gen]) {
+      badges[legacyIdx] = legacyChampionMap[gen];
+      state.gym_badges = badges;
+    }
+
     // Consistency recalculation (every session start)
     const commonState = readCommonState();
     recalculateCommonEffects(commonState);

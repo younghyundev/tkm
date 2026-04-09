@@ -142,7 +142,8 @@ describe('recalculateCommonEffects', () => {
       },
     });
 
-    recalculateCommonEffects(commonState);
+    // Pass includePerGen=false to test common-only recalculation in isolation
+    recalculateCommonEffects(commonState, false);
 
     assert.ok(
       Math.abs(commonState.xp_bonus_multiplier - 0.2) < 1e-9,
@@ -161,7 +162,7 @@ describe('recalculateCommonEffects', () => {
       xp_bonus_multiplier: 0.3,
     });
 
-    recalculateCommonEffects(commonState);
+    recalculateCommonEffects(commonState, false);
 
     assert.equal(commonState.encounter_rate_bonus, 0);
     assert.equal(commonState.xp_bonus_multiplier, 0);
@@ -176,7 +177,7 @@ describe('recalculateCommonEffects', () => {
       },
     });
 
-    recalculateCommonEffects(commonState);
+    recalculateCommonEffects(commonState, false);
 
     assert.ok(
       Math.abs(commonState.xp_bonus_multiplier - 0.3) < 1e-9,

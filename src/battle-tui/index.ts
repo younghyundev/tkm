@@ -11,6 +11,7 @@ import { initLocale, t } from '../i18n/index.js';
 import { readGlobalConfig } from '../core/config.js';
 import { checkAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { readCommonState, writeCommonState } from '../core/state.js';
+import { withLockRetry } from '../core/lock.js';
 import { fallbackMoves, loadMovesData, getLoadedMovesDB, getMovesForPokemon, getDisplayName } from '../core/battle-setup.js';
 import type { State, Config, MoveData, GymData } from '../core/types.js';
 
@@ -162,20 +163,38 @@ function main(): void {
   startGameLoop(playerTeam, gymTeam, gym, (result) => {
     // Award victory if player won
     if (result.winner === 'player') {
-      const participatingPokemon = config.party.filter((name) => state.pokemon[name]);
-      const victoryResult = awardGymVictory(state, gym, participatingPokemon);
+      // Wrap state mutations in global lock to prevent concurrent clobbering
+      // with CLI victory path (stop.ts also uses withLockRetry)
+      const lockResult = withLockRetry(() => {
+        // Re-read state inside lock to avoid stale data
+        const freshState: State = JSON.parse(readFileSync(statePath, 'utf-8'));
+        const participatingPokemon = config.party.filter((name) => freshState.pokemon[name]);
+        const victoryResult = awardGymVictory(freshState, gym, participatingPokemon);
 
-      // Check achievements immediately after badge (pass commonState for encounter_rate_bonus)
-      const commonState = readCommonState();
-      const achEvents = victoryResult.badgeEarned ? checkAchievements(state, config, commonState) : [];
+        // Check achievements immediately after badge (pass commonState for encounter_rate_bonus)
+        const commonState = readCommonState();
+        const achEvents = victoryResult.badgeEarned ? checkAchievements(freshState, config, commonState) : [];
 
-      // Save updated state
-      writeFileSync(statePath, JSON.stringify(state, null, 2), 'utf-8');
-      writeCommonState(commonState);
+        // Save updated state
+        writeFileSync(statePath, JSON.stringify(freshState, null, 2), 'utf-8');
+        writeCommonState(commonState);
 
-      // Badge notification to stderr (stdout is for JSON)
+        return {
+          victoryResult,
+          achEvents,
+          badgeCount: (freshState.gym_badges ?? []).length,
+        };
+      });
+
+      if (!lockResult.acquired) {
+        process.stderr.write('Failed to acquire state lock for gym victory.\n');
+        process.exit(1);
+      }
+
+      const { victoryResult, achEvents, badgeCount } = lockResult.value;
+
+      // Badge notification to stderr (stdout is for JSON) — outside lock
       if (victoryResult.badgeEarned) {
-        const badgeCount = (state.gym_badges ?? []).length;
         const isChampion = gym.badge.startsWith('champion_');
         if (isChampion) {
           process.stderr.write('\n═══════════════════════════════\n');
