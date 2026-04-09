@@ -23,6 +23,8 @@ function makeCommonState(overrides: Partial<CommonState> = {}): CommonState {
     evolution_count: 0,
     error_count: 0,
     permission_count: 0,
+    total_gym_badges: 0,
+    completed_gym_gens: 0,
     ...overrides,
   };
 }

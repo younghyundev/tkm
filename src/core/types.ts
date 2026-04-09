@@ -236,6 +236,7 @@ export interface State {
   pending_tier?: string | null;
   context_tokens_used?: number;
   gym_badges?: string[];
+  rare_weight_multiplier?: number;
 }
 
 export interface Config {
@@ -307,6 +308,7 @@ export interface AchievementEvent {
   name: string;
   rewardPokemon?: string;
   rewardMessage?: string;
+  rewardXpDump?: number;
 }
 
 export interface RegionData {
@@ -427,6 +429,8 @@ export interface CommonState {
   evolution_count: number;
   error_count: number;
   permission_count: number;
+  total_gym_badges: number;
+  completed_gym_gens: number;
   last_turn_ts?: number;
 }
 

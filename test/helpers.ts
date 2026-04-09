@@ -64,6 +64,7 @@ export function makeState(overrides: Partial<State> = {}): State {
     shiny_catch_count: 0,
     shiny_escaped_count: 0,
     gym_badges: [],
+    rare_weight_multiplier: 1.0,
     ...overrides,
   };
 }
