@@ -14,9 +14,11 @@
 |------|------|------|
 | 트리거 범위 | 세대별 + 크로스 세대 | 기존 gen/common 이중 구조 활용 |
 | 배지 알림 | 진행도 포맷 + 챔피언 특별 연출 | 배지는 특별 이벤트, 차별화 필요 |
-| 보상 | 기존 효과 + 칭호(title) | `state.titles[]` 인프라 이미 존재 |
+| 보상 | 기존 효과 + 칭호(title) + rare_weight_multiplier | `state.titles[]` 인프라 이미 존재 |
 | 트리거 구현 | 새 trigger_type 추가 | 현재 switch 패턴과 일관성 유지 |
 | 체크 시점 | awardGymVictory 직후 | 배지 획득 즉시 피드백 |
+| 중복 포켓몬 | 이미 보유 시 Lv50 상당 XP 부여 | 보상이 사라지지 않도록 |
+| 레어도 보상 | rare_weight_multiplier (곱셈+정규화) | 구현 간단, 기존 weight 구조와 호환 |
 
 ## New Trigger Types
 
@@ -68,6 +70,68 @@ case 'all_gen_badges': {
 
 **`getAchievementProgress()`** (notifications.ts)에도 동일 3종 추가하여 90% 근접 알림 지원.
 
+## New Reward Effect: `rare_weight_multiplier`
+
+rare/legendary/mythical 가중치에 배수를 적용. `selectWildPokemon()`에서 기존 정규화 로직에 자연스럽게 통합.
+
+**저장:** `state.rare_weight_multiplier` (기본값 1.0, 곱셈 누적)
+**적용:** `selectWildPokemon()`에서 weighted selection 시 rare 이상 가중치에 곱셈
+
+```typescript
+// encounter.ts — selectWildPokemon() 내
+const rareMultiplier = state.rare_weight_multiplier ?? 1.0;
+for (const p of pool) {
+  let w = weights[p.rarity];
+  if (p.rarity === 'rare' || p.rarity === 'legendary' || p.rarity === 'mythical') {
+    w *= rareMultiplier;
+  }
+  // ... existing event modifiers ...
+}
+// 정규화는 기존 코드에서 이미 처리
+```
+
+**효과 시뮬레이션 (기본 가중치 기준):**
+
+| 배수 | common | uncommon | rare | legendary | mythical |
+|------|--------|----------|------|-----------|----------|
+| ×1.0 (기본) | 55.0% | 30.0% | 13.0% | 1.50% | 0.50% |
+| ×1.5 | 51.2% | 27.9% | 18.1% | 2.09% | 0.70% |
+| ×2.0 | 47.8% | 26.1% | 22.6% | 2.61% | 0.87% |
+| ×3.0 | 42.3% | 23.1% | 30.0% | 3.46% | 1.15% |
+
+## Duplicate Reward Pokemon Handling
+
+보상 포켓몬을 이미 보유 중인 경우, 해당 포켓몬에 **Lv50 상당 XP**를 부여한다.
+
+```typescript
+// achievements.ts — reward pokemon handling
+if (ach.reward_pokemon) {
+  const rewardName = ach.reward_pokemon;
+  if (state.unlocked.includes(rewardName) && state.pokemon[rewardName]) {
+    // 이미 보유: XP dump
+    const pData = pokemonDB.pokemon[rewardName];
+    const bonusXp = levelToXp(50, pData?.exp_group ?? 'slow');
+    state.pokemon[rewardName].xp += bonusXp;
+    state.pokemon[rewardName].level = xpToLevel(state.pokemon[rewardName].xp, pData?.exp_group ?? 'slow');
+    event.rewardXpDump = bonusXp;
+  } else {
+    // 기존 로직: 포켓몬 지급
+    // ...
+  }
+}
+```
+
+**XP dump 결과 (slow 경험치 그룹, 보상 = 156,250 XP):**
+
+| 현재 레벨 | 결과 레벨 | 증가 |
+|-----------|-----------|------|
+| Lv1 | Lv50 | +49 |
+| Lv30 | Lv53 | +23 |
+| Lv50 | Lv63 | +13 |
+| Lv60 | Lv69 | +9 |
+| Lv70 | Lv77 | +7 |
+| Lv90 | Lv94 | +4 |
+
 ## Achievement Data
 
 ### Gen-Specific (`data/genN/achievements.json` × 9세대)
@@ -76,9 +140,9 @@ case 'all_gen_badges': {
 
 | ID | trigger_type | trigger_value | rarity | 보상 |
 |----|-------------|---------------|--------|------|
-| `first_badge` | `badge_count` | 1 | 1 | `add_item: pokeball × 3` |
-| `four_badges` | `badge_count` | 4 | 2 | `xp_bonus: 0.1` |
-| `eight_badges` | `badge_count` | 8 | 3 | `add_item: pokeball × 10` |
+| `first_badge` | `badge_count` | 1 | 1 | `encounter_rate_bonus: 0.03` |
+| `four_badges` | `badge_count` | 4 | 2 | `xp_bonus: 0.1`, `encounter_rate_bonus: 0.02` |
+| `eight_badges` | `badge_count` | 8 | 3 | `rare_weight_multiplier: 1.3` |
 | `champion` | `champion_defeated` | 1 | 4 | 칭호 + 보상 포켓몬 (세대별 전설) |
 
 **챔피언 보상 포켓몬 (세대별):**
@@ -95,16 +159,16 @@ case 'all_gen_badges': {
 | Gen8 | 가라르 챔피언 | 890 (무한다이노) |
 | Gen9 | 팔데아 챔피언 | 1007 (코라이돈) |
 
-**주의:** `reward_pokemon`이 해당 세대 pokemon DB에 존재하는지 구현 시 확인 필요. 없으면 `reward_pokemon`을 null로 두고 칭호만 부여.
+**주의:** `reward_pokemon`이 해당 세대 pokemon DB에 존재하는지 구현 시 확인 필요. 없으면 `reward_pokemon`을 null로 두고 칭호만 부여. 이미 보유 시 Lv50 상당 XP dump.
 
 ### Cross-Gen (`data/common/achievements.json`)
 
 | ID | trigger_type | trigger_value | rarity | 보상 |
 |----|-------------|---------------|--------|------|
-| `total_badges_10` | `badge_count` | 10 | 2 | `add_item: pokeball × 5` |
-| `total_badges_30` | `badge_count` | 30 | 3 | `xp_bonus: 0.15` |
-| `three_gen_champion` | `all_gen_badges` | 3 | 4 | 칭호: "멀티 챔피언" |
-| `all_gen_champion` | `all_gen_badges` | 9 | 5 | 칭호: "포켓몬 마스터" |
+| `total_badges_10` | `badge_count` | 10 | 2 | `encounter_rate_bonus: 0.05` |
+| `total_badges_30` | `badge_count` | 30 | 3 | `rare_weight_multiplier: 1.5` |
+| `three_gen_champion` | `all_gen_badges` | 3 | 4 | 칭호: "멀티 챔피언", `rare_weight_multiplier: 1.3` |
+| `all_gen_champion` | `all_gen_badges` | 9 | 5 | 칭호: "포켓몬 마스터", `rare_weight_multiplier: 2.0` |
 
 ## Badge Notification Format
 
@@ -193,12 +257,20 @@ commonState.total_gym_badges += currentBadges - prevBadges;
 ### `src/core/types.ts`
 
 - `CommonState`에 `total_gym_badges: number`, `completed_gym_gens: number` 추가
+- `State`에 `rare_weight_multiplier: number` 추가 (기본값 1.0)
+- `AchievementEvent`에 `rewardXpDump?: number` 추가
 
 ### `src/core/achievements.ts`
 
 - `checkAchievements()` switch문에 `badge_count`, `champion_defeated`, `all_gen_badges` 추가
 - 칭호 보상 효과 처리: `reward_effects`에 `{ type: "title", value: "관동 챔피언" }` 추가
   - `applyAchievementEffects()`에 `case 'title'` 추가 → `state.titles.push(effect.value)`
+- `applyAchievementEffects()`에 `case 'rare_weight_multiplier'` 추가 → `state.rare_weight_multiplier *= effect.value`
+- 중복 포켓몬 처리: 이미 보유 시 `levelToXp(50, group)` XP를 기존 포켓몬에 부여
+
+### `src/core/encounter.ts`
+
+- `selectWildPokemon()`에서 rare 이상 가중치에 `state.rare_weight_multiplier` 적용
 
 ### `src/core/notifications.ts`
 
@@ -256,6 +328,9 @@ commonState.total_gym_badges += currentBadges - prevBadges;
 - 칭호 부여: `state.titles`에 정상 추가
 - 중복 방지: 재도전 시 업적 재트리거 안 됨
 - 기존 업적 회귀: 기존 trigger_type들 정상 동작
+- `rare_weight_multiplier`: 배수 적용 후 정규화 검증, 누적 곱셈 확인
+- 중복 포켓몬 XP dump: 이미 보유 시 XP 부여 + 레벨 재계산 검증
+- commonState 동기화: `total_gym_badges`, `completed_gym_gens` delta 정확성
 
 ## Scope Exclusions
 
