@@ -545,5 +545,16 @@
   "exp_group.fluctuating": "Fluctuating",
 
   "weather.location_set": "Weather location set to {location}. Weather will update each session.",
-  "weather.fetch_failed": "Could not fetch weather data. Will retry next session."
+  "weather.fetch_failed": "Could not fetch weather data. Will retry next session.",
+
+  "gym.gate_rejected": "You need to explore more of this region's Pokédex or train your party before challenging this gym! (Pokédex: {caught}/{required}, Party avg level: Lv.{avgLevel}/{requiredLevel})",
+
+  "tip.gym_region_rumor": "Rumors say a powerful Gym Leader awaits in each region.",
+  "tip.gym_badge_reward": "They say you earn a special badge for defeating a Gym Leader.",
+  "tip.gym_gate_hint": "🏟️ Fill the regional Pokédex or train your party to challenge a gym!",
+  "tip.gym_badge_collect": "🏟️ Collect badges to challenge the Champion! Check with `/tkm gym list`",
+  "tip.gym_next_info": "🏟️ Next gym: {leaderName} ({type} type) — prepare your type matchups!",
+  "tip.gym_badge_progress": "You've collected {badgeCount} badges. They say {remaining} more until the Champion.",
+
+  "gym.champion_badge_required": "You must collect all 8 badges before challenging the Champion! (Current badges: {badgeCount}/8)"
 }

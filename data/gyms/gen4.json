@@ -7,7 +7,7 @@
       "type": "rock",
       "badge": "coal",
       "badgeKo": "콜배지",
-      "region": "gen4",
+      "region": "1",
       "team": [
         { "species": 74, "level": 12, "moves": [33, 88, 106, 189] },
         { "species": 95, "level": 13, "moves": [88, 317, 33, 20] },
@@ -21,7 +21,7 @@
       "type": "grass",
       "badge": "forest",
       "badgeKo": "포레스트배지",
-      "region": "gen4",
+      "region": "2",
       "team": [
         { "species": 387, "level": 17, "moves": [33, 75, 22, 71] },
         { "species": 407, "level": 20, "moves": [345, 40, 202, 237] }
@@ -34,7 +34,7 @@
       "type": "fighting",
       "badge": "cobble",
       "badgeKo": "코블배지",
-      "region": "gen4",
+      "region": "3",
       "team": [
         { "species": 307, "level": 22, "moves": [93, 183, 280, 29] },
         { "species": 67, "level": 24, "moves": [2, 249, 280, 66] },
@@ -48,7 +48,7 @@
       "type": "water",
       "badge": "fen",
       "badgeKo": "펜배지",
-      "region": "gen4",
+      "region": "4",
       "team": [
         { "species": 130, "level": 28, "moves": [127, 44, 89, 237] },
         { "species": 195, "level": 29, "moves": [55, 89, 21, 189] },
@@ -62,7 +62,7 @@
       "type": "ghost",
       "badge": "relic",
       "badgeKo": "렐릭배지",
-      "region": "gen4",
+      "region": "5",
       "team": [
         { "species": 355, "level": 33, "moves": [247, 425, 310, 194] },
         { "species": 93, "level": 35, "moves": [247, 389, 93, 92] },
@@ -76,7 +76,7 @@
       "type": "steel",
       "badge": "mine",
       "badgeKo": "마인배지",
-      "region": "gen4",
+      "region": "6",
       "team": [
         { "species": 82, "level": 38, "moves": [85, 430, 209, 84] },
         { "species": 208, "level": 40, "moves": [442, 231, 88, 89] },
@@ -90,7 +90,7 @@
       "type": "ice",
       "badge": "icicle",
       "badgeKo": "아이시클배지",
-      "region": "gen4",
+      "region": "7",
       "team": [
         { "species": 215, "level": 43, "moves": [8, 400, 185, 232] },
         { "species": 221, "level": 45, "moves": [58, 89, 556, 36] },
@@ -104,11 +104,28 @@
       "type": "electric",
       "badge": "beacon",
       "badgeKo": "비콘배지",
-      "region": "gen4",
+      "region": "8",
       "team": [
         { "species": 26, "level": 48, "moves": [85, 209, 98, 129] },
         { "species": 405, "level": 50, "moves": [85, 422, 242, 528] },
         { "species": 466, "level": 52, "moves": [85, 9, 370, 8] }
+      ]
+    },
+    {
+      "id": 9,
+      "leader": "Cynthia",
+      "leaderKo": "난천",
+      "type": "normal",
+      "badge": "Champion Badge",
+      "badgeKo": "챔피언배지",
+      "region": "9",
+      "team": [
+        { "species": 442, "level": 55, "moves": [247, 399, 94, 425] },
+        { "species": 407, "level": 55, "moves": [188, 412, 437, 92] },
+        { "species": 468, "level": 56, "moves": [403, 585, 605, 63] },
+        { "species": 448, "level": 57, "moves": [396, 337, 411, 370] },
+        { "species": 350, "level": 58, "moves": [57, 58, 127, 56] },
+        { "species": 445, "level": 60, "moves": [89, 337, 200, 444] }
       ]
     }
   ]

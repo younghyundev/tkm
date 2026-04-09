@@ -14,7 +14,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { createBattlePokemon, createBattleState, resolveTurn, getActivePokemon, hasAlivePokemon } from '../core/turn-battle.js';
 import { selectAiAction } from '../core/gym-ai.js';
-import { getGymById, awardGymVictory } from '../core/gym.js';
+import { getGymById, awardGymVictory, canChallengeGym } from '../core/gym.js';
 import { getPokemonDB, getPokemonName, speciesIdToGeneration } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale, t } from '../i18n/index.js';
@@ -163,6 +163,23 @@ function handleInit(): void {
   if (!gym) {
     output({ status: 'error', messages: [`Gym ${gymId} not found for ${generation}`] });
     process.exit(1);
+  }
+
+  // Gate check: player must meet conditions to challenge this gym
+  const gateResult = canChallengeGym(gym, state, config, generation);
+  if (!gateResult.allowed) {
+    output({
+      status: 'rejected',
+      messages: [
+        t('gym.gate_rejected', {
+          caught: String(gateResult.caught),
+          required: String(gateResult.requiredCaught),
+          avgLevel: String(gateResult.avgLevel),
+          requiredLevel: String(gateResult.requiredLevel),
+        }),
+      ],
+    });
+    process.exit(0);
   }
 
   // Load move data

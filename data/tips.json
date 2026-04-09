@@ -248,5 +248,49 @@
     "template": "🔴 풀숲을 걷다 보면 몬스터볼이 떨어져 있을 때도 있습니다!",
     "dynamic": false,
     "template_key": "tip.item_field_drop"
+  },
+  {
+    "id": "gym_region_rumor",
+    "category": "gym",
+    "template": "각 지역에는 강력한 관장이 기다리고 있다는 소문이 있다.",
+    "dynamic": false,
+    "template_key": "tip.gym_region_rumor"
+  },
+  {
+    "id": "gym_badge_reward",
+    "category": "gym",
+    "template": "관장에게 이기면 특별한 배지를 얻을 수 있다고 한다.",
+    "dynamic": false,
+    "template_key": "tip.gym_badge_reward"
+  },
+  {
+    "id": "gym_gate_hint",
+    "category": "gym",
+    "template": "🏟️ 체육관에 도전하려면 해당 지역의 도감을 채우거나 파티를 성장시키세요!",
+    "dynamic": false,
+    "template_key": "tip.gym_gate_hint"
+  },
+  {
+    "id": "gym_badge_collect",
+    "category": "gym",
+    "template": "🏟️ 배지를 모아 챔피언에게 도전하세요! `/tkm gym list`로 확인",
+    "dynamic": false,
+    "template_key": "tip.gym_badge_collect"
+  },
+  {
+    "id": "gym_next_info",
+    "category": "gym",
+    "template": "🏟️ 다음 체육관: {leaderName} ({type}타입) — 상성을 준비하세요!",
+    "dynamic": true,
+    "resolver": "nextGymInfo",
+    "template_key": "tip.gym_next_info"
+  },
+  {
+    "id": "gym_badge_progress",
+    "category": "gym",
+    "template": "배지를 {badgeCount}개 모았다. 챔피언까지 {remaining}개 남았다고 한다.",
+    "dynamic": true,
+    "resolver": "gymBadgeProgress",
+    "template_key": "tip.gym_badge_progress"
   }
 ]

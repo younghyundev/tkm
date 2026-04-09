@@ -1,7 +1,8 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
-import type { GymData, State } from './types.js';
+import type { GymData, State, Config } from './types.js';
 import { PLUGIN_ROOT } from './paths.js';
+import { getRegionsDB } from './pokemon-data.js';
 
 const gymCache = new Map<string, GymData[]>();
 
@@ -30,6 +31,102 @@ export function loadGymData(generation: string): GymData[] {
   } catch {
     return [];
   }
+}
+
+export interface GymGateResult {
+  allowed: boolean;
+  reason?: string;
+  caught: number;
+  requiredCaught: number;
+  avgLevel: number;
+  requiredLevel: number;
+}
+
+/**
+ * Check if the player can challenge a gym.
+ * Condition A: Caught >= 25% of the gym's region pokemon pool
+ * Condition B: Party average level >= gym's lowest team member level × 60%
+ */
+export function canChallengeGym(gym: GymData, state: State, config: Config, generation: string): GymGateResult {
+  const regionsDB = getRegionsDB(generation);
+  const region = regionsDB.regions[gym.region];
+
+  // If region not found, fail closed — data integrity issue
+  if (!region) {
+    return { allowed: false, reason: 'gym.region_data_missing', caught: 0, requiredCaught: 0, avgLevel: 0, requiredLevel: 0 };
+  }
+
+  // Champion gym (id 9) requires all 8 badges
+  if (gym.id === 9) {
+    const badges = state.gym_badges ?? [];
+    if (badges.length < 8) {
+      return {
+        allowed: false,
+        reason: 'champion_badge_required',
+        caught: 0,
+        requiredCaught: 0,
+        avgLevel: 0,
+        requiredLevel: 0,
+      };
+    }
+  }
+
+  // Condition A: 25% of region pokemon pool caught
+  const pool = region.pokemon_pool;
+
+  // Defense: if pool is empty, skip pokedex condition entirely
+  if (pool.length === 0) {
+    // Only use level gate when pool is empty
+    const lowestGymLevel = Math.min(...gym.team.map(p => p.level));
+    const requiredLevel = Math.ceil(lowestGymLevel * 0.6);
+
+    let totalLevel = 0;
+    let partyCount = 0;
+    for (const name of (config.party ?? [])) {
+      const poke = state.pokemon[name];
+      if (poke) {
+        totalLevel += poke.level;
+        partyCount++;
+      }
+    }
+    const avgLevel = partyCount > 0 ? Math.floor(totalLevel / partyCount) : 0;
+    const levelMet = avgLevel >= requiredLevel;
+
+    return {
+      allowed: levelMet,
+      caught: 0,
+      requiredCaught: 0,
+      avgLevel,
+      requiredLevel,
+    };
+  }
+
+  const pokedex = state.pokedex ?? {};
+  const caughtCount = pool.filter(id => pokedex[id]?.caught).length;
+  const requiredCaught = Math.ceil(pool.length * 0.25);
+  const pokedexMet = caughtCount >= requiredCaught;
+
+  // Condition B: party avg level >= lowest gym team level × 60%
+  const lowestGymLevel = Math.min(...gym.team.map(p => p.level));
+  const requiredLevel = Math.ceil(lowestGymLevel * 0.6);
+
+  let totalLevel = 0;
+  let partyCount = 0;
+  for (const name of (config.party ?? [])) {
+    const poke = state.pokemon[name];
+    if (poke) {
+      totalLevel += poke.level;
+      partyCount++;
+    }
+  }
+  const avgLevel = partyCount > 0 ? Math.floor(totalLevel / partyCount) : 0;
+  const levelMet = avgLevel >= requiredLevel;
+
+  if (pokedexMet || levelMet) {
+    return { allowed: true, caught: caughtCount, requiredCaught, avgLevel, requiredLevel };
+  }
+
+  return { allowed: false, caught: caughtCount, requiredCaught, avgLevel, requiredLevel };
 }
 
 /** Get the next uncleared gym. Returns null if all cleared. */

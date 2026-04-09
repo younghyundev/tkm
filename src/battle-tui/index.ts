@@ -4,7 +4,7 @@ import { join } from 'path';
 import { SHOW_CURSOR } from './ansi.js';
 import { startGameLoop } from './game-loop.js';
 import { createBattlePokemon } from '../core/turn-battle.js';
-import { getGymById, awardGymVictory } from '../core/gym.js';
+import { getGymById, awardGymVictory, canChallengeGym } from '../core/gym.js';
 import { getPokemonName, getPokemonDB, speciesIdToGeneration } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale } from '../i18n/index.js';
@@ -67,6 +67,17 @@ function main(): void {
   const gym = getGymById(generation, gymId);
   if (!gym) {
     console.error(`Gym ${gymId} not found for ${generation}`);
+    process.exit(1);
+  }
+
+  // Gate check: player must meet conditions to challenge this gym
+  const gateResult = canChallengeGym(gym, state, config, generation);
+  if (!gateResult.allowed) {
+    if (gateResult.reason === 'champion_badge_required') {
+      console.error(`You must collect all 8 badges before challenging the Champion! (Current badges: ${(state.gym_badges ?? []).length}/8)`);
+    } else {
+      console.error(`You need to explore more of this region or train your party before challenging this gym! (Pokédex: ${gateResult.caught}/${gateResult.requiredCaught}, Party avg level: Lv.${gateResult.avgLevel}/${gateResult.requiredLevel})`);
+    }
     process.exit(1);
   }
 

@@ -7,7 +7,7 @@
       "type": "normal",
       "badge": "normalium",
       "badgeKo": "노말Z배지",
-      "region": "gen7",
+      "region": "1",
       "team": [
         { "species": 735, "level": 13, "moves": [242, 33, 44, 29] },
         { "species": 235, "level": 15, "moves": [33, 10, 166, 98] }
@@ -20,7 +20,7 @@
       "type": "water",
       "badge": "waterium",
       "badgeKo": "물Z배지",
-      "region": "gen7",
+      "region": "2",
       "team": [
         { "species": 752, "level": 17, "moves": [141, 55, 450, 61] },
         { "species": 746, "level": 20, "moves": [127, 55, 61, 36] }
@@ -33,7 +33,7 @@
       "type": "fire",
       "badge": "firium",
       "badgeKo": "불꽃Z배지",
-      "region": "gen7",
+      "region": "3",
       "team": [
         { "species": 105, "level": 22, "moves": [125, 394, 155, 34] },
         { "species": 758, "level": 25, "moves": [53, 398, 474, 92] }
@@ -46,7 +46,7 @@
       "type": "grass",
       "badge": "grassium",
       "badgeKo": "풀Z배지",
-      "region": "gen7",
+      "region": "4",
       "team": [
         { "species": 763, "level": 28, "moves": [688, 348, 583, 98] },
         { "species": 756, "level": 30, "moves": [412, 345, 605, 237] }
@@ -59,7 +59,7 @@
       "type": "electric",
       "badge": "electrium",
       "badgeKo": "전기Z배지",
-      "region": "gen7",
+      "region": "5",
       "team": [
         { "species": 777, "level": 33, "moves": [716, 442, 609, 98] },
         { "species": 737, "level": 36, "moves": [85, 404, 209, 44] }
@@ -72,7 +72,7 @@
       "type": "ghost",
       "badge": "ghostium",
       "badgeKo": "고스트Z배지",
-      "region": "gen7",
+      "region": "6",
       "team": [
         { "species": 770, "level": 38, "moves": [247, 414, 89, 425] },
         { "species": 478, "level": 41, "moves": [247, 58, 194, 585] }
@@ -85,7 +85,7 @@
       "type": "fairy",
       "badge": "fairium",
       "badgeKo": "페어리Z배지",
-      "region": "gen7",
+      "region": "7",
       "team": [
         { "species": 743, "level": 44, "moves": [405, 585, 577, 676] },
         { "species": 210, "level": 46, "moves": [583, 242, 44, 605] }
@@ -98,11 +98,28 @@
       "type": "dark",
       "badge": "darkinium",
       "badgeKo": "악Z배지",
-      "region": "gen7",
+      "region": "8",
       "team": [
         { "species": 53, "level": 48, "moves": [399, 185, 6, 492] },
         { "species": 302, "level": 50, "moves": [421, 425, 282, 492] },
         { "species": 359, "level": 52, "moves": [400, 94, 389, 399] }
+      ]
+    },
+    {
+      "id": 9,
+      "leader": "Kukui",
+      "leaderKo": "쿠쿠이",
+      "type": "normal",
+      "badge": "Champion Badge",
+      "badgeKo": "챔피언배지",
+      "region": "9",
+      "team": [
+        { "species": 745, "level": 55, "moves": [444, 157, 242, 370] },
+        { "species": 628, "level": 55, "moves": [413, 370, 157, 276] },
+        { "species": 462, "level": 56, "moves": [85, 430, 161, 58] },
+        { "species": 38, "level": 57, "moves": [59, 605, 246, 58] },
+        { "species": 143, "level": 58, "moves": [34, 242, 89, 63] },
+        { "species": 727, "level": 60, "moves": [394, 399, 242, 370] }
       ]
     }
   ]

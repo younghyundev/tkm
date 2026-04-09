@@ -139,7 +139,15 @@
         35,
         55
       ],
-      "pokemon_pool": [],
+      "pokemon_pool": [
+        "765",
+        "768",
+        "770",
+        "776",
+        "778",
+        "780",
+        "784"
+      ],
       "unlock_condition": {
         "type": "pokedex_caught",
         "value": 35
@@ -151,7 +159,15 @@
         40,
         65
       ],
-      "pokemon_pool": [],
+      "pokemon_pool": [
+        "748",
+        "750",
+        "758",
+        "763",
+        "766",
+        "771",
+        "775"
+      ],
       "unlock_condition": {
         "type": "pokedex_caught",
         "value": 45
