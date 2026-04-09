@@ -1,6 +1,6 @@
 import { getPokemonDB, getAchievementsDB, getCommonAchievementsDB, getAchievementName, getPokemonName } from './pokemon-data.js';
 import { markCaught } from './pokedex.js';
-import { levelToXp } from './xp.js';
+import { levelToXp, xpToLevel } from './xp.js';
 import { t } from '../i18n/index.js';
 import type { State, Config, AchievementEvent, CommonState } from './types.js';
 
@@ -42,6 +42,14 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
       case 'catch_count':
         triggered = (state.catch_count ?? 0) >= ach.trigger_value;
         break;
+      case 'badge_count':
+        triggered = (state.gym_badges ?? []).length >= ach.trigger_value;
+        break;
+      case 'champion_defeated': {
+        const championBadges = (state.gym_badges ?? []).filter(b => b.startsWith('champion_'));
+        triggered = championBadges.length >= ach.trigger_value;
+        break;
+      }
     }
 
     if (!triggered) continue;
@@ -56,12 +64,24 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
     // Handle reward pokemon
     if (ach.reward_pokemon) {
       const rewardName = ach.reward_pokemon;
-      if (!state.unlocked.includes(rewardName)) {
+      const pData = pokemonDB.pokemon[rewardName];
+      if (state.unlocked.includes(rewardName) && state.pokemon[rewardName] && pData) {
+        // Already owned: XP dump
+        const rewardLevel = (ach as { reward_level?: number }).reward_level;
+        const group = pData.exp_group ?? 'slow';
+        const bonusXp = levelToXp(rewardLevel ?? 75, group);
+        state.pokemon[rewardName].xp += bonusXp;
+        state.pokemon[rewardName].level = xpToLevel(state.pokemon[rewardName].xp, group);
+        event.rewardXpDump = bonusXp;
+        event.rewardPokemon = rewardName;
+      } else if (!state.unlocked.includes(rewardName)) {
         state.unlocked.push(rewardName);
-        const pData = pokemonDB.pokemon[rewardName];
         if (pData && !state.pokemon[rewardName]) {
+          const rewardLevel = (ach as { reward_level?: number }).reward_level;
           let level: number;
-          if (pData.rarity === 'legendary' || pData.rarity === 'mythical') {
+          if (rewardLevel) {
+            level = rewardLevel;
+          } else if (pData.rarity === 'legendary' || pData.rarity === 'mythical') {
             level = 50;
           } else {
             const partyLevels = (config.party ?? []).map((name: string) => state.pokemon[name]?.level ?? 0).filter((l: number) => l > 0);
@@ -108,6 +128,14 @@ function applyAchievementEffects(achievementId: string, state: State, config: Co
           break;
         case 'unlock_legendary':
           // Flag-only effect — no direct state change needed
+          break;
+        case 'title':
+          if (effect.value && !state.titles.includes(effect.value as string)) {
+            state.titles.push(effect.value as string);
+          }
+          break;
+        case 'rare_weight_multiplier':
+          state.rare_weight_multiplier = (state.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
           break;
         case 'encounter_rate_bonus':
           // Cross-state write: encounter_rate_bonus always goes to commonState
