@@ -5,7 +5,7 @@ import { checkAchievements, formatAchievementMessage, checkCommonAchievements } 
 import { playCry } from '../audio/play-cry.js';
 import { initLocale } from '../i18n/index.js';
 import { withLock } from '../core/lock.js';
-import { getSessionGeneration, setActiveGenerationCache } from '../core/paths.js';
+import { getSessionGeneration, setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 
 function readStdin(): string {
@@ -19,26 +19,34 @@ function readStdin(): string {
 
 function main(): void {
   const stdinData = readStdin();
+  let generation: string;
   try {
     const input = JSON.parse(stdinData) as HookInput;
     const sessionId = input.session_id ?? '';
     if (sessionId) {
       const resolvedGen = getSessionGeneration(sessionId);
       if (resolvedGen) {
-        setActiveGenerationCache(resolvedGen);
+        generation = resolvedGen;
+        setActiveGenerationCache(generation);
       } else {
         process.stderr.write(`tokenmon tool-fail: no gen binding for session ${sessionId}, skipping\n`);
         console.log(JSON.stringify({ continue: true }));
         return;
       }
+    } else {
+      generation = getActiveGeneration();
+      setActiveGenerationCache(generation);
     }
-  } catch { /* fall through */ }
+  } catch {
+    generation = getActiveGeneration();
+    setActiveGenerationCache(generation);
+  }
 
   const messages: string[] = [];
 
   const result = withLock(() => {
-    const state = readState();
-    const config = readConfig();
+    const state = readState(generation);
+    const config = readConfig(generation);
     const commonState = readCommonState();
     initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
@@ -47,7 +55,7 @@ function main(): void {
     commonState.error_count += 1;
 
     // Check achievements (first_error)
-    const achEvents = checkAchievements(state, config, commonState);
+    const achEvents = checkAchievements(state, config, commonState, generation);
     for (const achEvent of achEvents) {
       messages.push(formatAchievementMessage(achEvent));
     }
@@ -58,7 +66,7 @@ function main(): void {
     }
 
     writeCommonState(commonState);
-    writeState(state);
+    writeState(state, generation);
   });
 
   // Lock failed — skip gracefully

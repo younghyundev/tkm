@@ -267,7 +267,7 @@ async function main(): Promise<void> {
         playSfx('gacha');
 
         // Check first_evolution achievement immediately
-        const achEvents = checkAchievements(state, config, commonState);
+        const achEvents = checkAchievements(state, config, commonState, gen);
         for (const achEvent of achEvents) {
           const msg = formatAchievementMessage(achEvent);
           messages.push(msg);
@@ -294,7 +294,7 @@ async function main(): Promise<void> {
     state.pending_tier = currentTier.name === 'normal' ? null : currentTier.name;
 
     // Check gen-specific achievements (pass commonState for cross-state encounter_rate_bonus writes)
-    const achEvents2 = checkAchievements(state, config, commonState);
+    const achEvents2 = checkAchievements(state, config, commonState, gen);
     for (const achEvent of achEvents2) {
       const msg = formatAchievementMessage(achEvent);
       messages.push(msg);

@@ -46,7 +46,7 @@ function main(): void {
   const messages: string[] = [];
 
   const result = withLockRetry(() => {
-    const state = readState();
+    const state = readState(gen);
 
     // Common state migration (first time only)
     if (!commonStateExists()) {
@@ -96,7 +96,7 @@ function main(): void {
       commonState.completed_gym_gens = completedGens;
     }
 
-    const config = readConfig();
+    const config = readConfig(gen);
 
     // Materialize common rewards into gen config/state on first session of a gen only.
     // Subsequent sessions already have these persisted. This handles new gen onboarding
@@ -209,7 +209,7 @@ function main(): void {
     resetWeeklyStats(state);
 
     // Check achievements (first_session, ten_sessions)
-    const achEvents = checkAchievements(state, config, commonState);
+    const achEvents = checkAchievements(state, config, commonState, gen);
     for (const achEvent of achEvents) {
       messages.push(formatAchievementMessage(achEvent));
     }
@@ -252,7 +252,7 @@ function main(): void {
     }
     // Save config if party_slot was awarded
     if (milestones.some(c => c.milestone.reward_type === 'party_slot')) {
-      writeConfig(config);
+      writeConfig(config, gen);
     }
 
     const newTypeMasters = checkTypeMasters(state);
@@ -309,7 +309,7 @@ function main(): void {
     }
     writeCommonState(commonState);
 
-    writeState(state);
+    writeState(state, gen);
   });
 
   // Lock failed — skip gracefully (state not mutated)
