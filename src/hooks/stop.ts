@@ -20,6 +20,7 @@ import { withLock, withLockRetry } from '../core/lock.js';
 import { setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import { isShinyKey, toBaseId, toShinyKey } from '../core/shiny-utils.js';
 import { recordXp, recordBattle, recordCatch, recordEncounter, recordShinyEncounter, recordShinyCatch, recordShinyEscaped } from '../core/stats.js';
+import { loadGymData } from '../core/gym.js';
 
 function getTurnFloor(level: number): number {
   if (level <= 10) return 3;
@@ -309,6 +310,7 @@ async function main(): Promise<void> {
     const preBattleWins = state.battle_wins ?? 0;
     const preCatchCount = state.catch_count ?? 0;
     const preEvolutionCount = state.evolution_count ?? 0;
+    const preBadgeCount = (state.gym_badges ?? []).length;
 
     // Random encounter + battle (with volume tier and commonState)
     try {
@@ -360,6 +362,29 @@ async function main(): Promise<void> {
     commonState.battle_wins += (state.battle_wins ?? 0) - preBattleWins;
     commonState.catch_count += (state.catch_count ?? 0) - preCatchCount;
     commonState.evolution_count += (state.evolution_count ?? 0) - preEvolutionCount;
+
+    // Gym badge sync
+    const currentBadgeCount = (state.gym_badges ?? []).length;
+    commonState.total_gym_badges += currentBadgeCount - preBadgeCount;
+
+    // Check if current gen is fully completed (all badges including champion)
+    if (currentBadgeCount > preBadgeCount) {
+      const gyms = loadGymData(gen);
+      const badges = state.gym_badges ?? [];
+      if (gyms.length > 0 && gyms.every(g => badges.includes(g.badge))) {
+        // Recalculate completed gens (idempotent, gen completion is rare)
+        let completedCount = 0;
+        for (const genKey of ['gen1','gen2','gen3','gen4','gen5','gen6','gen7','gen8','gen9']) {
+          const genGyms = loadGymData(genKey);
+          const genState = readState(genKey);
+          const genBadges = genState.gym_badges ?? [];
+          if (genGyms.length > 0 && genGyms.every(g => genBadges.includes(g.badge))) {
+            completedCount++;
+          }
+        }
+        commonState.completed_gym_gens = completedCount;
+      }
+    }
 
     // Check common achievements AFTER counter sync so battle/catch-based achievements
     // (battle_50, battle_wins_25, ten_catches etc.) unlock on the triggering turn

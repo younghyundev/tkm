@@ -189,6 +189,12 @@ export function checkCommonAchievements(commonState: CommonState, config: Config
       case 'catch_count':
         triggered = commonState.catch_count >= ach.trigger_value;
         break;
+      case 'badge_count':
+        triggered = commonState.total_gym_badges >= ach.trigger_value;
+        break;
+      case 'all_gen_badges':
+        triggered = commonState.completed_gym_gens >= ach.trigger_value;
+        break;
     }
 
     if (!triggered) continue;
@@ -231,6 +237,12 @@ function applyCommonAchievementEffects(
         commonState.items[effect.item as string] = (commonState.items[effect.item as string] ?? 0) + (effect.count ?? 1);
         break;
       case 'unlock_legendary':
+        break;
+      case 'title':
+        // Cross-gen titles are informational — tracked in commonState achievements
+        break;
+      case 'rare_weight_multiplier':
+        // Cross-gen rare weight is tracked via commonState achievements
         break;
     }
   }
