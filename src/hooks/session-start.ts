@@ -53,19 +53,26 @@ function main(): void {
       migrateToCommonState();
     }
 
-    // Migrate legacy "Champion Badge" → champion_<region> for the CURRENT gen immediately
-    // (before any gym lookups). The stop.ts backfill handles all gens, but this ensures
-    // the current gen is correct before getNextGym()/awardGymVictory() run.
+    // Migrate legacy "Champion Badge" → champion_<region> for ALL gens
+    // so the aggregate recomputation below sees the correct badge IDs.
     const legacyChampionMap: Record<string, string> = {
       gen1: 'champion_kanto', gen2: 'champion_johto', gen3: 'champion_hoenn',
       gen4: 'champion_sinnoh', gen5: 'champion_unova', gen6: 'champion_kalos',
       gen7: 'champion_alola', gen8: 'champion_galar', gen9: 'champion_paldea',
     };
-    const badges = state.gym_badges ?? [];
-    const legacyIdx = badges.indexOf('Champion Badge');
-    if (legacyIdx !== -1 && legacyChampionMap[gen]) {
-      badges[legacyIdx] = legacyChampionMap[gen];
-      state.gym_badges = badges;
+    for (const [genKey, newBadge] of Object.entries(legacyChampionMap)) {
+      const genState = genKey === gen ? state : readState(genKey);
+      const badges = genState.gym_badges ?? [];
+      const legacyIdx = badges.indexOf('Champion Badge');
+      if (legacyIdx !== -1) {
+        badges[legacyIdx] = newBadge;
+        genState.gym_badges = badges;
+        if (genKey === gen) {
+          // Current gen state will be written at the end
+        } else {
+          writeState(genState, genKey);
+        }
+      }
     }
 
     // Consistency recalculation (every session start)
@@ -171,7 +178,7 @@ function main(): void {
     resetWeeklyStats(state);
 
     // Check achievements (first_session, ten_sessions)
-    const achEvents = checkAchievements(state, config);
+    const achEvents = checkAchievements(state, config, commonState);
     for (const achEvent of achEvents) {
       messages.push(formatAchievementMessage(achEvent));
     }
