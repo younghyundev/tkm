@@ -167,8 +167,14 @@ export function selectWildPokemon(state: State, config: Config, tier?: VolumeTie
 
   // Build weighted selection by rarity
   const weighted: Array<{ name: string; weight: number }> = [];
+  const rareMultiplier = state.rare_weight_multiplier ?? 1.0;
   for (const p of pool) {
     let w = weights[p.rarity as keyof typeof weights] ?? 0.1;
+
+    // Apply gym achievement rare weight multiplier
+    if (rareMultiplier !== 1.0 && (p.rarity === 'rare' || p.rarity === 'legendary' || p.rarity === 'mythical')) {
+      w *= rareMultiplier;
+    }
 
     // Apply time-of-day type boosts
     for (const te of events.timeEvents) {

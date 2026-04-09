@@ -143,6 +143,16 @@ function getAchievementProgress(triggerType: string, triggerValue: number, state
     case 'battle_wins': current = state.battle_wins ?? 0; break;
     case 'battle_count': current = state.battle_count ?? 0; break;
     case 'catch_count': current = state.catch_count ?? 0; break;
+    case 'badge_count': current = (state.gym_badges ?? []).length; break;
+    case 'champion_defeated': {
+      current = (state.gym_badges ?? []).filter(b => b.startsWith('champion_')).length;
+      break;
+    }
+    case 'all_gen_badges': {
+      // Approximate: count badges / 9 per gen as rough progress
+      current = Math.floor((state.gym_badges ?? []).length / 9);
+      break;
+    }
     default: return 0;
   }
   return triggerValue > 0 ? current / triggerValue : 0;
