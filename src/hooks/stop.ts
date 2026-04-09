@@ -140,6 +140,25 @@ async function main(): Promise<void> {
     // Read common state early (needed for last_turn_ts on all paths)
     const commonState = readCommonState();
 
+    // Backfill gym badge aggregates for existing saves (idempotent)
+    if (commonState.total_gym_badges === 0) {
+      let totalBadges = 0;
+      let completedGens = 0;
+      for (const genKey of ['gen1','gen2','gen3','gen4','gen5','gen6','gen7','gen8','gen9']) {
+        const genState = readState(genKey);
+        const badges = genState.gym_badges ?? [];
+        totalBadges += badges.length;
+        const gyms = loadGymData(genKey);
+        if (gyms.length > 0 && gyms.every(g => badges.includes(g.badge))) {
+          completedGens++;
+        }
+      }
+      if (totalBadges > 0) {
+        commonState.total_gym_badges = totalBadges;
+        commonState.completed_gym_gens = completedGens;
+      }
+    }
+
     // Delta tracking
     const isFirstStop = !(sessionId in state.last_session_tokens);
     const prevSessionTokens = state.last_session_tokens[sessionId] ?? 0;

@@ -74,8 +74,11 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
         state.pokemon[rewardName].level = xpToLevel(state.pokemon[rewardName].xp, group);
         event.rewardXpDump = bonusXp;
         event.rewardPokemon = rewardName;
-      } else if (!state.unlocked.includes(rewardName)) {
-        state.unlocked.push(rewardName);
+      } else {
+        // New grant OR recovery from unlocked/pokemon divergence
+        if (!state.unlocked.includes(rewardName)) {
+          state.unlocked.push(rewardName);
+        }
         if (pData && !state.pokemon[rewardName]) {
           const rewardLevel = (ach as { reward_level?: number }).reward_level;
           let level: number;
@@ -206,8 +209,8 @@ export function checkCommonAchievements(commonState: CommonState, config: Config
       name: getAchievementName(ach.id),
     };
 
-    // Apply effects to commonState
-    applyCommonAchievementEffects(ach, commonState, config);
+    // Apply effects to commonState and per-gen state
+    applyCommonAchievementEffects(ach, commonState, config, state);
 
     events.push(event);
   }
@@ -219,6 +222,7 @@ function applyCommonAchievementEffects(
   ach: { reward_effects?: Array<{ type: string; item?: string; count?: number; value?: number }> },
   commonState: CommonState,
   config: Config,
+  state: State,
 ): void {
   if (!ach.reward_effects) return;
   for (const effect of ach.reward_effects) {
@@ -239,10 +243,12 @@ function applyCommonAchievementEffects(
       case 'unlock_legendary':
         break;
       case 'title':
-        // Cross-gen titles are informational — tracked in commonState achievements
+        if (effect.value && !state.titles.includes(String(effect.value))) {
+          state.titles.push(String(effect.value));
+        }
         break;
       case 'rare_weight_multiplier':
-        // Cross-gen rare weight is tracked via commonState achievements
+        state.rare_weight_multiplier = (state.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
         break;
     }
   }
