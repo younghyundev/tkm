@@ -146,10 +146,9 @@ function applyAchievementEffects(achievementId: string, state: State, config: Co
           state.rare_weight_multiplier = (state.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
           break;
         case 'encounter_rate_bonus':
-          // Cross-state write: encounter_rate_bonus always goes to commonState
-          if (commonState) {
-            commonState.encounter_rate_bonus += (effect.value ?? 0);
-          }
+          // Per-gen only: don't write to commonState (common effects are recalculated
+          // from common achievements by recalculateCommonEffects at session start)
+          state.encounter_rate_bonus = (state.encounter_rate_bonus ?? 0) + (effect.value ?? 0);
           break;
       }
     }

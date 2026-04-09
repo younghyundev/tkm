@@ -33,8 +33,8 @@ export function rollEncounter(state: State, config: Config, tier?: VolumeTier, c
   // Region level penalty
   const penalty = avgLevel < region.level_range[0] ? -0.05 : 0;
 
-  // Achievement-based encounter rate bonus (from commonState)
-  const encounterBonus = commonState?.encounter_rate_bonus ?? 0;
+  // Achievement-based encounter rate bonus (per-gen + common, rebuilt at session start)
+  const encounterBonus = state.encounter_rate_bonus ?? 0;
   const baseRate = Math.max(0.05, Math.min(0.30, BASE_ENCOUNTER_RATE + encounterBonus + penalty));
 
   // Apply volume tier encounter multiplier

@@ -136,6 +136,23 @@ function main(): void {
       } catch { /* ignore — keep perGenRareMultiplier at 1.0 */ }
       state.rare_weight_multiplier = perGenRareMultiplier * (commonState.rare_weight_multiplier ?? 1.0);
     }
+    // Rebuild per-gen encounter_rate_bonus from per-gen achievements to avoid
+    // compounding on repeated session starts, then add common on top.
+    {
+      let perGenEncounterBonus = 0;
+      try {
+        const genAchDB = getAchievementsDB(gen);
+        for (const ach of genAchDB.achievements) {
+          if (!state.achievements[ach.id]) continue;
+          for (const effect of (ach.reward_effects ?? []) as Array<{ type: string; value?: number }>) {
+            if (effect.type === 'encounter_rate_bonus') {
+              perGenEncounterBonus += (effect.value ?? 0);
+            }
+          }
+        }
+      } catch { /* ignore — keep perGenEncounterBonus at 0 */ }
+      state.encounter_rate_bonus = perGenEncounterBonus + (commonState.encounter_rate_bonus ?? 0);
+    }
     initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
     // Re-resolve gen inside lock for new sessions (avoids stale gen if gen switch happened before lock)
