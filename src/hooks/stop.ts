@@ -376,7 +376,8 @@ async function main(): Promise<void> {
         let completedCount = 0;
         for (const genKey of ['gen1','gen2','gen3','gen4','gen5','gen6','gen7','gen8','gen9']) {
           const genGyms = loadGymData(genKey);
-          const genState = readState(genKey);
+          // Use in-memory state for current gen (not yet written to disk), disk for others
+          const genState = genKey === gen ? state : readState(genKey);
           const genBadges = genState.gym_badges ?? [];
           if (genGyms.length > 0 && genGyms.every(g => genBadges.includes(g.badge))) {
             completedCount++;

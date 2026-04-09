@@ -185,7 +185,7 @@ export function isCommonAchievement(id: string): boolean {
   return achievements.some(a => a.id === id);
 }
 
-export function recalculateCommonEffects(commonState: CommonState, includePerGen: boolean = true): void {
+export function recalculateCommonEffects(commonState: CommonState): void {
   const achievements = loadCommonAchievements();
 
   let encounter_rate_bonus = 0;
@@ -221,39 +221,10 @@ export function recalculateCommonEffects(commonState: CommonState, includePerGen
     }
   }
 
-  // Also include per-gen achievement effects (gym badges grant encounter_rate_bonus
-  // and rare_weight_multiplier via per-gen achievements, not common ones).
-  // Without this, recalculation zeros out per-gen bonuses every session start.
-  if (includePerGen) {
-    const ALL_GENS = ['gen1','gen2','gen3','gen4','gen5','gen6','gen7','gen8','gen9'];
-    for (const g of ALL_GENS) {
-      let genState: State;
-      try {
-        genState = readState(g);
-      } catch {
-        continue;
-      }
-      // Skip gens with no achievements (default/empty state)
-      if (Object.keys(genState.achievements).length === 0) continue;
-      let genAchievements: Achievement[];
-      try {
-        genAchievements = getAchievementsDB(g).achievements;
-      } catch {
-        continue;
-      }
-      for (const ach of genAchievements) {
-        if (!genState.achievements[ach.id]) continue;
-        if (!ach.reward_effects) continue;
-        for (const effect of ach.reward_effects) {
-          if (effect.type === 'encounter_rate_bonus') {
-            encounter_rate_bonus += (effect.value as number) ?? 0;
-          } else if (effect.type === 'rare_weight_multiplier') {
-            rare_weight_multiplier *= (effect.value as number) ?? 1.0;
-          }
-        }
-      }
-    }
-  }
+  // Per-gen achievement effects (encounter_rate_bonus, rare_weight_multiplier from
+  // first_badge, four_badges, eight_badges) are NOT aggregated here. They are
+  // applied to per-gen state when the achievement triggers via applyAchievementEffects().
+  // Aggregating them into commonState would leak per-gen bonuses across all generations.
 
   commonState.encounter_rate_bonus = encounter_rate_bonus;
   commonState.xp_bonus_multiplier = xp_bonus_multiplier;

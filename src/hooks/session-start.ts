@@ -10,7 +10,7 @@ import { getActiveEvents } from '../core/encounter.js';
 import { checkMilestoneRewards, checkTypeMasters, checkChainCompletion } from '../core/pokedex-rewards.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { addItem, randInt } from '../core/items.js';
-import { getPokemonName } from '../core/pokemon-data.js';
+import { getPokemonName, getAchievementsDB } from '../core/pokemon-data.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale, t } from '../i18n/index.js';
 import { withLockRetry } from '../core/lock.js';
@@ -119,8 +119,22 @@ function main(): void {
         if (!state.titles.includes(title)) state.titles.push(title);
       }
     }
-    if (commonState.rare_weight_multiplier != null && commonState.rare_weight_multiplier !== 1.0) {
-      state.rare_weight_multiplier = commonState.rare_weight_multiplier;
+    // Rebuild per-gen rare_weight_multiplier from per-gen achievements to avoid
+    // compounding on repeated session starts, then multiply common on top.
+    {
+      let perGenRareMultiplier = 1.0;
+      try {
+        const genAchDB = getAchievementsDB(gen);
+        for (const ach of genAchDB.achievements) {
+          if (!state.achievements[ach.id]) continue;
+          for (const effect of (ach.reward_effects ?? []) as Array<{ type: string; value?: number }>) {
+            if (effect.type === 'rare_weight_multiplier') {
+              perGenRareMultiplier *= (effect.value ?? 1.0);
+            }
+          }
+        }
+      } catch { /* ignore — keep perGenRareMultiplier at 1.0 */ }
+      state.rare_weight_multiplier = perGenRareMultiplier * (commonState.rare_weight_multiplier ?? 1.0);
     }
     initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
