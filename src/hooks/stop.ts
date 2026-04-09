@@ -20,6 +20,7 @@ import { withLock, withLockRetry } from '../core/lock.js';
 import { setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
 import { isShinyKey, toBaseId, toShinyKey } from '../core/shiny-utils.js';
 import { recordXp, recordBattle, recordCatch, recordEncounter, recordShinyEncounter, recordShinyCatch, recordShinyEscaped } from '../core/stats.js';
+import { readCodexTotalTokens } from '../core/codex.js';
 
 function getTurnFloor(level: number): number {
   if (level <= 10) return 3;
@@ -132,9 +133,16 @@ async function main(): Promise<void> {
     const state = readState(gen);
     const genMap = readSessionGenMap();
 
-    // Clear previous battle/tip result (only show for one turn)
+    // Clear previous battle/tip/codex result (only show for one turn)
     state.last_battle = null;
     state.last_tip = null;
+    state.last_codex_xp = null;
+
+    // Self-healing: register session in gen-map if SessionStart hook didn't fire
+    if (sessionId && !genMap[sessionId]) {
+      genMap[sessionId] = { generation: gen, created: new Date().toISOString(), last_seen: new Date().toISOString() };
+      writeSessionGenMap(genMap);
+    }
 
     // Read common state early (needed for last_turn_ts on all paths)
     const commonState = readCommonState();
@@ -143,6 +151,7 @@ async function main(): Promise<void> {
     const isFirstStop = !(sessionId in state.last_session_tokens);
     const prevSessionTokens = state.last_session_tokens[sessionId] ?? 0;
     const deltaTokens = totalTokens - prevSessionTokens;
+
 
     if (isFirstStop) {
       // First stop in this session: record baseline, no XP yet
@@ -156,9 +165,38 @@ async function main(): Promise<void> {
     }
 
     if (deltaTokens <= 0) {
+      // Codex-only path: award Codex XP if available, but skip ALL gameplay side effects
+      // (no encounters, drops, rest bonus, tier updates, friendship, evolution checks)
+      const codexPreCheck = readCodexTotalTokens();
+      const codexPrev = commonState.last_codex_tokens_total ?? 0;
+      const codexDelta = Math.max(0, codexPreCheck - codexPrev);
+      const tokensPerXpEarly = Math.max(1, config.tokens_per_xp);
+      const codexXpOnly = Math.floor(codexDelta / tokensPerXpEarly);
+
+      if (codexXpOnly > 0) {
+        const pokemonDB = getPokemonDB();
+        for (const pokemonName of config.party) {
+          if (!pokemonName || !state.pokemon[pokemonName]) continue;
+          const expGroup: ExpGroup = pokemonDB.pokemon[toBaseId(pokemonName)]?.exp_group ?? 'medium_fast';
+          const prevLevel = state.pokemon[pokemonName].level;
+          state.pokemon[pokemonName].xp += codexXpOnly;
+          state.pokemon[pokemonName].level = xpToLevel(state.pokemon[pokemonName].xp, expGroup);
+          if (state.pokemon[pokemonName].level > prevLevel) {
+            messages.push(t('hook.levelup', { pokemon: getPokemonName(pokemonName), from: prevLevel, to: state.pokemon[pokemonName].level, xp: codexXpOnly }));
+          }
+        }
+        const codexConsumed = codexXpOnly * tokensPerXpEarly;
+        commonState.last_codex_tokens_total = codexPrev + codexConsumed;
+        state.stats.codex_tokens_consumed = (state.stats.codex_tokens_consumed ?? 0) + codexConsumed;
+        state.stats.codex_xp_earned = (state.stats.codex_xp_earned ?? 0) + codexXpOnly;
+        state.last_codex_xp = codexXpOnly;
+        recordXp(state, codexXpOnly * config.party.filter(Boolean).length);
+      }
+
       commonState.last_turn_ts = Date.now();
       writeCommonState(commonState);
-      return 'no_delta';
+      writeState(state, gen);
+      return codexXpOnly > 0 ? 'codex_only' : 'no_delta';
     }
 
     // Rest bonus activation (before XP calc)
@@ -193,6 +231,8 @@ async function main(): Promise<void> {
     const xpBonus = config.xp_bonus_multiplier + Math.max(0, state.xp_bonus_multiplier - 1.0) + commonState.xp_bonus_multiplier;
     const xpTotal = Math.max(0, Math.floor((deltaTokens / tokensPerXp) * xpBonus * appliedTier.xpMultiplier));
     // All party members receive the full XP (not divided)
+    // On Codex-only turns (deltaTokens <= 0), Claude XP is 0 — skip Claude XP award loop
+    // deltaTokens is always > 0 here (<=0 handled by early return above)
     const xpPerPokemon = Math.max(1, xpTotal);
 
     const pokemonDB = getPokemonDB();
@@ -275,7 +315,48 @@ async function main(): Promise<void> {
       }
     }
 
-    // Record XP in stats (total XP earned across all party members)
+    // ── Codex flat XP (no volume tier / rest bonus, normal turn) ──
+    const codexTotalTokens = readCodexTotalTokens();
+    // First-stop and no-delta early exits above intentionally skip this block;
+    // any Codex tokens consumed during those turns are deferred to the next qualifying stop.
+    const codexPrev = commonState.last_codex_tokens_total ?? 0;
+    const codexDelta = Math.max(0, codexTotalTokens - codexPrev);
+    let codexXpTotal = 0;
+
+    if (codexDelta > 0) {
+      codexXpTotal = Math.max(0, Math.floor(codexDelta / tokensPerXp));
+
+      if (codexXpTotal > 0) {
+        for (const pokemonName of config.party) {
+          if (!pokemonName) continue;
+          if (!state.pokemon[pokemonName]) continue;
+
+          const expGroup: ExpGroup = pokemonDB.pokemon[toBaseId(pokemonName)]?.exp_group ?? 'medium_fast';
+          const prevLevel = state.pokemon[pokemonName].level;
+          state.pokemon[pokemonName].xp += codexXpTotal;
+          state.pokemon[pokemonName].level = xpToLevel(state.pokemon[pokemonName].xp, expGroup);
+
+          if (state.pokemon[pokemonName].level > prevLevel) {
+            messages.push(t('hook.levelup', { pokemon: getPokemonName(pokemonName), from: prevLevel, to: state.pokemon[pokemonName].level, xp: codexXpTotal }));
+            addFriendship(state, pokemonName, FRIENDSHIP_PER_LEVELUP);
+            playSfx('levelup');
+          }
+        }
+
+        totalXpGranted += codexXpTotal * config.party.filter(Boolean).length;
+
+        // Advance checkpoint by consumed tokens only; remainder is retained.
+        // E.g., delta=15000, tokensPerXp=10000 → 1 XP, checkpoint advances by 10000, 5000 retained.
+        commonState.last_codex_tokens_total = codexPrev + codexXpTotal * tokensPerXp;
+
+        // Track in stats (count only consumed tokens, not full delta — remainder is re-counted next turn)
+        const codexConsumedNormal = codexXpTotal * tokensPerXp;
+        state.stats.codex_tokens_consumed = (state.stats.codex_tokens_consumed ?? 0) + codexConsumedNormal;
+        state.stats.codex_xp_earned = (state.stats.codex_xp_earned ?? 0) + codexXpTotal;
+      }
+    }
+
+    // Record XP in stats (total XP earned across all party members, including Codex)
     recordXp(state, totalXpGranted);
 
     // Update session tokens tracking & total
@@ -291,6 +372,9 @@ async function main(): Promise<void> {
     // Store new tier for next turn's application (status bar reads this)
     // Note: appliedTier (from previous pending_tier) controls this turn's XP, encounter rate, AND rarity weights
     state.pending_tier = currentTier.name === 'normal' ? null : currentTier.name;
+
+    // Store Codex XP for status-line display (persisted, cleared next turn)
+    state.last_codex_xp = codexXpTotal > 0 ? codexXpTotal : null;
 
     // Check gen-specific achievements (pass commonState for cross-state encounter_rate_bonus writes)
     const achEvents2 = checkAchievements(state, config, commonState);
