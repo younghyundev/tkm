@@ -107,7 +107,7 @@ for (const p of pool) {
 
 ```typescript
 const rewardLevel = Math.max(...gym.team.map(p => p.level));
-// 현재 전 세대 챔피언 에이스 = Lv60
+// 현재 전 세대 챔피언 에이스 = Lv75
 ```
 
 ### 중복 시 XP dump
@@ -176,7 +176,7 @@ if (ach.reward_pokemon) {
 | Gen8 | 가라르 챔피언 | 890 (무한다이노) |
 | Gen9 | 팔데아 챔피언 | 1007 (코라이돈) |
 
-**주의:** `reward_pokemon`이 해당 세대 pokemon DB에 존재하는지 구현 시 확인 필요. 없으면 `reward_pokemon`을 null로 두고 칭호만 부여. 이미 보유 시 보상 레벨(챔피언 에이스 Lv60) 상당 XP dump.
+**주의:** `reward_pokemon`이 해당 세대 pokemon DB에 존재하는지 구현 시 확인 필요. 없으면 `reward_pokemon`을 null로 두고 칭호만 부여. 이미 보유 시 보상 레벨(챔피언 에이스 Lv75) 상당 XP dump.
 
 ### Cross-Gen (`data/common/achievements.json`)
 
