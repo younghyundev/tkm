@@ -17,7 +17,7 @@
 | 보상 | 기존 효과 + 칭호(title) + rare_weight_multiplier | `state.titles[]` 인프라 이미 존재 |
 | 트리거 구현 | 새 trigger_type 추가 | 현재 switch 패턴과 일관성 유지 |
 | 체크 시점 | awardGymVictory 직후 | 배지 획득 즉시 피드백 |
-| 중복 포켓몬 | 이미 보유 시 Lv50 상당 XP 부여 | 보상이 사라지지 않도록 |
+| 중복 포켓몬 | 이미 보유 시 보상 레벨 상당 XP 부여 | 보상이 사라지지 않도록, 레벨은 gym 에이스 기준 |
 | 레어도 보상 | rare_weight_multiplier (곱셈+정규화) | 구현 간단, 기존 weight 구조와 호환 |
 
 ## New Trigger Types
@@ -99,38 +99,55 @@ for (const p of pool) {
 | ×2.0 | 47.8% | 26.1% | 22.6% | 2.61% | 0.87% |
 | ×3.0 | 42.3% | 23.1% | 30.0% | 3.46% | 1.15% |
 
-## Duplicate Reward Pokemon Handling
+## Reward Pokemon Level & Duplicate Handling
 
-보상 포켓몬을 이미 보유 중인 경우, 해당 포켓몬에 **Lv50 상당 XP**를 부여한다.
+### 보상 레벨 결정
+
+보상 포켓몬의 레벨은 해당 체육관의 **에이스(최고 레벨 팀원) 기준**으로 결정. 하드코딩하지 않고 gym 데이터에서 동적으로 추출:
 
 ```typescript
-// achievements.ts — reward pokemon handling
+const rewardLevel = Math.max(...gym.team.map(p => p.level));
+// 현재 전 세대 챔피언 에이스 = Lv60
+```
+
+### 중복 시 XP dump
+
+이미 보유 중인 경우, 해당 포켓몬에 **보상 레벨 상당 XP**를 부여:
+
+```typescript
 if (ach.reward_pokemon) {
   const rewardName = ach.reward_pokemon;
+  const rewardLevel = ach.reward_level; // gym 에이스 레벨 기반
   if (state.unlocked.includes(rewardName) && state.pokemon[rewardName]) {
     // 이미 보유: XP dump
     const pData = pokemonDB.pokemon[rewardName];
-    const bonusXp = levelToXp(50, pData?.exp_group ?? 'slow');
+    const group = pData?.exp_group ?? 'slow';
+    const bonusXp = levelToXp(rewardLevel, group);
     state.pokemon[rewardName].xp += bonusXp;
-    state.pokemon[rewardName].level = xpToLevel(state.pokemon[rewardName].xp, pData?.exp_group ?? 'slow');
+    state.pokemon[rewardName].level = xpToLevel(state.pokemon[rewardName].xp, group);
     event.rewardXpDump = bonusXp;
   } else {
-    // 기존 로직: 포켓몬 지급
+    // 신규 지급: rewardLevel로 생성
+    const xp = levelToXp(rewardLevel, pData?.exp_group ?? 'slow');
+    state.pokemon[rewardName] = { id: pData.id, xp, level: rewardLevel, friendship: 0, ev: 0 };
     // ...
   }
 }
 ```
 
-**XP dump 결과 (slow 경험치 그룹, 보상 = 156,250 XP):**
+### XP dump 시뮬레이션 (slow 그룹, 보상 레벨 = Lv60, 270,000 XP)
 
 | 현재 레벨 | 결과 레벨 | 증가 |
 |-----------|-----------|------|
-| Lv1 | Lv50 | +49 |
-| Lv30 | Lv53 | +23 |
-| Lv50 | Lv63 | +13 |
-| Lv60 | Lv69 | +9 |
-| Lv70 | Lv77 | +7 |
-| Lv90 | Lv94 | +4 |
+| Lv1 | Lv60 | +59 |
+| Lv30 | Lv62 | +32 |
+| Lv40 | Lv65 | +25 |
+| Lv50 | Lv69 | +19 |
+| Lv54 | Lv72 | +18 |
+| Lv60 | Lv75 | +15 |
+| Lv70 | Lv82 | +12 |
+| Lv80 | Lv89 | +9 |
+| Lv90 | Lv98 | +8 |
 
 ## Achievement Data
 
@@ -159,7 +176,7 @@ if (ach.reward_pokemon) {
 | Gen8 | 가라르 챔피언 | 890 (무한다이노) |
 | Gen9 | 팔데아 챔피언 | 1007 (코라이돈) |
 
-**주의:** `reward_pokemon`이 해당 세대 pokemon DB에 존재하는지 구현 시 확인 필요. 없으면 `reward_pokemon`을 null로 두고 칭호만 부여. 이미 보유 시 Lv50 상당 XP dump.
+**주의:** `reward_pokemon`이 해당 세대 pokemon DB에 존재하는지 구현 시 확인 필요. 없으면 `reward_pokemon`을 null로 두고 칭호만 부여. 이미 보유 시 보상 레벨(챔피언 에이스 Lv60) 상당 XP dump.
 
 ### Cross-Gen (`data/common/achievements.json`)
 
