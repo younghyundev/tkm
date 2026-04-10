@@ -713,16 +713,16 @@
   },
   "73": {
     "id": 73,
-    "name": "leech-seed",
-    "nameKo": "씨뿌리기",
-    "nameEn": "Leech Seed",
+    "name": "stun-spore",
+    "nameKo": "저리가루",
+    "nameEn": "Stun Spore",
     "type": "grass",
     "category": "status",
     "power": 0,
-    "accuracy": 90,
-    "pp": 10,
-    "volatileEffect": {
-      "type": "leech_seed",
+    "accuracy": 75,
+    "pp": 30,
+    "effect": {
+      "type": "paralysis",
       "chance": 100
     }
   },
@@ -760,21 +760,6 @@
     "pp": 35,
     "effect": {
       "type": "poison",
-      "chance": 100
-    }
-  },
-  "78": {
-    "id": 78,
-    "name": "stun-spore",
-    "nameKo": "저리가루",
-    "nameEn": "Stun Spore",
-    "type": "grass",
-    "category": "status",
-    "power": 0,
-    "accuracy": 75,
-    "pp": 30,
-    "effect": {
-      "type": "paralysis",
       "chance": 100
     }
   },
@@ -4996,5 +4981,20 @@
     "power": 100,
     "accuracy": 100,
     "pp": 5
+  },
+  "920": {
+    "id": 920,
+    "name": "leech-seed",
+    "nameKo": "씨뿌리기",
+    "nameEn": "Leech Seed",
+    "type": "grass",
+    "category": "status",
+    "power": 0,
+    "accuracy": 90,
+    "pp": 10,
+    "volatileEffect": {
+      "type": "leech_seed",
+      "chance": 100
+    }
   }
 }

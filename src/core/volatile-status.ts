@@ -121,7 +121,16 @@ export function applyLeechSeedEndOfTurn(
   messages: string[],
 ): boolean {
   const seeded = affected.volatileStatuses.find((entry) => entry.type === 'leech_seed');
-  if (!seeded || affected.fainted || !seeded.sourceSide) return false;
+  if (!seeded || affected.fainted) return false;
+
+  // Defensive: a resumed save with a corrupted sourceSide ('foo') must not
+  // crash when we look up the healing team. The normalizer drops invalid
+  // entries on load, but this is a second line of defense.
+  if (seeded.sourceSide !== 'player' && seeded.sourceSide !== 'opponent') return false;
+  const sourceTeam = allPokemon[seeded.sourceSide];
+  if (!sourceTeam || !Array.isArray(sourceTeam.pokemon)) return false;
+  const healer = sourceTeam.pokemon[sourceTeam.activeIndex];
+  if (!healer) return false;
 
   const drain = Math.max(1, Math.floor(affected.maxHp / 8));
   const actualDrain = Math.min(drain, affected.currentHp);
@@ -134,7 +143,6 @@ export function applyLeechSeedEndOfTurn(
     affected.fainted = true;
   }
 
-  const healer = allPokemon[seeded.sourceSide].pokemon[allPokemon[seeded.sourceSide].activeIndex];
   if (!healer.fainted) {
     healer.currentHp = Math.min(healer.maxHp, healer.currentHp + actualDrain);
   }

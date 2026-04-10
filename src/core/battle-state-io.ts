@@ -57,6 +57,29 @@ export function normalizeBattlePokemon(mon: BattlePokemon): void {
   }
   if (!Array.isArray(mon.volatileStatuses)) {
     mon.volatileStatuses = [];
+  } else {
+    // Validate each entry and drop malformed ones so resumed state with
+    // schema drift cannot crash end-of-turn logic (e.g., leech-seed with
+    // an unknown sourceSide dereferencing allPokemon[undefined]).
+    const validTypes = new Set(['confusion', 'flinch', 'leech_seed']);
+    const validSides = new Set(['player', 'opponent']);
+    mon.volatileStatuses = mon.volatileStatuses.filter((entry) => {
+      if (!entry || typeof entry !== 'object') return false;
+      if (!validTypes.has((entry as { type?: string }).type ?? '')) return false;
+      // confusion: require finite turnsRemaining or coerce to 0 (checkConfusionSkip clears at 0)
+      if ((entry as { type: string }).type === 'confusion') {
+        const t = (entry as { turnsRemaining?: unknown }).turnsRemaining;
+        if (typeof t !== 'number' || !Number.isFinite(t)) {
+          (entry as { turnsRemaining: number }).turnsRemaining = 0;
+        }
+      }
+      // leech_seed: require valid sourceSide
+      if ((entry as { type: string }).type === 'leech_seed') {
+        const s = (entry as { sourceSide?: unknown }).sourceSide;
+        if (typeof s !== 'string' || !validSides.has(s)) return false;
+      }
+      return true;
+    });
   }
   if (mon.statStages === undefined) {
     mon.statStages = createStatStages();

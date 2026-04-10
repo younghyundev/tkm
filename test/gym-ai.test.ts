@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { initLocale } from '../src/i18n/index.js';
 import { selectAiMove, selectAiAction } from '../src/core/gym-ai.js';
+import { addVolatileStatus } from '../src/core/volatile-status.js';
 import { createBattlePokemon } from '../src/core/turn-battle.js';
 import type { MoveData } from '../src/core/types.js';
 import type { BattlePokemon, StatusCondition } from '../src/core/types.js';
@@ -40,6 +41,44 @@ const thunderWave: MoveData = {
   effect: { type: 'paralysis' as StatusCondition, chance: 100 },
 };
 
+const weakTackle: MoveData = {
+  id: 133,
+  name: 'weak-tackle',
+  nameKo: '약한몸통박치기',
+  nameEn: 'Weak Tackle',
+  type: 'normal',
+  category: 'physical',
+  power: 10,
+  accuracy: 100,
+  pp: 35,
+};
+
+const confuseRay: MoveData = {
+  id: 109,
+  name: 'confuse-ray',
+  nameKo: '이상한빛',
+  nameEn: 'Confuse Ray',
+  type: 'ghost',
+  category: 'status' as any,
+  power: 0,
+  accuracy: 100,
+  pp: 10,
+  volatileEffect: { type: 'confusion', chance: 100, minTurns: 2, maxTurns: 5 },
+};
+
+const leechSeed: MoveData = {
+  id: 920,
+  name: 'leech-seed',
+  nameKo: '씨뿌리기',
+  nameEn: 'Leech Seed',
+  type: 'grass',
+  category: 'status' as any,
+  power: 0,
+  accuracy: 90,
+  pp: 10,
+  volatileEffect: { type: 'leech_seed', chance: 100 },
+};
+
 // ── Helpers ──
 
 function makeAttacker() {
@@ -60,6 +99,20 @@ function makeAttackerWithStatus() {
   return createBattlePokemon(
     { id: 25, types: ['electric'], level: 30, baseStats: { hp: 35, attack: 55, defense: 40, speed: 90, sp_attack: 50, sp_defense: 50 } },
     [thunderbolt, thunderWave],
+  );
+}
+
+function makeAttackerWithConfuseRay() {
+  return createBattlePokemon(
+    { id: 94, types: ['ghost'], level: 30, baseStats: { hp: 60, attack: 65, defense: 60, speed: 110, sp_attack: 130, sp_defense: 75 } },
+    [weakTackle, confuseRay],
+  );
+}
+
+function makeAttackerWithLeechSeed() {
+  return createBattlePokemon(
+    { id: 1, types: ['grass'], level: 30, baseStats: { hp: 45, attack: 49, defense: 49, speed: 45, sp_attack: 65, sp_defense: 65 } },
+    [weakTackle, leechSeed],
   );
 }
 
@@ -161,15 +214,55 @@ describe('selectAiMove with status moves', () => {
   });
 });
 
+describe('selectAiMove with volatile-status moves', () => {
+  it('never uses confuse-ray when the opponent is already confused', () => {
+    let confusionCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const defender = makeWaterDefender();
+      defender.volatileStatuses = [];
+      addVolatileStatus(defender, { type: 'confusion', turnsRemaining: 3 }, []);
+      if (selectAiMove(makeAttackerWithConfuseRay(), defender) === 1) confusionCount++;
+    }
+    assert.equal(confusionCount, 0, 'Should never pick Confuse Ray against an already-confused target');
+  });
+
+  it('uses leech-seed sometimes against non-grass targets', () => {
+    let leechSeedCount = 0;
+    for (let i = 0; i < 200; i++) {
+      if (selectAiMove(makeAttackerWithLeechSeed(), makeWaterDefender()) === 1) leechSeedCount++;
+    }
+    assert.ok(leechSeedCount > 0, `Leech Seed should be used sometimes, got ${leechSeedCount}/200`);
+  });
+
+  it('never uses leech-seed against grass targets', () => {
+    let leechSeedCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const defender = createBattlePokemon(
+        { id: 43, types: ['grass'], level: 30, baseStats: { hp: 45, attack: 50, defense: 55, speed: 30, sp_attack: 75, sp_defense: 65 } },
+        [tackle],
+      );
+      if (selectAiMove(makeAttackerWithLeechSeed(), defender) === 1) leechSeedCount++;
+    }
+    assert.equal(leechSeedCount, 0, 'Should never pick Leech Seed against Grass-type targets');
+  });
+
+  it('never uses leech-seed when the opponent is already seeded', () => {
+    let leechSeedCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const defender = makeWaterDefender();
+      defender.volatileStatuses = [];
+      addVolatileStatus(defender, { type: 'leech_seed', sourceSide: 'player' }, []);
+      if (selectAiMove(makeAttackerWithLeechSeed(), defender) === 1) leechSeedCount++;
+    }
+    assert.equal(leechSeedCount, 0, 'Should never pick Leech Seed when the target is already seeded');
+  });
+});
+
 describe('selectAiMove with stat-change moves (debuff scoring)', () => {
   // Regression for v3b R2: opponent debuff scoring was inverted, so the AI
   // valued redundant drops on already-debuffed targets and ignored buffed
   // ones. The fix uses headroom toward -6 instead of raw stage.
 
-  const weakTackle: MoveData = {
-    id: 33, name: 'tackle', nameKo: '몸통박치기', nameEn: 'Tackle',
-    type: 'normal', category: 'physical', power: 10, accuracy: 100, pp: 35,
-  };
   const growl: MoveData = {
     id: 45, name: 'growl', nameKo: '울음소리', nameEn: 'Growl',
     type: 'normal', category: 'status' as any, power: 0, accuracy: 100, pp: 40,

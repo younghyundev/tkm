@@ -171,4 +171,46 @@ describe('battle state migration', () => {
     assert.equal(skipped, true, 'Should skip this turn');
     assert.equal(mon.statusCondition, null, 'Should wake up (not stuck in permanent sleep)');
   });
+
+  it('normalizeBattlePokemon drops volatile-status entries with unknown type', () => {
+    // Regression for v3c R1 MEDIUM: corrupted saves with unknown volatile
+    // status types should be dropped, not passed through to the battle loop.
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [
+        { type: 'confusion', turnsRemaining: 3 },
+        { type: 'not_a_real_status' as any },
+        { type: 'bound' as any, turnsRemaining: 2 },
+      ],
+    } as Partial<BattlePokemon>);
+    normalizeBattlePokemon(mon);
+    assert.equal(mon.volatileStatuses.length, 1);
+    assert.equal(mon.volatileStatuses[0].type, 'confusion');
+  });
+
+  it('normalizeBattlePokemon drops leech_seed entries with invalid sourceSide', () => {
+    // Regression for v3c R1 MEDIUM: leech_seed with a bogus sourceSide
+    // ('foo') would crash applyLeechSeedEndOfTurn at allPokemon['foo'].
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [
+        { type: 'leech_seed', sourceSide: 'foo' as any },
+        { type: 'leech_seed', sourceSide: 'player' },
+        { type: 'leech_seed' }, // no sourceSide
+      ],
+    } as Partial<BattlePokemon>);
+    normalizeBattlePokemon(mon);
+    assert.equal(mon.volatileStatuses.length, 1);
+    assert.equal(mon.volatileStatuses[0].type, 'leech_seed');
+    assert.equal((mon.volatileStatuses[0] as any).sourceSide, 'player');
+  });
+
+  it('normalizeBattlePokemon coerces confusion with non-finite turnsRemaining to 0', () => {
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [
+        { type: 'confusion', turnsRemaining: NaN as any },
+      ],
+    } as Partial<BattlePokemon>);
+    normalizeBattlePokemon(mon);
+    assert.equal(mon.volatileStatuses.length, 1);
+    assert.equal((mon.volatileStatuses[0] as any).turnsRemaining, 0);
+  });
 });
