@@ -1,5 +1,12 @@
 import { t } from '../i18n/index.js';
 import { getTypeEffectiveness } from './type-chart.js';
+import {
+  applyStatChange,
+  createStatStages,
+  getAccEvaMultiplier,
+  getStatMultiplier,
+  resetStatStages,
+} from './stat-stages.js';
 import type {
   BaseStats,
   MoveData,
@@ -70,6 +77,7 @@ export function createBattlePokemon(
     statusCondition: null,
     toxicCounter: 0,
     sleepCounter: 0,
+    statStages: createStatStages(),
   };
 }
 
@@ -83,10 +91,19 @@ export function calculateDamage(
   const power = move.data.power;
   if (!power || power <= 0) return 0;
 
-  const rawAtk = move.data.category === 'physical' ? attacker.attack : attacker.spAttack;
-  const burnMod = move.data.category === 'physical' ? getBurnAttackMultiplier(attacker) : 1.0;
-  const atk = Math.floor(rawAtk * burnMod);
-  const def = Math.max(1, move.data.category === 'physical' ? defender.defense : defender.spDefense);
+  const isPhysical = move.data.category === 'physical';
+  const attackStat = isPhysical ? attacker.attack : attacker.spAttack;
+  const defenseStat = isPhysical ? defender.defense : defender.spDefense;
+  const attackStage = isPhysical ? attacker.statStages.attack : attacker.statStages.spAttack;
+  const defenseStage = isPhysical ? defender.statStages.defense : defender.statStages.spDefense;
+
+  const effectiveAttack =
+    attackStat *
+    getStatMultiplier(attackStage) *
+    (isPhysical ? getBurnAttackMultiplier(attacker) : 1);
+  const effectiveDefense = defenseStat * getStatMultiplier(defenseStage);
+  const atk = Math.floor(effectiveAttack);
+  const def = Math.max(1, Math.floor(effectiveDefense));
 
   const base = Math.floor(
     ((2 * attacker.level / 5 + 2) * power * atk) / def / 50 + 2,
@@ -123,9 +140,17 @@ export function getEffectivenessMessage(
 
 // ── Accuracy Check ──
 
-export function checkAccuracy(move: BattleMove): boolean {
-  if (move.data.accuracy <= 0) return true; // always-hit moves
-  return Math.random() * 100 < move.data.accuracy;
+export function checkAccuracy(
+  attacker: BattlePokemon,
+  defender: BattlePokemon,
+  move: MoveData,
+): boolean {
+  if (move.accuracy === null) return true;
+  const hitChance =
+    move.accuracy *
+    getAccEvaMultiplier(attacker.statStages.accuracy) /
+    getAccEvaMultiplier(defender.statStages.evasion);
+  return Math.random() * 100 < hitChance;
 }
 
 // ── Battle State Factory ──
@@ -162,6 +187,19 @@ interface ActionEntry {
   pokemon: BattlePokemon;
 }
 
+function applyMoveStatChanges(
+  attacker: BattlePokemon,
+  defender: BattlePokemon,
+  move: MoveData,
+  messages: string[],
+): void {
+  for (const change of move.statChanges ?? []) {
+    if (Math.random() * 100 >= change.chance) continue;
+    const target = change.target === 'self' ? attacker : defender;
+    applyStatChange(target, change.stat, change.stages, messages);
+  }
+}
+
 function executeSwitch(
   team: BattleTeam,
   targetIndex: number,
@@ -177,8 +215,10 @@ function executeSwitch(
   if (old.statusCondition === 'badly_poisoned') {
     old.toxicCounter = 1;
   }
-  const next = getActivePokemon(team);
-  messages.push(`${old.displayName}에서 ${next.displayName}(으)로 교체!`);
+  const active = getActivePokemon(team);
+  active.toxicCounter = active.statusCondition === 'badly_poisoned' ? active.toxicCounter : 0;
+  resetStatStages(active);
+  messages.push(t('battle.switch', { name: active.displayName }));
 }
 
 const STRUGGLE_MOVE: BattleMove = {
@@ -266,8 +306,8 @@ function executeMove(
   }
 
   // Accuracy check
-  if (!checkAccuracy(move)) {
-    messages.push('공격이 빗나갔다!');
+  if (!checkAccuracy(attacker, defender, move.data)) {
+    messages.push(t('battle.miss', { name: attacker.displayName }));
     return { defenderFainted: false };
   }
 
@@ -310,6 +350,14 @@ function executeMove(
     defender.fainted = true;
     messages.push(`${defender.displayName}은(는) 쓰러졌다!`);
     return { defenderFainted: true };
+  }
+
+  if (move.data.power > 0 && damage > 0 && !defender.fainted) {
+    applyMoveStatChanges(attacker, defender, move.data, messages);
+  }
+
+  if (move.data.power === 0) {
+    applyMoveStatChanges(attacker, defender, move.data, messages);
   }
 
   // Roll secondary effect — blocked if the move type has no effect on the defender
@@ -358,8 +406,16 @@ export function resolveTurn(
     const bPriority = b.action.type === 'switch' ? 0 : 1;
     if (aPriority !== bPriority) return aPriority - bPriority;
     // Same priority → speed
-    const aSpeed = Math.floor(a.pokemon.speed * getParalysisSpeedMultiplier(a.pokemon));
-    const bSpeed = Math.floor(b.pokemon.speed * getParalysisSpeedMultiplier(b.pokemon));
+    const aSpeed = Math.floor(
+      a.pokemon.speed *
+      getStatMultiplier(a.pokemon.statStages.speed) *
+      getParalysisSpeedMultiplier(a.pokemon),
+    );
+    const bSpeed = Math.floor(
+      b.pokemon.speed *
+      getStatMultiplier(b.pokemon.statStages.speed) *
+      getParalysisSpeedMultiplier(b.pokemon),
+    );
     if (aSpeed !== bSpeed) return bSpeed - aSpeed;
     // Random tiebreak
     return Math.random() < 0.5 ? -1 : 1;

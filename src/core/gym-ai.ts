@@ -5,6 +5,42 @@ import type { BattlePokemon, TurnAction } from './types.js';
 /** Base score for a status move (equivalent to a ~60-power move with neutral typing). */
 const STATUS_MOVE_BASE_SCORE = 60;
 
+function getHpRatio(pokemon: BattlePokemon): number {
+  return pokemon.maxHp > 0 ? pokemon.currentHp / pokemon.maxHp : 0;
+}
+
+function averageStages(mon: BattlePokemon, stats: Array<keyof BattlePokemon['statStages']>): number {
+  return stats.reduce((sum, stat) => sum + mon.statStages[stat], 0) / stats.length;
+}
+
+function scoreStatChangeMove(
+  attacker: BattlePokemon,
+  defender: BattlePokemon,
+  move: BattlePokemon['moves'][number],
+): number {
+  const changes = move.data.statChanges ?? [];
+  if (changes.length === 0) return 0;
+
+  const selfChanges = changes.filter((c) => c.target === 'self' && c.stages > 0);
+  if (selfChanges.length > 0) {
+    const stats = selfChanges.map((c) => c.stat);
+    if (stats.every((stat) => attacker.statStages[stat] >= 6)) return 0;
+    const currentStageAverage = averageStages(attacker, stats);
+    return Math.max(0, (STATUS_MOVE_BASE_SCORE + 10) * (1 - currentStageAverage / 6));
+  }
+
+  const opponentChanges = changes.filter((c) => c.target === 'opponent' && c.stages < 0);
+  if (opponentChanges.length > 0) {
+    if (getHpRatio(defender) <= 0.5) return 0;
+    const targetStat = opponentChanges[0].stat;
+    if (defender.statStages[targetStat] <= -6) return 0;
+    const normalized = Math.max(0, Math.min(1, defender.statStages[targetStat] / 6));
+    return 40 * (1 - normalized);
+  }
+
+  return 0;
+}
+
 /**
  * Select the best move index for the AI.
  *
@@ -25,6 +61,10 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
     let typeEff = 1.0;
     for (const defType of defender.types) {
       typeEff *= getTypeEffectiveness(move.data.type, defType);
+    }
+
+    if (move.data.power === 0 && move.data.statChanges?.length) {
+      return { index, score: scoreStatChangeMove(attacker, defender, move) };
     }
 
     // Status move scoring

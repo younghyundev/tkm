@@ -3,6 +3,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync, renameSync } from 'fs';
 import { join, dirname } from 'path';
+import { createStatStages } from './stat-stages.js';
 import type { BattlePokemon, BattleState, BattleTeam, GymData } from './types.js';
 
 // ── Constants ──
@@ -53,6 +54,17 @@ export function normalizeBattlePokemon(mon: BattlePokemon): void {
   }
   if (mon.sleepCounter === undefined || !Number.isFinite(mon.sleepCounter)) {
     mon.sleepCounter = 0;
+  }
+  if (mon.statStages === undefined) {
+    mon.statStages = createStatStages();
+  } else {
+    mon.statStages.attack = Number.isFinite(mon.statStages.attack) ? mon.statStages.attack : 0;
+    mon.statStages.defense = Number.isFinite(mon.statStages.defense) ? mon.statStages.defense : 0;
+    mon.statStages.spAttack = Number.isFinite(mon.statStages.spAttack) ? mon.statStages.spAttack : 0;
+    mon.statStages.spDefense = Number.isFinite(mon.statStages.spDefense) ? mon.statStages.spDefense : 0;
+    mon.statStages.speed = Number.isFinite(mon.statStages.speed) ? mon.statStages.speed : 0;
+    mon.statStages.accuracy = Number.isFinite(mon.statStages.accuracy) ? mon.statStages.accuracy : 0;
+    mon.statStages.evasion = Number.isFinite(mon.statStages.evasion) ? mon.statStages.evasion : 0;
   }
 }
 
