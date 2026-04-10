@@ -205,8 +205,15 @@ function executeSwitch(
   targetIndex: number,
   messages: string[],
 ): void {
-  // Reject invalid switch targets
-  if (targetIndex < 0 || targetIndex >= team.pokemon.length || team.pokemon[targetIndex].fainted) {
+  // Reject invalid switch targets — including no-op same-slot switches.
+  // A same-slot switch must not reach the reset path below, otherwise it would
+  // act as a free, priority cleanse for stat stages without leaving the field.
+  if (
+    targetIndex < 0 ||
+    targetIndex >= team.pokemon.length ||
+    team.pokemon[targetIndex].fainted ||
+    targetIndex === team.activeIndex
+  ) {
     return;
   }
   const old = getActivePokemon(team);

@@ -523,6 +523,28 @@ describe('resolveTurn', () => {
     // Should not throw; invalid switch is silently skipped
     assert.ok(Array.isArray(result.messages));
   });
+
+  it('same-slot switch does NOT reset stat stages (no-op cleanse exploit)', () => {
+    // Regression: a "switch" action targeting the already-active Pokemon must
+    // not act as a free, priority cleanse for stat-stage debuffs. The bug
+    // would let a debuffed mon erase its own stages by issuing a no-op switch.
+    const player = getActivePokemon(state.player);
+    player.statStages.attack = -3;
+    player.statStages.defense = -2;
+
+    const result = resolveTurn(
+      state,
+      { type: 'switch', pokemonIndex: state.player.activeIndex },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.equal(player.statStages.attack, -3, 'attack stage should remain unchanged');
+    assert.equal(player.statStages.defense, -2, 'defense stage should remain unchanged');
+    assert.ok(
+      !result.messages.some((m) => m.includes('교체') || m.toLowerCase().includes('switch')),
+      'No switch message should be emitted for a no-op switch',
+    );
+  });
 });
 
 describe('calculateDamage edge cases', () => {
