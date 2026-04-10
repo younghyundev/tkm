@@ -9,6 +9,13 @@ import type {
   TurnAction,
   TurnResult,
 } from './types.js';
+import {
+  getParalysisSpeedMultiplier,
+  getBurnAttackMultiplier,
+  checkParalysisSkip,
+  applyEndOfTurnEffects,
+  rollMoveEffect,
+} from './status-effects.js';
 
 // ── Stat Calculation ──
 
@@ -72,7 +79,9 @@ export function calculateDamage(
   const power = move.data.power;
   if (!power || power <= 0) return 0;
 
-  const atk = move.data.category === 'physical' ? attacker.attack : attacker.spAttack;
+  const rawAtk = move.data.category === 'physical' ? attacker.attack : attacker.spAttack;
+  const burnMod = move.data.category === 'physical' ? getBurnAttackMultiplier(attacker) : 1.0;
+  const atk = Math.floor(rawAtk * burnMod);
   const def = Math.max(1, move.data.category === 'physical' ? defender.defense : defender.spDefense);
 
   const base = Math.floor(
@@ -160,6 +169,10 @@ function executeSwitch(
   }
   const old = getActivePokemon(team);
   team.activeIndex = targetIndex;
+  // Reset toxic counter when switching out
+  if (old.statusCondition === 'badly_poisoned') {
+    old.toxicCounter = 1;
+  }
   const next = getActivePokemon(team);
   messages.push(`${old.displayName}에서 ${next.displayName}(으)로 교체!`);
 }
@@ -194,6 +207,11 @@ function executeMove(
 
   // Skip if attacker already fainted
   if (attacker.fainted) return { defenderFainted: false };
+
+  // Paralysis skip check
+  if (checkParalysisSkip(attacker, messages)) {
+    return { defenderFainted: false };
+  }
 
   // Determine move (struggle if no PP)
   let move: BattleMove;
@@ -254,6 +272,11 @@ function executeMove(
     return { defenderFainted: true };
   }
 
+  // Roll secondary effect (only if move hit and defender alive)
+  if (!defender.fainted && move.data.effect) {
+    rollMoveEffect(move.data, defender, messages);
+  }
+
   return { defenderFainted: false };
 }
 
@@ -294,7 +317,9 @@ export function resolveTurn(
     const bPriority = b.action.type === 'switch' ? 0 : 1;
     if (aPriority !== bPriority) return aPriority - bPriority;
     // Same priority → speed
-    if (a.pokemon.speed !== b.pokemon.speed) return b.pokemon.speed - a.pokemon.speed;
+    const aSpeed = Math.floor(a.pokemon.speed * getParalysisSpeedMultiplier(a.pokemon));
+    const bSpeed = Math.floor(b.pokemon.speed * getParalysisSpeedMultiplier(b.pokemon));
+    if (aSpeed !== bSpeed) return bSpeed - aSpeed;
     // Random tiebreak
     return Math.random() < 0.5 ? -1 : 1;
   });
@@ -318,6 +343,20 @@ export function resolveTurn(
   const opponentActive = getActivePokemon(state.opponent);
   if (playerActive.fainted) playerFainted = true;
   if (opponentActive.fainted) opponentFainted = true;
+
+  // ── End-of-turn status effects ──
+  const statusMessages: string[] = [];
+  if (!playerActive.fainted) {
+    if (applyEndOfTurnEffects(playerActive, statusMessages)) {
+      playerFainted = true;
+    }
+  }
+  if (!opponentActive.fainted) {
+    if (applyEndOfTurnEffects(opponentActive, statusMessages)) {
+      opponentFainted = true;
+    }
+  }
+  messages.push(...statusMessages);
 
   // Win/loss conditions
   const playerAlive = hasAlivePokemon(state.player);

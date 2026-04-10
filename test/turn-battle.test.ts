@@ -13,7 +13,7 @@ import {
   hasAlivePokemon,
   resolveTurn,
 } from '../src/core/turn-battle.js';
-import type { BattlePokemon, BattleMove, MoveData, BattleState } from '../src/core/types.js';
+import type { BattlePokemon, BattleMove, MoveData, BattleState, StatusCondition } from '../src/core/types.js';
 
 initLocale('ko');
 
@@ -494,5 +494,69 @@ describe('calculateDamage edge cases', () => {
     const move: BattleMove = { data: makeMoveData({ type: 'normal', power: 40 }), currentPp: 10 };
     const dmg = calculateDamage(attacker, defender, move);
     assert.equal(dmg, 0, `Immune matchup should deal 0 damage, got ${dmg}`);
+  });
+});
+
+describe('resolveTurn with status effects', () => {
+  it('paralyzed pokemon has reduced effective speed in turn order', () => {
+    const player = makeTestPokemon({ displayName: 'Fast', types: ['normal'], speed: 110, statusCondition: null, toxicCounter: 0 });
+    const opponent = makeTestPokemon({ displayName: 'Slow', types: ['normal'], speed: 200, statusCondition: 'paralysis' as StatusCondition, toxicCounter: 0 });
+    const state = createBattleState([player], [opponent]);
+    const result = resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    // Opponent effective speed = 200 * 0.5 = 100 < 110, player goes first
+    assert.ok(result.messages[0].includes('Fast'), `Player should act first, got: ${result.messages[0]}`);
+  });
+
+  it('burn halves physical damage', () => {
+    const player = makeTestPokemon({ displayName: 'Burned', types: ['normal'], attack: 100, statusCondition: null, toxicCounter: 0 });
+    const defender = makeTestPokemon({ displayName: 'Def', types: ['normal'], defense: 50, statusCondition: null, toxicCounter: 0 });
+    const move: BattleMove = { data: makeMoveData({ power: 80, category: 'physical' }), currentPp: 10 };
+
+    let normalTotal = 0;
+    for (let i = 0; i < 200; i++) normalTotal += calculateDamage(player, defender, move);
+
+    player.statusCondition = 'burn';
+    let burnedTotal = 0;
+    for (let i = 0; i < 200; i++) burnedTotal += calculateDamage(player, defender, move);
+
+    const ratio = burnedTotal / normalTotal;
+    assert.ok(ratio > 0.4 && ratio < 0.6, `Burn ratio should be ~0.5, got ${ratio}`);
+  });
+
+  it('end-of-turn poison damage applied after moves', () => {
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0 });
+    const opp = makeTestPokemon({ displayName: 'O', maxHp: 160, currentHp: 160, statusCondition: 'poison' as StatusCondition, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    // Poison damage = floor(160/8) = 20, plus move damage
+    assert.ok(opp.currentHp < 160 - 20, `Should take move + poison damage`);
+  });
+
+  it('pokemon can faint from end-of-turn poison', () => {
+    const player = makeTestPokemon({ displayName: 'P', statusCondition: null, toxicCounter: 0, moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', maxHp: 160, currentHp: 1, statusCondition: 'poison' as StatusCondition, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.fainted, true);
+    assert.equal(opp.currentHp, 0);
+  });
+
+  it('secondary effect applies status on hit', () => {
+    const effectMove = makeMoveData({ type: 'fire', category: 'special', power: 40 });
+    (effectMove as any).effect = { type: 'burn', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: effectMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['water'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, 'burn');
+  });
+
+  it('toxic counter resets on switch', () => {
+    const p1 = makeTestPokemon({ displayName: 'Toxic', statusCondition: 'badly_poisoned' as StatusCondition, toxicCounter: 5 });
+    const p2 = makeTestPokemon({ displayName: 'Fresh', statusCondition: null, toxicCounter: 0 });
+    const opp = makeTestPokemon({ displayName: 'O', statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([p1, p2], [opp]);
+    resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
+    assert.equal(p1.toxicCounter, 1);
   });
 });
