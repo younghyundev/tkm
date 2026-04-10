@@ -80,6 +80,8 @@ function makeTestPokemon(overrides: Partial<BattlePokemon> = {}): BattlePokemon 
     speed: 70,
     moves: [{ data: makeMoveData(), currentPp: 35 }],
     fainted: false,
+    statusCondition: null,
+    toxicCounter: 0,
     ...overrides,
   };
 }

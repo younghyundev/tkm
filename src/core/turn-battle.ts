@@ -57,6 +57,8 @@ export function createBattlePokemon(
     speed: calculateStat(baseStats.speed, level),
     moves: moves.map((m) => ({ data: m, currentPp: m.pp })),
     fainted: false,
+    statusCondition: null,
+    toxicCounter: 0,
   };
 }
 
