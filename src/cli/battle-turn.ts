@@ -89,7 +89,19 @@ function detectLastHit(
   playerHpAfter: number,
   opponentHpAfter: number,
 ): LastHit | null {
-  // Determine effectiveness from messages
+  const opponentDamage = opponentHpBefore - opponentHpAfter;
+  const playerDamage = playerHpBefore - playerHpAfter;
+  const now = Date.now();
+
+  // When both sides deal damage, effectiveness is ambiguous — the message list
+  // contains results from both attacks and we can't reliably attribute which
+  // effectiveness belongs to which hit without structured per-hit data from
+  // resolveTurn. Default to 'normal' to avoid showing wrong color flash.
+  if (opponentDamage > 0 && playerDamage > 0) {
+    return { target: 'opponent', damage: opponentDamage, effectiveness: 'normal', timestamp: now, prevHp: opponentHpBefore };
+  }
+
+  // Single-hit turn: effectiveness is unambiguous
   let effectiveness: LastHit['effectiveness'] = 'normal';
   for (const msg of messages) {
     if (msg.includes('효과가 굉장했다')) { effectiveness = 'super'; break; }
@@ -97,18 +109,11 @@ function detectLastHit(
     if (msg.includes('효과가 없는')) { effectiveness = 'immune'; break; }
   }
 
-  const opponentDamage = opponentHpBefore - opponentHpAfter;
-  const playerDamage = playerHpBefore - playerHpAfter;
-
-  // When both sides deal damage in the same turn, we record only one hit
-  // for animation purposes. We favor the opponent (player's attack landed)
-  // since the player initiated the action and expects visual feedback for it.
-  // The opponent's counterattack animation is sacrificed in this case.
   if (opponentDamage > 0) {
-    return { target: 'opponent', damage: opponentDamage, effectiveness, timestamp: Date.now(), prevHp: opponentHpBefore };
+    return { target: 'opponent', damage: opponentDamage, effectiveness, timestamp: now, prevHp: opponentHpBefore };
   }
   if (playerDamage > 0) {
-    return { target: 'player', damage: playerDamage, effectiveness, timestamp: Date.now(), prevHp: playerHpBefore };
+    return { target: 'player', damage: playerDamage, effectiveness, timestamp: now, prevHp: playerHpBefore };
   }
   return null;
 }

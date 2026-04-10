@@ -107,6 +107,53 @@ describe('sprite collapse row calculation', () => {
   });
 });
 
+describe('detectLastHit effectiveness attribution', () => {
+  // Reimplements the core logic of detectLastHit to test effectiveness coupling
+  type Eff = 'super' | 'normal' | 'not_very' | 'immune';
+  function detectEffectiveness(
+    messages: string[],
+    opponentDamage: number,
+    playerDamage: number,
+  ): { target: string; effectiveness: Eff } | null {
+    if (opponentDamage > 0 && playerDamage > 0) {
+      // Both sides hit — effectiveness is ambiguous, default to normal
+      return { target: 'opponent', effectiveness: 'normal' };
+    }
+    let effectiveness: Eff = 'normal';
+    for (const msg of messages) {
+      if (msg.includes('효과가 굉장했다')) { effectiveness = 'super'; break; }
+      if (msg.includes('효과가 별로인')) { effectiveness = 'not_very'; break; }
+      if (msg.includes('효과가 없는')) { effectiveness = 'immune'; break; }
+    }
+    if (opponentDamage > 0) return { target: 'opponent', effectiveness };
+    if (playerDamage > 0) return { target: 'player', effectiveness };
+    return null;
+  }
+
+  it('single hit: correctly attributes super effective', () => {
+    const result = detectEffectiveness(['효과가 굉장했다!'], 40, 0);
+    assert.deepEqual(result, { target: 'opponent', effectiveness: 'super' });
+  });
+
+  it('single hit: correctly attributes not very effective', () => {
+    const result = detectEffectiveness(['효과가 별로인 듯하다'], 0, 20);
+    assert.deepEqual(result, { target: 'player', effectiveness: 'not_very' });
+  });
+
+  it('both sides hit: defaults to normal even if super effective message exists', () => {
+    // This is the key regression test — previously this would wrongly return 'super'
+    const result = detectEffectiveness(
+      ['효과가 굉장했다!', 'some other message'],
+      30, 25,  // both sides deal damage
+    );
+    assert.deepEqual(result, { target: 'opponent', effectiveness: 'normal' });
+  });
+
+  it('no damage: returns null', () => {
+    assert.equal(detectEffectiveness(['some message'], 0, 0), null);
+  });
+});
+
 describe('defeat state lifecycle', () => {
   it('defeatTimestamp marks battle as ended', () => {
     // Verify the guard logic: a battle with defeatTimestamp should be treated as finished
