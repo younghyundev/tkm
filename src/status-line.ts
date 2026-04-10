@@ -496,8 +496,14 @@ function main(): void {
   if (existsSync(battleStatePath)) {
     try {
       const battleData = JSON.parse(readFileSync(battleStatePath, 'utf-8'));
-      renderBattleMode(battleData);
-      process.exit(0); // Don't render normal status line
+      // Skip expired defeated battles — fall through to normal rendering.
+      // CLI lifecycle (handleAction/handleInit/handleEnd) will clean up the file.
+      const isExpiredDefeat = battleData.defeatTimestamp
+        && (Date.now() - battleData.defeatTimestamp) >= ANIM_COLLAPSE_MS + 500;
+      if (!isExpiredDefeat) {
+        renderBattleMode(battleData);
+        process.exit(0);
+      }
     } catch {
       // Invalid battle state, fall through to normal rendering
     }

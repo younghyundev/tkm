@@ -418,8 +418,14 @@ function handleAction(): void {
     }
   }
 
+  // Clear hit animation state after switch — new pokemon shouldn't inherit it
+  if (turnResult.opponentFainted || turnResult.playerFainted) {
+    bsf.lastHit = null;
+  }
+
   // Player fainted + has more → fainted_switch
   if (battleState.phase === 'fainted_switch') {
+    bsf.lastHit = null;  // Clear — new active pokemon shouldn't inherit hit animation
     writeBattleState(bsf);
     return handleFaintedSwitch(battleState, messages);
   }
