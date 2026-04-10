@@ -368,7 +368,7 @@ function executeMove(
   }
 
   if (move.data.power === 0 && moveEffect?.type === 'rest') {
-    if (attacker.currentHp === attacker.maxHp && attacker.statusCondition !== null) {
+    if (attacker.currentHp === attacker.maxHp && attacker.statusCondition === null) {
       messages.push(t('move.heal.fail', { name: attacker.displayName }));
       return { defenderFainted: false };
     }

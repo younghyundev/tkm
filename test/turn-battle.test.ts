@@ -585,8 +585,8 @@ describe('resolveTurn', () => {
     assert.equal(player.sleepCounter, 2);
   });
 
-  it('Rest fails only when the user is both full HP and already statused', () => {
-    const failedRestUser = makeTestPokemon({
+  it('Rest cures status at full HP but fails when the user is already healthy and full', () => {
+    const statusedFullHpUser = makeTestPokemon({
       displayName: '실패잠자기',
       speed: 999,
       maxHp: 120,
@@ -603,20 +603,21 @@ describe('resolveTurn', () => {
         currentPp: 10,
       }],
     });
-    const failedRestState = createBattleState(
-      [failedRestUser],
+    const statusedRestState = createBattleState(
+      [statusedFullHpUser],
       [makeTestPokemon({ displayName: 'Opp' })],
     );
 
-    const failedResult = resolveTurn(
-      failedRestState,
+    const successResult = resolveTurn(
+      statusedRestState,
       { type: 'move', moveIndex: 0 },
       { type: 'switch', pokemonIndex: 0 },
     );
 
-    assert.equal(failedRestUser.statusCondition, 'burn');
-    assert.equal(failedRestUser.sleepCounter, 0);
-    assert.ok(failedResult.messages.some((m) => m.includes('가득')));
+    assert.equal(statusedFullHpUser.currentHp, 120);
+    assert.equal(statusedFullHpUser.statusCondition, 'sleep');
+    assert.equal(statusedFullHpUser.sleepCounter, 2);
+    assert.ok(successResult.messages.some((m) => m.includes('잠들')));
 
     const healthyFullHpUser = makeTestPokemon({
       displayName: '성공잠자기',
@@ -640,14 +641,15 @@ describe('resolveTurn', () => {
       [makeTestPokemon({ displayName: 'Opp' })],
     );
 
-    resolveTurn(
+    const failedResult = resolveTurn(
       healthyFullHpState,
       { type: 'move', moveIndex: 0 },
       { type: 'switch', pokemonIndex: 0 },
     );
 
-    assert.equal(healthyFullHpUser.statusCondition, 'sleep');
-    assert.equal(healthyFullHpUser.sleepCounter, 2);
+    assert.equal(healthyFullHpUser.statusCondition, null);
+    assert.equal(healthyFullHpUser.sleepCounter, 0);
+    assert.ok(failedResult.messages.some((m) => m.includes('가득')));
   });
 
   it('recoil damage uses max(1, floor(actual damage * fraction))', () => {
