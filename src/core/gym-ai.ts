@@ -17,6 +17,7 @@ function scoreStatChangeMove(
   attacker: BattlePokemon,
   defender: BattlePokemon,
   move: BattlePokemon['moves'][number],
+  typeEff: number,
 ): number {
   const changes = move.data.statChanges ?? [];
   if (changes.length === 0) return 0;
@@ -31,6 +32,10 @@ function scoreStatChangeMove(
 
   const opponentChanges = changes.filter((c) => c.target === 'opponent' && c.stages < 0);
   if (opponentChanges.length > 0) {
+    // Type-immune debuff moves cannot land on the defender (e.g., growl on
+    // Ghost type). Mirror the engine's gating so the AI does not waste a
+    // turn on a debuff that the battle resolver will silently drop.
+    if (typeEff === 0) return 0;
     if (getHpRatio(defender) <= 0.5) return 0;
     const targetStat = opponentChanges[0].stat;
     const stage = defender.statStages[targetStat];
@@ -69,7 +74,7 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
     }
 
     if (move.data.power === 0 && move.data.statChanges?.length) {
-      return { index, score: scoreStatChangeMove(attacker, defender, move) };
+      return { index, score: scoreStatChangeMove(attacker, defender, move, typeEff) };
     }
 
     // Status move scoring

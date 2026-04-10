@@ -524,6 +524,73 @@ describe('resolveTurn', () => {
     assert.ok(Array.isArray(result.messages));
   });
 
+  it('type-immune debuff move does not apply stat changes to defender', () => {
+    // Regression for v3b R3 HIGH: growl into a Ghost target was logging
+    // immunity but still dropping the defender's attack stage.
+    const growlMove: BattleMove = {
+      data: {
+        ...makeMoveData({ type: 'normal', category: 'physical', power: 0, accuracy: 100 }),
+        statChanges: [{ target: 'opponent', stat: 'attack', stages: -1, chance: 100 }],
+      } as any,
+      currentPp: 40,
+    };
+    const player = makeTestPokemon({
+      displayName: 'Growler',
+      speed: 999,
+      moves: [growlMove],
+    });
+    const ghostDefender = makeTestPokemon({
+      displayName: 'Ghost',
+      types: ['ghost'],
+      speed: 1,
+    });
+    const ghostState = createBattleState([player], [ghostDefender]);
+    resolveTurn(
+      ghostState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+    assert.equal(
+      ghostDefender.statStages.attack,
+      0,
+      'Ghost defender should not have attack stage dropped by Normal-type debuff',
+    );
+  });
+
+  it('type-immune debuff still applies self-buff component if present', () => {
+    // Defensive: a hypothetical move that buffs self AND debuffs opponent.
+    // The opponent debuff should be blocked by type immunity, but the
+    // self-buff should still land because immunity does not affect self.
+    const dualMove: BattleMove = {
+      data: {
+        ...makeMoveData({ type: 'normal', category: 'physical', power: 0, accuracy: 100 }),
+        statChanges: [
+          { target: 'self', stat: 'attack', stages: 1, chance: 100 },
+          { target: 'opponent', stat: 'defense', stages: -1, chance: 100 },
+        ],
+      } as any,
+      currentPp: 10,
+    };
+    const player = makeTestPokemon({
+      displayName: 'Dual',
+      speed: 999,
+      moves: [dualMove],
+    });
+    const ghostDefender = makeTestPokemon({
+      displayName: 'Ghost',
+      types: ['ghost'],
+      speed: 1,
+    });
+    const dualState = createBattleState([player], [ghostDefender]);
+    resolveTurn(
+      dualState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+    assert.equal(player.statStages.attack, 1, 'Self-buff should still apply');
+    assert.equal(ghostDefender.statStages.defense, 0, 'Opponent debuff should be blocked');
+  });
+
   it('same-slot switch does NOT reset stat stages (no-op cleanse exploit)', () => {
     // Regression: a "switch" action targeting the already-active Pokemon must
     // not act as a free, priority cleanse for stat-stage debuffs. The bug

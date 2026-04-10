@@ -192,8 +192,12 @@ function applyMoveStatChanges(
   defender: BattlePokemon,
   move: MoveData,
   messages: string[],
+  moveTypeImmuneToDefender: boolean,
 ): void {
   for (const change of move.statChanges ?? []) {
+    // Type-immune moves cannot debuff their immune target. Self-buff
+    // changes are unaffected (they always land on the attacker).
+    if (change.target === 'opponent' && moveTypeImmuneToDefender) continue;
     if (Math.random() * 100 >= change.chance) continue;
     const target = change.target === 'self' ? attacker : defender;
     applyStatChange(target, change.stat, change.stages, messages);
@@ -360,11 +364,11 @@ function executeMove(
   }
 
   if (move.data.power > 0 && damage > 0 && !defender.fainted) {
-    applyMoveStatChanges(attacker, defender, move.data, messages);
+    applyMoveStatChanges(attacker, defender, move.data, messages, moveTypeImmune);
   }
 
   if (move.data.power === 0) {
-    applyMoveStatChanges(attacker, defender, move.data, messages);
+    applyMoveStatChanges(attacker, defender, move.data, messages, moveTypeImmune);
   }
 
   // Roll secondary effect — blocked if the move type has no effect on the defender

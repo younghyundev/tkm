@@ -216,6 +216,20 @@ describe('selectAiMove with stat-change moves (debuff scoring)', () => {
     );
   });
 
+  it('never uses normal-type debuff against Ghost (move-type immune)', () => {
+    // Regression for v3b R3: AI was scoring growl normally against Ghost,
+    // even though normal-type moves cannot land on Ghost types.
+    let debuffCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const ghostDefender = createBattlePokemon(
+        { id: 92, types: ['ghost'], level: 30, baseStats: { hp: 30, attack: 35, defense: 30, speed: 80, sp_attack: 100, sp_defense: 35 } },
+        [tackle],
+      );
+      if (selectAiMove(makeAttackerWithDebuff(), ghostDefender) === 1) debuffCount++;
+    }
+    assert.equal(debuffCount, 0, 'AI should never pick growl against Ghost-type');
+  });
+
   it('debuff scoring decays as defender approaches -6 (monotonic with headroom)', () => {
     // Compare selection rates at stages -3 vs +3 to verify the headroom-based
     // scoring (not the inverted raw-stage one). +3 should yield more debuff
