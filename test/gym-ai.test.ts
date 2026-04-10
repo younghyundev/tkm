@@ -466,9 +466,12 @@ describe('selectAiMove with moveEffect heuristics', () => {
     assert.ok(restCount > 150, `Expected Rest >150/200 at low HP, got ${restCount}`);
   });
 
-  it('skips Rest when already statused', () => {
+  it('prefers Rest at low HP when already statused (doubles as cure)', () => {
+    // Regression for v3d R1: Rest was hard-gated away from statused users,
+    // but the battle engine sets statusCondition = null on Rest, so Rest
+    // doubles as a status cure. AI should value Rest MORE when statused.
     let restCount = 0;
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 200; i++) {
       const attacker = makeRestAttacker();
       const defender = makeWaterDefender();
       attacker.currentHp = Math.floor(attacker.maxHp * 0.25);
@@ -476,10 +479,10 @@ describe('selectAiMove with moveEffect heuristics', () => {
       if (selectAiMove(attacker, defender) === 1) restCount++;
     }
 
-    assert.equal(restCount, 0, 'Should never pick Rest when already statused');
+    assert.ok(restCount > 150, `Expected Rest >150/200 when burned at low HP, got ${restCount}`);
   });
 
-  it('skips Rest when above 50% HP', () => {
+  it('skips Rest when above 60% HP', () => {
     let restCount = 0;
     for (let i = 0; i < 100; i++) {
       const attacker = makeRestAttacker();
@@ -488,7 +491,7 @@ describe('selectAiMove with moveEffect heuristics', () => {
       if (selectAiMove(attacker, defender) === 1) restCount++;
     }
 
-    assert.equal(restCount, 0, 'Should never pick Rest above 50% HP');
+    assert.equal(restCount, 0, 'Should never pick Rest above 60% HP');
   });
 
   it('gives drain moves a score bonus over similar damaging moves', () => {

@@ -28,9 +28,14 @@ function scoreMoveEffectMove(
   }
 
   if (moveEffect?.type === 'rest') {
-    if (attacker.statusCondition !== null) return 0;
-    if (hpRatio > 0.5) return 0;
-    return (1 - hpRatio) * 80;
+    // Rest is a full-heal + 2-turn sleep AND clears any existing non-volatile
+    // status (executeMove sets statusCondition = null before re-sleeping).
+    // Score it by HP headroom, with a bonus when the attacker is already
+    // statused because Rest doubles as a cure in that state.
+    if (hpRatio > 0.6) return 0;
+    const hpHeadroom = (1 - hpRatio) * 80;
+    const cureBonus = attacker.statusCondition !== null ? 20 : 0;
+    return hpHeadroom + cureBonus;
   }
 
   return null;
