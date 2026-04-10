@@ -494,6 +494,33 @@ describe('selectAiMove with moveEffect heuristics', () => {
     assert.equal(restCount, 0, 'Should never pick Rest above 60% HP');
   });
 
+  it('above-cutoff Rest is not chosen even when every alternative scores 0', () => {
+    // Regression for v3d R2 HIGH: the all-zero fallback used to pick
+    // scored[0] unconditionally, which let a high-HP attacker self-sleep
+    // when the other moves all scored 0 (e.g., Thunder Wave into Ground).
+    // After the DISABLED_SCORE fix, the fallback must prefer the
+    // zero-scored non-disabled move over Rest.
+    const attacker = createBattlePokemon(
+      { id: 143, types: ['normal'], level: 30, baseStats: { hp: 160, attack: 110, defense: 65, speed: 30, sp_attack: 65, sp_defense: 110 } },
+      [rest, thunderWave],
+    );
+    attacker.currentHp = Math.ceil(attacker.maxHp * 0.75); // > 60%, Rest disabled
+    const groundDefender = createBattlePokemon(
+      { id: 50, types: ['ground'], level: 30, baseStats: { hp: 30, attack: 55, defense: 25, speed: 95, sp_attack: 35, sp_defense: 45 } },
+      [tackle],
+    );
+
+    let restCount = 0;
+    for (let i = 0; i < 100; i++) {
+      if (selectAiMove(attacker, groundDefender) === 0) restCount++;
+    }
+    assert.equal(
+      restCount,
+      0,
+      'Above-cutoff Rest must not win the all-zero fallback against a type-immune debuff target',
+    );
+  });
+
   it('gives drain moves a score bonus over similar damaging moves', () => {
     let drainCount = 0;
     for (let i = 0; i < 200; i++) {
