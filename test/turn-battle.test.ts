@@ -559,4 +559,55 @@ describe('resolveTurn with status effects', () => {
     resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
     assert.equal(p1.toxicCounter, 1);
   });
+
+  it('move-type immune target does not receive status from secondary effect', () => {
+    // Thunderbolt (electric) vs Ground-type — should not paralyze
+    const effectMove = makeMoveData({ type: 'electric', category: 'special', power: 90 });
+    (effectMove as any).effect = { type: 'paralysis', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: effectMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['ground'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, null, 'Ground type should not be paralyzed by Electric move');
+  });
+
+  it('move-type immune target does not receive status from status move', () => {
+    // Thunder Wave (electric status) vs Ground-type — should not paralyze
+    const statusMove = makeMoveData({ type: 'electric', category: 'physical', power: 0, accuracy: 90 });
+    (statusMove as any).effect = { type: 'paralysis', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: statusMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['ground'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, null, 'Ground type should not be paralyzed by Thunder Wave');
+  });
+
+  it('end-of-turn status damage does not run after opponent KO (last mon)', () => {
+    // Player KOs opponent's only pokemon while burned at 1 HP — player should win,
+    // not faint from burn tick after battle is already decided.
+    const player = makeTestPokemon({
+      displayName: 'Burned',
+      speed: 999,
+      attack: 200,
+      maxHp: 100,
+      currentHp: 1,
+      statusCondition: 'burn' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 100, category: 'special' }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Victim',
+      speed: 1,
+      maxHp: 50,
+      currentHp: 1,
+      defense: 1,
+      statusCondition: null,
+      toxicCounter: 0,
+    });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(state.winner, 'player', 'Player should win after KOing last mon');
+    assert.equal(player.fainted, false, 'Player should not faint from post-turn burn tick after battle decided');
+    assert.equal(state.phase, 'battle_end');
+  });
 });

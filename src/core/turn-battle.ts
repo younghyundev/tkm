@@ -246,6 +246,10 @@ function executeMove(
     return { defenderFainted: false };
   }
 
+  // Move-type effectiveness (shared by damage, messages, and effect gating)
+  const effMsg = getEffectivenessMessage(move.data.type, defender.types);
+  const moveTypeImmune = effMsg === 'effect_immune';
+
   // Damage calculation
   const damage = calculateDamage(attacker, defender, move);
   defender.currentHp = Math.max(0, defender.currentHp - damage);
@@ -260,7 +264,6 @@ function executeMove(
   }
 
   // Effectiveness messages
-  const effMsg = getEffectivenessMessage(move.data.type, defender.types);
   if (effMsg === 'effect_super') messages.push('효과가 굉장했다!');
   else if (effMsg === 'effect_not_very') messages.push('효과가 별로인 듯하다...');
   else if (effMsg === 'effect_immune') messages.push('효과가 없는 듯하다...');
@@ -272,8 +275,9 @@ function executeMove(
     return { defenderFainted: true };
   }
 
-  // Roll secondary effect (only if move hit and defender alive)
-  if (!defender.fainted && move.data.effect) {
+  // Roll secondary effect — blocked if the move type has no effect on the defender
+  // (e.g., Thunder Wave vs Ground-type should not paralyze).
+  if (!defender.fainted && move.data.effect && !moveTypeImmune) {
     rollMoveEffect(move.data, defender, messages);
   }
 
@@ -345,18 +349,24 @@ export function resolveTurn(
   if (opponentActive.fainted) opponentFainted = true;
 
   // ── End-of-turn status effects ──
-  const statusMessages: string[] = [];
-  if (!playerActive.fainted) {
-    if (applyEndOfTurnEffects(playerActive, statusMessages)) {
-      playerFainted = true;
+  // Skip post-turn damage once the battle is already decided — applying burn/poison
+  // ticks after either side has no remaining Pokemon would mutate state past the
+  // natural end of the match and could flip the winner.
+  const battleOverAfterActions = !hasAlivePokemon(state.player) || !hasAlivePokemon(state.opponent);
+  if (!battleOverAfterActions) {
+    const statusMessages: string[] = [];
+    if (!playerActive.fainted) {
+      if (applyEndOfTurnEffects(playerActive, statusMessages)) {
+        playerFainted = true;
+      }
     }
-  }
-  if (!opponentActive.fainted) {
-    if (applyEndOfTurnEffects(opponentActive, statusMessages)) {
-      opponentFainted = true;
+    if (!opponentActive.fainted) {
+      if (applyEndOfTurnEffects(opponentActive, statusMessages)) {
+        opponentFainted = true;
+      }
     }
+    messages.push(...statusMessages);
   }
-  messages.push(...statusMessages);
 
   // Win/loss conditions
   const playerAlive = hasAlivePokemon(state.player);

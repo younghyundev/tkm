@@ -145,4 +145,18 @@ describe('selectAiMove with status moves', () => {
     }
     assert.equal(statusCount, 0, 'Should never pick status move when opponent is type-immune');
   });
+
+  it('never uses Thunder Wave against Ground-type (move-type immunity)', () => {
+    // Ground is status-vulnerable to paralysis but immune to Electric moves.
+    // The AI should recognize move-type immunity, not just status-type immunity.
+    let statusCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const defender = createBattlePokemon(
+        { id: 50, types: ['ground'], level: 30, baseStats: { hp: 35, attack: 55, defense: 40, speed: 90, sp_attack: 50, sp_defense: 50 } },
+        [tackle],
+      );
+      if (selectAiMove(makeAttackerWithStatus(), defender) === 1) statusCount++;
+    }
+    assert.equal(statusCount, 0, 'Should never pick Thunder Wave against Ground (move-type immune)');
+  });
 });

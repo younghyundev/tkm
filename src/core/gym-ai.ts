@@ -21,6 +21,12 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
   if (usableMoves.length === 0) return 0;
 
   const scored = usableMoves.map(({ move, index }) => {
+    // Compute move-type effectiveness once — shared by status and damage branches
+    let typeEff = 1.0;
+    for (const defType of defender.types) {
+      typeEff *= getTypeEffectiveness(move.data.type, defType);
+    }
+
     // Status move scoring
     if (move.data.effect && move.data.power === 0) {
       if (defender.statusCondition !== null) {
@@ -29,14 +35,14 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
       if (isStatusImmune(defender, move.data.effect.type)) {
         return { index, score: 0 };
       }
+      // Move-type immunity also blocks status (e.g., Thunder Wave vs Ground)
+      if (typeEff === 0) {
+        return { index, score: 0 };
+      }
       return { index, score: STATUS_MOVE_BASE_SCORE };
     }
 
     // Damaging move scoring (unchanged)
-    let typeEff = 1.0;
-    for (const defType of defender.types) {
-      typeEff *= getTypeEffectiveness(move.data.type, defType);
-    }
     const stab = attacker.types.includes(move.data.type) ? 1.5 : 1.0;
     const power = move.data.power || 0;
     return { index, score: power * stab * typeEff };
