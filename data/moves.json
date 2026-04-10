@@ -339,7 +339,11 @@
     "category": "physical",
     "power": 90,
     "accuracy": 85,
-    "pp": 20
+    "pp": 20,
+    "moveEffect": {
+      "type": "recoil",
+      "fraction": 0.25
+    }
   },
   "37": {
     "id": 37,
@@ -361,7 +365,11 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "moveEffect": {
+      "type": "recoil",
+      "fraction": 0.333
+    }
   },
   "39": {
     "id": 39,
@@ -709,7 +717,11 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "moveEffect": {
+      "type": "drain",
+      "fraction": 0.5
+    }
   },
   "73": {
     "id": 73,
@@ -1006,7 +1018,11 @@
     "category": "status",
     "power": 0,
     "accuracy": null,
-    "pp": 5
+    "pp": 5,
+    "moveEffect": {
+      "type": "heal",
+      "fraction": 0.5
+    }
   },
   "106": {
     "id": 106,
@@ -1170,6 +1186,21 @@
     "accuracy": null,
     "pp": 20
   },
+  "135": {
+    "id": 135,
+    "name": "soft-boiled",
+    "nameKo": "알낳기",
+    "nameEn": "Soft-Boiled",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 5,
+    "moveEffect": {
+      "type": "heal",
+      "fraction": 0.5
+    }
+  },
   "136": {
     "id": 136,
     "name": "high-jump-kick",
@@ -1201,7 +1232,11 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "moveEffect": {
+      "type": "drain",
+      "fraction": 0.5
+    }
   },
   "142": {
     "id": 142,
@@ -1331,6 +1366,20 @@
     "power": 50,
     "accuracy": 90,
     "pp": 10
+  },
+  "156": {
+    "id": 156,
+    "name": "rest",
+    "nameKo": "잠자기",
+    "nameEn": "Rest",
+    "type": "psychic",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 5,
+    "moveEffect": {
+      "type": "rest"
+    }
   },
   "157": {
     "id": 157,
@@ -1601,7 +1650,11 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "moveEffect": {
+      "type": "drain",
+      "fraction": 0.5
+    }
   },
   "204": {
     "id": 204,
@@ -1627,6 +1680,21 @@
     "power": 30,
     "accuracy": 90,
     "pp": 20
+  },
+  "208": {
+    "id": 208,
+    "name": "milk-drink",
+    "nameKo": "밀크드링크",
+    "nameEn": "Milk Drink",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 5,
+    "moveEffect": {
+      "type": "heal",
+      "fraction": 0.5
+    }
   },
   "209": {
     "id": 209,
@@ -2092,6 +2160,21 @@
     "accuracy": 100,
     "pp": 15
   },
+  "303": {
+    "id": 303,
+    "name": "slack-off",
+    "nameKo": "게으름피우기",
+    "nameEn": "Slack Off",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 5,
+    "moveEffect": {
+      "type": "heal",
+      "fraction": 0.5
+    }
+  },
   "304": {
     "id": 304,
     "name": "hyper-voice",
@@ -2466,6 +2549,21 @@
     "accuracy": 90,
     "pp": 5
   },
+  "355": {
+    "id": 355,
+    "name": "roost",
+    "nameKo": "날개쉬기",
+    "nameEn": "Roost",
+    "type": "flying",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 5,
+    "moveEffect": {
+      "type": "heal",
+      "fraction": 0.5
+    }
+  },
   "358": {
     "id": 358,
     "name": "wake-up-slap",
@@ -2596,7 +2694,11 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "moveEffect": {
+      "type": "recoil",
+      "fraction": 0.333
+    }
   },
   "395": {
     "id": 395,
@@ -2762,7 +2864,11 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "moveEffect": {
+      "type": "drain",
+      "fraction": 0.5
+    }
   },
   "411": {
     "id": 411,
@@ -2795,7 +2901,11 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "moveEffect": {
+      "type": "recoil",
+      "fraction": 0.333
+    }
   },
   "414": {
     "id": 414,
@@ -3136,7 +3246,11 @@
     "category": "physical",
     "power": 120,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "moveEffect": {
+      "type": "recoil",
+      "fraction": 0.333
+    }
   },
   "453": {
     "id": 453,
@@ -3169,7 +3283,11 @@
     "category": "physical",
     "power": 150,
     "accuracy": 80,
-    "pp": 5
+    "pp": 5,
+    "moveEffect": {
+      "type": "recoil",
+      "fraction": 0.5
+    }
   },
   "458": {
     "id": 458,
@@ -3605,7 +3723,11 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "moveEffect": {
+      "type": "drain",
+      "fraction": 0.5
+    }
   },
   "533": {
     "id": 533,

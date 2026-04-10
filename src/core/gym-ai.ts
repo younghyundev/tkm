@@ -15,6 +15,27 @@ function averageStages(mon: BattlePokemon, stats: Array<keyof BattlePokemon['sta
   return stats.reduce((sum, stat) => sum + mon.statStages[stat], 0) / stats.length;
 }
 
+function scoreMoveEffectMove(
+  attacker: BattlePokemon,
+  move: BattlePokemon['moves'][number],
+): number | null {
+  const hpRatio = getHpRatio(attacker);
+  const moveEffect = move.data.moveEffect;
+
+  if (moveEffect?.type === 'heal') {
+    if (hpRatio > 0.8) return 0;
+    return (1 - hpRatio) * 60;
+  }
+
+  if (moveEffect?.type === 'rest') {
+    if (attacker.statusCondition !== null) return 0;
+    if (hpRatio > 0.5) return 0;
+    return (1 - hpRatio) * 80;
+  }
+
+  return null;
+}
+
 function scoreStatChangeMove(
   attacker: BattlePokemon,
   defender: BattlePokemon,
@@ -75,6 +96,11 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
       typeEff *= getTypeEffectiveness(move.data.type, defType);
     }
 
+    const moveEffectScore = scoreMoveEffectMove(attacker, move);
+    if (moveEffectScore !== null) {
+      return { index, score: moveEffectScore };
+    }
+
     if (move.data.power === 0 && move.data.statChanges?.length) {
       return { index, score: scoreStatChangeMove(attacker, defender, move, typeEff) };
     }
@@ -117,7 +143,11 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
     // Damaging move scoring (unchanged)
     const stab = attacker.types.includes(move.data.type) ? 1.5 : 1.0;
     const power = move.data.power || 0;
-    return { index, score: power * stab * typeEff };
+    let score = power * stab * typeEff;
+    if (move.data.moveEffect?.type === 'drain') {
+      score += 20;
+    }
+    return { index, score };
   });
 
   // Filter out zero-scored moves so they are never selected

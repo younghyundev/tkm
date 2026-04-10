@@ -375,6 +375,11 @@
   "battle.press_any_key": "아무 키나 눌러서 나가기",
   "battle.fainted_label": "[쓰러짐]",
   "battle.other_session": "다른 세션의 배틀이 진행 중입니다.",
+  "move.heal.success": "{name}의 HP가 회복되었다!",
+  "move.heal.fail": "하지만 실패! {name}의 HP가 가득 차 있다!",
+  "move.rest.success": "{name}은(는) 잠들면서 HP를 회복했다!",
+  "move.recoil": "{name}은(는) 반동 데미지를 입었다!",
+  "move.drain": "{name}은(는) HP를 흡수했다!",
 
   "achievement.unlocked": "🏆 업적 달성: {name}! ",
   "achievement.unlocked_pokemon": "🏆 업적 달성: {name}! {pokemon:을/를} 얻었습니다!",

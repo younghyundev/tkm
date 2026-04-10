@@ -25,6 +25,7 @@ import {
   checkParalysisSkip,
   applyEndOfTurnEffects,
   rollMoveEffect,
+  tryApplyStatus,
 } from './status-effects.js';
 import {
   addVolatileStatus,
@@ -353,6 +354,35 @@ function executeMove(
     messages.push(`${attacker.displayName}의 ${move.data.nameKo}!`);
   }
 
+  const moveEffect = move.data.moveEffect;
+  if (move.data.power === 0 && moveEffect?.type === 'heal') {
+    if (attacker.currentHp === attacker.maxHp) {
+      messages.push(t('move.heal.fail', { name: attacker.displayName }));
+      return { defenderFainted: false };
+    }
+
+    const healAmount = Math.floor(attacker.maxHp * moveEffect.fraction);
+    attacker.currentHp = Math.min(attacker.maxHp, attacker.currentHp + healAmount);
+    messages.push(t('move.heal.success', { name: attacker.displayName }));
+    return { defenderFainted: false };
+  }
+
+  if (move.data.power === 0 && moveEffect?.type === 'rest') {
+    if (attacker.currentHp === attacker.maxHp && attacker.statusCondition !== null) {
+      messages.push(t('move.heal.fail', { name: attacker.displayName }));
+      return { defenderFainted: false };
+    }
+
+    attacker.currentHp = attacker.maxHp;
+    attacker.statusCondition = null;
+    attacker.toxicCounter = 0;
+    attacker.sleepCounter = 0;
+    tryApplyStatus(attacker, 'sleep', messages);
+    attacker.sleepCounter = 2;
+    messages.push(t('move.rest.success', { name: attacker.displayName }));
+    return { defenderFainted: false };
+  }
+
   // Move-type effectiveness — computed BEFORE accuracy so type-immune debuff
   // moves report immunity instead of missing (e.g., Screech vs Ghost). The
   // mainline order resolves immunity before the accuracy roll.
@@ -396,8 +426,10 @@ function executeMove(
     messages.push(t('status.freeze.thawed', { name: defender.displayName }));
   }
 
+  const defenderHpBefore = defender.currentHp;
   const damage = calculateDamage(attacker, defender, move);
   defender.currentHp = Math.max(0, defender.currentHp - damage);
+  const damageDealt = defenderHpBefore - defender.currentHp;
 
   // Struggle recoil: 1/4 max HP
   if (isStruggle) {
@@ -412,6 +444,21 @@ function executeMove(
   if (effMsg === 'effect_super') messages.push('효과가 굉장했다!');
   else if (effMsg === 'effect_not_very') messages.push('효과가 별로인 듯하다...');
   else if (effMsg === 'effect_immune') messages.push('효과가 없는 듯하다...');
+
+  if (damageDealt > 0 && moveEffect?.type === 'recoil') {
+    const recoil = Math.max(1, Math.floor(damageDealt * moveEffect.fraction));
+    attacker.currentHp = Math.max(0, attacker.currentHp - recoil);
+    if (attacker.currentHp <= 0) {
+      attacker.fainted = true;
+    }
+    messages.push(t('move.recoil', { name: attacker.displayName }));
+  }
+
+  if (damageDealt > 0 && moveEffect?.type === 'drain') {
+    const heal = Math.max(1, Math.floor(damageDealt * moveEffect.fraction));
+    attacker.currentHp = Math.min(attacker.maxHp, attacker.currentHp + heal);
+    messages.push(t('move.drain', { name: attacker.displayName }));
+  }
 
   // Faint check
   if (defender.currentHp <= 0) {

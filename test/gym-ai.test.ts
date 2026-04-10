@@ -53,6 +53,18 @@ const weakTackle: MoveData = {
   pp: 35,
 };
 
+const weakScratch: MoveData = {
+  id: 10,
+  name: 'scratch',
+  nameKo: '할퀴기',
+  nameEn: 'Scratch',
+  type: 'normal',
+  category: 'physical',
+  power: 10,
+  accuracy: 100,
+  pp: 35,
+};
+
 const confuseRay: MoveData = {
   id: 109,
   name: 'confuse-ray',
@@ -77,6 +89,57 @@ const leechSeed: MoveData = {
   accuracy: 90,
   pp: 10,
   volatileEffect: { type: 'leech_seed', chance: 100 },
+};
+
+const recover: MoveData = {
+  id: 105,
+  name: 'recover',
+  nameKo: '회복',
+  nameEn: 'Recover',
+  type: 'normal',
+  category: 'status' as any,
+  power: 0,
+  accuracy: null,
+  pp: 5,
+  moveEffect: { type: 'heal', fraction: 0.5 },
+};
+
+const rest: MoveData = {
+  id: 156,
+  name: 'rest',
+  nameKo: '잠자기',
+  nameEn: 'Rest',
+  type: 'psychic',
+  category: 'status' as any,
+  power: 0,
+  accuracy: null,
+  pp: 5,
+  moveEffect: { type: 'rest' },
+};
+
+const absorb: MoveData = {
+  id: 71,
+  name: 'absorb',
+  nameKo: '흡수',
+  nameEn: 'Absorb',
+  type: 'grass',
+  category: 'special',
+  power: 40,
+  accuracy: 100,
+  pp: 25,
+  moveEffect: { type: 'drain', fraction: 0.5 },
+};
+
+const razorLeaf: MoveData = {
+  id: 75,
+  name: 'razor-leaf',
+  nameKo: '잎날가르기',
+  nameEn: 'Razor Leaf',
+  type: 'grass',
+  category: 'physical',
+  power: 40,
+  accuracy: 100,
+  pp: 25,
 };
 
 // ── Helpers ──
@@ -113,6 +176,27 @@ function makeAttackerWithLeechSeed() {
   return createBattlePokemon(
     { id: 1, types: ['grass'], level: 30, baseStats: { hp: 45, attack: 49, defense: 49, speed: 45, sp_attack: 65, sp_defense: 65 } },
     [weakTackle, leechSeed],
+  );
+}
+
+function makeRecoveryAttacker() {
+  return createBattlePokemon(
+    { id: 133, types: ['normal'], level: 30, baseStats: { hp: 55, attack: 55, defense: 50, speed: 55, sp_attack: 45, sp_defense: 65 } },
+    [weakScratch, recover],
+  );
+}
+
+function makeRestAttacker() {
+  return createBattlePokemon(
+    { id: 143, types: ['normal'], level: 30, baseStats: { hp: 160, attack: 110, defense: 65, speed: 30, sp_attack: 65, sp_defense: 110 } },
+    [weakScratch, rest],
+  );
+}
+
+function makeDrainAttacker() {
+  return createBattlePokemon(
+    { id: 1, types: ['grass'], level: 30, baseStats: { hp: 45, attack: 49, defense: 49, speed: 45, sp_attack: 65, sp_defense: 65 } },
+    [razorLeaf, absorb],
   );
 }
 
@@ -342,5 +426,79 @@ describe('selectAiMove with stat-change moves (debuff scoring)', () => {
       countAtPlus3 > countAtMinus3,
       `Buffed (+3) should be debuffed more often than already-debuffed (-3): +3=${countAtPlus3} vs -3=${countAtMinus3}`,
     );
+  });
+});
+
+describe('selectAiMove with moveEffect heuristics', () => {
+  it('prefers healing moves at low HP', () => {
+    let healCount = 0;
+    for (let i = 0; i < 200; i++) {
+      const attacker = makeRecoveryAttacker();
+      const defender = makeWaterDefender();
+      attacker.currentHp = Math.floor(attacker.maxHp * 0.25);
+      if (selectAiMove(attacker, defender) === 1) healCount++;
+    }
+
+    assert.ok(healCount > 150, `Expected heal move >150/200 at low HP, got ${healCount}`);
+  });
+
+  it('skips healing moves when HP is above 80%', () => {
+    let healCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const attacker = makeRecoveryAttacker();
+      const defender = makeWaterDefender();
+      attacker.currentHp = Math.ceil(attacker.maxHp * 0.9);
+      if (selectAiMove(attacker, defender) === 1) healCount++;
+    }
+
+    assert.equal(healCount, 0, 'Should never pick healing move above 80% HP');
+  });
+
+  it('prefers Rest at low HP when not statused', () => {
+    let restCount = 0;
+    for (let i = 0; i < 200; i++) {
+      const attacker = makeRestAttacker();
+      const defender = makeWaterDefender();
+      attacker.currentHp = Math.floor(attacker.maxHp * 0.25);
+      if (selectAiMove(attacker, defender) === 1) restCount++;
+    }
+
+    assert.ok(restCount > 150, `Expected Rest >150/200 at low HP, got ${restCount}`);
+  });
+
+  it('skips Rest when already statused', () => {
+    let restCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const attacker = makeRestAttacker();
+      const defender = makeWaterDefender();
+      attacker.currentHp = Math.floor(attacker.maxHp * 0.25);
+      attacker.statusCondition = 'burn';
+      if (selectAiMove(attacker, defender) === 1) restCount++;
+    }
+
+    assert.equal(restCount, 0, 'Should never pick Rest when already statused');
+  });
+
+  it('skips Rest when above 50% HP', () => {
+    let restCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const attacker = makeRestAttacker();
+      const defender = makeWaterDefender();
+      attacker.currentHp = Math.ceil(attacker.maxHp * 0.75);
+      if (selectAiMove(attacker, defender) === 1) restCount++;
+    }
+
+    assert.equal(restCount, 0, 'Should never pick Rest above 50% HP');
+  });
+
+  it('gives drain moves a score bonus over similar damaging moves', () => {
+    let drainCount = 0;
+    for (let i = 0; i < 200; i++) {
+      const attacker = makeDrainAttacker();
+      const defender = makeWaterDefender();
+      if (selectAiMove(attacker, defender) === 1) drainCount++;
+    }
+
+    assert.ok(drainCount > 150, `Expected drain move >150/200, got ${drainCount}`);
   });
 });
