@@ -5,7 +5,11 @@ export type LayoutTier = 1 | 2 | 3 | 4;
 export type SpriteMode = Config['sprite_mode'];
 
 export const SPRITE_WIDTH = 20; // character count (used for padding)
-export const SPRITE_COL_WIDTH = SPRITE_WIDTH + 1; // +1 for braille separator (braille = 1-wide per Unicode EAW:N)
+// Braille is EAW:Neutral per Unicode spec — treated as 1-wide for layout math.
+// Actual rendered width is terminal/font-dependent (some CJK terminals render
+// braille as 2-wide). The render loop uses \u2800 everywhere so that all
+// transparent cells share whatever width the terminal picks for braille.
+export const SPRITE_COL_WIDTH = SPRITE_WIDTH + 1; // +1 for braille separator
 
 /**
  * Determine the display tier based on terminal width, party size, and sprite_mode.
