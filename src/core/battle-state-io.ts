@@ -18,6 +18,8 @@ export interface LastHit {
   target: 'player' | 'opponent';
   damage: number;
   effectiveness: 'super' | 'normal' | 'not_very' | 'immune';
+  timestamp: number;
+  prevHp: number;
 }
 
 export interface BattleStateFile {
@@ -28,6 +30,7 @@ export interface BattleStateFile {
   playerPartyNames: string[];
   lastHit?: LastHit | null;
   sessionId?: string;
+  defeatTimestamp?: number;
 }
 
 // ── File Operations ──

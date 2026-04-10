@@ -89,7 +89,19 @@ function detectLastHit(
   playerHpAfter: number,
   opponentHpAfter: number,
 ): LastHit | null {
-  // Determine effectiveness from messages
+  const opponentDamage = opponentHpBefore - opponentHpAfter;
+  const playerDamage = playerHpBefore - playerHpAfter;
+  const now = Date.now();
+
+  // When both sides deal damage, effectiveness is ambiguous — the message list
+  // contains results from both attacks and we can't reliably attribute which
+  // effectiveness belongs to which hit without structured per-hit data from
+  // resolveTurn. Default to 'normal' to avoid showing wrong color flash.
+  if (opponentDamage > 0 && playerDamage > 0) {
+    return { target: 'opponent', damage: opponentDamage, effectiveness: 'normal', timestamp: now, prevHp: opponentHpBefore };
+  }
+
+  // Single-hit turn: effectiveness is unambiguous
   let effectiveness: LastHit['effectiveness'] = 'normal';
   for (const msg of messages) {
     if (msg.includes('효과가 굉장했다')) { effectiveness = 'super'; break; }
@@ -97,15 +109,11 @@ function detectLastHit(
     if (msg.includes('효과가 없는')) { effectiveness = 'immune'; break; }
   }
 
-  const opponentDamage = opponentHpBefore - opponentHpAfter;
-  const playerDamage = playerHpBefore - playerHpAfter;
-
-  // Return the most recent significant hit (prefer opponent taking damage = player attacked)
   if (opponentDamage > 0) {
-    return { target: 'opponent', damage: opponentDamage, effectiveness };
+    return { target: 'opponent', damage: opponentDamage, effectiveness, timestamp: now, prevHp: opponentHpBefore };
   }
   if (playerDamage > 0) {
-    return { target: 'player', damage: playerDamage, effectiveness };
+    return { target: 'player', damage: playerDamage, effectiveness, timestamp: now, prevHp: playerHpBefore };
   }
   return null;
 }
@@ -254,6 +262,12 @@ function handleInit(): void {
     process.exit(1);
   }
 
+  // Clean up any stale terminal battle state before starting a new one
+  const existingBsf = readBattleState();
+  if (existingBsf?.defeatTimestamp || existingBsf?.battleState.phase === 'battle_end') {
+    deleteBattleState();
+  }
+
   // Create battle state
   const battleState = createBattleState(playerTeam, gymTeam);
 
@@ -307,6 +321,13 @@ function handleAction(): void {
   // would always fail. Skip check entirely for single-user CLI usage.
   if (bsf.sessionId && process.env.CLAUDE_SESSION_ID && bsf.sessionId !== process.env.CLAUDE_SESSION_ID) {
     output({ status: 'error', messages: [t('battle.other_session')] });
+    process.exit(1);
+  }
+
+  // Guard: reject actions on battles that have already ended (defeat animation state)
+  if (bsf.defeatTimestamp || bsf.battleState.phase === 'battle_end') {
+    deleteBattleState();
+    output({ status: 'error', messages: ['Battle has already ended. State cleaned up.'] });
     process.exit(1);
   }
 
@@ -402,8 +423,14 @@ function handleAction(): void {
     }
   }
 
+  // Clear hit animation state after switch — new pokemon shouldn't inherit it
+  if (turnResult.opponentFainted || turnResult.playerFainted) {
+    bsf.lastHit = null;
+  }
+
   // Player fainted + has more → fainted_switch
   if (battleState.phase === 'fainted_switch') {
+    bsf.lastHit = null;  // Clear — new active pokemon shouldn't inherit hit animation
     writeBattleState(bsf);
     return handleFaintedSwitch(battleState, messages);
   }
@@ -619,8 +646,11 @@ function handleDefeat(bsf: BattleStateFile, messages: string[]): void {
 
   messages.push(t('battle.defeat', { leader: gym.leaderKo }));
 
-  // Clean up battle state
-  deleteBattleState();
+  // Record terminal-state time for both KO and surrender.
+  // Collapse animation still only shows for actual KO, because the renderer
+  // separately checks whether the player's active Pokémon actually fainted.
+  bsf.defeatTimestamp = Date.now();
+  writeBattleState(bsf);
 
   output({
     status: 'defeat',
