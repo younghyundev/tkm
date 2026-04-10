@@ -6,6 +6,7 @@ export function ppBar(stdinData: StdinData, blocks: number = 6): string | null {
   if (!fiveHour || !Number.isFinite(fiveHour.used_percentage)) return null;
 
   const remaining = Math.max(0, Math.min(100, 100 - fiveHour.used_percentage));
+  const displayRemaining = Math.round(remaining);
   const filled = Math.min(blocks, Math.round(remaining / 100 * blocks));
   const empty = blocks - filled;
   const bar = '\u2588'.repeat(filled) + '\u2591'.repeat(empty);
@@ -28,5 +29,5 @@ export function ppBar(stdinData: StdinData, blocks: number = 6): string | null {
   }
 
   const label = t('statusline.pp_label');
-  return `${label}[${bar}] ${remaining}%${timeStr}`;
+  return `${label}[${bar}] ${displayRemaining}%${timeStr}`;
 }

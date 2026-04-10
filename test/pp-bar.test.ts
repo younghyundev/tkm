@@ -143,4 +143,29 @@ describe('ppBar', () => {
     assert.ok(result.includes('(~2h)'));
     assert.ok(!result.includes('2h0m'));
   });
+
+  it('rounds displayed percentage to a whole number for fractional remaining values', () => {
+    const data: StdinData = {
+      rate_limits: {
+        five_hour: { used_percentage: 12.34567, resets_at: 0 },
+      },
+    };
+    const result = ppBar(data);
+    assert.ok(result);
+    assert.ok(result.includes('88%'));
+    assert.ok(!result.includes('87.65433%'));
+    assert.ok(!/\d+\.\d+%/.test(result));
+  });
+
+  it('never emits scientific notation for near-zero remaining percentages', () => {
+    const data: StdinData = {
+      rate_limits: {
+        five_hour: { used_percentage: 99.999999, resets_at: 0 },
+      },
+    };
+    const result = ppBar(data);
+    assert.ok(result);
+    assert.ok(result.includes('0%'));
+    assert.ok(!/[eE][+-]?\d+%/.test(result));
+  });
 });
