@@ -257,6 +257,12 @@ function handleInit(): void {
     process.exit(1);
   }
 
+  // Clean up any stale defeated battle state before starting a new one
+  const existingBsf = readBattleState();
+  if (existingBsf?.defeatTimestamp) {
+    deleteBattleState();
+  }
+
   // Create battle state
   const battleState = createBattleState(playerTeam, gymTeam);
 
@@ -311,6 +317,13 @@ function handleAction(): void {
   if (bsf.sessionId && process.env.CLAUDE_SESSION_ID && bsf.sessionId !== process.env.CLAUDE_SESSION_ID) {
     output({ status: 'error', messages: [t('battle.other_session')] });
     process.exit(1);
+  }
+
+  // Guard: reject actions on battles that have already ended (defeat animation state)
+  if (bsf.defeatTimestamp || bsf.battleState.phase === 'battle_end') {
+    deleteBattleState();
+    output({ status: 'error', messages: ['Battle has already ended. State cleaned up.'] });
+    process.exit(0);
   }
 
   const { battleState, gym, generation, stateDir, playerPartyNames } = bsf;

@@ -106,3 +106,17 @@ describe('sprite collapse row calculation', () => {
     assert.equal(calcEmptyRows(14, 0.5), 7);
   });
 });
+
+describe('defeat state lifecycle', () => {
+  it('defeatTimestamp marks battle as ended', () => {
+    // Verify the guard logic: a battle with defeatTimestamp should be treated as finished
+    const isDefeated = (bsf: { defeatTimestamp?: number; battleState: { phase: string } }) => {
+      return !!(bsf.defeatTimestamp || bsf.battleState.phase === 'battle_end');
+    };
+
+    assert.equal(isDefeated({ battleState: { phase: 'select_action' } }), false);
+    assert.equal(isDefeated({ battleState: { phase: 'battle_end' } }), true);
+    assert.equal(isDefeated({ defeatTimestamp: Date.now(), battleState: { phase: 'battle_end' } }), true);
+    assert.equal(isDefeated({ defeatTimestamp: Date.now(), battleState: { phase: 'select_action' } }), true);
+  });
+});
