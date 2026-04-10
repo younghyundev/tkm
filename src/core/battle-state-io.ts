@@ -38,9 +38,11 @@ export interface BattleStateFile {
 /**
  * Backfill status fields on a BattlePokemon parsed from an older save.
  * `statusCondition` and `toxicCounter` were added in status-effects-v2;
- * earlier battle-state.json files lack them. We normalize `undefined` to
- * the schema defaults so downstream checks (e.g. `statusCondition !== null`)
- * do not mistake a pre-status battle for "already has a status".
+ * `sleepCounter` was added in status-effects-v3a. Earlier battle-state.json
+ * files lack these. We normalize `undefined` to schema defaults so downstream
+ * checks (e.g. `statusCondition !== null`) do not mistake a pre-status battle
+ * for "already has a status", and so arithmetic on `sleepCounter` does not
+ * produce NaN (which would trap a sleeping mon in permanent sleep on resume).
  */
 export function normalizeBattlePokemon(mon: BattlePokemon): void {
   if (mon.statusCondition === undefined) {
@@ -48,6 +50,9 @@ export function normalizeBattlePokemon(mon: BattlePokemon): void {
   }
   if (mon.toxicCounter === undefined) {
     mon.toxicCounter = 0;
+  }
+  if (mon.sleepCounter === undefined || !Number.isFinite(mon.sleepCounter)) {
+    mon.sleepCounter = 0;
   }
 }
 

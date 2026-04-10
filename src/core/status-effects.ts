@@ -62,7 +62,11 @@ export function getBurnAttackMultiplier(pokemon: BattlePokemon): number {
 export function checkSleepSkip(pokemon: BattlePokemon, messages: string[]): boolean {
   if (pokemon.statusCondition !== 'sleep') return false;
 
-  pokemon.sleepCounter = Math.max(0, pokemon.sleepCounter - 1);
+  // Harden against corrupted/legacy saves where sleepCounter may be
+  // undefined/NaN — treat non-finite counters as "wake up now" rather than
+  // trapping the mon in permanent sleep.
+  const current = Number.isFinite(pokemon.sleepCounter) ? pokemon.sleepCounter : 0;
+  pokemon.sleepCounter = Math.max(0, current - 1);
 
   if (pokemon.sleepCounter === 0) {
     pokemon.statusCondition = null;
