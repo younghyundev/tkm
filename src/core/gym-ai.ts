@@ -33,9 +33,14 @@ function scoreStatChangeMove(
   if (opponentChanges.length > 0) {
     if (getHpRatio(defender) <= 0.5) return 0;
     const targetStat = opponentChanges[0].stat;
-    if (defender.statStages[targetStat] <= -6) return 0;
-    const normalized = Math.max(0, Math.min(1, defender.statStages[targetStat] / 6));
-    return 40 * (1 - normalized);
+    const stage = defender.statStages[targetStat];
+    if (stage <= -6) return 0;
+    // Score by remaining debuff headroom toward -6.
+    // headroom = stage + 6 → ranges 0 (at -6) up to 12 (at +6).
+    // Normalize to [0, 1]; max score at +6 (urgent corrective drop),
+    // mid score at neutral, near 0 as we approach -6.
+    const headroomRatio = (stage + 6) / 12;
+    return 40 * headroomRatio;
   }
 
   return 0;
