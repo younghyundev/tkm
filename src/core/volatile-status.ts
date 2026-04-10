@@ -132,12 +132,17 @@ export function applyLeechSeedEndOfTurn(
   const healer = sourceTeam.pokemon[sourceTeam.activeIndex];
   if (!healer) return false;
 
-  // Ownership guard: if the seeder's slot was recorded, verify it still
-  // matches the active slot. executeSwitch clears opposing leech-seed
-  // entries on switch-out, so a mismatched sourceSlot should not normally
-  // reach here. But if it does (e.g., a caller outside executeSwitch),
-  // drain the target but do not heal the replacement mon.
-  const healingAllowed = seeded.sourceSlot === undefined || seeded.sourceSlot === sourceTeam.activeIndex;
+  // Ownership guard: healing requires an explicit sourceSlot that still
+  // matches the source team's active slot. This is stricter than the
+  // executeSwitch cleanup path and covers three additional cases:
+  //   1. Legacy/resumed saves with leech_seed but no sourceSlot field
+  //      (pre-ownership-fix schema) — still drain, never heal.
+  //   2. Active-slot changes outside executeSwitch (CLI/TUI replacement
+  //      flows, post-faint replacements) where cleanup was skipped —
+  //      the mismatched slot blocks healing even if the entry survives.
+  //   3. Corrupted save data with a non-numeric sourceSlot.
+  const healingAllowed =
+    typeof seeded.sourceSlot === 'number' && seeded.sourceSlot === sourceTeam.activeIndex;
 
   const drain = Math.max(1, Math.floor(affected.maxHp / 8));
   const actualDrain = Math.min(drain, affected.currentHp);

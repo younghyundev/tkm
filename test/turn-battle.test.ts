@@ -982,7 +982,7 @@ describe('resolveTurn with status effects', () => {
     const messages: string[] = [];
 
     addVolatileStatus(target, { type: 'confusion', turnsRemaining: 3 }, messages);
-    addVolatileStatus(target, { type: 'leech_seed', sourceSide: 'player' }, messages);
+    addVolatileStatus(target, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, messages);
     addVolatileStatus(target, { type: 'flinch' }, messages);
 
     assert.deepEqual(
@@ -1004,7 +1004,7 @@ describe('resolveTurn with status effects', () => {
       currentHp: 160,
       moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
     });
-    addVolatileStatus(opp, { type: 'leech_seed', sourceSide: 'player' }, []);
+    addVolatileStatus(opp, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, []);
     const state = createBattleState([player], [opp]);
 
     resolveTurn(
@@ -1030,7 +1030,7 @@ describe('resolveTurn with status effects', () => {
       currentHp: 160,
       moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
     });
-    addVolatileStatus(opp, { type: 'leech_seed', sourceSide: 'player' }, []);
+    addVolatileStatus(opp, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, []);
     const state = createBattleState([player], [opp]);
 
     resolveTurn(
@@ -1105,7 +1105,7 @@ describe('resolveTurn with status effects', () => {
     const p2 = makeTestPokemon({ displayName: 'Bench' });
     const opp = makeTestPokemon({ displayName: 'Opp' });
     addVolatileStatus(p1, { type: 'confusion', turnsRemaining: 3 }, []);
-    addVolatileStatus(p1, { type: 'leech_seed', sourceSide: 'opponent' }, []);
+    addVolatileStatus(p1, { type: 'leech_seed', sourceSide: 'opponent', sourceSlot: 0 }, []);
     const state = createBattleState([p1, p2], [opp]);
 
     resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
@@ -1162,6 +1162,33 @@ describe('resolveTurn with status effects', () => {
 
     assert.ok(target.currentHp < 160, 'Target should still take drain damage');
     assert.equal(bench.currentHp, 10, 'Bench (wrong slot) must not receive leech-seed heal');
+  });
+
+  it('legacy leech_seed without sourceSlot cannot heal after resume', () => {
+    // Regression for v3c R4 HIGH: a legacy entry without sourceSlot must
+    // still drain the target but never heal any mon. The normalizer drops
+    // such entries during load, but this test bypasses that to validate
+    // the end-of-turn ownership guard as a second line of defense.
+    const seeder = makeTestPokemon({
+      displayName: 'Seeder',
+      currentHp: 10,
+      maxHp: 160,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const target = makeTestPokemon({
+      displayName: 'Target',
+      currentHp: 160,
+      maxHp: 160,
+      speed: 1,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    target.volatileStatuses.push({ type: 'leech_seed', sourceSide: 'player' } as any);
+    const state = createBattleState([seeder], [target]);
+
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.ok(target.currentHp < 160, 'Target should still take drain damage');
+    assert.equal(seeder.currentHp, 10, 'Seeder must not be healed from a legacy seed entry');
   });
 
   it('switching out also clears flinch if it was still present', () => {

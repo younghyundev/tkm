@@ -84,7 +84,7 @@ describe('addVolatileStatus', () => {
     const messages: string[] = [];
 
     assert.equal(
-      addVolatileStatus(mon, { type: 'leech_seed', sourceSide: 'player' }, messages),
+      addVolatileStatus(mon, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, messages),
       false,
     );
     assert.equal(mon.volatileStatuses.length, 0);
@@ -152,7 +152,7 @@ describe('applyLeechSeedEndOfTurn', () => {
   it('drains 1/8 max HP and heals the source side', () => {
     const seeded = makePokemon({
       displayName: 'Seeded',
-      volatileStatuses: [{ type: 'leech_seed', sourceSide: 'player' }],
+      volatileStatuses: [{ type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }],
     });
     const healer = makePokemon({ displayName: 'Healer', currentHp: 80 });
     const otherSide = makePokemon({ displayName: 'Opponent' });
@@ -167,7 +167,7 @@ describe('applyLeechSeedEndOfTurn', () => {
   it('caps healing at maxHp', () => {
     const seeded = makePokemon({
       currentHp: 20,
-      volatileStatuses: [{ type: 'leech_seed', sourceSide: 'player' }],
+      volatileStatuses: [{ type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }],
     });
     const healer = makePokemon({ currentHp: 159 });
     const otherSide = makePokemon({ displayName: 'Opponent' });

@@ -187,20 +187,25 @@ describe('battle state migration', () => {
     assert.equal(mon.volatileStatuses[0].type, 'confusion');
   });
 
-  it('normalizeBattlePokemon drops leech_seed entries with invalid sourceSide', () => {
+  it('normalizeBattlePokemon drops leech_seed entries with invalid sourceSide or missing sourceSlot', () => {
     // Regression for v3c R1 MEDIUM: leech_seed with a bogus sourceSide
     // ('foo') would crash applyLeechSeedEndOfTurn at allPokemon['foo'].
+    // Regression for v3c R4 HIGH: legacy leech_seed without sourceSlot
+    // must also be dropped; otherwise the ownership guard at end-of-turn
+    // would have no way to verify the original seeder's identity.
     const mon = makeLegacyPokemon({
       volatileStatuses: [
-        { type: 'leech_seed', sourceSide: 'foo' as any },
-        { type: 'leech_seed', sourceSide: 'player' },
+        { type: 'leech_seed', sourceSide: 'foo' as any, sourceSlot: 0 },
+        { type: 'leech_seed', sourceSide: 'player' }, // legacy, no sourceSlot
         { type: 'leech_seed' }, // no sourceSide
+        { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, // valid
       ],
     } as Partial<BattlePokemon>);
     normalizeBattlePokemon(mon);
     assert.equal(mon.volatileStatuses.length, 1);
     assert.equal(mon.volatileStatuses[0].type, 'leech_seed');
     assert.equal((mon.volatileStatuses[0] as any).sourceSide, 'player');
+    assert.equal((mon.volatileStatuses[0] as any).sourceSlot, 0);
   });
 
   it('normalizeBattlePokemon drops confusion with non-finite/expired turnsRemaining', () => {

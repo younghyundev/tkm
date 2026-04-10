@@ -76,10 +76,16 @@ export function normalizeBattlePokemon(mon: BattlePokemon): void {
           return false;
         }
       }
-      // leech_seed: require valid sourceSide
+      // leech_seed: require valid sourceSide AND numeric sourceSlot.
+      // Legacy saves from before the ownership fix have no sourceSlot,
+      // which would let them drain the target forever without the
+      // ownership guard ever matching. Drop them entirely so resume
+      // cannot silently revive the pre-R3 ownership bug.
       if ((entry as { type: string }).type === 'leech_seed') {
         const s = (entry as { sourceSide?: unknown }).sourceSide;
         if (typeof s !== 'string' || !validSides.has(s)) return false;
+        const slot = (entry as { sourceSlot?: unknown }).sourceSlot;
+        if (typeof slot !== 'number' || !Number.isFinite(slot) || slot < 0) return false;
       }
       return true;
     });
