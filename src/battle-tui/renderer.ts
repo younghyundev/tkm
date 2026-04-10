@@ -23,16 +23,30 @@ function padRight(text: string, width: number): string {
   return text + ' '.repeat(pad);
 }
 
+function statusLabel(mon: BattlePokemon): string {
+  if (!mon.statusCondition) return '';
+  const label = t(`status.label.${mon.statusCondition}`);
+  const colors: Record<string, string> = {
+    burn: '\x1b[31m',
+    poison: '\x1b[35m',
+    badly_poisoned: '\x1b[35m',
+    paralysis: '\x1b[33m',
+  };
+  const color = colors[mon.statusCondition] || '';
+  return ` ${color}[${label}]${RESET}`;
+}
+
 function pokemonLine(
   mon: BattlePokemon,
   indent: number,
 ): string {
   const nameStr = `${BOLD}${mon.displayName}${RESET}`;
   const lvStr = `${DIM}Lv.${mon.level}${RESET}`;
+  const status = statusLabel(mon);
   const hpBar = renderHpBar(mon.currentHp, mon.maxHp, 10);
   const hpNum = `${mon.currentHp}/${mon.maxHp}`;
   const prefix = ' '.repeat(indent);
-  return `${prefix}${nameStr} ${lvStr}        HP ${hpBar} ${hpNum}`;
+  return `${prefix}${nameStr} ${lvStr}${status}        HP ${hpBar} ${hpNum}`;
 }
 
 function doubleLine(): string {
@@ -138,7 +152,8 @@ function renderSwitchMenu(state: BattleState): string {
     const mon = team[i];
     if (mon.fainted || i === state.player.activeIndex) continue;
     const hpBar = renderHpBar(mon.currentHp, mon.maxHp, 8);
-    rows.push(`  ${BOLD}${i + 1}${RESET}. ${mon.displayName} Lv.${mon.level} ${hpBar} ${mon.currentHp}/${mon.maxHp}`);
+    const statusStr = mon.statusCondition ? ` [${t(`status.label.${mon.statusCondition}`)}]` : '';
+    rows.push(`  ${BOLD}${i + 1}${RESET}. ${mon.displayName} Lv.${mon.level}${statusStr} ${hpBar} ${mon.currentHp}/${mon.maxHp}`);
   }
 
   return rows.join('\n');

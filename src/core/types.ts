@@ -465,7 +465,9 @@ export interface StdinData {
 
 // ── Battle System Types ──
 
-export type MoveCategory = 'physical' | 'special';
+export type MoveCategory = 'physical' | 'special' | 'status';
+
+export type StatusCondition = 'burn' | 'poison' | 'badly_poisoned' | 'paralysis';
 
 export interface MoveData {
   id: number;
@@ -477,6 +479,10 @@ export interface MoveData {
   power: number;
   accuracy: number;
   pp: number;
+  effect?: {
+    type: StatusCondition;
+    chance: number;
+  };
 }
 
 export interface PokemonMovePool {
@@ -503,6 +509,8 @@ export interface BattlePokemon {
   speed: number;
   moves: BattleMove[];
   fainted: boolean;
+  statusCondition: StatusCondition | null;
+  toxicCounter: number;
 }
 
 export interface BattleTeam {

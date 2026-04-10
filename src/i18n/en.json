@@ -584,5 +584,23 @@
   "title.champion_galar": "Galar Champion",
   "title.champion_paldea": "Paldea Champion",
   "title.multi_champion": "Multi Champion",
-  "title.pokemon_master": "Pokémon Master"
+  "title.pokemon_master": "Pokémon Master",
+
+  "status.paralysis.inflicted": "{name} is paralyzed! It may be unable to move!",
+  "status.paralysis.immobile": "{name} is paralyzed! It can't move!",
+  "status.burn.inflicted": "{name} was burned!",
+  "status.burn.damage": "{name} is hurt by its burn!",
+  "status.poison.inflicted": "{name} was poisoned!",
+  "status.poison.damage": "{name} is hurt by poison!",
+  "status.badly_poisoned.inflicted": "{name} was badly poisoned!",
+  "status.already": "{name} already has a status condition!",
+  "status.immune": "It doesn't affect {name}...",
+  "status.fainted_by_status": "{name} fainted!",
+  "status.name.burn": "burn",
+  "status.name.poison": "poison",
+  "status.name.paralysis": "paralysis",
+  "status.label.burn": "BRN",
+  "status.label.poison": "PSN",
+  "status.label.badly_poisoned": "TOX",
+  "status.label.paralysis": "PRZ"
 }

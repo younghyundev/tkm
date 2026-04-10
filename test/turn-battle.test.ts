@@ -13,7 +13,7 @@ import {
   hasAlivePokemon,
   resolveTurn,
 } from '../src/core/turn-battle.js';
-import type { BattlePokemon, BattleMove, MoveData, BattleState } from '../src/core/types.js';
+import type { BattlePokemon, BattleMove, MoveData, BattleState, StatusCondition } from '../src/core/types.js';
 
 initLocale('ko');
 
@@ -80,6 +80,8 @@ function makeTestPokemon(overrides: Partial<BattlePokemon> = {}): BattlePokemon 
     speed: 70,
     moves: [{ data: makeMoveData(), currentPp: 35 }],
     fainted: false,
+    statusCondition: null,
+    toxicCounter: 0,
     ...overrides,
   };
 }
@@ -492,5 +494,226 @@ describe('calculateDamage edge cases', () => {
     const move: BattleMove = { data: makeMoveData({ type: 'normal', power: 40 }), currentPp: 10 };
     const dmg = calculateDamage(attacker, defender, move);
     assert.equal(dmg, 0, `Immune matchup should deal 0 damage, got ${dmg}`);
+  });
+});
+
+describe('resolveTurn with status effects', () => {
+  it('paralyzed pokemon has reduced effective speed in turn order', () => {
+    const player = makeTestPokemon({ displayName: 'Fast', types: ['normal'], speed: 110, statusCondition: null, toxicCounter: 0 });
+    const opponent = makeTestPokemon({ displayName: 'Slow', types: ['normal'], speed: 200, statusCondition: 'paralysis' as StatusCondition, toxicCounter: 0 });
+    const state = createBattleState([player], [opponent]);
+    const result = resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    // Opponent effective speed = 200 * 0.5 = 100 < 110, player goes first
+    assert.ok(result.messages[0].includes('Fast'), `Player should act first, got: ${result.messages[0]}`);
+  });
+
+  it('burn halves physical damage', () => {
+    const player = makeTestPokemon({ displayName: 'Burned', types: ['normal'], attack: 100, statusCondition: null, toxicCounter: 0 });
+    const defender = makeTestPokemon({ displayName: 'Def', types: ['normal'], defense: 50, statusCondition: null, toxicCounter: 0 });
+    const move: BattleMove = { data: makeMoveData({ power: 80, category: 'physical' }), currentPp: 10 };
+
+    let normalTotal = 0;
+    for (let i = 0; i < 200; i++) normalTotal += calculateDamage(player, defender, move);
+
+    player.statusCondition = 'burn';
+    let burnedTotal = 0;
+    for (let i = 0; i < 200; i++) burnedTotal += calculateDamage(player, defender, move);
+
+    const ratio = burnedTotal / normalTotal;
+    assert.ok(ratio > 0.4 && ratio < 0.6, `Burn ratio should be ~0.5, got ${ratio}`);
+  });
+
+  it('end-of-turn poison damage applied after moves', () => {
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0 });
+    const opp = makeTestPokemon({ displayName: 'O', maxHp: 160, currentHp: 160, statusCondition: 'poison' as StatusCondition, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    // Poison damage = floor(160/8) = 20, plus move damage
+    assert.ok(opp.currentHp < 160 - 20, `Should take move + poison damage`);
+  });
+
+  it('pokemon can faint from end-of-turn poison', () => {
+    const player = makeTestPokemon({ displayName: 'P', statusCondition: null, toxicCounter: 0, moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', maxHp: 160, currentHp: 1, statusCondition: 'poison' as StatusCondition, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.fainted, true);
+    assert.equal(opp.currentHp, 0);
+  });
+
+  it('secondary effect applies status on hit', () => {
+    const effectMove = makeMoveData({ type: 'fire', category: 'special', power: 40 });
+    (effectMove as any).effect = { type: 'burn', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: effectMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['water'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, 'burn');
+  });
+
+  it('toxic counter resets on switch', () => {
+    const p1 = makeTestPokemon({ displayName: 'Toxic', statusCondition: 'badly_poisoned' as StatusCondition, toxicCounter: 5 });
+    const p2 = makeTestPokemon({ displayName: 'Fresh', statusCondition: null, toxicCounter: 0 });
+    const opp = makeTestPokemon({ displayName: 'O', statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([p1, p2], [opp]);
+    resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
+    assert.equal(p1.toxicCounter, 1);
+  });
+
+  it('move-type immune target does not receive status from secondary effect', () => {
+    // Thunderbolt (electric) vs Ground-type — should not paralyze
+    const effectMove = makeMoveData({ type: 'electric', category: 'special', power: 90 });
+    (effectMove as any).effect = { type: 'paralysis', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: effectMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['ground'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, null, 'Ground type should not be paralyzed by Electric move');
+  });
+
+  it('steel type does not receive poison from a non-poison move secondary effect', () => {
+    // Hypothetical grass-type move (no type-immunity vs steel) with poison effect —
+    // steel status immunity should still block the poison application.
+    const effectMove = makeMoveData({ type: 'grass', category: 'special', power: 60 });
+    (effectMove as any).effect = { type: 'poison', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: effectMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['steel'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, null, 'Steel type should not be poisoned regardless of move type');
+  });
+
+  it('steel type does not receive badly_poisoned from a non-poison move', () => {
+    // Hypothetical grass-type status move with badly_poisoned effect — steel
+    // status immunity must still block it.
+    const toxicMove = makeMoveData({ type: 'grass', category: 'physical', power: 0, accuracy: 100 });
+    (toxicMove as any).effect = { type: 'badly_poisoned', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: toxicMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['steel'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, null, 'Steel type should not be badly poisoned regardless of move type');
+  });
+
+  it('move-type immune target does not receive status from status move', () => {
+    // Thunder Wave (electric status) vs Ground-type — should not paralyze
+    const statusMove = makeMoveData({ type: 'electric', category: 'physical', power: 0, accuracy: 90 });
+    (statusMove as any).effect = { type: 'paralysis', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: statusMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['ground'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, null, 'Ground type should not be paralyzed by Thunder Wave');
+  });
+
+  it('no-PP turn always resolves through Struggle, even when paralyzed', () => {
+    // Paralyzed pokemon with 0 PP should still use Struggle and take recoil
+    // damage — paralysis must not let a no-PP turn skip the mandatory Struggle path.
+    const player = makeTestPokemon({
+      displayName: 'Exhausted',
+      maxHp: 100,
+      currentHp: 100,
+      speed: 999,
+      statusCondition: 'paralysis' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 0 }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+
+    // Track over many trials — expected: Struggle runs on every turn (no paralysis skip)
+    // so recoil (1/4 max HP = 25) is applied each time.
+    let recoilHits = 0;
+    for (let i = 0; i < 50; i++) {
+      player.currentHp = 100;
+      resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+      if (player.currentHp < 100) recoilHits++;
+    }
+    assert.ok(recoilHits >= 40, `Struggle recoil should run on most no-PP turns, got ${recoilHits}/50`);
+  });
+
+  it('paralysis does not waste PP when fully paralyzed', () => {
+    // A normal chosen move skipped by full paralysis must not decrement PP.
+    // Force deterministic paralysis by monkey-patching Math.random via many trials.
+    const player = makeTestPokemon({
+      displayName: 'Paralyzed',
+      speed: 999,
+      statusCondition: 'paralysis' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+
+    // Run many trials and confirm that on turns where player message contains
+    // the immobile message, PP did NOT decrement.
+    const origRandom = Math.random;
+    try {
+      // Force paralysis skip by making Math.random return 0 (< 0.25)
+      Math.random = () => 0;
+      const ppBefore = player.moves[0].currentPp;
+      resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+      assert.equal(player.moves[0].currentPp, ppBefore, 'PP should not decrement on full paralysis');
+    } finally {
+      Math.random = origRandom;
+    }
+  });
+
+  it('simultaneous end-of-turn double KO results in opponent win (player loses)', () => {
+    // Both last mons are poisoned at 1 HP. End-of-turn poison damage faints
+    // both simultaneously. Mainline rule: player loses a double KO.
+    const player = makeTestPokemon({
+      displayName: 'P',
+      speed: 999,
+      maxHp: 160,
+      currentHp: 1,
+      statusCondition: 'poison' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'O',
+      speed: 1,
+      maxHp: 160,
+      currentHp: 1,
+      statusCondition: 'poison' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(state.phase, 'battle_end');
+    assert.equal(state.winner, 'opponent', 'Double KO should award opponent (player loses)');
+    assert.equal(player.fainted, true);
+    assert.equal(opp.fainted, true);
+  });
+
+  it('end-of-turn status damage does not run after opponent KO (last mon)', () => {
+    // Player KOs opponent's only pokemon while burned at 1 HP — player should win,
+    // not faint from burn tick after battle is already decided.
+    const player = makeTestPokemon({
+      displayName: 'Burned',
+      speed: 999,
+      attack: 200,
+      maxHp: 100,
+      currentHp: 1,
+      statusCondition: 'burn' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 100, category: 'special' }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Victim',
+      speed: 1,
+      maxHp: 50,
+      currentHp: 1,
+      defense: 1,
+      statusCondition: null,
+      toxicCounter: 0,
+    });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(state.winner, 'player', 'Player should win after KOing last mon');
+    assert.equal(player.fainted, false, 'Player should not faint from post-turn burn tick after battle decided');
+    assert.equal(state.phase, 'battle_end');
   });
 });

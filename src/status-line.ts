@@ -344,8 +344,8 @@ function animatedHpBar(
 // === Battle Mode Renderer ===
 function renderBattleMode(battleData: {
   battleState: {
-    player: { pokemon: Array<{ id: number; name: string; displayName: string; types: string[]; level: number; maxHp: number; currentHp: number; fainted: boolean }>; activeIndex: number };
-    opponent: { pokemon: Array<{ id: number; name: string; displayName: string; types: string[]; level: number; maxHp: number; currentHp: number; fainted: boolean }>; activeIndex: number };
+    player: { pokemon: Array<{ id: number; name: string; displayName: string; types: string[]; level: number; maxHp: number; currentHp: number; fainted: boolean; statusCondition?: string | null }>; activeIndex: number };
+    opponent: { pokemon: Array<{ id: number; name: string; displayName: string; types: string[]; level: number; maxHp: number; currentHp: number; fainted: boolean; statusCondition?: string | null }>; activeIndex: number };
     turn: number;
     phase: string;
     winner: string | null;
@@ -461,8 +461,18 @@ function renderBattleMode(battleData: {
   const playerFaintedMark = playerFainted ? ` ${t('battle.fainted_label')}` : '';
 
   // Info lines below sprites
-  const oppInfo = `${oppMon.displayName} Lv.${oppMon.level}${oppHitMark}${oppFaintedMark}`;
-  const playerInfo = `${playerMon.displayName} Lv.${playerMon.level}${playerHitMark}${playerFaintedMark}`;
+  // Status condition indicator
+  const statusLabels: Record<string, string> = {
+    burn: '\x1b[31m[BRN]\x1b[0m',
+    poison: '\x1b[35m[PSN]\x1b[0m',
+    badly_poisoned: '\x1b[35m[TOX]\x1b[0m',
+    paralysis: '\x1b[33m[PRZ]\x1b[0m',
+  };
+  const oppStatusMark = oppMon.statusCondition ? ' ' + (statusLabels[oppMon.statusCondition] || '') : '';
+  const playerStatusMark = playerMon.statusCondition ? ' ' + (statusLabels[playerMon.statusCondition] || '') : '';
+
+  const oppInfo = `${oppMon.displayName} Lv.${oppMon.level}${oppStatusMark}${oppHitMark}${oppFaintedMark}`;
+  const playerInfo = `${playerMon.displayName} Lv.${playerMon.level}${playerStatusMark}${playerHitMark}${playerFaintedMark}`;
 
   const oppHpResult = animatedHpBar(oppMon.currentHp, oppMon.maxHp, lastHit, 'opponent', 10, now);
   const playerHpResult = animatedHpBar(playerMon.currentHp, playerMon.maxHp, lastHit, 'player', 10, now);

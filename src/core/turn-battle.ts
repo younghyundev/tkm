@@ -9,6 +9,13 @@ import type {
   TurnAction,
   TurnResult,
 } from './types.js';
+import {
+  getParalysisSpeedMultiplier,
+  getBurnAttackMultiplier,
+  checkParalysisSkip,
+  applyEndOfTurnEffects,
+  rollMoveEffect,
+} from './status-effects.js';
 
 // ── Stat Calculation ──
 
@@ -57,6 +64,8 @@ export function createBattlePokemon(
     speed: calculateStat(baseStats.speed, level),
     moves: moves.map((m) => ({ data: m, currentPp: m.pp })),
     fainted: false,
+    statusCondition: null,
+    toxicCounter: 0,
   };
 }
 
@@ -70,7 +79,9 @@ export function calculateDamage(
   const power = move.data.power;
   if (!power || power <= 0) return 0;
 
-  const atk = move.data.category === 'physical' ? attacker.attack : attacker.spAttack;
+  const rawAtk = move.data.category === 'physical' ? attacker.attack : attacker.spAttack;
+  const burnMod = move.data.category === 'physical' ? getBurnAttackMultiplier(attacker) : 1.0;
+  const atk = Math.floor(rawAtk * burnMod);
   const def = Math.max(1, move.data.category === 'physical' ? defender.defense : defender.spDefense);
 
   const base = Math.floor(
@@ -158,6 +169,10 @@ function executeSwitch(
   }
   const old = getActivePokemon(team);
   team.activeIndex = targetIndex;
+  // Reset toxic counter when switching out
+  if (old.statusCondition === 'badly_poisoned') {
+    old.toxicCounter = 1;
+  }
   const next = getActivePokemon(team);
   messages.push(`${old.displayName}에서 ${next.displayName}(으)로 교체!`);
 }
@@ -193,7 +208,10 @@ function executeMove(
   // Skip if attacker already fainted
   if (attacker.fainted) return { defenderFainted: false };
 
-  // Determine move (struggle if no PP)
+  // Determine move (struggle if no PP) BEFORE paralysis check.
+  // Struggle is mandatory — if the attacker has no usable PP we must run its
+  // recoil path regardless of status. Only chosen (non-Struggle) moves can be
+  // skipped by full paralysis, so the PP-decrement invariant holds.
   let move: BattleMove;
   let isStruggle = false;
 
@@ -208,16 +226,31 @@ function executeMove(
     isStruggle = true;
     messages.push(`${attacker.displayName}은(는) 발버둥쳤다!`);
   } else {
-    move = attacker.moves[moveIndex];
-    if (move.currentPp <= 0) {
+    const chosen = attacker.moves[moveIndex];
+    if (chosen.currentPp <= 0) {
       // Requested move has 0 PP → struggle
       move = STRUGGLE_MOVE;
       isStruggle = true;
       messages.push(`${attacker.displayName}은(는) 발버둥쳤다!`);
     } else {
-      move.currentPp--;
-      messages.push(`${attacker.displayName}의 ${move.data.nameKo}!`);
+      move = chosen;
+      // Defer PP decrement + move announcement until after paralysis check so
+      // that a fully paralyzed turn does not waste PP on the chosen move.
     }
+  }
+
+  // Paralysis full-skip check — only applies to chosen moves, never to
+  // mandatory Struggle. This preserves the invariant that a no-PP turn always
+  // resolves through Struggle recoil.
+  if (!isStruggle && checkParalysisSkip(attacker, messages)) {
+    return { defenderFainted: false };
+  }
+
+  // Announce and consume PP for the chosen move (Struggle was already
+  // announced above and has no persistent PP).
+  if (!isStruggle) {
+    move.currentPp--;
+    messages.push(`${attacker.displayName}의 ${move.data.nameKo}!`);
   }
 
   // Accuracy check
@@ -225,6 +258,10 @@ function executeMove(
     messages.push('공격이 빗나갔다!');
     return { defenderFainted: false };
   }
+
+  // Move-type effectiveness (shared by damage, messages, and effect gating)
+  const effMsg = getEffectivenessMessage(move.data.type, defender.types);
+  const moveTypeImmune = effMsg === 'effect_immune';
 
   // Damage calculation
   const damage = calculateDamage(attacker, defender, move);
@@ -240,7 +277,6 @@ function executeMove(
   }
 
   // Effectiveness messages
-  const effMsg = getEffectivenessMessage(move.data.type, defender.types);
   if (effMsg === 'effect_super') messages.push('효과가 굉장했다!');
   else if (effMsg === 'effect_not_very') messages.push('효과가 별로인 듯하다...');
   else if (effMsg === 'effect_immune') messages.push('효과가 없는 듯하다...');
@@ -250,6 +286,12 @@ function executeMove(
     defender.fainted = true;
     messages.push(`${defender.displayName}은(는) 쓰러졌다!`);
     return { defenderFainted: true };
+  }
+
+  // Roll secondary effect — blocked if the move type has no effect on the defender
+  // (e.g., Thunder Wave vs Ground-type should not paralyze).
+  if (!defender.fainted && move.data.effect && !moveTypeImmune) {
+    rollMoveEffect(move.data, defender, messages);
   }
 
   return { defenderFainted: false };
@@ -292,7 +334,9 @@ export function resolveTurn(
     const bPriority = b.action.type === 'switch' ? 0 : 1;
     if (aPriority !== bPriority) return aPriority - bPriority;
     // Same priority → speed
-    if (a.pokemon.speed !== b.pokemon.speed) return b.pokemon.speed - a.pokemon.speed;
+    const aSpeed = Math.floor(a.pokemon.speed * getParalysisSpeedMultiplier(a.pokemon));
+    const bSpeed = Math.floor(b.pokemon.speed * getParalysisSpeedMultiplier(b.pokemon));
+    if (aSpeed !== bSpeed) return bSpeed - aSpeed;
     // Random tiebreak
     return Math.random() < 0.5 ? -1 : 1;
   });
@@ -317,11 +361,39 @@ export function resolveTurn(
   if (playerActive.fainted) playerFainted = true;
   if (opponentActive.fainted) opponentFainted = true;
 
+  // ── End-of-turn status effects ──
+  // Skip post-turn damage once the battle is already decided — applying burn/poison
+  // ticks after either side has no remaining Pokemon would mutate state past the
+  // natural end of the match and could flip the winner.
+  const battleOverAfterActions = !hasAlivePokemon(state.player) || !hasAlivePokemon(state.opponent);
+  if (!battleOverAfterActions) {
+    const statusMessages: string[] = [];
+    if (!playerActive.fainted) {
+      if (applyEndOfTurnEffects(playerActive, statusMessages)) {
+        playerFainted = true;
+      }
+    }
+    if (!opponentActive.fainted) {
+      if (applyEndOfTurnEffects(opponentActive, statusMessages)) {
+        opponentFainted = true;
+      }
+    }
+    messages.push(...statusMessages);
+  }
+
   // Win/loss conditions
   const playerAlive = hasAlivePokemon(state.player);
   const opponentAlive = hasAlivePokemon(state.opponent);
 
-  if (!opponentAlive) {
+  if (!playerAlive && !opponentAlive) {
+    // Simultaneous double KO (e.g., both last mons faint to end-of-turn
+    // burn/poison in the same turn). Mainline Pokemon gives this to the
+    // opponent — the player "loses" because their last Pokemon did not
+    // survive. We follow the same convention so post-turn trades cannot
+    // flip into a false player victory.
+    state.phase = 'battle_end';
+    state.winner = 'opponent';
+  } else if (!opponentAlive) {
     state.phase = 'battle_end';
     state.winner = 'player';
   } else if (!playerAlive) {

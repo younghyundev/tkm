@@ -52,7 +52,11 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "effect": {
+      "type": "burn",
+      "chance": 10
+    }
   },
   "8": {
     "id": 8,
@@ -74,7 +78,11 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "effect": {
+      "type": "paralysis",
+      "chance": 10
+    }
   },
   "10": {
     "id": 10,
@@ -283,7 +291,11 @@
     "category": "physical",
     "power": 85,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "effect": {
+      "type": "paralysis",
+      "chance": 30
+    }
   },
   "35": {
     "id": 35,
@@ -393,7 +405,11 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
-    "pp": 25
+    "pp": 25,
+    "effect": {
+      "type": "burn",
+      "chance": 10
+    }
   },
   "53": {
     "id": 53,
@@ -404,7 +420,11 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "effect": {
+      "type": "burn",
+      "chance": 10
+    }
   },
   "55": {
     "id": 55,
@@ -582,6 +602,21 @@
     "accuracy": 100,
     "pp": 15
   },
+  "73": {
+    "id": 73,
+    "name": "stun-spore",
+    "nameKo": "저리가루",
+    "nameEn": "Stun Spore",
+    "type": "grass",
+    "category": "status",
+    "power": 0,
+    "accuracy": 75,
+    "pp": 30,
+    "effect": {
+      "type": "paralysis",
+      "chance": 100
+    }
+  },
   "75": {
     "id": 75,
     "name": "razor-leaf",
@@ -603,6 +638,21 @@
     "power": 120,
     "accuracy": 100,
     "pp": 10
+  },
+  "77": {
+    "id": 77,
+    "name": "poison-powder",
+    "nameKo": "독가루",
+    "nameEn": "Poison Powder",
+    "type": "poison",
+    "category": "status",
+    "power": 0,
+    "accuracy": 75,
+    "pp": 35,
+    "effect": {
+      "type": "poison",
+      "chance": 100
+    }
   },
   "80": {
     "id": 80,
@@ -635,7 +685,26 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "effect": {
+      "type": "paralysis",
+      "chance": 10
+    }
+  },
+  "86": {
+    "id": 86,
+    "name": "thunder-wave",
+    "nameKo": "전기자석파",
+    "nameEn": "Thunder Wave",
+    "type": "electric",
+    "category": "status",
+    "power": 0,
+    "accuracy": 90,
+    "pp": 20,
+    "effect": {
+      "type": "paralysis",
+      "chance": 100
+    }
   },
   "87": {
     "id": 87,
@@ -646,7 +715,11 @@
     "category": "special",
     "power": 110,
     "accuracy": 70,
-    "pp": 10
+    "pp": 10,
+    "effect": {
+      "type": "paralysis",
+      "chance": 30
+    }
   },
   "88": {
     "id": 88,
@@ -690,7 +763,11 @@
     "category": "status",
     "power": 0,
     "accuracy": 90,
-    "pp": 10
+    "pp": 10,
+    "effect": {
+      "type": "badly_poisoned",
+      "chance": 100
+    }
   },
   "93": {
     "id": 93,
@@ -833,7 +910,11 @@
     "category": "special",
     "power": 110,
     "accuracy": 85,
-    "pp": 5
+    "pp": 5,
+    "effect": {
+      "type": "burn",
+      "chance": 10
+    }
   },
   "127": {
     "id": 127,
@@ -1174,7 +1255,11 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "effect": {
+      "type": "poison",
+      "chance": 30
+    }
   },
   "189": {
     "id": 189,
@@ -1284,7 +1369,11 @@
     "category": "physical",
     "power": 65,
     "accuracy": 100,
-    "pp": 20
+    "pp": 20,
+    "effect": {
+      "type": "paralysis",
+      "chance": 30
+    }
   },
   "210": {
     "id": 210,
@@ -1549,6 +1638,21 @@
     "power": 95,
     "accuracy": 90,
     "pp": 10
+  },
+  "261": {
+    "id": 261,
+    "name": "will-o-wisp",
+    "nameKo": "도깨비불",
+    "nameEn": "Will-O-Wisp",
+    "type": "fire",
+    "category": "status",
+    "power": 0,
+    "accuracy": 85,
+    "pp": 15,
+    "effect": {
+      "type": "burn",
+      "chance": 100
+    }
   },
   "263": {
     "id": 263,
@@ -2186,7 +2290,11 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
-    "pp": 20
+    "pp": 20,
+    "effect": {
+      "type": "poison",
+      "chance": 30
+    }
   },
   "399": {
     "id": 399,
@@ -2516,7 +2624,11 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "effect": {
+      "type": "paralysis",
+      "chance": 30
+    }
   },
   "436": {
     "id": 436,
@@ -2527,7 +2639,11 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "effect": {
+      "type": "burn",
+      "chance": 30
+    }
   },
   "437": {
     "id": 437,
@@ -2571,7 +2687,11 @@
     "category": "physical",
     "power": 70,
     "accuracy": 100,
-    "pp": 20
+    "pp": 20,
+    "effect": {
+      "type": "poison",
+      "chance": 10
+    }
   },
   "441": {
     "id": 441,
@@ -2934,7 +3054,11 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "effect": {
+      "type": "burn",
+      "chance": 30
+    }
   },
   "506": {
     "id": 506,
@@ -3462,7 +3586,11 @@
     "category": "physical",
     "power": 20,
     "accuracy": 100,
-    "pp": 20
+    "pp": 20,
+    "effect": {
+      "type": "paralysis",
+      "chance": 100
+    }
   },
   "611": {
     "id": 611,

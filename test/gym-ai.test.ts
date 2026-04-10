@@ -4,6 +4,7 @@ import { initLocale } from '../src/i18n/index.js';
 import { selectAiMove, selectAiAction } from '../src/core/gym-ai.js';
 import { createBattlePokemon } from '../src/core/turn-battle.js';
 import type { MoveData } from '../src/core/types.js';
+import type { BattlePokemon, StatusCondition } from '../src/core/types.js';
 
 initLocale('ko');
 
@@ -33,6 +34,12 @@ const tackle: MoveData = {
   pp: 35,
 };
 
+const thunderWave: MoveData = {
+  id: 86, name: 'thunder-wave', nameKo: '전기자석파', nameEn: 'Thunder Wave',
+  type: 'electric', category: 'status' as any, power: 0, accuracy: 90, pp: 20,
+  effect: { type: 'paralysis' as StatusCondition, chance: 100 },
+};
+
 // ── Helpers ──
 
 function makeAttacker() {
@@ -46,6 +53,13 @@ function makeWaterDefender() {
   return createBattlePokemon(
     { id: 120, types: ['water'], level: 30, baseStats: { hp: 30, attack: 45, defense: 55, speed: 85, sp_attack: 70, sp_defense: 25 } },
     [tackle],
+  );
+}
+
+function makeAttackerWithStatus() {
+  return createBattlePokemon(
+    { id: 25, types: ['electric'], level: 30, baseStats: { hp: 35, attack: 55, defense: 40, speed: 90, sp_attack: 50, sp_defense: 50 } },
+    [thunderbolt, thunderWave],
   );
 }
 
@@ -97,5 +111,52 @@ describe('selectAiAction', () => {
     assert.equal(action.type, 'move');
     assert.ok('moveIndex' in action, 'Action should have moveIndex');
     assert.equal(typeof action.moveIndex, 'number');
+  });
+});
+
+describe('selectAiMove with status moves', () => {
+  it('uses status move when opponent has no status', () => {
+    let statusCount = 0;
+    for (let i = 0; i < 200; i++) {
+      const idx = selectAiMove(makeAttackerWithStatus(), makeWaterDefender());
+      if (idx === 1) statusCount++;
+    }
+    assert.ok(statusCount > 0, `Status move should be used sometimes, got ${statusCount}/200`);
+  });
+
+  it('never uses status move when opponent already has status', () => {
+    let statusCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const defender = makeWaterDefender();
+      (defender as BattlePokemon).statusCondition = 'paralysis';
+      if (selectAiMove(makeAttackerWithStatus(), defender) === 1) statusCount++;
+    }
+    assert.equal(statusCount, 0, 'Should never pick status move when opponent has status');
+  });
+
+  it('never uses status move when opponent is immune', () => {
+    let statusCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const defender = createBattlePokemon(
+        { id: 26, types: ['electric'], level: 30, baseStats: { hp: 35, attack: 55, defense: 40, speed: 90, sp_attack: 50, sp_defense: 50 } },
+        [tackle],
+      );
+      if (selectAiMove(makeAttackerWithStatus(), defender) === 1) statusCount++;
+    }
+    assert.equal(statusCount, 0, 'Should never pick status move when opponent is type-immune');
+  });
+
+  it('never uses Thunder Wave against Ground-type (move-type immunity)', () => {
+    // Ground is status-vulnerable to paralysis but immune to Electric moves.
+    // The AI should recognize move-type immunity, not just status-type immunity.
+    let statusCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const defender = createBattlePokemon(
+        { id: 50, types: ['ground'], level: 30, baseStats: { hp: 35, attack: 55, defense: 40, speed: 90, sp_attack: 50, sp_defense: 50 } },
+        [tackle],
+      );
+      if (selectAiMove(makeAttackerWithStatus(), defender) === 1) statusCount++;
+    }
+    assert.equal(statusCount, 0, 'Should never pick Thunder Wave against Ground (move-type immune)');
   });
 });

@@ -3,7 +3,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync, renameSync } from 'fs';
 import { join, dirname } from 'path';
-import type { BattleState, GymData } from './types.js';
+import type { BattlePokemon, BattleState, BattleTeam, GymData } from './types.js';
 
 // ── Constants ──
 
@@ -35,10 +35,37 @@ export interface BattleStateFile {
 
 // ── File Operations ──
 
+/**
+ * Backfill status fields on a BattlePokemon parsed from an older save.
+ * `statusCondition` and `toxicCounter` were added in status-effects-v2;
+ * earlier battle-state.json files lack them. We normalize `undefined` to
+ * the schema defaults so downstream checks (e.g. `statusCondition !== null`)
+ * do not mistake a pre-status battle for "already has a status".
+ */
+export function normalizeBattlePokemon(mon: BattlePokemon): void {
+  if (mon.statusCondition === undefined) {
+    mon.statusCondition = null;
+  }
+  if (mon.toxicCounter === undefined) {
+    mon.toxicCounter = 0;
+  }
+}
+
+export function normalizeBattleTeam(team: BattleTeam): void {
+  if (!team || !Array.isArray(team.pokemon)) return;
+  for (const mon of team.pokemon) {
+    normalizeBattlePokemon(mon);
+  }
+}
+
 export function readBattleState(): BattleStateFile | null {
   if (!existsSync(BATTLE_STATE_PATH)) return null;
   try {
-    return JSON.parse(readFileSync(BATTLE_STATE_PATH, 'utf-8'));
+    const parsed = JSON.parse(readFileSync(BATTLE_STATE_PATH, 'utf-8')) as BattleStateFile;
+    // Migrate pre-status saves so they can be resumed safely.
+    if (parsed?.battleState?.player) normalizeBattleTeam(parsed.battleState.player);
+    if (parsed?.battleState?.opponent) normalizeBattleTeam(parsed.battleState.opponent);
+    return parsed;
   } catch {
     return null;
   }
