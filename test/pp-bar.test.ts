@@ -3,6 +3,16 @@ import assert from 'node:assert/strict';
 import { ppBar } from '../src/core/pp.js';
 import type { StdinData } from '../src/core/types.js';
 
+function withMockedNow<T>(nowMs: number, run: () => T): T {
+  const realNow = Date.now;
+  Date.now = () => nowMs;
+  try {
+    return run();
+  } finally {
+    Date.now = realNow;
+  }
+}
+
 describe('ppBar', () => {
   it('70% remaining shows battery bar + percentage + time', () => {
     const futureTs = Math.floor(Date.now() / 1000) + 7200; // +2h
@@ -110,5 +120,27 @@ describe('ppBar', () => {
     const result = ppBar(data);
     assert.ok(result);
     assert.ok(result.includes('(~2h1m)'));
+  });
+
+  it('rounds 1h59m30s up to 2h instead of showing 1h60m', () => {
+    const result = withMockedNow(0, () => ppBar({
+      rate_limits: {
+        five_hour: { used_percentage: 30, resets_at: 7170 },
+      },
+    }));
+    assert.ok(result);
+    assert.ok(result.includes('(~2h)'));
+    assert.ok(!result.includes('1h60m'));
+  });
+
+  it('keeps exact 2h remaining formatted without minutes', () => {
+    const result = withMockedNow(0, () => ppBar({
+      rate_limits: {
+        five_hour: { used_percentage: 30, resets_at: 7200 },
+      },
+    }));
+    assert.ok(result);
+    assert.ok(result.includes('(~2h)'));
+    assert.ok(!result.includes('2h0m'));
   });
 });
