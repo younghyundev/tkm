@@ -102,10 +102,10 @@ function detectLastHit(
 
   // Return the most recent significant hit (prefer opponent taking damage = player attacked)
   if (opponentDamage > 0) {
-    return { target: 'opponent', damage: opponentDamage, effectiveness };
+    return { target: 'opponent', damage: opponentDamage, effectiveness, timestamp: Date.now(), prevHp: opponentHpBefore };
   }
   if (playerDamage > 0) {
-    return { target: 'player', damage: playerDamage, effectiveness };
+    return { target: 'player', damage: playerDamage, effectiveness, timestamp: Date.now(), prevHp: playerHpBefore };
   }
   return null;
 }
@@ -618,8 +618,9 @@ function handleDefeat(bsf: BattleStateFile, messages: string[]): void {
 
   messages.push(t('battle.defeat', { leader: gym.leaderKo }));
 
-  // Clean up battle state
-  deleteBattleState();
+  // Keep battle state alive for collapse animation; status line reads defeatTimestamp
+  bsf.defeatTimestamp = Date.now();
+  writeBattleState(bsf);
 
   output({
     status: 'defeat',
