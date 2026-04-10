@@ -310,18 +310,33 @@ function hpBar(current: number, max: number, width: number = 10): string {
   return `${color}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`;
 }
 
-/** HP bar with drain animation: interpolates from prevHp to currentHp over ANIM_HP_DRAIN_MS. */
+/** HP bar with drain animation: interpolates from prevHp to currentHp over ANIM_HP_DRAIN_MS.
+ *  Also flashes red/yellow for super effective hits during ANIM_COLOR_FLASH_MS. */
 function animatedHpBar(
   currentHp: number,
   maxHp: number,
-  lastHit: { target: 'player' | 'opponent'; timestamp: number; prevHp: number } | null | undefined,
+  lastHit: { target: 'player' | 'opponent'; effectiveness: string; timestamp: number; prevHp: number } | null | undefined,
   side: 'player' | 'opponent',
   width: number = 10,
 ): string {
   if (!lastHit || lastHit.target !== side) return hpBar(currentHp, maxHp, width);
-  const progress = animProgress(lastHit.timestamp, ANIM_HP_DRAIN_MS);
-  if (progress == null) return hpBar(currentHp, maxHp, width);
-  const displayHp = Math.round(lastHit.prevHp - (lastHit.prevHp - currentHp) * progress);
+
+  const drainProgress = animProgress(lastHit.timestamp, ANIM_HP_DRAIN_MS);
+  const colorProgress = animProgress(lastHit.timestamp, ANIM_COLOR_FLASH_MS);
+
+  const displayHp = drainProgress != null
+    ? Math.round(lastHit.prevHp - (lastHit.prevHp - currentHp) * drainProgress)
+    : currentHp;
+
+  if (colorProgress != null && lastHit.effectiveness === 'super') {
+    const elapsed = Date.now() - lastHit.timestamp;
+    const flashColor = Math.floor(elapsed / 200) % 2 === 0 ? '\x1b[31m' : '\x1b[33m';
+    const ratio = Math.max(0, Math.min(1, displayHp / maxHp));
+    const filled = Math.round(ratio * width);
+    const empty = width - filled;
+    return `${flashColor}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`;
+  }
+
   return hpBar(displayHp, maxHp, width);
 }
 
