@@ -10,10 +10,11 @@ import { getActiveEvents } from '../core/encounter.js';
 import { checkMilestoneRewards, checkTypeMasters, checkChainCompletion } from '../core/pokedex-rewards.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { addItem, randInt } from '../core/items.js';
-import { getPokemonName } from '../core/pokemon-data.js';
+import { getPokemonName, getAchievementsDB } from '../core/pokemon-data.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale, t } from '../i18n/index.js';
 import { withLockRetry } from '../core/lock.js';
+import { loadGymData } from '../core/gym.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 
 function readStdin(): string {
@@ -45,17 +46,57 @@ function main(): void {
   const messages: string[] = [];
 
   const result = withLockRetry(() => {
-    const state = readState();
+    const state = readState(gen);
 
     // Common state migration (first time only)
     if (!commonStateExists()) {
       migrateToCommonState();
     }
+
+    // Migrate legacy "Champion Badge" → champion_<region> for ALL gens
+    // so the aggregate recomputation below sees the correct badge IDs.
+    const legacyChampionMap: Record<string, string> = {
+      gen1: 'champion_kanto', gen2: 'champion_johto', gen3: 'champion_hoenn',
+      gen4: 'champion_sinnoh', gen5: 'champion_unova', gen6: 'champion_kalos',
+      gen7: 'champion_alola', gen8: 'champion_galar', gen9: 'champion_paldea',
+    };
+    for (const [genKey, newBadge] of Object.entries(legacyChampionMap)) {
+      const genState = genKey === gen ? state : readState(genKey);
+      const badges = genState.gym_badges ?? [];
+      const legacyIdx = badges.indexOf('Champion Badge');
+      if (legacyIdx !== -1) {
+        badges[legacyIdx] = newBadge;
+        genState.gym_badges = badges;
+        if (genKey === gen) {
+          // Current gen state will be written at the end
+        } else {
+          writeState(genState, genKey);
+        }
+      }
+    }
+
     // Consistency recalculation (every session start)
     const commonState = readCommonState();
     recalculateCommonEffects(commonState);
 
-    const config = readConfig();
+    // Recompute badge aggregates from per-gen state (idempotent, every session start)
+    {
+      let totalBadges = 0;
+      let completedGens = 0;
+      for (const genKey of ['gen1','gen2','gen3','gen4','gen5','gen6','gen7','gen8','gen9']) {
+        const genState = readState(genKey);
+        const genBadges = genState.gym_badges ?? [];
+        totalBadges += genBadges.length;
+        const gyms = loadGymData(genKey);
+        if (gyms.length > 0 && gyms.every(g => genBadges.includes(g.badge))) {
+          completedGens++;
+        }
+      }
+      commonState.total_gym_badges = totalBadges;
+      commonState.completed_gym_gens = completedGens;
+    }
+
+    const config = readConfig(gen);
 
     // Materialize common rewards into gen config/state on first session of a gen only.
     // Subsequent sessions already have these persisted. This handles new gen onboarding
@@ -69,6 +110,48 @@ function main(): void {
           state.items[item] = (state.items[item] ?? 0) + count;
         }
       }
+    }
+
+    // Materialize cross-gen title and rare_weight_multiplier on every session start
+    // so all gens see common achievement effects
+    if (commonState.titles && commonState.titles.length > 0) {
+      for (const title of commonState.titles) {
+        if (!state.titles.includes(title)) state.titles.push(title);
+      }
+    }
+    // Rebuild per-gen rare_weight_multiplier from per-gen achievements to avoid
+    // compounding on repeated session starts, then multiply common on top.
+    {
+      let perGenRareMultiplier = 1.0;
+      try {
+        const genAchDB = getAchievementsDB(gen);
+        for (const ach of genAchDB.achievements) {
+          if (!state.achievements[ach.id]) continue;
+          for (const effect of (ach.reward_effects ?? []) as Array<{ type: string; value?: number }>) {
+            if (effect.type === 'rare_weight_multiplier') {
+              perGenRareMultiplier *= (effect.value ?? 1.0);
+            }
+          }
+        }
+      } catch { /* ignore — keep perGenRareMultiplier at 1.0 */ }
+      state.rare_weight_multiplier = perGenRareMultiplier * (commonState.rare_weight_multiplier ?? 1.0);
+    }
+    // Rebuild per-gen encounter_rate_bonus from per-gen achievements to avoid
+    // compounding on repeated session starts, then add common on top.
+    {
+      let perGenEncounterBonus = 0;
+      try {
+        const genAchDB = getAchievementsDB(gen);
+        for (const ach of genAchDB.achievements) {
+          if (!state.achievements[ach.id]) continue;
+          for (const effect of (ach.reward_effects ?? []) as Array<{ type: string; value?: number }>) {
+            if (effect.type === 'encounter_rate_bonus') {
+              perGenEncounterBonus += (effect.value ?? 0);
+            }
+          }
+        }
+      } catch { /* ignore — keep perGenEncounterBonus at 0 */ }
+      state.encounter_rate_bonus = perGenEncounterBonus + (commonState.encounter_rate_bonus ?? 0);
     }
     initLocale(config.language ?? 'en', readGlobalConfig().voice_tone);
 
@@ -126,8 +209,15 @@ function main(): void {
     resetWeeklyStats(state);
 
     // Check achievements (first_session, ten_sessions)
-    const achEvents = checkAchievements(state, config);
+    const achEvents = checkAchievements(state, config, commonState, gen);
     for (const achEvent of achEvents) {
+      messages.push(formatAchievementMessage(achEvent));
+    }
+
+    // Backfill common badge achievements for upgraded saves
+    // (aggregates were recomputed above; per-gen achievements just ran)
+    const backfillCommonAchEvents = checkCommonAchievements(commonState, config, state);
+    for (const achEvent of backfillCommonAchEvents) {
       messages.push(formatAchievementMessage(achEvent));
     }
 
@@ -162,7 +252,7 @@ function main(): void {
     }
     // Save config if party_slot was awarded
     if (milestones.some(c => c.milestone.reward_type === 'party_slot')) {
-      writeConfig(config);
+      writeConfig(config, gen);
     }
 
     const newTypeMasters = checkTypeMasters(state);
@@ -180,7 +270,7 @@ function main(): void {
 
     // Refresh notifications and include active ones in output
     updateKnownRegions(state);
-    refreshNotifications(state, config);
+    refreshNotifications(state, config, commonState);
     const activeNotifs = getActiveNotifications(state);
     if (activeNotifs.length > 0) {
       const icons: Record<string, string> = {
@@ -219,7 +309,7 @@ function main(): void {
     }
     writeCommonState(commonState);
 
-    writeState(state);
+    writeState(state, gen);
   });
 
   // Lock failed — skip gracefully (state not mutated)

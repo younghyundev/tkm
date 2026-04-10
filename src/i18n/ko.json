@@ -360,6 +360,20 @@
   "battle.shiny_catch": "\n★ 색이 다른 포켓몬 포획 성공!",
   "battle.shiny_escaped": "\n색이 다른 {pokemon:이/가} 도망쳤다...",
 
+  "battle.gym_challenge": "{leader:이/가} 승부를 걸어왔다!",
+  "battle.send_out": "{leader:은/는} {pokemon:을/를} 내보냈다!",
+  "battle.go": "가라, {pokemon}!",
+  "battle.victory": "{leader}에게 승리했다!",
+  "battle.defeat": "{leader}에게 패배했다...",
+  "battle.select_switch": "교체할 포켓몬을 선택하세요:",
+  "battle.no_switch": "교체할 수 있는 포켓몬이 없다!",
+  "battle.select_next": "다음 포켓몬을 선택하세요:",
+  "battle.all_fainted": "모든 포켓몬이 쓰러졌다...",
+  "battle.surrender_confirm": "정말 항복하시겠습니까?",
+  "battle.press_any_key": "아무 키나 눌러서 나가기",
+  "battle.fainted_label": "[쓰러짐]",
+  "battle.other_session": "다른 세션의 배틀이 진행 중입니다.",
+
   "achievement.unlocked": "🏆 업적 달성: {name}! ",
   "achievement.unlocked_pokemon": "🏆 업적 달성: {name}! {pokemon:을/를} 얻었습니다!",
   "achievement.unlocked_message": "🏆 업적 달성: {name}! {message}",
@@ -531,5 +545,44 @@
   "exp_group.fluctuating": "변동",
 
   "weather.location_set": "날씨 위치가 {location}(으)로 설정되었습니다. 매 세션마다 업데이트됩니다.",
-  "weather.fetch_failed": "날씨 데이터를 가져올 수 없습니다. 다음 세션에 재시도합니다."
+  "weather.fetch_failed": "날씨 데이터를 가져올 수 없습니다. 다음 세션에 재시도합니다.",
+
+  "gym.gate_rejected": "이 체육관에 도전하려면 이 지역의 도감을 더 채우거나 파티를 더 성장시켜야 합니다! (도감: {caught}/{required}마리, 파티 평균 레벨: Lv.{avgLevel}/{requiredLevel})",
+
+  "tip.gym_region_rumor": "각 지역에는 강력한 관장이 기다리고 있다는 소문이 있다.",
+  "tip.gym_badge_reward": "관장에게 이기면 특별한 배지를 얻을 수 있다고 한다.",
+  "tip.gym_gate_hint": "🏟️ 체육관에 도전하려면 해당 지역의 도감을 채우거나 파티를 성장시키세요!",
+  "tip.gym_badge_collect": "🏟️ 배지를 모아 챔피언에게 도전하세요! `/tkm gym list`로 확인",
+  "tip.gym_next_info": "🏟️ 다음 체육관: {leaderName} ({type}타입) — 상성을 준비하세요!",
+  "tip.gym_badge_progress": "배지를 {badgeCount}개 모았다. 챔피언까지 {remaining}개 남았다고 한다.",
+
+  "gym.champion_badge_required": "모든 배지를 모아야 챔피언에게 도전할 수 있습니다! (현재 배지: {badgeCount}/8)",
+
+  "gym.badge_earned": "🥊 {badge} 획득! ({leader} 격파) [{count}/8]",
+  "gym.champion_victory_header": "챔피언 승리!",
+  "gym.champion_victory_detail": "{region} 챔피언 {leader} 격파!",
+  "gym.title_earned": "칭호 획득: {title}",
+  "gym.reward_pokemon": "보상: {pokemon} 획득!",
+  "gym.reward_xp_dump": "{pokemon}에게 {xp} XP 부여! (Lv.{oldLevel} → Lv.{newLevel})",
+
+  "achievement.first_badge": "첫 번째 배지",
+  "achievement.four_badges": "배지 수집가",
+  "achievement.eight_badges": "체육관 마스터",
+  "achievement.champion": "챔피언",
+  "achievement.total_badges_10": "배지 매니아",
+  "achievement.total_badges_30": "배지 마니아",
+  "achievement.three_gen_champion": "멀티 챔피언",
+  "achievement.all_gen_champion": "포켓몬 마스터",
+
+  "title.champion_kanto": "관동 챔피언",
+  "title.champion_johto": "성도 챔피언",
+  "title.champion_hoenn": "호연 챔피언",
+  "title.champion_sinnoh": "신오 챔피언",
+  "title.champion_unova": "하나 챔피언",
+  "title.champion_kalos": "칼로스 챔피언",
+  "title.champion_alola": "알로라 챔피언",
+  "title.champion_galar": "가라르 챔피언",
+  "title.champion_paldea": "팔데아 챔피언",
+  "title.multi_champion": "멀티 챔피언",
+  "title.pokemon_master": "포켓몬 마스터"
 }

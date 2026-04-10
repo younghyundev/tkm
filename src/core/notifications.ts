@@ -1,13 +1,13 @@
-import { getAchievementsDB, getRegionsDB, getAchievementName } from './pokemon-data.js';
+import { getAchievementsDB, getCommonAchievementsDB, getRegionsDB, getAchievementName } from './pokemon-data.js';
 import { isRegionUnlocked } from './regions.js';
 import { t } from '../i18n/index.js';
-import type { State, Config, Notification } from './types.js';
+import type { State, Config, Notification, CommonState } from './types.js';
 
 /**
  * Scan state for conditions that warrant notifications.
  * Returns new notifications not already dismissed.
  */
-export function checkPendingNotifications(state: State, config: Config): Notification[] {
+export function checkPendingNotifications(state: State, config: Config, commonState?: CommonState): Notification[] {
   if (!config.notifications_enabled) return [];
 
   const now = new Date().toISOString().split('T')[0];
@@ -51,6 +51,23 @@ export function checkPendingNotifications(state: State, config: Config): Notific
   for (const ach of achDB.achievements) {
     if (state.achievements[ach.id]) continue;
     const progress = getAchievementProgress(ach.trigger_type, ach.trigger_value, state);
+    if (progress >= 0.9) {
+      const id = `achievement_near:${ach.id}`;
+      if (state.dismissed_notifications.includes(id)) continue;
+      notifications.push({
+        id,
+        type: 'achievement_near',
+        message: t('notification.achievement_near', { name: getAchievementName(ach.id), pct: Math.round(progress * 100) }),
+        created: now,
+      });
+    }
+  }
+
+  // 3b. Common achievement near (>= 90% progress)
+  const commonAchDB = getCommonAchievementsDB();
+  for (const ach of commonAchDB.achievements) {
+    if (commonState?.achievements?.[ach.id]) continue;
+    const progress = getCommonAchievementProgress(ach.trigger_type, ach.trigger_value, commonState);
     if (progress >= 0.9) {
       const id = `achievement_near:${ach.id}`;
       if (state.dismissed_notifications.includes(id)) continue;
@@ -110,8 +127,8 @@ export function dismissAll(state: State): void {
  * Update state.notifications with freshly checked notifications.
  * Also prunes dismissed_notifications to prevent unbounded growth.
  */
-export function refreshNotifications(state: State, config: Config): void {
-  state.notifications = checkPendingNotifications(state, config);
+export function refreshNotifications(state: State, config: Config, commonState?: CommonState): void {
+  state.notifications = checkPendingNotifications(state, config, commonState);
 
   // Prune: keep only dismissed IDs that match current active notifications + cap at 100
   const activeIds = new Set(state.notifications.map(n => n.id));
@@ -132,6 +149,25 @@ export function updateKnownRegions(state: State): void {
   state.last_known_regions = count;
 }
 
+function getCommonAchievementProgress(triggerType: string, triggerValue: number, commonState?: CommonState): number {
+  if (!commonState) return 0;
+  let current = 0;
+  switch (triggerType) {
+    case 'session_count': current = commonState.session_count; break;
+    case 'error_count': current = commonState.error_count; break;
+    case 'evolution_count': current = commonState.evolution_count; break;
+    case 'total_tokens': current = commonState.total_tokens_consumed; break;
+    case 'permission_count': current = commonState.permission_count; break;
+    case 'battle_wins': current = commonState.battle_wins; break;
+    case 'battle_count': current = commonState.battle_count; break;
+    case 'catch_count': current = commonState.catch_count; break;
+    case 'badge_count': current = commonState.total_gym_badges; break;
+    case 'all_gen_badges': current = commonState.completed_gym_gens; break;
+    default: return 0;
+  }
+  return triggerValue > 0 ? current / triggerValue : 0;
+}
+
 function getAchievementProgress(triggerType: string, triggerValue: number, state: State): number {
   let current = 0;
   switch (triggerType) {
@@ -143,6 +179,15 @@ function getAchievementProgress(triggerType: string, triggerValue: number, state
     case 'battle_wins': current = state.battle_wins ?? 0; break;
     case 'battle_count': current = state.battle_count ?? 0; break;
     case 'catch_count': current = state.catch_count ?? 0; break;
+    case 'badge_count': current = (state.gym_badges ?? []).length; break;
+    case 'champion_defeated': {
+      current = (state.gym_badges ?? []).filter(b => b.startsWith('champion_')).length;
+      break;
+    }
+    case 'all_gen_badges': {
+      // all_gen_badges only exists in common achievements; not reached from per-gen scan
+      return 0;
+    }
     default: return 0;
   }
   return triggerValue > 0 ? current / triggerValue : 0;

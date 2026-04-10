@@ -157,7 +157,15 @@
         40,
         65
       ],
-      "pokemon_pool": [],
+      "pokemon_pool": [
+        "675",
+        "681",
+        "697",
+        "699",
+        "706",
+        "713",
+        "715"
+      ],
       "unlock_condition": {
         "type": "pokedex_caught",
         "value": 40

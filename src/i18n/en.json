@@ -360,6 +360,20 @@
   "battle.shiny_catch": "\n★ Shiny caught!",
   "battle.shiny_escaped": "\nThe shiny {pokemon} got away...",
 
+  "battle.gym_challenge": "{leader} wants to battle!",
+  "battle.send_out": "{leader} sent out {pokemon}!",
+  "battle.go": "Go, {pokemon}!",
+  "battle.victory": "You defeated {leader}!",
+  "battle.defeat": "You lost to {leader}...",
+  "battle.select_switch": "Choose a Pokémon to switch to:",
+  "battle.no_switch": "No Pokémon available to switch!",
+  "battle.select_next": "Choose your next Pokémon:",
+  "battle.all_fainted": "All your Pokémon fainted...",
+  "battle.surrender_confirm": "Are you sure you want to surrender?",
+  "battle.press_any_key": "Press any key to exit",
+  "battle.fainted_label": "[Fainted]",
+  "battle.other_session": "A battle from another session is in progress.",
+
   "achievement.unlocked": "🏆 Achievement unlocked: {name}! ",
   "achievement.unlocked_pokemon": "🏆 Achievement unlocked: {name}! You got {pokemon}!",
   "achievement.unlocked_message": "🏆 Achievement unlocked: {name}! {message}",
@@ -531,5 +545,44 @@
   "exp_group.fluctuating": "Fluctuating",
 
   "weather.location_set": "Weather location set to {location}. Weather will update each session.",
-  "weather.fetch_failed": "Could not fetch weather data. Will retry next session."
+  "weather.fetch_failed": "Could not fetch weather data. Will retry next session.",
+
+  "gym.gate_rejected": "You need to explore more of this region's Pokédex or train your party before challenging this gym! (Pokédex: {caught}/{required}, Party avg level: Lv.{avgLevel}/{requiredLevel})",
+
+  "tip.gym_region_rumor": "Rumors say a powerful Gym Leader awaits in each region.",
+  "tip.gym_badge_reward": "They say you earn a special badge for defeating a Gym Leader.",
+  "tip.gym_gate_hint": "🏟️ Fill the regional Pokédex or train your party to challenge a gym!",
+  "tip.gym_badge_collect": "🏟️ Collect badges to challenge the Champion! Check with `/tkm gym list`",
+  "tip.gym_next_info": "🏟️ Next gym: {leaderName} ({type} type) — prepare your type matchups!",
+  "tip.gym_badge_progress": "You've collected {badgeCount} badges. They say {remaining} more until the Champion.",
+
+  "gym.champion_badge_required": "You must collect all 8 badges before challenging the Champion! (Current badges: {badgeCount}/8)",
+
+  "gym.badge_earned": "🥊 {badge} earned! ({leader} defeated) [{count}/8]",
+  "gym.champion_victory_header": "CHAMPION VICTORY!",
+  "gym.champion_victory_detail": "{region} Champion {leader} defeated!",
+  "gym.title_earned": "Title earned: {title}",
+  "gym.reward_pokemon": "Reward: {pokemon} obtained!",
+  "gym.reward_xp_dump": "{pokemon} gained {xp} XP! (Lv.{oldLevel} → Lv.{newLevel})",
+
+  "achievement.first_badge": "First Badge",
+  "achievement.four_badges": "Badge Collector",
+  "achievement.eight_badges": "Gym Master",
+  "achievement.champion": "Champion",
+  "achievement.total_badges_10": "Badge Enthusiast",
+  "achievement.total_badges_30": "Badge Maniac",
+  "achievement.three_gen_champion": "Multi Champion",
+  "achievement.all_gen_champion": "Pokémon Master",
+
+  "title.champion_kanto": "Kanto Champion",
+  "title.champion_johto": "Johto Champion",
+  "title.champion_hoenn": "Hoenn Champion",
+  "title.champion_sinnoh": "Sinnoh Champion",
+  "title.champion_unova": "Unova Champion",
+  "title.champion_kalos": "Kalos Champion",
+  "title.champion_alola": "Alola Champion",
+  "title.champion_galar": "Galar Champion",
+  "title.champion_paldea": "Paldea Champion",
+  "title.multi_champion": "Multi Champion",
+  "title.pokemon_master": "Pokémon Master"
 }

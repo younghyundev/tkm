@@ -23,6 +23,10 @@ function makeCommonState(overrides: Partial<CommonState> = {}): CommonState {
     evolution_count: 0,
     error_count: 0,
     permission_count: 0,
+    total_gym_badges: 0,
+    completed_gym_gens: 0,
+    titles: [],
+    rare_weight_multiplier: 1.0,
     ...overrides,
   };
 }
@@ -200,6 +204,117 @@ describe('checkAchievements', () => {
 
     const count = state.unlocked.filter(u => u === '393').length;
     assert.equal(count, 1, 'should not duplicate in unlocked');
+  });
+
+  it('first_badge triggers at badge_count >= 1', () => {
+    const state = makeState({ gym_badges: ['boulder'] });
+    const config = makeConfig();
+    const events = checkAchievements(state, config);
+    const ev = events.find(e => e.id === 'first_badge');
+    assert.ok(ev, 'first_badge should trigger');
+    assert.ok(state.achievements['first_badge']);
+  });
+
+  it('first_badge does not trigger with no badges', () => {
+    const state = makeState({ gym_badges: [] });
+    const config = makeConfig();
+    const events = checkAchievements(state, config);
+    const ev = events.find(e => e.id === 'first_badge');
+    assert.equal(ev, undefined, 'first_badge should not trigger');
+  });
+
+  it('four_badges triggers at badge_count >= 4', () => {
+    const state = makeState({ gym_badges: ['a', 'b', 'c', 'd'] });
+    const config = makeConfig();
+    const events = checkAchievements(state, config);
+    const ev = events.find(e => e.id === 'four_badges');
+    assert.ok(ev, 'four_badges should trigger');
+  });
+
+  it('eight_badges applies rare_weight_multiplier', () => {
+    const state = makeState({ gym_badges: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] });
+    const config = makeConfig();
+    checkAchievements(state, config);
+    assert.ok(state.achievements['eight_badges']);
+    assert.equal(state.rare_weight_multiplier, 1.3);
+  });
+
+  it('champion triggers when champion badge exists', () => {
+    const state = makeState({ gym_badges: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'champion_sinnoh'] });
+    const config = makeConfig();
+    const events = checkAchievements(state, config);
+    const ev = events.find(e => e.id === 'champion');
+    assert.ok(ev, 'champion should trigger');
+  });
+
+  it('champion does not trigger without champion_ prefix badge', () => {
+    const state = makeState({ gym_badges: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] });
+    const config = makeConfig();
+    const events = checkAchievements(state, config);
+    const ev = events.find(e => e.id === 'champion');
+    assert.equal(ev, undefined, 'champion should not trigger');
+  });
+
+  it('champion achievement grants title', () => {
+    const state = makeState({ gym_badges: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'champion_sinnoh'] });
+    const config = makeConfig();
+    checkAchievements(state, config);
+    assert.ok(state.titles.includes('champion_sinnoh'), 'should have champion_sinnoh title');
+  });
+
+  it('total_badges_10 triggers in common achievements', () => {
+    const state = makeState();
+    const config = makeConfig();
+    const commonState = makeCommonState({ total_gym_badges: 10 });
+    const events = checkCommonAchievements(commonState, config, state);
+
+    const ev = events.find(e => e.id === 'total_badges_10');
+    assert.ok(ev, 'total_badges_10 should trigger');
+  });
+
+  it('total_badges_10 does not trigger below threshold', () => {
+    const state = makeState();
+    const config = makeConfig();
+    const commonState = makeCommonState({ total_gym_badges: 9 });
+    const events = checkCommonAchievements(commonState, config, state);
+
+    const ev = events.find(e => e.id === 'total_badges_10');
+    assert.equal(ev, undefined, 'total_badges_10 should not trigger');
+  });
+
+  it('all_gen_champion triggers at completed_gym_gens >= 9', () => {
+    const state = makeState();
+    const config = makeConfig();
+    const commonState = makeCommonState({ completed_gym_gens: 9 });
+    const events = checkCommonAchievements(commonState, config, state);
+
+    const ev = events.find(e => e.id === 'all_gen_champion');
+    assert.ok(ev, 'all_gen_champion should trigger');
+  });
+
+  it('three_gen_champion triggers at completed_gym_gens >= 3', () => {
+    const state = makeState();
+    const config = makeConfig();
+    const commonState = makeCommonState({ completed_gym_gens: 3 });
+    const events = checkCommonAchievements(commonState, config, state);
+
+    const ev = events.find(e => e.id === 'three_gen_champion');
+    assert.ok(ev, 'three_gen_champion should trigger');
+  });
+
+  it('champion XP dumps when reward pokemon already owned', () => {
+    const state = makeState({
+      gym_badges: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'champion_sinnoh'],
+      unlocked: ['493'],
+      pokemon: { '493': { id: 493, xp: levelToXp(50, 'slow'), level: 50, friendship: 0, ev: 0 } },
+    });
+    const config = makeConfig();
+    const events = checkAchievements(state, config);
+    const ev = events.find(e => e.id === 'champion');
+    assert.ok(ev, 'champion should trigger');
+    assert.ok(ev!.rewardXpDump, 'should have XP dump');
+    assert.ok(ev!.rewardXpDump! > 0, 'XP dump should be positive');
+    assert.ok(state.pokemon['493'].level > 50, 'level should increase from XP dump');
   });
 });
 

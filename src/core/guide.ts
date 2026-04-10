@@ -4,6 +4,8 @@ import { fileURLToPath } from 'url';
 import { getPokemonDB, getAchievementsDB, getRegionsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription } from './pokemon-data.js';
 import { getCompletion } from './pokedex.js';
 import { getCurrentRegion, getRegionList } from './regions.js';
+import { getNextGym, loadGymData } from './gym.js';
+import { getActiveGeneration } from './paths.js';
 import { t } from '../i18n/index.js';
 import type { State, Config } from './types.js';
 
@@ -116,12 +118,32 @@ function resolvePokeBallCount(state: State, _config: Config): Record<string, str
   return { count: String(count) };
 }
 
+function resolveNextGymInfo(state: State, _config: Config): Record<string, string> | null {
+  const generation = getActiveGeneration();
+  const gym = getNextGym(generation, state);
+  if (!gym) return null;
+  return { leaderName: gym.leaderKo || gym.leader, type: gym.type };
+}
+
+function resolveGymBadgeProgress(state: State, _config: Config): Record<string, string> | null {
+  const generation = getActiveGeneration();
+  const gyms = loadGymData(generation);
+  if (gyms.length === 0) return null;
+  const badgeCount = state.gym_badges?.length ?? 0;
+  const total = gyms.length;
+  const remaining = total - badgeCount;
+  if (remaining <= 0) return null;
+  return { badgeCount: String(badgeCount), remaining: String(remaining) };
+}
+
 const RESOLVERS: Record<string, (state: State, config: Config) => Record<string, string> | null> = {
   nextRegionUnlock: resolveNextRegionUnlock,
   currentRegionLevel: resolveCurrentRegionLevel,
   nearestAchievement: resolveNearestAchievement,
   weakestPartyMember: resolveWeakestPartyMember,
   pokeBallCount: resolvePokeBallCount,
+  nextGymInfo: resolveNextGymInfo,
+  gymBadgeProgress: resolveGymBadgeProgress,
 };
 
 // === Tip Selection ===

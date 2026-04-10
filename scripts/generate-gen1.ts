@@ -241,6 +241,8 @@ async function main() {
         attack: statMap['attack'] || 0,
         defense: statMap['defense'] || 0,
         speed: statMap['speed'] || 0,
+        sp_attack: statMap['special-attack'] || 0,
+        sp_defense: statMap['special-defense'] || 0,
       };
       const bst = Object.values(statMap).reduce((a, b) => a + b, 0);
 

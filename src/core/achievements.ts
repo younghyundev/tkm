@@ -1,6 +1,6 @@
 import { getPokemonDB, getAchievementsDB, getCommonAchievementsDB, getAchievementName, getPokemonName } from './pokemon-data.js';
 import { markCaught } from './pokedex.js';
-import { levelToXp } from './xp.js';
+import { levelToXp, xpToLevel } from './xp.js';
 import { t } from '../i18n/index.js';
 import type { State, Config, AchievementEvent, CommonState } from './types.js';
 
@@ -8,8 +8,8 @@ import type { State, Config, AchievementEvent, CommonState } from './types.js';
  * Check all achievements against current state.
  * Returns list of newly unlocked achievements.
  */
-export function checkAchievements(state: State, config: Config, commonState?: CommonState): AchievementEvent[] {
-  const db = getAchievementsDB();
+export function checkAchievements(state: State, config: Config, commonState?: CommonState, generation?: string): AchievementEvent[] {
+  const db = getAchievementsDB(generation);
   const pokemonDB = getPokemonDB();
   const events: AchievementEvent[] = [];
 
@@ -42,6 +42,14 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
       case 'catch_count':
         triggered = (state.catch_count ?? 0) >= ach.trigger_value;
         break;
+      case 'badge_count':
+        triggered = (state.gym_badges ?? []).length >= ach.trigger_value;
+        break;
+      case 'champion_defeated': {
+        const championBadges = (state.gym_badges ?? []).filter(b => b.startsWith('champion_'));
+        triggered = championBadges.length >= ach.trigger_value;
+        break;
+      }
     }
 
     if (!triggered) continue;
@@ -56,12 +64,27 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
     // Handle reward pokemon
     if (ach.reward_pokemon) {
       const rewardName = ach.reward_pokemon;
-      if (!state.unlocked.includes(rewardName)) {
-        state.unlocked.push(rewardName);
-        const pData = pokemonDB.pokemon[rewardName];
+      const pData = pokemonDB.pokemon[rewardName];
+      if (state.unlocked.includes(rewardName) && state.pokemon[rewardName] && pData) {
+        // Already owned: XP dump
+        const rewardLevel = (ach as { reward_level?: number }).reward_level;
+        const group = pData.exp_group ?? 'slow';
+        const bonusXp = levelToXp(rewardLevel ?? 75, group);
+        state.pokemon[rewardName].xp += bonusXp;
+        state.pokemon[rewardName].level = xpToLevel(state.pokemon[rewardName].xp, group);
+        event.rewardXpDump = bonusXp;
+        event.rewardPokemon = rewardName;
+      } else {
+        // New grant OR recovery from unlocked/pokemon divergence
+        if (!state.unlocked.includes(rewardName)) {
+          state.unlocked.push(rewardName);
+        }
         if (pData && !state.pokemon[rewardName]) {
+          const rewardLevel = (ach as { reward_level?: number }).reward_level;
           let level: number;
-          if (pData.rarity === 'legendary' || pData.rarity === 'mythical') {
+          if (rewardLevel) {
+            level = rewardLevel;
+          } else if (pData.rarity === 'legendary' || pData.rarity === 'mythical') {
             level = 50;
           } else {
             const partyLevels = (config.party ?? []).map((name: string) => state.pokemon[name]?.level ?? 0).filter((l: number) => l > 0);
@@ -75,7 +98,7 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
       }
     }
 
-    applyAchievementEffects(ach.id, state, config, commonState);
+    applyAchievementEffects(ach.id, state, config, commonState, generation);
 
     // For dual-existence IDs (e.g. hundred_k_tokens in both common and gen4),
     // also mark commonState so recalculateCommonEffects includes their effects on restart
@@ -89,8 +112,8 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
   return events;
 }
 
-function applyAchievementEffects(achievementId: string, state: State, config: Config, commonState?: CommonState): void {
-  const db = getAchievementsDB();
+function applyAchievementEffects(achievementId: string, state: State, config: Config, commonState?: CommonState, generation?: string): void {
+  const db = getAchievementsDB(generation);
   const ach = db.achievements.find(a => a.id === achievementId);
 
   // Process structured reward_effects from achievements.json
@@ -109,11 +132,23 @@ function applyAchievementEffects(achievementId: string, state: State, config: Co
         case 'unlock_legendary':
           // Flag-only effect — no direct state change needed
           break;
-        case 'encounter_rate_bonus':
-          // Cross-state write: encounter_rate_bonus always goes to commonState
-          if (commonState) {
-            commonState.encounter_rate_bonus += (effect.value ?? 0);
+        case 'title':
+          if (effect.value) {
+            const titleStr = String(effect.value);
+            if (!state.titles.includes(titleStr)) state.titles.push(titleStr);
+            // Do NOT write per-gen titles to commonState — they are per-gen only.
+            // Only common achievement titles belong in commonState.titles.
           }
+          break;
+        case 'rare_weight_multiplier':
+          // Per-gen only: don't write to commonState (common effects are recalculated
+          // from common achievements by recalculateCommonEffects at session start)
+          state.rare_weight_multiplier = (state.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
+          break;
+        case 'encounter_rate_bonus':
+          // Per-gen only: don't write to commonState (common effects are recalculated
+          // from common achievements by recalculateCommonEffects at session start)
+          state.encounter_rate_bonus = (state.encounter_rate_bonus ?? 0) + (effect.value ?? 0);
           break;
       }
     }
@@ -161,6 +196,12 @@ export function checkCommonAchievements(commonState: CommonState, config: Config
       case 'catch_count':
         triggered = commonState.catch_count >= ach.trigger_value;
         break;
+      case 'badge_count':
+        triggered = commonState.total_gym_badges >= ach.trigger_value;
+        break;
+      case 'all_gen_badges':
+        triggered = commonState.completed_gym_gens >= ach.trigger_value;
+        break;
     }
 
     if (!triggered) continue;
@@ -172,8 +213,8 @@ export function checkCommonAchievements(commonState: CommonState, config: Config
       name: getAchievementName(ach.id),
     };
 
-    // Apply effects to commonState
-    applyCommonAchievementEffects(ach, commonState, config);
+    // Apply effects to commonState and per-gen state
+    applyCommonAchievementEffects(ach, commonState, config, state);
 
     events.push(event);
   }
@@ -185,6 +226,7 @@ function applyCommonAchievementEffects(
   ach: { reward_effects?: Array<{ type: string; item?: string; count?: number; value?: number }> },
   commonState: CommonState,
   config: Config,
+  state: State,
 ): void {
   if (!ach.reward_effects) return;
   for (const effect of ach.reward_effects) {
@@ -204,6 +246,18 @@ function applyCommonAchievementEffects(
         break;
       case 'unlock_legendary':
         break;
+      case 'title':
+        if (effect.value) {
+          const titleStr = String(effect.value);
+          if (!state.titles.includes(titleStr)) state.titles.push(titleStr);
+          if (!commonState.titles) commonState.titles = [];
+          if (!commonState.titles.includes(titleStr)) commonState.titles.push(titleStr);
+        }
+        break;
+      case 'rare_weight_multiplier':
+        state.rare_weight_multiplier = (state.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
+        commonState.rare_weight_multiplier = (commonState.rare_weight_multiplier ?? 1.0) * (effect.value ?? 1.0);
+        break;
     }
   }
 }
@@ -212,6 +266,10 @@ function applyCommonAchievementEffects(
  * Format achievement event as a notification message.
  */
 export function formatAchievementMessage(event: AchievementEvent): string {
+  if (event.rewardXpDump && event.rewardPokemon) {
+    // XP dump for duplicate — show generic unlock message, not "got pokemon"
+    return t('achievement.unlocked', { name: event.name }) + '!';
+  }
   if (event.rewardPokemon) {
     return t('achievement.unlocked_pokemon', { name: event.name, pokemon: getPokemonName(event.rewardPokemon) });
   }

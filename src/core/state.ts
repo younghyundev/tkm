@@ -89,6 +89,10 @@ const DEFAULT_COMMON_STATE: CommonState = {
   evolution_count: 0,
   error_count: 0,
   permission_count: 0,
+  total_gym_badges: 0,
+  completed_gym_gens: 0,
+  titles: [],
+  rare_weight_multiplier: 1.0,
   last_codex_tokens_total: 0,
 };
 
@@ -104,9 +108,11 @@ export function readCommonState(): CommonState {
       ...parsed,
       achievements: parsed.achievements ?? {},
       items: parsed.items ?? {},
+      titles: parsed.titles ?? [],
+      rare_weight_multiplier: parsed.rare_weight_multiplier ?? 1.0,
     };
   } catch {
-    return { ...DEFAULT_COMMON_STATE, achievements: {}, items: {} };
+    return { ...DEFAULT_COMMON_STATE, achievements: {}, items: {}, titles: [], rare_weight_multiplier: 1.0 };
   }
 }
 

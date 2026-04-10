@@ -27,6 +27,10 @@ function makeCommonState(overrides: Partial<CommonState> = {}): CommonState {
     evolution_count: 0,
     error_count: 0,
     permission_count: 0,
+    total_gym_badges: 0,
+    completed_gym_gens: 0,
+    titles: [],
+    rare_weight_multiplier: 1.0,
     ...overrides,
   };
 }
@@ -43,17 +47,17 @@ describe('common achievement loading', () => {
     assert.ok(db.achievements.length > 0, 'should have at least one common achievement');
   });
 
-  it('common achievements count is 17', () => {
+  it('common achievements count is 21', () => {
     const db = getCommonAchievementsDB();
-    assert.equal(db.achievements.length, 17);
+    assert.equal(db.achievements.length, 21);
   });
 
   it('getAchievementsDB returns gen-specific only (not merged with common)', () => {
     const genDB = getAchievementsDB('gen4');
 
-    // Gen-specific DB should have exactly 10 gen4 achievements
-    assert.equal(genDB.achievements.length, 10,
-      `gen4 should have 10 achievements, got ${genDB.achievements.length}`);
+    // Gen-specific DB should have exactly 14 gen4 achievements
+    assert.equal(genDB.achievements.length, 14,
+      `gen4 should have 14 achievements, got ${genDB.achievements.length}`);
   });
 });
 
@@ -138,6 +142,7 @@ describe('recalculateCommonEffects', () => {
       },
     });
 
+    // Pass includePerGen=false to test common-only recalculation in isolation
     recalculateCommonEffects(commonState);
 
     assert.ok(

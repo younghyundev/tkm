@@ -20,7 +20,9 @@
         "hp": 100,
         "attack": 100,
         "defense": 100,
-        "speed": 100
+        "speed": 100,
+        "sp_attack": 100,
+        "sp_defense": 100
       },
       "catch_rate": 3
     },
@@ -45,7 +47,9 @@
         "hp": 45,
         "attack": 45,
         "defense": 55,
-        "speed": 63
+        "speed": 63,
+        "sp_attack": 45,
+        "sp_defense": 55
       },
       "catch_rate": 45,
       "evolves_to": "496"
@@ -71,7 +75,9 @@
         "hp": 60,
         "attack": 60,
         "defense": 75,
-        "speed": 83
+        "speed": 83,
+        "sp_attack": 60,
+        "sp_defense": 75
       },
       "catch_rate": 45,
       "evolves_to": "497"
@@ -97,7 +103,9 @@
         "hp": 75,
         "attack": 75,
         "defense": 95,
-        "speed": 113
+        "speed": 113,
+        "sp_attack": 75,
+        "sp_defense": 95
       },
       "catch_rate": 45
     },
@@ -122,7 +130,9 @@
         "hp": 65,
         "attack": 63,
         "defense": 45,
-        "speed": 45
+        "speed": 45,
+        "sp_attack": 45,
+        "sp_defense": 45
       },
       "catch_rate": 45,
       "evolves_to": "499"
@@ -149,7 +159,9 @@
         "hp": 90,
         "attack": 93,
         "defense": 55,
-        "speed": 55
+        "speed": 55,
+        "sp_attack": 70,
+        "sp_defense": 55
       },
       "catch_rate": 45,
       "evolves_to": "500"
@@ -176,7 +188,9 @@
         "hp": 110,
         "attack": 123,
         "defense": 65,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 100,
+        "sp_defense": 65
       },
       "catch_rate": 45
     },
@@ -201,7 +215,9 @@
         "hp": 55,
         "attack": 55,
         "defense": 45,
-        "speed": 45
+        "speed": 45,
+        "sp_attack": 63,
+        "sp_defense": 45
       },
       "catch_rate": 45,
       "evolves_to": "502"
@@ -227,7 +243,9 @@
         "hp": 75,
         "attack": 75,
         "defense": 60,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 83,
+        "sp_defense": 60
       },
       "catch_rate": 45,
       "evolves_to": "503"
@@ -253,7 +271,9 @@
         "hp": 95,
         "attack": 100,
         "defense": 85,
-        "speed": 70
+        "speed": 70,
+        "sp_attack": 108,
+        "sp_defense": 70
       },
       "catch_rate": 45
     },
@@ -277,7 +297,9 @@
         "hp": 45,
         "attack": 55,
         "defense": 39,
-        "speed": 42
+        "speed": 42,
+        "sp_attack": 35,
+        "sp_defense": 39
       },
       "catch_rate": 255,
       "evolves_to": "505"
@@ -302,7 +324,9 @@
         "hp": 60,
         "attack": 85,
         "defense": 69,
-        "speed": 77
+        "speed": 77,
+        "sp_attack": 60,
+        "sp_defense": 69
       },
       "catch_rate": 255
     },
@@ -327,7 +351,9 @@
         "hp": 45,
         "attack": 60,
         "defense": 45,
-        "speed": 55
+        "speed": 55,
+        "sp_attack": 25,
+        "sp_defense": 45
       },
       "catch_rate": 255,
       "evolves_to": "507"
@@ -353,7 +379,9 @@
         "hp": 65,
         "attack": 80,
         "defense": 65,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 35,
+        "sp_defense": 65
       },
       "catch_rate": 120,
       "evolves_to": "508"
@@ -379,7 +407,9 @@
         "hp": 85,
         "attack": 110,
         "defense": 90,
-        "speed": 80
+        "speed": 80,
+        "sp_attack": 45,
+        "sp_defense": 90
       },
       "catch_rate": 45
     },
@@ -403,7 +433,9 @@
         "hp": 41,
         "attack": 50,
         "defense": 37,
-        "speed": 66
+        "speed": 66,
+        "sp_attack": 50,
+        "sp_defense": 37
       },
       "catch_rate": 255,
       "evolves_to": "510"
@@ -428,7 +460,9 @@
         "hp": 64,
         "attack": 88,
         "defense": 50,
-        "speed": 106
+        "speed": 106,
+        "sp_attack": 88,
+        "sp_defense": 50
       },
       "catch_rate": 90
     },
@@ -452,7 +486,9 @@
         "hp": 50,
         "attack": 53,
         "defense": 48,
-        "speed": 64
+        "speed": 64,
+        "sp_attack": 53,
+        "sp_defense": 48
       },
       "catch_rate": 190,
       "evolves_condition": "item:leaf-stone",
@@ -478,7 +514,9 @@
         "hp": 75,
         "attack": 98,
         "defense": 63,
-        "speed": 101
+        "speed": 101,
+        "sp_attack": 98,
+        "sp_defense": 63
       },
       "catch_rate": 75
     },
@@ -502,7 +540,9 @@
         "hp": 50,
         "attack": 53,
         "defense": 48,
-        "speed": 64
+        "speed": 64,
+        "sp_attack": 53,
+        "sp_defense": 48
       },
       "catch_rate": 190,
       "evolves_condition": "item:fire-stone",
@@ -528,7 +568,9 @@
         "hp": 75,
         "attack": 98,
         "defense": 63,
-        "speed": 101
+        "speed": 101,
+        "sp_attack": 98,
+        "sp_defense": 63
       },
       "catch_rate": 75
     },
@@ -552,7 +594,9 @@
         "hp": 50,
         "attack": 53,
         "defense": 48,
-        "speed": 64
+        "speed": 64,
+        "sp_attack": 53,
+        "sp_defense": 48
       },
       "catch_rate": 190,
       "evolves_condition": "item:water-stone",
@@ -578,7 +622,9 @@
         "hp": 75,
         "attack": 98,
         "defense": 63,
-        "speed": 101
+        "speed": 101,
+        "sp_attack": 98,
+        "sp_defense": 63
       },
       "catch_rate": 75
     },
@@ -602,7 +648,9 @@
         "hp": 76,
         "attack": 25,
         "defense": 45,
-        "speed": 24
+        "speed": 24,
+        "sp_attack": 67,
+        "sp_defense": 55
       },
       "catch_rate": 190,
       "evolves_condition": "item:moon-stone",
@@ -628,7 +676,9 @@
         "hp": 116,
         "attack": 55,
         "defense": 85,
-        "speed": 29
+        "speed": 29,
+        "sp_attack": 107,
+        "sp_defense": 95
       },
       "catch_rate": 75
     },
@@ -654,7 +704,9 @@
         "hp": 50,
         "attack": 55,
         "defense": 50,
-        "speed": 43
+        "speed": 43,
+        "sp_attack": 36,
+        "sp_defense": 30
       },
       "catch_rate": 255,
       "evolves_to": "520"
@@ -681,7 +733,9 @@
         "hp": 62,
         "attack": 77,
         "defense": 62,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 50,
+        "sp_defense": 42
       },
       "catch_rate": 120,
       "evolves_to": "521"
@@ -708,7 +762,9 @@
         "hp": 80,
         "attack": 115,
         "defense": 80,
-        "speed": 93
+        "speed": 93,
+        "sp_attack": 65,
+        "sp_defense": 55
       },
       "catch_rate": 45
     },
@@ -732,7 +788,9 @@
         "hp": 45,
         "attack": 60,
         "defense": 32,
-        "speed": 76
+        "speed": 76,
+        "sp_attack": 50,
+        "sp_defense": 32
       },
       "catch_rate": 190,
       "evolves_to": "523"
@@ -757,7 +815,9 @@
         "hp": 75,
         "attack": 100,
         "defense": 63,
-        "speed": 116
+        "speed": 116,
+        "sp_attack": 80,
+        "sp_defense": 63
       },
       "catch_rate": 75
     },
@@ -782,7 +842,9 @@
         "hp": 55,
         "attack": 75,
         "defense": 85,
-        "speed": 15
+        "speed": 15,
+        "sp_attack": 25,
+        "sp_defense": 25
       },
       "catch_rate": 255,
       "evolves_to": "525"
@@ -808,7 +870,9 @@
         "hp": 70,
         "attack": 105,
         "defense": 105,
-        "speed": 20
+        "speed": 20,
+        "sp_attack": 50,
+        "sp_defense": 40
       },
       "catch_rate": 120,
       "evolves_condition": "trade",
@@ -835,7 +899,9 @@
         "hp": 85,
         "attack": 135,
         "defense": 130,
-        "speed": 25
+        "speed": 25,
+        "sp_attack": 60,
+        "sp_defense": 80
       },
       "catch_rate": 45
     },
@@ -860,7 +926,9 @@
         "hp": 65,
         "attack": 45,
         "defense": 43,
-        "speed": 72
+        "speed": 72,
+        "sp_attack": 55,
+        "sp_defense": 43
       },
       "catch_rate": 190,
       "evolves_condition": "friendship",
@@ -887,7 +955,9 @@
         "hp": 67,
         "attack": 57,
         "defense": 55,
-        "speed": 114
+        "speed": 114,
+        "sp_attack": 77,
+        "sp_defense": 55
       },
       "catch_rate": 45
     },
@@ -911,7 +981,9 @@
         "hp": 60,
         "attack": 85,
         "defense": 40,
-        "speed": 68
+        "speed": 68,
+        "sp_attack": 30,
+        "sp_defense": 45
       },
       "catch_rate": 120,
       "evolves_to": "530"
@@ -937,7 +1009,9 @@
         "hp": 110,
         "attack": 135,
         "defense": 60,
-        "speed": 88
+        "speed": 88,
+        "sp_attack": 50,
+        "sp_defense": 65
       },
       "catch_rate": 60
     },
@@ -960,7 +1034,9 @@
         "hp": 103,
         "attack": 60,
         "defense": 86,
-        "speed": 50
+        "speed": 50,
+        "sp_attack": 60,
+        "sp_defense": 86
       },
       "catch_rate": 255
     },
@@ -985,7 +1061,9 @@
         "hp": 75,
         "attack": 80,
         "defense": 55,
-        "speed": 35
+        "speed": 35,
+        "sp_attack": 25,
+        "sp_defense": 35
       },
       "catch_rate": 180,
       "evolves_to": "533"
@@ -1011,7 +1089,9 @@
         "hp": 85,
         "attack": 105,
         "defense": 85,
-        "speed": 40
+        "speed": 40,
+        "sp_attack": 40,
+        "sp_defense": 50
       },
       "catch_rate": 90,
       "evolves_condition": "trade",
@@ -1038,7 +1118,9 @@
         "hp": 105,
         "attack": 140,
         "defense": 95,
-        "speed": 45
+        "speed": 45,
+        "sp_attack": 55,
+        "sp_defense": 65
       },
       "catch_rate": 45
     },
@@ -1063,7 +1145,9 @@
         "hp": 50,
         "attack": 50,
         "defense": 40,
-        "speed": 64
+        "speed": 64,
+        "sp_attack": 50,
+        "sp_defense": 40
       },
       "catch_rate": 255,
       "evolves_to": "536"
@@ -1090,7 +1174,9 @@
         "hp": 75,
         "attack": 65,
         "defense": 55,
-        "speed": 69
+        "speed": 69,
+        "sp_attack": 65,
+        "sp_defense": 55
       },
       "catch_rate": 120,
       "evolves_to": "537"
@@ -1117,7 +1203,9 @@
         "hp": 105,
         "attack": 95,
         "defense": 75,
-        "speed": 74
+        "speed": 74,
+        "sp_attack": 85,
+        "sp_defense": 75
       },
       "catch_rate": 45
     },
@@ -1140,7 +1228,9 @@
         "hp": 120,
         "attack": 100,
         "defense": 85,
-        "speed": 45
+        "speed": 45,
+        "sp_attack": 30,
+        "sp_defense": 85
       },
       "catch_rate": 45
     },
@@ -1163,7 +1253,9 @@
         "hp": 75,
         "attack": 125,
         "defense": 75,
-        "speed": 85
+        "speed": 85,
+        "sp_attack": 30,
+        "sp_defense": 75
       },
       "catch_rate": 45
     },
@@ -1189,7 +1281,9 @@
         "hp": 45,
         "attack": 53,
         "defense": 70,
-        "speed": 42
+        "speed": 42,
+        "sp_attack": 40,
+        "sp_defense": 60
       },
       "catch_rate": 255,
       "evolves_to": "541"
@@ -1216,7 +1310,9 @@
         "hp": 55,
         "attack": 63,
         "defense": 90,
-        "speed": 42
+        "speed": 42,
+        "sp_attack": 50,
+        "sp_defense": 80
       },
       "catch_rate": 120,
       "evolves_condition": "friendship",
@@ -1244,7 +1340,9 @@
         "hp": 75,
         "attack": 103,
         "defense": 80,
-        "speed": 92
+        "speed": 92,
+        "sp_attack": 70,
+        "sp_defense": 80
       },
       "catch_rate": 45
     },
@@ -1270,7 +1368,9 @@
         "hp": 30,
         "attack": 45,
         "defense": 59,
-        "speed": 57
+        "speed": 57,
+        "sp_attack": 30,
+        "sp_defense": 39
       },
       "catch_rate": 255,
       "evolves_to": "544"
@@ -1297,7 +1397,9 @@
         "hp": 40,
         "attack": 55,
         "defense": 99,
-        "speed": 47
+        "speed": 47,
+        "sp_attack": 40,
+        "sp_defense": 79
       },
       "catch_rate": 120,
       "evolves_to": "545"
@@ -1324,7 +1426,9 @@
         "hp": 60,
         "attack": 100,
         "defense": 89,
-        "speed": 112
+        "speed": 112,
+        "sp_attack": 55,
+        "sp_defense": 69
       },
       "catch_rate": 45
     },
@@ -1349,7 +1453,9 @@
         "hp": 40,
         "attack": 27,
         "defense": 60,
-        "speed": 66
+        "speed": 66,
+        "sp_attack": 37,
+        "sp_defense": 50
       },
       "catch_rate": 190,
       "evolves_condition": "item:sun-stone",
@@ -1376,7 +1482,9 @@
         "hp": 60,
         "attack": 67,
         "defense": 85,
-        "speed": 116
+        "speed": 116,
+        "sp_attack": 77,
+        "sp_defense": 75
       },
       "catch_rate": 75
     },
@@ -1400,7 +1508,9 @@
         "hp": 45,
         "attack": 35,
         "defense": 50,
-        "speed": 30
+        "speed": 30,
+        "sp_attack": 70,
+        "sp_defense": 50
       },
       "catch_rate": 190,
       "evolves_condition": "item:sun-stone",
@@ -1426,7 +1536,9 @@
         "hp": 70,
         "attack": 60,
         "defense": 75,
-        "speed": 90
+        "speed": 90,
+        "sp_attack": 110,
+        "sp_defense": 75
       },
       "catch_rate": 75
     },
@@ -1449,7 +1561,9 @@
         "hp": 70,
         "attack": 92,
         "defense": 65,
-        "speed": 98
+        "speed": 98,
+        "sp_attack": 80,
+        "sp_defense": 55
       },
       "catch_rate": 25,
       "evolves_condition": "special"
@@ -1476,7 +1590,9 @@
         "hp": 50,
         "attack": 72,
         "defense": 35,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 35,
+        "sp_defense": 35
       },
       "catch_rate": 180,
       "evolves_to": "552"
@@ -1503,7 +1619,9 @@
         "hp": 60,
         "attack": 82,
         "defense": 45,
-        "speed": 74
+        "speed": 74,
+        "sp_attack": 45,
+        "sp_defense": 45
       },
       "catch_rate": 90,
       "evolves_to": "553"
@@ -1530,7 +1648,9 @@
         "hp": 95,
         "attack": 117,
         "defense": 80,
-        "speed": 92
+        "speed": 92,
+        "sp_attack": 65,
+        "sp_defense": 70
       },
       "catch_rate": 45
     },
@@ -1554,7 +1674,9 @@
         "hp": 70,
         "attack": 90,
         "defense": 45,
-        "speed": 50
+        "speed": 50,
+        "sp_attack": 15,
+        "sp_defense": 45
       },
       "catch_rate": 120,
       "evolves_to": "555"
@@ -1579,7 +1701,9 @@
         "hp": 105,
         "attack": 140,
         "defense": 55,
-        "speed": 95
+        "speed": 95,
+        "sp_attack": 30,
+        "sp_defense": 55
       },
       "catch_rate": 60
     },
@@ -1602,7 +1726,9 @@
         "hp": 75,
         "attack": 86,
         "defense": 67,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 106,
+        "sp_defense": 67
       },
       "catch_rate": 255
     },
@@ -1627,7 +1753,9 @@
         "hp": 50,
         "attack": 65,
         "defense": 85,
-        "speed": 55
+        "speed": 55,
+        "sp_attack": 35,
+        "sp_defense": 35
       },
       "catch_rate": 190,
       "evolves_to": "558"
@@ -1653,7 +1781,9 @@
         "hp": 70,
         "attack": 105,
         "defense": 125,
-        "speed": 45
+        "speed": 45,
+        "sp_attack": 65,
+        "sp_defense": 75
       },
       "catch_rate": 75
     },
@@ -1678,7 +1808,9 @@
         "hp": 50,
         "attack": 75,
         "defense": 70,
-        "speed": 48
+        "speed": 48,
+        "sp_attack": 35,
+        "sp_defense": 70
       },
       "catch_rate": 180,
       "evolves_to": "560"
@@ -1704,7 +1836,9 @@
         "hp": 65,
         "attack": 90,
         "defense": 115,
-        "speed": 58
+        "speed": 58,
+        "sp_attack": 45,
+        "sp_defense": 115
       },
       "catch_rate": 90
     },
@@ -1728,7 +1862,9 @@
         "hp": 72,
         "attack": 58,
         "defense": 80,
-        "speed": 97
+        "speed": 97,
+        "sp_attack": 103,
+        "sp_defense": 80
       },
       "catch_rate": 45
     },
@@ -1752,7 +1888,9 @@
         "hp": 38,
         "attack": 30,
         "defense": 85,
-        "speed": 30
+        "speed": 30,
+        "sp_attack": 55,
+        "sp_defense": 65
       },
       "catch_rate": 190,
       "evolves_to": [
@@ -1782,7 +1920,9 @@
         "hp": 58,
         "attack": 50,
         "defense": 145,
-        "speed": 30
+        "speed": 30,
+        "sp_attack": 95,
+        "sp_defense": 105
       },
       "catch_rate": 90
     },
@@ -1807,7 +1947,9 @@
         "hp": 54,
         "attack": 78,
         "defense": 103,
-        "speed": 22
+        "speed": 22,
+        "sp_attack": 53,
+        "sp_defense": 45
       },
       "catch_rate": 45,
       "evolves_to": "565"
@@ -1833,7 +1975,9 @@
         "hp": 74,
         "attack": 108,
         "defense": 133,
-        "speed": 32
+        "speed": 32,
+        "sp_attack": 83,
+        "sp_defense": 65
       },
       "catch_rate": 45
     },
@@ -1858,7 +2002,9 @@
         "hp": 55,
         "attack": 112,
         "defense": 45,
-        "speed": 70
+        "speed": 70,
+        "sp_attack": 74,
+        "sp_defense": 45
       },
       "catch_rate": 45,
       "evolves_to": "567"
@@ -1884,7 +2030,9 @@
         "hp": 75,
         "attack": 140,
         "defense": 65,
-        "speed": 110
+        "speed": 110,
+        "sp_attack": 112,
+        "sp_defense": 65
       },
       "catch_rate": 45
     },
@@ -1908,7 +2056,9 @@
         "hp": 50,
         "attack": 50,
         "defense": 62,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 40,
+        "sp_defense": 62
       },
       "catch_rate": 190,
       "evolves_to": "569"
@@ -1933,7 +2083,9 @@
         "hp": 80,
         "attack": 95,
         "defense": 82,
-        "speed": 75
+        "speed": 75,
+        "sp_attack": 60,
+        "sp_defense": 82
       },
       "catch_rate": 60
     },
@@ -1957,7 +2109,9 @@
         "hp": 40,
         "attack": 65,
         "defense": 40,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 80,
+        "sp_defense": 40
       },
       "catch_rate": 75,
       "evolves_to": "571"
@@ -1982,7 +2136,9 @@
         "hp": 60,
         "attack": 105,
         "defense": 60,
-        "speed": 105
+        "speed": 105,
+        "sp_attack": 120,
+        "sp_defense": 60
       },
       "catch_rate": 45
     },
@@ -2006,7 +2162,9 @@
         "hp": 55,
         "attack": 50,
         "defense": 40,
-        "speed": 75
+        "speed": 75,
+        "sp_attack": 40,
+        "sp_defense": 40
       },
       "catch_rate": 255,
       "evolves_condition": "item:shiny-stone",
@@ -2032,7 +2190,9 @@
         "hp": 75,
         "attack": 95,
         "defense": 60,
-        "speed": 115
+        "speed": 115,
+        "sp_attack": 65,
+        "sp_defense": 60
       },
       "catch_rate": 60
     },
@@ -2057,7 +2217,9 @@
         "hp": 45,
         "attack": 30,
         "defense": 50,
-        "speed": 45
+        "speed": 45,
+        "sp_attack": 55,
+        "sp_defense": 65
       },
       "catch_rate": 200,
       "evolves_to": "575"
@@ -2083,7 +2245,9 @@
         "hp": 60,
         "attack": 45,
         "defense": 70,
-        "speed": 55
+        "speed": 55,
+        "sp_attack": 75,
+        "sp_defense": 85
       },
       "catch_rate": 100,
       "evolves_to": "576"
@@ -2109,7 +2273,9 @@
         "hp": 70,
         "attack": 55,
         "defense": 95,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 95,
+        "sp_defense": 110
       },
       "catch_rate": 50
     },
@@ -2134,7 +2300,9 @@
         "hp": 45,
         "attack": 30,
         "defense": 40,
-        "speed": 20
+        "speed": 20,
+        "sp_attack": 105,
+        "sp_defense": 50
       },
       "catch_rate": 200,
       "evolves_to": "578"
@@ -2160,7 +2328,9 @@
         "hp": 65,
         "attack": 40,
         "defense": 50,
-        "speed": 30
+        "speed": 30,
+        "sp_attack": 125,
+        "sp_defense": 60
       },
       "catch_rate": 100,
       "evolves_to": "579"
@@ -2186,7 +2356,9 @@
         "hp": 110,
         "attack": 65,
         "defense": 75,
-        "speed": 30
+        "speed": 30,
+        "sp_attack": 125,
+        "sp_defense": 85
       },
       "catch_rate": 50
     },
@@ -2211,7 +2383,9 @@
         "hp": 62,
         "attack": 44,
         "defense": 50,
-        "speed": 55
+        "speed": 55,
+        "sp_attack": 44,
+        "sp_defense": 50
       },
       "catch_rate": 190,
       "evolves_to": "581"
@@ -2237,7 +2411,9 @@
         "hp": 75,
         "attack": 87,
         "defense": 63,
-        "speed": 98
+        "speed": 98,
+        "sp_attack": 87,
+        "sp_defense": 63
       },
       "catch_rate": 45
     },
@@ -2262,7 +2438,9 @@
         "hp": 36,
         "attack": 50,
         "defense": 50,
-        "speed": 44
+        "speed": 44,
+        "sp_attack": 65,
+        "sp_defense": 60
       },
       "catch_rate": 255,
       "evolves_to": "583"
@@ -2288,7 +2466,9 @@
         "hp": 51,
         "attack": 65,
         "defense": 65,
-        "speed": 59
+        "speed": 59,
+        "sp_attack": 80,
+        "sp_defense": 75
       },
       "catch_rate": 120,
       "evolves_to": "584"
@@ -2314,7 +2494,9 @@
         "hp": 71,
         "attack": 95,
         "defense": 85,
-        "speed": 79
+        "speed": 79,
+        "sp_attack": 110,
+        "sp_defense": 95
       },
       "catch_rate": 45
     },
@@ -2339,7 +2521,9 @@
         "hp": 60,
         "attack": 60,
         "defense": 50,
-        "speed": 75
+        "speed": 75,
+        "sp_attack": 40,
+        "sp_defense": 50
       },
       "catch_rate": 190,
       "evolves_to": "586"
@@ -2365,7 +2549,9 @@
         "hp": 80,
         "attack": 100,
         "defense": 70,
-        "speed": 95
+        "speed": 95,
+        "sp_attack": 60,
+        "sp_defense": 70
       },
       "catch_rate": 75
     },
@@ -2389,7 +2575,9 @@
         "hp": 55,
         "attack": 75,
         "defense": 60,
-        "speed": 103
+        "speed": 103,
+        "sp_attack": 75,
+        "sp_defense": 60
       },
       "catch_rate": 200
     },
@@ -2413,7 +2601,9 @@
         "hp": 50,
         "attack": 75,
         "defense": 45,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 40,
+        "sp_defense": 45
       },
       "catch_rate": 200,
       "evolves_condition": "trade",
@@ -2440,7 +2630,9 @@
         "hp": 70,
         "attack": 135,
         "defense": 105,
-        "speed": 20
+        "speed": 20,
+        "sp_attack": 60,
+        "sp_defense": 105
       },
       "catch_rate": 75
     },
@@ -2465,7 +2657,9 @@
         "hp": 69,
         "attack": 55,
         "defense": 45,
-        "speed": 15
+        "speed": 15,
+        "sp_attack": 55,
+        "sp_defense": 55
       },
       "catch_rate": 190,
       "evolves_to": "591"
@@ -2491,7 +2685,9 @@
         "hp": 114,
         "attack": 85,
         "defense": 70,
-        "speed": 30
+        "speed": 30,
+        "sp_attack": 85,
+        "sp_defense": 80
       },
       "catch_rate": 75
     },
@@ -2516,7 +2712,9 @@
         "hp": 55,
         "attack": 40,
         "defense": 50,
-        "speed": 40
+        "speed": 40,
+        "sp_attack": 65,
+        "sp_defense": 85
       },
       "catch_rate": 190,
       "evolves_to": "593"
@@ -2542,7 +2740,9 @@
         "hp": 100,
         "attack": 60,
         "defense": 70,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 85,
+        "sp_defense": 105
       },
       "catch_rate": 60
     },
@@ -2565,7 +2765,9 @@
         "hp": 165,
         "attack": 75,
         "defense": 80,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 40,
+        "sp_defense": 45
       },
       "catch_rate": 75
     },
@@ -2590,7 +2792,9 @@
         "hp": 50,
         "attack": 47,
         "defense": 50,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 57,
+        "sp_defense": 50
       },
       "catch_rate": 190,
       "evolves_to": "596"
@@ -2616,7 +2820,9 @@
         "hp": 70,
         "attack": 77,
         "defense": 60,
-        "speed": 108
+        "speed": 108,
+        "sp_attack": 97,
+        "sp_defense": 60
       },
       "catch_rate": 75
     },
@@ -2641,7 +2847,9 @@
         "hp": 44,
         "attack": 50,
         "defense": 91,
-        "speed": 10
+        "speed": 10,
+        "sp_attack": 24,
+        "sp_defense": 86
       },
       "catch_rate": 255,
       "evolves_to": "598"
@@ -2667,7 +2875,9 @@
         "hp": 74,
         "attack": 94,
         "defense": 131,
-        "speed": 20
+        "speed": 20,
+        "sp_attack": 54,
+        "sp_defense": 116
       },
       "catch_rate": 90
     },
@@ -2692,7 +2902,9 @@
         "hp": 40,
         "attack": 55,
         "defense": 70,
-        "speed": 30
+        "speed": 30,
+        "sp_attack": 45,
+        "sp_defense": 60
       },
       "catch_rate": 130,
       "evolves_to": "600"
@@ -2718,7 +2930,9 @@
         "hp": 60,
         "attack": 80,
         "defense": 95,
-        "speed": 50
+        "speed": 50,
+        "sp_attack": 70,
+        "sp_defense": 85
       },
       "catch_rate": 60,
       "evolves_to": "601"
@@ -2744,7 +2958,9 @@
         "hp": 60,
         "attack": 100,
         "defense": 115,
-        "speed": 90
+        "speed": 90,
+        "sp_attack": 70,
+        "sp_defense": 85
       },
       "catch_rate": 30
     },
@@ -2769,7 +2985,9 @@
         "hp": 35,
         "attack": 55,
         "defense": 40,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 45,
+        "sp_defense": 40
       },
       "catch_rate": 190,
       "evolves_to": "603"
@@ -2795,7 +3013,9 @@
         "hp": 65,
         "attack": 85,
         "defense": 70,
-        "speed": 40
+        "speed": 40,
+        "sp_attack": 75,
+        "sp_defense": 70
       },
       "catch_rate": 60,
       "evolves_condition": "item:thunder-stone",
@@ -2822,7 +3042,9 @@
         "hp": 85,
         "attack": 115,
         "defense": 80,
-        "speed": 50
+        "speed": 50,
+        "sp_attack": 105,
+        "sp_defense": 80
       },
       "catch_rate": 30
     },
@@ -2846,7 +3068,9 @@
         "hp": 55,
         "attack": 55,
         "defense": 55,
-        "speed": 30
+        "speed": 30,
+        "sp_attack": 85,
+        "sp_defense": 55
       },
       "catch_rate": 255,
       "evolves_to": "606"
@@ -2871,7 +3095,9 @@
         "hp": 75,
         "attack": 75,
         "defense": 75,
-        "speed": 40
+        "speed": 40,
+        "sp_attack": 125,
+        "sp_defense": 95
       },
       "catch_rate": 90
     },
@@ -2897,7 +3123,9 @@
         "hp": 50,
         "attack": 30,
         "defense": 55,
-        "speed": 20
+        "speed": 20,
+        "sp_attack": 65,
+        "sp_defense": 55
       },
       "catch_rate": 190,
       "evolves_to": "608"
@@ -2924,7 +3152,9 @@
         "hp": 60,
         "attack": 40,
         "defense": 60,
-        "speed": 55
+        "speed": 55,
+        "sp_attack": 95,
+        "sp_defense": 60
       },
       "catch_rate": 90,
       "evolves_condition": "item:dusk-stone",
@@ -2952,7 +3182,9 @@
         "hp": 60,
         "attack": 55,
         "defense": 90,
-        "speed": 80
+        "speed": 80,
+        "sp_attack": 145,
+        "sp_defense": 90
       },
       "catch_rate": 45
     },
@@ -2977,7 +3209,9 @@
         "hp": 46,
         "attack": 87,
         "defense": 60,
-        "speed": 57
+        "speed": 57,
+        "sp_attack": 30,
+        "sp_defense": 40
       },
       "catch_rate": 75,
       "evolves_to": "611"
@@ -3003,7 +3237,9 @@
         "hp": 66,
         "attack": 117,
         "defense": 70,
-        "speed": 67
+        "speed": 67,
+        "sp_attack": 40,
+        "sp_defense": 50
       },
       "catch_rate": 60,
       "evolves_to": "612"
@@ -3029,7 +3265,9 @@
         "hp": 76,
         "attack": 147,
         "defense": 90,
-        "speed": 97
+        "speed": 97,
+        "sp_attack": 60,
+        "sp_defense": 70
       },
       "catch_rate": 45
     },
@@ -3053,7 +3291,9 @@
         "hp": 55,
         "attack": 70,
         "defense": 40,
-        "speed": 40
+        "speed": 40,
+        "sp_attack": 60,
+        "sp_defense": 40
       },
       "catch_rate": 120,
       "evolves_to": "614"
@@ -3078,7 +3318,9 @@
         "hp": 95,
         "attack": 130,
         "defense": 80,
-        "speed": 50
+        "speed": 50,
+        "sp_attack": 70,
+        "sp_defense": 80
       },
       "catch_rate": 60
     },
@@ -3101,7 +3343,9 @@
         "hp": 80,
         "attack": 50,
         "defense": 50,
-        "speed": 105
+        "speed": 105,
+        "sp_attack": 95,
+        "sp_defense": 135
       },
       "catch_rate": 25
     },
@@ -3125,7 +3369,9 @@
         "hp": 50,
         "attack": 40,
         "defense": 85,
-        "speed": 25
+        "speed": 25,
+        "sp_attack": 40,
+        "sp_defense": 65
       },
       "catch_rate": 200,
       "evolves_condition": "trade",
@@ -3151,7 +3397,9 @@
         "hp": 80,
         "attack": 70,
         "defense": 40,
-        "speed": 145
+        "speed": 145,
+        "sp_attack": 100,
+        "sp_defense": 60
       },
       "catch_rate": 75
     },
@@ -3175,7 +3423,9 @@
         "hp": 109,
         "attack": 66,
         "defense": 84,
-        "speed": 32
+        "speed": 32,
+        "sp_attack": 81,
+        "sp_defense": 99
       },
       "catch_rate": 75
     },
@@ -3199,7 +3449,9 @@
         "hp": 45,
         "attack": 85,
         "defense": 50,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 55,
+        "sp_defense": 50
       },
       "catch_rate": 180,
       "evolves_to": "620"
@@ -3224,7 +3476,9 @@
         "hp": 65,
         "attack": 125,
         "defense": 60,
-        "speed": 105
+        "speed": 105,
+        "sp_attack": 95,
+        "sp_defense": 60
       },
       "catch_rate": 45
     },
@@ -3247,7 +3501,9 @@
         "hp": 77,
         "attack": 120,
         "defense": 90,
-        "speed": 48
+        "speed": 48,
+        "sp_attack": 60,
+        "sp_defense": 90
       },
       "catch_rate": 45
     },
@@ -3272,7 +3528,9 @@
         "hp": 59,
         "attack": 74,
         "defense": 50,
-        "speed": 35
+        "speed": 35,
+        "sp_attack": 35,
+        "sp_defense": 50
       },
       "catch_rate": 190,
       "evolves_to": "623"
@@ -3298,7 +3556,9 @@
         "hp": 89,
         "attack": 124,
         "defense": 80,
-        "speed": 55
+        "speed": 55,
+        "sp_attack": 55,
+        "sp_defense": 80
       },
       "catch_rate": 90
     },
@@ -3323,7 +3583,9 @@
         "hp": 45,
         "attack": 85,
         "defense": 70,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 40,
+        "sp_defense": 40
       },
       "catch_rate": 120,
       "evolves_to": "625"
@@ -3349,7 +3611,9 @@
         "hp": 65,
         "attack": 125,
         "defense": 100,
-        "speed": 70
+        "speed": 70,
+        "sp_attack": 60,
+        "sp_defense": 70
       },
       "catch_rate": 45,
       "evolves_condition": "special"
@@ -3373,7 +3637,9 @@
         "hp": 95,
         "attack": 110,
         "defense": 95,
-        "speed": 55
+        "speed": 55,
+        "sp_attack": 40,
+        "sp_defense": 95
       },
       "catch_rate": 45
     },
@@ -3398,7 +3664,9 @@
         "hp": 70,
         "attack": 83,
         "defense": 50,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 37,
+        "sp_defense": 50
       },
       "catch_rate": 190,
       "evolves_to": "628"
@@ -3424,7 +3692,9 @@
         "hp": 100,
         "attack": 123,
         "defense": 75,
-        "speed": 80
+        "speed": 80,
+        "sp_attack": 57,
+        "sp_defense": 75
       },
       "catch_rate": 60
     },
@@ -3449,7 +3719,9 @@
         "hp": 70,
         "attack": 55,
         "defense": 75,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 45,
+        "sp_defense": 65
       },
       "catch_rate": 190,
       "evolves_to": "630"
@@ -3475,7 +3747,9 @@
         "hp": 110,
         "attack": 65,
         "defense": 105,
-        "speed": 80
+        "speed": 80,
+        "sp_attack": 55,
+        "sp_defense": 95
       },
       "catch_rate": 60
     },
@@ -3498,7 +3772,9 @@
         "hp": 85,
         "attack": 97,
         "defense": 66,
-        "speed": 65
+        "speed": 65,
+        "sp_attack": 105,
+        "sp_defense": 66
       },
       "catch_rate": 90
     },
@@ -3522,7 +3798,9 @@
         "hp": 58,
         "attack": 109,
         "defense": 112,
-        "speed": 109
+        "speed": 109,
+        "sp_attack": 48,
+        "sp_defense": 48
       },
       "catch_rate": 90
     },
@@ -3548,7 +3826,9 @@
         "hp": 52,
         "attack": 65,
         "defense": 50,
-        "speed": 38
+        "speed": 38,
+        "sp_attack": 45,
+        "sp_defense": 50
       },
       "catch_rate": 45,
       "evolves_to": "634"
@@ -3575,7 +3855,9 @@
         "hp": 72,
         "attack": 85,
         "defense": 70,
-        "speed": 58
+        "speed": 58,
+        "sp_attack": 65,
+        "sp_defense": 70
       },
       "catch_rate": 45,
       "evolves_to": "635"
@@ -3602,7 +3884,9 @@
         "hp": 92,
         "attack": 105,
         "defense": 90,
-        "speed": 98
+        "speed": 98,
+        "sp_attack": 125,
+        "sp_defense": 90
       },
       "catch_rate": 45
     },
@@ -3627,7 +3911,9 @@
         "hp": 55,
         "attack": 85,
         "defense": 55,
-        "speed": 60
+        "speed": 60,
+        "sp_attack": 50,
+        "sp_defense": 55
       },
       "catch_rate": 45,
       "evolves_to": "637"
@@ -3653,7 +3939,9 @@
         "hp": 85,
         "attack": 60,
         "defense": 65,
-        "speed": 100
+        "speed": 100,
+        "sp_attack": 135,
+        "sp_defense": 105
       },
       "catch_rate": 15
     },
@@ -3677,7 +3965,9 @@
         "hp": 91,
         "attack": 90,
         "defense": 129,
-        "speed": 108
+        "speed": 108,
+        "sp_attack": 90,
+        "sp_defense": 72
       },
       "catch_rate": 3
     },
@@ -3701,7 +3991,9 @@
         "hp": 91,
         "attack": 129,
         "defense": 90,
-        "speed": 108
+        "speed": 108,
+        "sp_attack": 72,
+        "sp_defense": 90
       },
       "catch_rate": 3
     },
@@ -3725,7 +4017,9 @@
         "hp": 91,
         "attack": 90,
         "defense": 72,
-        "speed": 108
+        "speed": 108,
+        "sp_attack": 90,
+        "sp_defense": 129
       },
       "catch_rate": 3
     },
@@ -3748,7 +4042,9 @@
         "hp": 79,
         "attack": 115,
         "defense": 70,
-        "speed": 111
+        "speed": 111,
+        "sp_attack": 125,
+        "sp_defense": 80
       },
       "catch_rate": 3
     },
@@ -3772,7 +4068,9 @@
         "hp": 79,
         "attack": 115,
         "defense": 70,
-        "speed": 111
+        "speed": 111,
+        "sp_attack": 125,
+        "sp_defense": 80
       },
       "catch_rate": 3
     },
@@ -3796,7 +4094,9 @@
         "hp": 100,
         "attack": 120,
         "defense": 100,
-        "speed": 90
+        "speed": 90,
+        "sp_attack": 150,
+        "sp_defense": 120
       },
       "catch_rate": 3
     },
@@ -3820,7 +4120,9 @@
         "hp": 100,
         "attack": 150,
         "defense": 120,
-        "speed": 90
+        "speed": 90,
+        "sp_attack": 120,
+        "sp_defense": 100
       },
       "catch_rate": 3
     },
@@ -3844,7 +4146,9 @@
         "hp": 89,
         "attack": 125,
         "defense": 90,
-        "speed": 101
+        "speed": 101,
+        "sp_attack": 115,
+        "sp_defense": 80
       },
       "catch_rate": 3
     },
@@ -3868,7 +4172,9 @@
         "hp": 125,
         "attack": 130,
         "defense": 90,
-        "speed": 95
+        "speed": 95,
+        "sp_attack": 130,
+        "sp_defense": 90
       },
       "catch_rate": 3
     },
@@ -3892,7 +4198,9 @@
         "hp": 91,
         "attack": 72,
         "defense": 90,
-        "speed": 108
+        "speed": 108,
+        "sp_attack": 129,
+        "sp_defense": 90
       },
       "catch_rate": 3
     },
@@ -3916,7 +4224,9 @@
         "hp": 100,
         "attack": 77,
         "defense": 77,
-        "speed": 90
+        "speed": 90,
+        "sp_attack": 128,
+        "sp_defense": 128
       },
       "catch_rate": 3
     },
@@ -3940,7 +4250,9 @@
         "hp": 71,
         "attack": 120,
         "defense": 95,
-        "speed": 99
+        "speed": 99,
+        "sp_attack": 120,
+        "sp_defense": 95
       },
       "catch_rate": 3
     }

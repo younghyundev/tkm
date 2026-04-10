@@ -1,0 +1,127 @@
+{
+  "gyms": [
+    {
+      "id": 1,
+      "leader": "Roxanne",
+      "leaderKo": "원규",
+      "type": "rock",
+      "badge": "stone",
+      "badgeKo": "스톤배지",
+      "region": "1",
+      "team": [
+        { "species": 74, "level": 12, "moves": [33, 88, 106, 317] },
+        { "species": 299, "level": 15, "moves": [88, 317, 106, 29] }
+      ]
+    },
+    {
+      "id": 2,
+      "leader": "Brawly",
+      "leaderKo": "철구",
+      "type": "fighting",
+      "badge": "knuckle",
+      "badgeKo": "너클배지",
+      "region": "2",
+      "team": [
+        { "species": 66, "level": 17, "moves": [2, 249, 33, 66] },
+        { "species": 296, "level": 20, "moves": [233, 249, 280, 29] }
+      ]
+    },
+    {
+      "id": 3,
+      "leader": "Wattson",
+      "leaderKo": "암페어",
+      "type": "electric",
+      "badge": "dynamo",
+      "badgeKo": "다이나모배지",
+      "region": "3",
+      "team": [
+        { "species": 100, "level": 22, "moves": [84, 209, 129, 120] },
+        { "species": 82, "level": 25, "moves": [85, 430, 84, 209] }
+      ]
+    },
+    {
+      "id": 4,
+      "leader": "Flannery",
+      "leaderKo": "민지",
+      "type": "fire",
+      "badge": "heat",
+      "badgeKo": "히트배지",
+      "region": "4",
+      "team": [
+        { "species": 218, "level": 28, "moves": [52, 88, 315, 106] },
+        { "species": 324, "level": 31, "moves": [53, 315, 34, 436] }
+      ]
+    },
+    {
+      "id": 5,
+      "leader": "Norman",
+      "leaderKo": "종길",
+      "type": "normal",
+      "badge": "balance",
+      "badgeKo": "밸런스배지",
+      "region": "5",
+      "team": [
+        { "species": 288, "level": 33, "moves": [163, 280, 98, 210] },
+        { "species": 289, "level": 36, "moves": [34, 63, 37, 264] }
+      ]
+    },
+    {
+      "id": 6,
+      "leader": "Winona",
+      "leaderKo": "은송",
+      "type": "flying",
+      "badge": "feather",
+      "badgeKo": "페더배지",
+      "region": "6",
+      "team": [
+        { "species": 333, "level": 38, "moves": [64, 332, 574, 310] },
+        { "species": 279, "level": 40, "moves": [55, 17, 182, 403] },
+        { "species": 334, "level": 42, "moves": [406, 332, 53, 403] }
+      ]
+    },
+    {
+      "id": 7,
+      "leader": "Tate & Liza",
+      "leaderKo": "풍&란",
+      "type": "psychic",
+      "badge": "mind",
+      "badgeKo": "마인드배지",
+      "region": "7",
+      "team": [
+        { "species": 338, "level": 44, "moves": [94, 246, 53, 322] },
+        { "species": 337, "level": 46, "moves": [94, 246, 58, 322] }
+      ]
+    },
+    {
+      "id": 8,
+      "leader": "Wallace",
+      "leaderKo": "윤진",
+      "type": "water",
+      "badge": "rain",
+      "badgeKo": "레인배지",
+      "region": "8",
+      "team": [
+        { "species": 364, "level": 48, "moves": [58, 57, 34, 62] },
+        { "species": 119, "level": 50, "moves": [127, 30, 57, 237] },
+        { "species": 350, "level": 52, "moves": [56, 58, 105, 57] }
+      ]
+    },
+    {
+      "id": 9,
+      "leader": "Steven",
+      "leaderKo": "성호",
+      "type": "steel",
+      "badge": "champion_hoenn",
+      "badgeKo": "호연 챔피언배지",
+      "region": "9",
+      "team": [
+        { "species": 227, "level": 70, "moves": [211, 332, 442, 92] },
+        { "species": 344, "level": 70, "moves": [89, 94, 246, 58] },
+        { "species": 306, "level": 71, "moves": [442, 89, 157, 406] },
+        { "species": 346, "level": 72, "moves": [246, 412, 188, 76] },
+        { "species": 348, "level": 73, "moves": [404, 157, 246, 242] },
+        { "species": 376, "level": 75, "moves": [309, 89, 94, 63] }
+      ]
+    }
+  ]
+}

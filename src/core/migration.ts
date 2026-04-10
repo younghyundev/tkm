@@ -191,6 +191,8 @@ export function recalculateCommonEffects(commonState: CommonState): void {
   let encounter_rate_bonus = 0;
   let xp_bonus_multiplier = 0;
   let max_party_size_bonus = 0;
+  let rare_weight_multiplier = 1.0;
+  const titles: string[] = [];
   // Sum total item grants across all achieved common achievements
   const totalItemGrants: Record<string, number> = {};
 
@@ -210,13 +212,27 @@ export function recalculateCommonEffects(commonState: CommonState): void {
         if (item && count > 0) {
           totalItemGrants[item] = (totalItemGrants[item] ?? 0) + count;
         }
+      } else if (effect.type === 'title') {
+        const titleStr = String(effect.value ?? '');
+        if (titleStr && !titles.includes(titleStr)) titles.push(titleStr);
+      } else if (effect.type === 'rare_weight_multiplier') {
+        rare_weight_multiplier *= (effect.value as number) ?? 1.0;
       }
     }
   }
 
+  // Per-gen achievement effects (encounter_rate_bonus, rare_weight_multiplier from
+  // first_badge, four_badges, eight_badges) are NOT aggregated here. They are
+  // applied to per-gen state when the achievement triggers via applyAchievementEffects().
+  // Aggregating them into commonState would leak per-gen bonuses across all generations.
+
   commonState.encounter_rate_bonus = encounter_rate_bonus;
   commonState.xp_bonus_multiplier = xp_bonus_multiplier;
   commonState.max_party_size_bonus = max_party_size_bonus;
+  commonState.rare_weight_multiplier = rare_weight_multiplier;
+
+  // Rebuild titles authoritatively from common achievements only
+  commonState.titles = titles;
 
   // Ensure item floor: if current count is below total grants, top up
   // (don't remove consumed items — only guarantee minimum from achievements)

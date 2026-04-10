@@ -1,0 +1,131 @@
+{
+  "gyms": [
+    {
+      "id": 1,
+      "leader": "Brock",
+      "leaderKo": "웅",
+      "type": "rock",
+      "badge": "boulder",
+      "badgeKo": "회색배지",
+      "region": "1",
+      "team": [
+        { "species": 74, "level": 12, "moves": [33, 88, 106, 36] },
+        { "species": 95, "level": 14, "moves": [33, 88, 20, 21] }
+      ]
+    },
+    {
+      "id": 2,
+      "leader": "Misty",
+      "leaderKo": "이슬",
+      "type": "water",
+      "badge": "cascade",
+      "badgeKo": "블루배지",
+      "region": "2",
+      "team": [
+        { "species": 120, "level": 18, "moves": [33, 55, 106, 84] },
+        { "species": 121, "level": 21, "moves": [55, 57, 58, 34] }
+      ]
+    },
+    {
+      "id": 3,
+      "leader": "Lt. Surge",
+      "leaderKo": "마티스",
+      "type": "electric",
+      "badge": "thunder",
+      "badgeKo": "오렌지배지",
+      "region": "3",
+      "team": [
+        { "species": 100, "level": 18, "moves": [33, 84, 29, 34] },
+        { "species": 25, "level": 21, "moves": [33, 84, 85, 9] },
+        { "species": 26, "level": 24, "moves": [33, 85, 9, 63] }
+      ]
+    },
+    {
+      "id": 4,
+      "leader": "Erika",
+      "leaderKo": "민화",
+      "type": "grass",
+      "badge": "rainbow",
+      "badgeKo": "레인보우배지",
+      "region": "4",
+      "team": [
+        { "species": 71, "level": 24, "moves": [75, 35, 51, 76] },
+        { "species": 114, "level": 26, "moves": [35, 75, 21, 34] },
+        { "species": 45, "level": 29, "moves": [75, 76, 51, 34] }
+      ]
+    },
+    {
+      "id": 5,
+      "leader": "Koga",
+      "leaderKo": "독수",
+      "type": "poison",
+      "badge": "soul",
+      "badgeKo": "핑크배지",
+      "region": "5",
+      "team": [
+        { "species": 109, "level": 37, "moves": [33, 123, 92, 34] },
+        { "species": 89, "level": 39, "moves": [34, 124, 92, 29] },
+        { "species": 110, "level": 43, "moves": [33, 123, 92, 63] }
+      ]
+    },
+    {
+      "id": 6,
+      "leader": "Sabrina",
+      "leaderKo": "초련",
+      "type": "psychic",
+      "badge": "marsh",
+      "badgeKo": "골드배지",
+      "region": "6",
+      "team": [
+        { "species": 64, "level": 37, "moves": [93, 60, 34, 94] },
+        { "species": 122, "level": 39, "moves": [93, 60, 94, 29] },
+        { "species": 65, "level": 43, "moves": [94, 60, 34, 63] }
+      ]
+    },
+    {
+      "id": 7,
+      "leader": "Blaine",
+      "leaderKo": "강연",
+      "type": "fire",
+      "badge": "volcano",
+      "badgeKo": "크림슨배지",
+      "region": "7",
+      "team": [
+        { "species": 58, "level": 40, "moves": [52, 44, 36, 53] },
+        { "species": 77, "level": 42, "moves": [52, 23, 172, 36] },
+        { "species": 59, "level": 47, "moves": [53, 126, 36, 63] }
+      ]
+    },
+    {
+      "id": 8,
+      "leader": "Giovanni",
+      "leaderKo": "비주기",
+      "type": "ground",
+      "badge": "earth",
+      "badgeKo": "그린배지",
+      "region": "8",
+      "team": [
+        { "species": 111, "level": 42, "moves": [33, 31, 88, 36] },
+        { "species": 51, "level": 44, "moves": [91, 10, 89, 21] },
+        { "species": 112, "level": 50, "moves": [89, 414, 36, 63] }
+      ]
+    },
+    {
+      "id": 9,
+      "leader": "Green",
+      "leaderKo": "그린",
+      "type": "normal",
+      "badge": "champion_kanto",
+      "badgeKo": "관동 챔피언배지",
+      "region": "9",
+      "team": [
+        { "species": 18, "level": 70, "moves": [413, 403, 332, 63] },
+        { "species": 65, "level": 70, "moves": [94, 247, 411, 58] },
+        { "species": 112, "level": 71, "moves": [89, 157, 224, 34] },
+        { "species": 59, "level": 72, "moves": [53, 126, 242, 34] },
+        { "species": 103, "level": 73, "moves": [94, 76, 437, 63] },
+        { "species": 130, "level": 75, "moves": [127, 89, 242, 56] }
+      ]
+    }
+  ]
+}
