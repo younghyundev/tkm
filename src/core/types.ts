@@ -475,6 +475,23 @@ export type StatusCondition =
   | 'sleep'
   | 'freeze';
 
+export interface StatStages {
+  attack: number;
+  defense: number;
+  spAttack: number;
+  spDefense: number;
+  speed: number;
+  accuracy: number;
+  evasion: number;
+}
+
+export interface StatChange {
+  target: 'self' | 'opponent';
+  stat: keyof StatStages;
+  stages: number;
+  chance: number;
+}
+
 export interface MoveData {
   id: number;
   name: string;
@@ -483,12 +500,13 @@ export interface MoveData {
   type: string;
   category: MoveCategory;
   power: number;
-  accuracy: number;
+  accuracy: number | null;
   pp: number;
   effect?: {
     type: StatusCondition;
     chance: number;
   };
+  statChanges?: StatChange[];
 }
 
 export interface PokemonMovePool {
@@ -518,6 +536,7 @@ export interface BattlePokemon {
   statusCondition: StatusCondition | null;
   toxicCounter: number;
   sleepCounter: number;
+  statStages: StatStages;
 }
 
 export interface BattleTeam {

@@ -160,3 +160,94 @@ describe('selectAiMove with status moves', () => {
     assert.equal(statusCount, 0, 'Should never pick Thunder Wave against Ground (move-type immune)');
   });
 });
+
+describe('selectAiMove with stat-change moves (debuff scoring)', () => {
+  // Regression for v3b R2: opponent debuff scoring was inverted, so the AI
+  // valued redundant drops on already-debuffed targets and ignored buffed
+  // ones. The fix uses headroom toward -6 instead of raw stage.
+
+  const weakTackle: MoveData = {
+    id: 33, name: 'tackle', nameKo: '몸통박치기', nameEn: 'Tackle',
+    type: 'normal', category: 'physical', power: 10, accuracy: 100, pp: 35,
+  };
+  const growl: MoveData = {
+    id: 45, name: 'growl', nameKo: '울음소리', nameEn: 'Growl',
+    type: 'normal', category: 'status' as any, power: 0, accuracy: 100, pp: 40,
+    statChanges: [{ target: 'opponent', stat: 'attack', stages: -1, chance: 100 }],
+  } as any;
+
+  function makeNormalDefender(): BattlePokemon {
+    return createBattlePokemon(
+      { id: 100, types: ['normal'], level: 30, baseStats: { hp: 80, attack: 60, defense: 50, speed: 50, sp_attack: 50, sp_defense: 50 } },
+      [tackle],
+    );
+  }
+
+  function makeAttackerWithDebuff(): BattlePokemon {
+    return createBattlePokemon(
+      { id: 25, types: ['normal'], level: 30, baseStats: { hp: 35, attack: 55, defense: 40, speed: 90, sp_attack: 50, sp_defense: 50 } },
+      [weakTackle, growl],
+    );
+  }
+
+  it('never uses debuff against a target already at -6 in the relevant stat', () => {
+    let debuffCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const defender = makeNormalDefender();
+      defender.statStages.attack = -6;
+      if (selectAiMove(makeAttackerWithDebuff(), defender) === 1) debuffCount++;
+    }
+    assert.equal(debuffCount, 0, 'Should never pick growl when target attack is already at -6');
+  });
+
+  it('prioritizes debuff against a buffed target over a weak attack', () => {
+    // weakTackle scores ~10 (10 * 1 * 1). growl against +6 attack scores
+    // 40 * 12/12 = 40. So debuff should be picked the vast majority of the
+    // time (80% best + 20% random tiebreak).
+    let debuffCount = 0;
+    for (let i = 0; i < 200; i++) {
+      const defender = makeNormalDefender();
+      defender.statStages.attack = 6;
+      if (selectAiMove(makeAttackerWithDebuff(), defender) === 1) debuffCount++;
+    }
+    assert.ok(
+      debuffCount > 150,
+      `Expected debuff vs +6 attacker to be picked >150/200, got ${debuffCount}`,
+    );
+  });
+
+  it('never uses normal-type debuff against Ghost (move-type immune)', () => {
+    // Regression for v3b R3: AI was scoring growl normally against Ghost,
+    // even though normal-type moves cannot land on Ghost types.
+    let debuffCount = 0;
+    for (let i = 0; i < 100; i++) {
+      const ghostDefender = createBattlePokemon(
+        { id: 92, types: ['ghost'], level: 30, baseStats: { hp: 30, attack: 35, defense: 30, speed: 80, sp_attack: 100, sp_defense: 35 } },
+        [tackle],
+      );
+      if (selectAiMove(makeAttackerWithDebuff(), ghostDefender) === 1) debuffCount++;
+    }
+    assert.equal(debuffCount, 0, 'AI should never pick growl against Ghost-type');
+  });
+
+  it('debuff scoring decays as defender approaches -6 (monotonic with headroom)', () => {
+    // Compare selection rates at stages -3 vs +3 to verify the headroom-based
+    // scoring (not the inverted raw-stage one). +3 should yield more debuff
+    // selections than -3.
+    let countAtMinus3 = 0;
+    let countAtPlus3 = 0;
+    for (let i = 0; i < 200; i++) {
+      const defA = makeNormalDefender();
+      defA.statStages.attack = -3;
+      if (selectAiMove(makeAttackerWithDebuff(), defA) === 1) countAtMinus3++;
+
+      const defB = makeNormalDefender();
+      defB.statStages.attack = 3;
+      if (selectAiMove(makeAttackerWithDebuff(), defB) === 1) countAtPlus3++;
+    }
+    assert.ok(
+      countAtPlus3 > countAtMinus3,
+      `Buffed (+3) should be debuffed more often than already-debuffed (-3): +3=${countAtPlus3} vs -3=${countAtMinus3}`,
+    );
+  });
+});

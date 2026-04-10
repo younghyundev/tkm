@@ -5,6 +5,52 @@ import type { BattlePokemon, TurnAction } from './types.js';
 /** Base score for a status move (equivalent to a ~60-power move with neutral typing). */
 const STATUS_MOVE_BASE_SCORE = 60;
 
+function getHpRatio(pokemon: BattlePokemon): number {
+  return pokemon.maxHp > 0 ? pokemon.currentHp / pokemon.maxHp : 0;
+}
+
+function averageStages(mon: BattlePokemon, stats: Array<keyof BattlePokemon['statStages']>): number {
+  return stats.reduce((sum, stat) => sum + mon.statStages[stat], 0) / stats.length;
+}
+
+function scoreStatChangeMove(
+  attacker: BattlePokemon,
+  defender: BattlePokemon,
+  move: BattlePokemon['moves'][number],
+  typeEff: number,
+): number {
+  const changes = move.data.statChanges ?? [];
+  if (changes.length === 0) return 0;
+
+  const selfChanges = changes.filter((c) => c.target === 'self' && c.stages > 0);
+  if (selfChanges.length > 0) {
+    const stats = selfChanges.map((c) => c.stat);
+    if (stats.every((stat) => attacker.statStages[stat] >= 6)) return 0;
+    const currentStageAverage = averageStages(attacker, stats);
+    return Math.max(0, (STATUS_MOVE_BASE_SCORE + 10) * (1 - currentStageAverage / 6));
+  }
+
+  const opponentChanges = changes.filter((c) => c.target === 'opponent' && c.stages < 0);
+  if (opponentChanges.length > 0) {
+    // Type-immune debuff moves cannot land on the defender (e.g., growl on
+    // Ghost type). Mirror the engine's gating so the AI does not waste a
+    // turn on a debuff that the battle resolver will silently drop.
+    if (typeEff === 0) return 0;
+    if (getHpRatio(defender) <= 0.5) return 0;
+    const targetStat = opponentChanges[0].stat;
+    const stage = defender.statStages[targetStat];
+    if (stage <= -6) return 0;
+    // Score by remaining debuff headroom toward -6.
+    // headroom = stage + 6 → ranges 0 (at -6) up to 12 (at +6).
+    // Normalize to [0, 1]; max score at +6 (urgent corrective drop),
+    // mid score at neutral, near 0 as we approach -6.
+    const headroomRatio = (stage + 6) / 12;
+    return 40 * headroomRatio;
+  }
+
+  return 0;
+}
+
 /**
  * Select the best move index for the AI.
  *
@@ -25,6 +71,10 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
     let typeEff = 1.0;
     for (const defType of defender.types) {
       typeEff *= getTypeEffectiveness(move.data.type, defType);
+    }
+
+    if (move.data.power === 0 && move.data.statChanges?.length) {
+      return { index, score: scoreStatChangeMove(attacker, defender, move, typeEff) };
     }
 
     // Status move scoring

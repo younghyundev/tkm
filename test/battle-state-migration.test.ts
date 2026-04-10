@@ -126,6 +126,21 @@ describe('battle state migration', () => {
     assert.equal(mon.sleepCounter, 2);
   });
 
+  it('normalizeBattlePokemon backfills missing statStages to zeroes (v3b)', () => {
+    const mon = makeLegacyPokemon();
+    assert.equal((mon as any).statStages, undefined);
+    normalizeBattlePokemon(mon);
+    assert.deepEqual(mon.statStages, {
+      attack: 0,
+      defense: 0,
+      spAttack: 0,
+      spDefense: 0,
+      speed: 0,
+      accuracy: 0,
+      evasion: 0,
+    });
+  });
+
   it('resumed legacy sleeping mon can wake up without NaN soft-lock', async () => {
     // Regression for v3a R2 finding: a legacy save with statusCondition='sleep'
     // but sleepCounter=undefined would otherwise decrement to NaN and trap the

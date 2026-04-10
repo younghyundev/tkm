@@ -363,6 +363,8 @@
   "battle.gym_challenge": "{leader} wants to battle!",
   "battle.send_out": "{leader} sent out {pokemon}!",
   "battle.go": "Go, {pokemon}!",
+  "battle.switch": "Go! {name}!",
+  "battle.miss": "{name}'s attack missed!",
   "battle.victory": "You defeated {leader}!",
   "battle.defeat": "You lost to {leader}...",
   "battle.select_switch": "Choose a Pokémon to switch to:",
@@ -612,5 +614,18 @@
   "status.label.badly_poisoned": "TOX",
   "status.label.paralysis": "PRZ",
   "status.label.sleep": "SLP",
-  "status.label.freeze": "FRZ"
+  "status.label.freeze": "FRZ",
+  "stat.rose": "{name}'s {stat} rose!",
+  "stat.rose_sharply": "{name}'s {stat} rose sharply!",
+  "stat.fell": "{name}'s {stat} fell!",
+  "stat.fell_harshly": "{name}'s {stat} fell harshly!",
+  "stat.cannot_rise": "{name}'s {stat} won't go any higher!",
+  "stat.cannot_fall": "{name}'s {stat} won't go any lower!",
+  "stat.name.attack": "Attack",
+  "stat.name.defense": "Defense",
+  "stat.name.sp_attack": "Sp. Atk",
+  "stat.name.sp_defense": "Sp. Def",
+  "stat.name.speed": "Speed",
+  "stat.name.accuracy": "Accuracy",
+  "stat.name.evasion": "Evasion"
 }

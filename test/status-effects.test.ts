@@ -3,6 +3,13 @@ import assert from 'node:assert/strict';
 import { initLocale } from '../src/i18n/index.js';
 import type { BattleMove, BattlePokemon } from '../src/core/types.js';
 import {
+  applyStatChange,
+  createStatStages,
+  getAccEvaMultiplier,
+  getStatMultiplier,
+  resetStatStages,
+} from '../src/core/stat-stages.js';
+import {
   isStatusImmune,
   tryApplyStatus,
   checkParalysisSkip,
@@ -21,7 +28,8 @@ function makePokemon(overrides: Partial<BattlePokemon> = {}): BattlePokemon {
     id: 1, name: '1', displayName: 'Test', types: ['normal'], level: 50,
     maxHp: 160, currentHp: 160, attack: 60, defense: 50, spAttack: 55,
     spDefense: 50, speed: 70, moves: [], fainted: false,
-    statusCondition: null, toxicCounter: 0, sleepCounter: 0, ...overrides,
+    statusCondition: null, toxicCounter: 0, sleepCounter: 0,
+    statStages: createStatStages(), ...overrides,
   };
 }
 
@@ -100,6 +108,36 @@ describe('getBurnAttackMultiplier', () => {
 describe('getParalysisSpeedMultiplier', () => {
   it('0.5 for paralyzed', () => { assert.equal(getParalysisSpeedMultiplier(makePokemon({ statusCondition: 'paralysis' })), 0.5); });
   it('1.0 for normal', () => { assert.equal(getParalysisSpeedMultiplier(makePokemon()), 1.0); });
+});
+
+describe('stat stage helpers', () => {
+  it('getStatMultiplier matches the battle-stage formula at +2 and -6', () => {
+    assert.equal(getStatMultiplier(2), 2);
+    assert.equal(getStatMultiplier(-6), 0.25);
+  });
+
+  it('getAccEvaMultiplier matches the accuracy/evasion formula at +1 and +6', () => {
+    assert.equal(getAccEvaMultiplier(1), 4 / 3);
+    assert.equal(getAccEvaMultiplier(6), 3);
+  });
+
+  it('applyStatChange clamps at +6 and emits cap messaging', () => {
+    const mon = makePokemon({ statStages: { ...createStatStages(), attack: 6 } });
+    const msgs: string[] = [];
+    const changed = applyStatChange(mon, 'attack', 2, msgs);
+    assert.equal(changed, false);
+    assert.equal(mon.statStages.attack, 6);
+    assert.ok(msgs[0].includes('공격'));
+    assert.ok(msgs[0].includes('올라가지 않는다'));
+  });
+
+  it('resetStatStages zeroes out existing boosts and drops', () => {
+    const mon = makePokemon({
+      statStages: { ...createStatStages(), attack: 2, defense: -1, speed: 4 },
+    });
+    resetStatStages(mon);
+    assert.deepEqual(mon.statStages, createStatStages());
+  });
 });
 
 describe('applyEndOfTurnEffects', () => {

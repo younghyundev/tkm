@@ -121,6 +121,20 @@
     "accuracy": 100,
     "pp": 10
   },
+  "14": {
+    "id": 14,
+    "name": "swords-dance",
+    "nameKo": "칼춤",
+    "nameEn": "Swords Dance",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 20,
+    "statChanges": [
+      { "target": "self", "stat": "attack", "stages": 2, "chance": 100 }
+    ]
+  },
   "16": {
     "id": 16,
     "name": "gust",
@@ -345,6 +359,20 @@
     "accuracy": 100,
     "pp": 15
   },
+  "39": {
+    "id": 39,
+    "name": "tail-whip",
+    "nameKo": "꼬리흔들기",
+    "nameEn": "Tail Whip",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 30,
+    "statChanges": [
+      { "target": "opponent", "stat": "defense", "stages": -1, "chance": 100 }
+    ]
+  },
   "40": {
     "id": 40,
     "name": "poison-sting",
@@ -378,6 +406,20 @@
     "accuracy": 95,
     "pp": 20
   },
+  "43": {
+    "id": 43,
+    "name": "leer",
+    "nameKo": "째려보기",
+    "nameEn": "Leer",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 30,
+    "statChanges": [
+      { "target": "opponent", "stat": "defense", "stages": -1, "chance": 100 }
+    ]
+  },
   "44": {
     "id": 44,
     "name": "bite",
@@ -388,6 +430,20 @@
     "power": 60,
     "accuracy": 100,
     "pp": 25
+  },
+  "45": {
+    "id": 45,
+    "name": "growl",
+    "nameKo": "울음소리",
+    "nameEn": "Growl",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 40,
+    "statChanges": [
+      { "target": "opponent", "stat": "attack", "stages": -1, "chance": 100 }
+    ]
   },
   "47": {
     "id": 47,
@@ -539,7 +595,10 @@
     "category": "special",
     "power": 65,
     "accuracy": 100,
-    "pp": 20
+    "pp": 20,
+    "statChanges": [
+      { "target": "opponent", "stat": "attack", "stages": -1, "chance": 10 }
+    ]
   },
   "63": {
     "id": 63,
@@ -707,6 +766,20 @@
     "accuracy": 100,
     "pp": 10
   },
+  "81": {
+    "id": 81,
+    "name": "string-shot",
+    "nameKo": "실뿜기",
+    "nameEn": "String Shot",
+    "type": "bug",
+    "category": "status",
+    "power": 0,
+    "accuracy": 95,
+    "pp": 40,
+    "statChanges": [
+      { "target": "opponent", "stat": "speed", "stages": -1, "chance": 100 }
+    ]
+  },
   "84": {
     "id": 84,
     "name": "thunder-shock",
@@ -831,7 +904,10 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "statChanges": [
+      { "target": "opponent", "stat": "spDefense", "stages": -1, "chance": 10 }
+    ]
   },
   "95": {
     "id": 95,
@@ -847,6 +923,20 @@
       "type": "sleep",
       "chance": 100
     }
+  },
+  "97": {
+    "id": 97,
+    "name": "agility",
+    "nameKo": "고속이동",
+    "nameEn": "Agility",
+    "type": "psychic",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 30,
+    "statChanges": [
+      { "target": "self", "stat": "speed", "stages": 2, "chance": 100 }
+    ]
   },
   "98": {
     "id": 98,
@@ -869,6 +959,20 @@
     "power": 0,
     "accuracy": null,
     "pp": 20
+  },
+  "103": {
+    "id": 103,
+    "name": "screech",
+    "nameKo": "싫은소리",
+    "nameEn": "Screech",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": 85,
+    "pp": 40,
+    "statChanges": [
+      { "target": "opponent", "stat": "defense", "stages": -2, "chance": 100 }
+    ]
   },
   "105": {
     "id": 105,
@@ -1326,6 +1430,20 @@
     "accuracy": 100,
     "pp": 30
   },
+  "184": {
+    "id": 184,
+    "name": "scary-face",
+    "nameKo": "무서운얼굴",
+    "nameEn": "Scary Face",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 10,
+    "statChanges": [
+      { "target": "opponent", "stat": "speed", "stages": -2, "chance": 100 }
+    ]
+  },
   "185": {
     "id": 185,
     "name": "feint-attack",
@@ -1405,7 +1523,10 @@
     "category": "special",
     "power": 55,
     "accuracy": 95,
-    "pp": 15
+    "pp": 15,
+    "statChanges": [
+      { "target": "opponent", "stat": "speed", "stages": -1, "chance": 100 }
+    ]
   },
   "198": {
     "id": 198,
@@ -1439,6 +1560,20 @@
     "power": 75,
     "accuracy": 100,
     "pp": 10
+  },
+  "204": {
+    "id": 204,
+    "name": "charm",
+    "nameKo": "애교부리기",
+    "nameEn": "Charm",
+    "type": "fairy",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 20,
+    "statChanges": [
+      { "target": "opponent", "stat": "attack", "stages": -2, "chance": 100 }
+    ]
   },
   "205": {
     "id": 205,
@@ -1554,6 +1689,20 @@
     "accuracy": 100,
     "pp": 40
   },
+  "230": {
+    "id": 230,
+    "name": "sweet-scent",
+    "nameKo": "달콤한향기",
+    "nameEn": "Sweet Scent",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 20,
+    "statChanges": [
+      { "target": "opponent", "stat": "evasion", "stages": -2, "chance": 100 }
+    ]
+  },
   "231": {
     "id": 231,
     "name": "iron-tail",
@@ -1629,7 +1778,10 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "statChanges": [
+      { "target": "opponent", "stat": "defense", "stages": -1, "chance": 20 }
+    ]
   },
   "245": {
     "id": 245,
@@ -1662,7 +1814,10 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "statChanges": [
+      { "target": "opponent", "stat": "spDefense", "stages": -1, "chance": 20 }
+    ]
   },
   "248": {
     "id": 248,
@@ -1684,7 +1839,10 @@
     "category": "physical",
     "power": 40,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "statChanges": [
+      { "target": "opponent", "stat": "defense", "stages": -1, "chance": 50 }
+    ]
   },
   "250": {
     "id": 250,
@@ -2108,6 +2266,20 @@
     "accuracy": null,
     "pp": 20
   },
+  "334": {
+    "id": 334,
+    "name": "iron-defense",
+    "nameKo": "철벽",
+    "nameEn": "Iron Defense",
+    "type": "steel",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 15,
+    "statChanges": [
+      { "target": "self", "stat": "defense", "stages": 2, "chance": 100 }
+    ]
+  },
   "337": {
     "id": 337,
     "name": "dragon-claw",
@@ -2163,6 +2335,21 @@
     "accuracy": null,
     "pp": 20
   },
+  "347": {
+    "id": 347,
+    "name": "calm-mind",
+    "nameKo": "명상",
+    "nameEn": "Calm Mind",
+    "type": "psychic",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 20,
+    "statChanges": [
+      { "target": "self", "stat": "spAttack", "stages": 1, "chance": 100 },
+      { "target": "self", "stat": "spDefense", "stages": 1, "chance": 100 }
+    ]
+  },
   "348": {
     "id": 348,
     "name": "leaf-blade",
@@ -2173,6 +2360,21 @@
     "power": 90,
     "accuracy": 100,
     "pp": 15
+  },
+  "349": {
+    "id": 349,
+    "name": "dragon-dance",
+    "nameKo": "용의춤",
+    "nameEn": "Dragon Dance",
+    "type": "dragon",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 20,
+    "statChanges": [
+      { "target": "self", "stat": "attack", "stages": 1, "chance": 100 },
+      { "target": "self", "stat": "speed", "stages": 1, "chance": 100 }
+    ]
   },
   "350": {
     "id": 350,
@@ -2429,7 +2631,8 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "statChanges": []
   },
   "403": {
     "id": 403,
@@ -2462,7 +2665,10 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "statChanges": [
+      { "target": "opponent", "stat": "spDefense", "stages": -1, "chance": 10 }
+    ]
   },
   "406": {
     "id": 406,
@@ -2562,6 +2768,20 @@
     "power": 150,
     "accuracy": 90,
     "pp": 5
+  },
+  "417": {
+    "id": 417,
+    "name": "nasty-plot",
+    "nameKo": "나쁜음모",
+    "nameEn": "Nasty Plot",
+    "type": "dark",
+    "category": "status",
+    "power": 0,
+    "accuracy": null,
+    "pp": 20,
+    "statChanges": [
+      { "target": "self", "stat": "spAttack", "stages": 2, "chance": 100 }
+    ]
   },
   "418": {
     "id": 418,
@@ -2693,7 +2913,10 @@
     "category": "special",
     "power": 80,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "statChanges": [
+      { "target": "opponent", "stat": "spDefense", "stages": -1, "chance": 10 }
+    ]
   },
   "431": {
     "id": 431,
@@ -3068,7 +3291,10 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
-    "pp": 20
+    "pp": 20,
+    "statChanges": [
+      { "target": "opponent", "stat": "spDefense", "stages": -2, "chance": 100 }
+    ]
   },
   "492": {
     "id": 492,
@@ -3659,7 +3885,10 @@
     "category": "special",
     "power": 75,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "statChanges": [
+      { "target": "opponent", "stat": "spAttack", "stages": -1, "chance": 100 }
+    ]
   },
   "605": {
     "id": 605,

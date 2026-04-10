@@ -13,6 +13,8 @@ import {
   hasAlivePokemon,
   resolveTurn,
 } from '../src/core/turn-battle.js';
+import { selectAiMove } from '../src/core/gym-ai.js';
+import { createStatStages } from '../src/core/stat-stages.js';
 import type { BattlePokemon, BattleMove, MoveData, BattleState, StatusCondition } from '../src/core/types.js';
 
 initLocale('ko');
@@ -83,6 +85,7 @@ function makeTestPokemon(overrides: Partial<BattlePokemon> = {}): BattlePokemon 
     statusCondition: null,
     toxicCounter: 0,
     sleepCounter: 0,
+    statStages: createStatStages(),
     ...overrides,
   };
 }
@@ -167,6 +170,7 @@ describe('createBattlePokemon', () => {
     assert.equal(bp.statusCondition, null);
     assert.equal(bp.toxicCounter, 0);
     assert.equal(bp.sleepCounter, 0);
+    assert.deepEqual(bp.statStages, createStatStages());
   });
 });
 
@@ -252,18 +256,43 @@ describe('getEffectivenessMessage', () => {
 });
 
 describe('checkAccuracy', () => {
-  it('returns true for always-hit moves (accuracy <= 0)', () => {
-    const move: BattleMove = { data: makeMoveData({ accuracy: 0 }), currentPp: 10 };
+  it('returns true for always-hit moves (accuracy null)', () => {
+    const attacker = makeTestPokemon();
+    const defender = makeTestPokemon({ displayName: 'Defender' });
+    const move = makeMoveData({ accuracy: null });
     // Should always return true
     for (let i = 0; i < 50; i++) {
-      assert.equal(checkAccuracy(move), true);
+      assert.equal(checkAccuracy(attacker, defender, move), true);
     }
   });
 
   it('returns boolean for normal accuracy moves', () => {
-    const move: BattleMove = { data: makeMoveData({ accuracy: 50 }), currentPp: 10 };
-    const result = checkAccuracy(move);
+    const attacker = makeTestPokemon();
+    const defender = makeTestPokemon({ displayName: 'Defender' });
+    const move = makeMoveData({ accuracy: 50 });
+    const result = checkAccuracy(attacker, defender, move);
     assert.equal(typeof result, 'boolean');
+  });
+
+  it('accuracy stages improve hit chance and evasion stages reduce it', () => {
+    const attacker = makeTestPokemon();
+    const defender = makeTestPokemon({ displayName: 'Defender' });
+    const move = makeMoveData({ accuracy: 50 });
+    const originalRandom = Math.random;
+
+    try {
+      Math.random = () => 0.7;
+      assert.equal(checkAccuracy(attacker, defender, move), false);
+
+      attacker.statStages.accuracy = 2;
+      assert.equal(checkAccuracy(attacker, defender, move), true);
+
+      attacker.statStages.accuracy = 0;
+      defender.statStages.evasion = 2;
+      assert.equal(checkAccuracy(attacker, defender, move), false);
+    } finally {
+      Math.random = originalRandom;
+    }
   });
 });
 
@@ -359,7 +388,7 @@ describe('resolveTurn', () => {
       { type: 'move', moveIndex: 0 },
     );
     // Switch message should come before attack message
-    const switchIdx = result.messages.findIndex((m) => m.includes('교체'));
+    const switchIdx = result.messages.findIndex((m) => m.includes('이상해씨'));
     const attackIdx = result.messages.findIndex((m) => m.includes('파이리'));
     assert.ok(switchIdx >= 0, 'Should have switch message');
     assert.ok(attackIdx >= 0, 'Should have attack message');
@@ -494,6 +523,140 @@ describe('resolveTurn', () => {
     // Should not throw; invalid switch is silently skipped
     assert.ok(Array.isArray(result.messages));
   });
+
+  it('type-immune debuff move does not apply stat changes to defender', () => {
+    // Regression for v3b R3 HIGH: growl into a Ghost target was logging
+    // immunity but still dropping the defender's attack stage.
+    const growlMove: BattleMove = {
+      data: {
+        ...makeMoveData({ type: 'normal', category: 'physical', power: 0, accuracy: 100 }),
+        statChanges: [{ target: 'opponent', stat: 'attack', stages: -1, chance: 100 }],
+      } as any,
+      currentPp: 40,
+    };
+    const player = makeTestPokemon({
+      displayName: 'Growler',
+      speed: 999,
+      moves: [growlMove],
+    });
+    const ghostDefender = makeTestPokemon({
+      displayName: 'Ghost',
+      types: ['ghost'],
+      speed: 1,
+    });
+    const ghostState = createBattleState([player], [ghostDefender]);
+    resolveTurn(
+      ghostState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+    assert.equal(
+      ghostDefender.statStages.attack,
+      0,
+      'Ghost defender should not have attack stage dropped by Normal-type debuff',
+    );
+  });
+
+  it('type-immune debuff with <100 accuracy reports immunity, not miss', () => {
+    // Regression for v3b R4: Screech (85 acc, normal-type, opponent debuff)
+    // into Ghost should report immunity even when the accuracy roll would
+    // have failed. Previously the accuracy gate ran first and emitted "miss".
+    const screechMove: BattleMove = {
+      data: {
+        ...makeMoveData({ type: 'normal', category: 'physical', power: 0, accuracy: 85 }),
+        statChanges: [{ target: 'opponent', stat: 'defense', stages: -2, chance: 100 }],
+      } as any,
+      currentPp: 40,
+    };
+    const player = makeTestPokemon({
+      displayName: 'Screecher',
+      speed: 999,
+      moves: [screechMove],
+    });
+    const ghostDefender = makeTestPokemon({
+      displayName: 'Ghost',
+      types: ['ghost'],
+      speed: 1,
+    });
+    const screechState = createBattleState([player], [ghostDefender]);
+    const origRandom = Math.random;
+    try {
+      // Force a "miss" roll: 0.9 * 100 = 90, 90 < 85 is false → miss
+      Math.random = () => 0.9;
+      const result = resolveTurn(
+        screechState,
+        { type: 'move', moveIndex: 0 },
+        { type: 'move', moveIndex: 0 },
+      );
+      assert.equal(ghostDefender.statStages.defense, 0, 'No debuff applied');
+      assert.ok(
+        result.messages.some((m) => m.includes('효과가 없') || m.toLowerCase().includes('no effect')),
+        `Should report immunity, not miss. Messages: ${JSON.stringify(result.messages)}`,
+      );
+      assert.ok(
+        !result.messages.some((m) => m.includes('빗나갔') || m.toLowerCase().includes('miss')),
+        `Should NOT report miss when target is type-immune`,
+      );
+    } finally {
+      Math.random = origRandom;
+    }
+  });
+
+  it('type-immune debuff still applies self-buff component if present', () => {
+    // Defensive: a hypothetical move that buffs self AND debuffs opponent.
+    // The opponent debuff should be blocked by type immunity, but the
+    // self-buff should still land because immunity does not affect self.
+    const dualMove: BattleMove = {
+      data: {
+        ...makeMoveData({ type: 'normal', category: 'physical', power: 0, accuracy: 100 }),
+        statChanges: [
+          { target: 'self', stat: 'attack', stages: 1, chance: 100 },
+          { target: 'opponent', stat: 'defense', stages: -1, chance: 100 },
+        ],
+      } as any,
+      currentPp: 10,
+    };
+    const player = makeTestPokemon({
+      displayName: 'Dual',
+      speed: 999,
+      moves: [dualMove],
+    });
+    const ghostDefender = makeTestPokemon({
+      displayName: 'Ghost',
+      types: ['ghost'],
+      speed: 1,
+    });
+    const dualState = createBattleState([player], [ghostDefender]);
+    resolveTurn(
+      dualState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+    assert.equal(player.statStages.attack, 1, 'Self-buff should still apply');
+    assert.equal(ghostDefender.statStages.defense, 0, 'Opponent debuff should be blocked');
+  });
+
+  it('same-slot switch does NOT reset stat stages (no-op cleanse exploit)', () => {
+    // Regression: a "switch" action targeting the already-active Pokemon must
+    // not act as a free, priority cleanse for stat-stage debuffs. The bug
+    // would let a debuffed mon erase its own stages by issuing a no-op switch.
+    const player = getActivePokemon(state.player);
+    player.statStages.attack = -3;
+    player.statStages.defense = -2;
+
+    const result = resolveTurn(
+      state,
+      { type: 'switch', pokemonIndex: state.player.activeIndex },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.equal(player.statStages.attack, -3, 'attack stage should remain unchanged');
+    assert.equal(player.statStages.defense, -2, 'defense stage should remain unchanged');
+    assert.ok(
+      !result.messages.some((m) => m.includes('교체') || m.toLowerCase().includes('switch')),
+      'No switch message should be emitted for a no-op switch',
+    );
+  });
 });
 
 describe('calculateDamage edge cases', () => {
@@ -513,6 +676,46 @@ describe('calculateDamage edge cases', () => {
     const dmg = calculateDamage(attacker, defender, move);
     assert.equal(dmg, 0, `Immune matchup should deal 0 damage, got ${dmg}`);
   });
+
+  it('damage increases with positive attack stages', () => {
+    const attacker = makeTestPokemon({ attack: 100 });
+    const defender = makeTestPokemon({ defense: 60, displayName: 'Defender' });
+    const move: BattleMove = { data: makeMoveData({ power: 60 }), currentPp: 10 };
+    const originalRandom = Math.random;
+
+    try {
+      Math.random = () => 0;
+      const neutralDamage = calculateDamage(attacker, defender, move);
+      attacker.statStages.attack = 2;
+      const boostedDamage = calculateDamage(attacker, defender, move);
+      assert.ok(
+        boostedDamage > neutralDamage,
+        `Expected +2 attack stages to increase damage (${neutralDamage} -> ${boostedDamage})`,
+      );
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
+
+  it('damage increases when the defender has negative defense stages', () => {
+    const attacker = makeTestPokemon({ attack: 100 });
+    const defender = makeTestPokemon({ defense: 80, displayName: 'Defender' });
+    const move: BattleMove = { data: makeMoveData({ power: 60 }), currentPp: 10 };
+    const originalRandom = Math.random;
+
+    try {
+      Math.random = () => 0;
+      const neutralDamage = calculateDamage(attacker, defender, move);
+      defender.statStages.defense = -2;
+      const droppedDefenseDamage = calculateDamage(attacker, defender, move);
+      assert.ok(
+        droppedDefenseDamage > neutralDamage,
+        `Expected -2 defense stages to increase damage (${neutralDamage} -> ${droppedDefenseDamage})`,
+      );
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
 });
 
 describe('resolveTurn with status effects', () => {
@@ -523,6 +726,24 @@ describe('resolveTurn with status effects', () => {
     const result = resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
     // Opponent effective speed = 200 * 0.5 = 100 < 110, player goes first
     assert.ok(result.messages[0].includes('Fast'), `Player should act first, got: ${result.messages[0]}`);
+  });
+
+  it('speed stages can flip turn order', () => {
+    const player = makeTestPokemon({ displayName: 'Boosted', speed: 80 });
+    player.statStages.speed = 2;
+    const opponent = makeTestPokemon({ displayName: 'Base', speed: 100 });
+    const state = createBattleState([player], [opponent]);
+
+    const result = resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.ok(
+      result.messages[0].includes('Boosted'),
+      `Expected boosted speed stages to flip turn order, got ${result.messages[0]}`,
+    );
   });
 
   it('burn halves physical damage', () => {
@@ -569,6 +790,47 @@ describe('resolveTurn with status effects', () => {
     assert.equal(opp.statusCondition, 'burn');
   });
 
+  it('status buff moves apply to the user', () => {
+    const buffMove = makeMoveData({
+      name: 'swords-dance',
+      nameKo: '칼춤',
+      power: 0,
+      statChanges: [{ target: 'self', stat: 'attack', stages: 2, chance: 100 }],
+    });
+    const player = makeTestPokemon({
+      displayName: 'P',
+      speed: 999,
+      moves: [{ data: buffMove, currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({ displayName: 'O' });
+    const state = createBattleState([player], [opp]);
+
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.equal(player.statStages.attack, 2);
+  });
+
+  it('damaging moves can apply post-hit secondary stat drops', () => {
+    const debuffMove = makeMoveData({
+      name: 'crunch',
+      nameKo: '깨물어부수기',
+      power: 80,
+      statChanges: [{ target: 'opponent', stat: 'defense', stages: -1, chance: 100 }],
+    });
+    const player = makeTestPokemon({
+      displayName: 'P',
+      speed: 999,
+      attack: 100,
+      moves: [{ data: debuffMove, currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({ displayName: 'O', defense: 60 });
+    const state = createBattleState([player], [opp]);
+
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.equal(opp.statStages.defense, -1);
+  });
+
   it('toxic counter resets on switch', () => {
     const p1 = makeTestPokemon({ displayName: 'Toxic', statusCondition: 'badly_poisoned' as StatusCondition, toxicCounter: 5 });
     const p2 = makeTestPokemon({ displayName: 'Fresh', statusCondition: null, toxicCounter: 0 });
@@ -576,6 +838,19 @@ describe('resolveTurn with status effects', () => {
     const state = createBattleState([p1, p2], [opp]);
     resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
     assert.equal(p1.toxicCounter, 1);
+  });
+
+  it('switch resets stat stages on the incoming pokemon', () => {
+    const p1 = makeTestPokemon({ displayName: 'Lead' });
+    const p2 = makeTestPokemon({ displayName: 'Bench' });
+    p2.statStages.attack = 3;
+    p2.statStages.speed = -2;
+    const opp = makeTestPokemon({ displayName: 'O' });
+    const state = createBattleState([p1, p2], [opp]);
+
+    resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
+
+    assert.deepEqual(p2.statStages, createStatStages());
   });
 
   it('move-type immune target does not receive status from secondary effect', () => {
@@ -975,5 +1250,53 @@ describe('resolveTurn with status effects', () => {
     } finally {
       Math.random = origRandom;
     }
+  });
+
+  it('AI prefers self-buff setup when its own stages are low', () => {
+    const attacker = makeTestPokemon({
+      moves: [
+        {
+          data: makeMoveData({
+            name: 'swords-dance',
+            category: 'status',
+            power: 0,
+            accuracy: null,
+            statChanges: [{ target: 'self', stat: 'attack', stages: 2, chance: 100 }],
+          }),
+          currentPp: 20,
+        },
+        { data: makeMoveData({ name: 'tackle', power: 40 }), currentPp: 35 },
+      ],
+    });
+    const defender = makeTestPokemon({ displayName: 'Defender', currentHp: 120 });
+    const origRandom = Math.random;
+    try {
+      Math.random = () => 0;
+      const choice = selectAiMove(attacker, defender);
+      assert.equal(choice, 0);
+    } finally {
+      Math.random = origRandom;
+    }
+  });
+
+  it('AI gives zero setup score when already capped', () => {
+    const attacker = makeTestPokemon({
+      statStages: { ...createStatStages(), attack: 6 },
+      moves: [
+        {
+          data: makeMoveData({
+            name: 'swords-dance',
+            category: 'status',
+            power: 0,
+            accuracy: null,
+            statChanges: [{ target: 'self', stat: 'attack', stages: 2, chance: 100 }],
+          }),
+          currentPp: 20,
+        },
+        { data: makeMoveData({ name: 'slash', power: 70 }), currentPp: 20 },
+      ],
+    });
+    const choice = selectAiMove(attacker, makeTestPokemon({ displayName: 'Defender' }));
+    assert.equal(choice, 1);
   });
 });
