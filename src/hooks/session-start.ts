@@ -270,7 +270,7 @@ function main(): void {
 
     // Refresh notifications and include active ones in output
     updateKnownRegions(state);
-    refreshNotifications(state, config);
+    refreshNotifications(state, config, commonState);
     const activeNotifs = getActiveNotifications(state);
     if (activeNotifs.length > 0) {
       const icons: Record<string, string> = {
