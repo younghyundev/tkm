@@ -243,11 +243,14 @@ function executeMove(
     }
   }
 
-  if (!isStruggle && checkSleepSkip(attacker, messages)) {
+  // Sleep and freeze are full incapacitation in mainline — they stop the turn
+  // even when Struggle would otherwise be forced. Paralysis is only a partial
+  // skip, so it keeps the Struggle bypass to preserve the no-PP invariant.
+  if (checkSleepSkip(attacker, messages)) {
     return { defenderFainted: false };
   }
 
-  if (!isStruggle && checkFreezeSkip(attacker, move, messages)) {
+  if (checkFreezeSkip(attacker, move, messages)) {
     return { defenderFainted: false };
   }
 
@@ -272,9 +275,13 @@ function executeMove(
   const effMsg = getEffectivenessMessage(move.data.type, defender.types);
   const moveTypeImmune = effMsg === 'effect_immune';
 
+  // Fire-type thaw: only damaging fire hits thaw the defender. A non-damaging
+  // fire status move (e.g. will-o-wisp) must not thaw a frozen target, or it
+  // would then apply a new burn status in the same action.
   if (
     defender.statusCondition === 'freeze' &&
     move.data.type === 'fire' &&
+    move.data.power > 0 &&
     !moveTypeImmune
   ) {
     defender.statusCondition = null;

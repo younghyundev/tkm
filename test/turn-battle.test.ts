@@ -858,4 +858,114 @@ describe('resolveTurn with status effects', () => {
     assert.equal(player.fainted, false, 'Player should not faint from post-turn burn tick after battle decided');
     assert.equal(state.phase, 'battle_end');
   });
+
+  it('sleep blocks Struggle turn (no-PP asleep pokemon cannot act)', () => {
+    // Sleep must consume the turn even when the attacker has no PP and would
+    // otherwise be forced into Struggle. Assertion: opponent took no damage
+    // from the sleeper, proving the sleeper never acted.
+    const player = makeTestPokemon({
+      displayName: 'Sleeper',
+      speed: 999,
+      statusCondition: 'sleep' as StatusCondition,
+      toxicCounter: 0,
+      sleepCounter: 3,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 0 }],
+    });
+    // Opponent has no usable moves either — guarantees opp does NOT attack
+    // the sleeper, so sleeper's HP should remain at maxHp (no opp damage, no
+    // struggle recoil on the sleeper side because sleeper never acted).
+    const opp = makeTestPokemon({
+      displayName: 'O',
+      speed: 1,
+      statusCondition: 'sleep' as StatusCondition,
+      toxicCounter: 0,
+      sleepCounter: 3,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 0 }],
+    });
+    const state = createBattleState([player], [opp]);
+    const result = resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    // Neither mon should take damage — both were asleep and blocked from acting.
+    assert.equal(player.currentHp, player.maxHp, 'Sleeper should not take struggle recoil');
+    assert.equal(opp.currentHp, opp.maxHp, 'Neither mon should have dealt damage');
+    assert.ok(
+      result.messages.some((m) => m.includes('잠') || m.toLowerCase().includes('sleep')),
+      `Expected sleep message, got: ${JSON.stringify(result.messages)}`,
+    );
+  });
+
+  it('freeze blocks Struggle turn (no-PP frozen pokemon cannot act)', () => {
+    // Freeze must consume the turn even when Struggle would be forced.
+    // Pin Math.random to 0.9 so thaw roll (<0.2) never fires.
+    const player = makeTestPokemon({
+      displayName: 'Frozen',
+      speed: 999,
+      statusCondition: 'freeze' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 0 }],
+    });
+    // Opponent also frozen with no PP — so neither side should act
+    const opp = makeTestPokemon({
+      displayName: 'O',
+      speed: 1,
+      statusCondition: 'freeze' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 0 }],
+    });
+    const state = createBattleState([player], [opp]);
+    const origRandom = Math.random;
+    try {
+      Math.random = () => 0.9;
+      resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+      assert.equal(player.currentHp, player.maxHp, 'Neither mon should have taken damage');
+      assert.equal(opp.currentHp, opp.maxHp, 'Neither mon should have dealt damage');
+      assert.equal(player.statusCondition, 'freeze', 'Player should still be frozen');
+      assert.equal(opp.statusCondition, 'freeze', 'Opponent should still be frozen');
+    } finally {
+      Math.random = origRandom;
+    }
+  });
+
+  it('will-o-wisp does not thaw a frozen defender (non-damaging fire status)', () => {
+    // Regression: a non-damaging fire move must not thaw a frozen target and
+    // then apply a new burn in the same action. Pin Math.random to 0.5 so
+    // the defender's own thaw roll (<0.2) does not fire.
+    const wow = makeMoveData({ type: 'fire', category: 'physical', power: 0, accuracy: 85 });
+    (wow as any).effect = { type: 'burn', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: wow, currentPp: 10 }] });
+    // Opponent is frozen, has no PP (so they would Struggle but sleep/freeze
+    // check fires first). Types set to water so fire is not immune.
+    const opp = makeTestPokemon({
+      displayName: 'O',
+      types: ['water'],
+      speed: 1,
+      statusCondition: 'freeze' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 0 }],
+    });
+    const state = createBattleState([player], [opp]);
+    const origRandom = Math.random;
+    try {
+      Math.random = () => 0.5;
+      resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+      assert.equal(opp.statusCondition, 'freeze', 'Freeze should not be cleared by non-damaging fire move');
+    } finally {
+      Math.random = origRandom;
+    }
+  });
+
+  it('damaging fire move (flamethrower) still thaws a frozen defender', () => {
+    const flamethrower = makeMoveData({ type: 'fire', category: 'special', power: 90 });
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: flamethrower, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['water'], statusCondition: 'freeze' as StatusCondition, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    const origRandom = Math.random;
+    try {
+      Math.random = () => 0;
+      resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+      assert.equal(opp.statusCondition, null, 'Frozen defender should be thawed by damaging fire move');
+      assert.ok(opp.currentHp < opp.maxHp, 'Damage should still apply');
+    } finally {
+      Math.random = origRandom;
+    }
+  });
 });
