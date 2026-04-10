@@ -67,7 +67,11 @@
     "category": "physical",
     "power": 75,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "effect": {
+      "type": "freeze",
+      "chance": 10
+    }
   },
   "9": {
     "id": 9,
@@ -385,6 +389,21 @@
     "accuracy": 100,
     "pp": 25
   },
+  "47": {
+    "id": 47,
+    "name": "sing",
+    "nameKo": "노래하기",
+    "nameEn": "Sing",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": 55,
+    "pp": 15,
+    "effect": {
+      "type": "sleep",
+      "chance": 100
+    }
+  },
   "51": {
     "id": 51,
     "name": "acid",
@@ -468,7 +487,11 @@
     "category": "special",
     "power": 90,
     "accuracy": 100,
-    "pp": 10
+    "pp": 10,
+    "effect": {
+      "type": "freeze",
+      "chance": 10
+    }
   },
   "59": {
     "id": 59,
@@ -479,7 +502,11 @@
     "category": "special",
     "power": 110,
     "accuracy": 70,
-    "pp": 5
+    "pp": 5,
+    "effect": {
+      "type": "freeze",
+      "chance": 10
+    }
   },
   "60": {
     "id": 60,
@@ -654,6 +681,21 @@
       "chance": 100
     }
   },
+  "79": {
+    "id": 79,
+    "name": "sleep-powder",
+    "nameKo": "수면가루",
+    "nameEn": "Sleep Powder",
+    "type": "grass",
+    "category": "status",
+    "power": 0,
+    "accuracy": 75,
+    "pp": 15,
+    "effect": {
+      "type": "sleep",
+      "chance": 100
+    }
+  },
   "80": {
     "id": 80,
     "name": "petal-dance",
@@ -790,6 +832,21 @@
     "power": 90,
     "accuracy": 100,
     "pp": 10
+  },
+  "95": {
+    "id": 95,
+    "name": "hypnosis",
+    "nameKo": "최면술",
+    "nameEn": "Hypnosis",
+    "type": "psychic",
+    "category": "status",
+    "power": 0,
+    "accuracy": 60,
+    "pp": 20,
+    "effect": {
+      "type": "sleep",
+      "chance": 100
+    }
   },
   "98": {
     "id": 98,
@@ -1004,6 +1061,21 @@
     "accuracy": 100,
     "pp": 10
   },
+  "142": {
+    "id": 142,
+    "name": "lovely-kiss",
+    "nameKo": "악마의키스",
+    "nameEn": "Lovely Kiss",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": 75,
+    "pp": 10,
+    "effect": {
+      "type": "sleep",
+      "chance": 100
+    }
+  },
   "143": {
     "id": 143,
     "name": "sky-attack",
@@ -1047,6 +1119,21 @@
     "power": 70,
     "accuracy": 100,
     "pp": 10
+  },
+  "147": {
+    "id": 147,
+    "name": "spore",
+    "nameKo": "버섯포자",
+    "nameEn": "Spore",
+    "type": "grass",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 15,
+    "effect": {
+      "type": "sleep",
+      "chance": 100
+    }
   },
   "150": {
     "id": 150,
@@ -1211,7 +1298,11 @@
     "category": "special",
     "power": 40,
     "accuracy": 100,
-    "pp": 25
+    "pp": 25,
+    "effect": {
+      "type": "freeze",
+      "chance": 10
+    }
   },
   "182": {
     "id": 182,
@@ -3476,7 +3567,11 @@
     "category": "special",
     "power": 70,
     "accuracy": 100,
-    "pp": 20
+    "pp": 20,
+    "effect": {
+      "type": "freeze",
+      "chance": 10
+    }
   },
   "574": {
     "id": 574,

@@ -25,13 +25,15 @@ function padRight(text: string, width: number): string {
 
 function statusLabel(mon: BattlePokemon): string {
   if (!mon.statusCondition) return '';
-  const label = t(`status.label.${mon.statusCondition}`);
   const colors: Record<string, string> = {
     burn: '\x1b[31m',
     poison: '\x1b[35m',
     badly_poisoned: '\x1b[35m',
     paralysis: '\x1b[33m',
+    sleep: '\x1b[33m',
+    freeze: '\x1b[36m',
   };
+  const label = t(`status.label.${mon.statusCondition}`);
   const color = colors[mon.statusCondition] || '';
   return ` ${color}[${label}]${RESET}`;
 }

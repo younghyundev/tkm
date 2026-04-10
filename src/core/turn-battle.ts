@@ -1,3 +1,4 @@
+import { t } from '../i18n/index.js';
 import { getTypeEffectiveness } from './type-chart.js';
 import type {
   BaseStats,
@@ -12,6 +13,8 @@ import type {
 import {
   getParalysisSpeedMultiplier,
   getBurnAttackMultiplier,
+  checkSleepSkip,
+  checkFreezeSkip,
   checkParalysisSkip,
   applyEndOfTurnEffects,
   rollMoveEffect,
@@ -66,6 +69,7 @@ export function createBattlePokemon(
     fainted: false,
     statusCondition: null,
     toxicCounter: 0,
+    sleepCounter: 0,
   };
 }
 
@@ -239,9 +243,17 @@ function executeMove(
     }
   }
 
-  // Paralysis full-skip check — only applies to chosen moves, never to
-  // mandatory Struggle. This preserves the invariant that a no-PP turn always
-  // resolves through Struggle recoil.
+  // Sleep and freeze are full incapacitation in mainline — they stop the turn
+  // even when Struggle would otherwise be forced. Paralysis is only a partial
+  // skip, so it keeps the Struggle bypass to preserve the no-PP invariant.
+  if (checkSleepSkip(attacker, messages)) {
+    return { defenderFainted: false };
+  }
+
+  if (checkFreezeSkip(attacker, move, messages)) {
+    return { defenderFainted: false };
+  }
+
   if (!isStruggle && checkParalysisSkip(attacker, messages)) {
     return { defenderFainted: false };
   }
@@ -263,7 +275,19 @@ function executeMove(
   const effMsg = getEffectivenessMessage(move.data.type, defender.types);
   const moveTypeImmune = effMsg === 'effect_immune';
 
-  // Damage calculation
+  // Fire-type thaw: only damaging fire hits thaw the defender. A non-damaging
+  // fire status move (e.g. will-o-wisp) must not thaw a frozen target, or it
+  // would then apply a new burn status in the same action.
+  if (
+    defender.statusCondition === 'freeze' &&
+    move.data.type === 'fire' &&
+    move.data.power > 0 &&
+    !moveTypeImmune
+  ) {
+    defender.statusCondition = null;
+    messages.push(t('status.freeze.thawed', { name: defender.displayName }));
+  }
+
   const damage = calculateDamage(attacker, defender, move);
   defender.currentHp = Math.max(0, defender.currentHp - damage);
 

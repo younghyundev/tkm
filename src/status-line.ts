@@ -467,6 +467,8 @@ function renderBattleMode(battleData: {
     poison: '\x1b[35m[PSN]\x1b[0m',
     badly_poisoned: '\x1b[35m[TOX]\x1b[0m',
     paralysis: '\x1b[33m[PRZ]\x1b[0m',
+    sleep: '\x1b[33m[SLP]\x1b[0m',
+    freeze: '\x1b[36m[FRZ]\x1b[0m',
   };
   const oppStatusMark = oppMon.statusCondition ? ' ' + (statusLabels[oppMon.statusCondition] || '') : '';
   const playerStatusMark = playerMon.statusCondition ? ' ' + (statusLabels[playerMon.statusCondition] || '') : '';

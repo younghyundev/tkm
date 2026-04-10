@@ -588,6 +588,12 @@
 
   "status.paralysis.inflicted": "{name:은/는} 마비되었다!",
   "status.paralysis.immobile": "{name:은/는} 몸이 저려 움직일 수 없다!",
+  "status.sleep.inflicted": "{name:은/는} 잠들었다!",
+  "status.sleep.wake": "{name:은/는} 잠에서 깨어났다!",
+  "status.sleep.still_asleep": "{name:은/는} 곤히 잠들어 있다!",
+  "status.freeze.inflicted": "{name:은/는} 얼어붙었다!",
+  "status.freeze.thawed": "{name:은/는} 얼음이 녹았다!",
+  "status.freeze.still_frozen": "{name:은/는} 얼어붙어 움직일 수 없다!",
   "status.burn.inflicted": "{name:은/는} 화상을 입었다!",
   "status.burn.damage": "{name:은/는} 화상 데미지를 입었다!",
   "status.poison.inflicted": "{name:은/는} 독에 걸렸다!",
@@ -599,8 +605,12 @@
   "status.name.burn": "화상",
   "status.name.poison": "독",
   "status.name.paralysis": "마비",
+  "status.name.sleep": "수면",
+  "status.name.freeze": "빙결",
   "status.label.burn": "화상",
   "status.label.poison": "독",
   "status.label.badly_poisoned": "맹독",
-  "status.label.paralysis": "마비"
+  "status.label.paralysis": "마비",
+  "status.label.sleep": "수면",
+  "status.label.freeze": "빙결"
 }
