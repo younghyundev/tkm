@@ -506,6 +506,27 @@ export interface StatChange {
   chance: number;
 }
 
+export interface HealEffect {
+  type: 'heal';
+  fraction: number;
+}
+
+export interface RestEffect {
+  type: 'rest';
+}
+
+export interface RecoilEffect {
+  type: 'recoil';
+  fraction: number;
+}
+
+export interface DrainEffect {
+  type: 'drain';
+  fraction: number;
+}
+
+export type MoveEffect = HealEffect | RestEffect | RecoilEffect | DrainEffect;
+
 export interface MoveData {
   id: number;
   name: string;
@@ -525,6 +546,7 @@ export interface MoveData {
     chance: number;
   };
   statChanges?: StatChange[];
+  moveEffect?: MoveEffect;
 }
 
 export interface PokemonMovePool {

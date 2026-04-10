@@ -494,6 +494,371 @@ describe('resolveTurn', () => {
     assert.equal(playerPoke.moves[0].currentPp, ppBefore - 1);
   });
 
+  it('healing moves restore floor(maxHp * fraction) without dealing damage', () => {
+    const player = makeTestPokemon({
+      displayName: '힐러',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 55,
+      moves: [{
+        data: makeMoveData({
+          name: 'recover',
+          nameKo: '회복',
+          power: 0,
+          moveEffect: { type: 'heal', fraction: 0.5 },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', maxHp: 80, currentHp: 80 });
+    const healState = createBattleState([player], [opp]);
+
+    resolveTurn(
+      healState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    assert.equal(player.currentHp, 115);
+    assert.equal(opp.currentHp, 80);
+  });
+
+  it('healing moves fail at full HP', () => {
+    const player = makeTestPokemon({
+      displayName: '힐러',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 120,
+      moves: [{
+        data: makeMoveData({
+          name: 'recover',
+          nameKo: '회복',
+          power: 0,
+          moveEffect: { type: 'heal', fraction: 0.5 },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', maxHp: 80, currentHp: 80 });
+    const healState = createBattleState([player], [opp]);
+
+    const result = resolveTurn(
+      healState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    assert.equal(player.currentHp, 120);
+    assert.equal(opp.currentHp, 80);
+    assert.ok(result.messages.some((m) => m.includes('가득')));
+  });
+
+  it('Rest heals to full and applies deterministic sleep', () => {
+    const player = makeTestPokemon({
+      displayName: '잠꾸러기',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 45,
+      statusCondition: 'burn' as StatusCondition,
+      moves: [{
+        data: makeMoveData({
+          id: 156,
+          name: 'rest',
+          nameKo: '잠자기',
+          power: 0,
+          moveEffect: { type: 'rest' },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp' });
+    const restState = createBattleState([player], [opp]);
+
+    resolveTurn(
+      restState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    assert.equal(player.currentHp, 120);
+    assert.equal(player.statusCondition, 'sleep');
+    assert.equal(player.sleepCounter, 2);
+  });
+
+  it('Rest cures status at full HP but fails when the user is already healthy and full', () => {
+    const statusedFullHpUser = makeTestPokemon({
+      displayName: '실패잠자기',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 120,
+      statusCondition: 'burn' as StatusCondition,
+      moves: [{
+        data: makeMoveData({
+          id: 156,
+          name: 'rest',
+          nameKo: '잠자기',
+          power: 0,
+          moveEffect: { type: 'rest' },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const statusedRestState = createBattleState(
+      [statusedFullHpUser],
+      [makeTestPokemon({ displayName: 'Opp' })],
+    );
+
+    const successResult = resolveTurn(
+      statusedRestState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    assert.equal(statusedFullHpUser.currentHp, 120);
+    assert.equal(statusedFullHpUser.statusCondition, 'sleep');
+    assert.equal(statusedFullHpUser.sleepCounter, 2);
+    assert.ok(successResult.messages.some((m) => m.includes('잠들')));
+
+    const healthyFullHpUser = makeTestPokemon({
+      displayName: '성공잠자기',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 120,
+      statusCondition: null,
+      moves: [{
+        data: makeMoveData({
+          id: 156,
+          name: 'rest',
+          nameKo: '잠자기',
+          power: 0,
+          moveEffect: { type: 'rest' },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const healthyFullHpState = createBattleState(
+      [healthyFullHpUser],
+      [makeTestPokemon({ displayName: 'Opp' })],
+    );
+
+    const failedResult = resolveTurn(
+      healthyFullHpState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    assert.equal(healthyFullHpUser.statusCondition, null);
+    assert.equal(healthyFullHpUser.sleepCounter, 0);
+    assert.ok(failedResult.messages.some((m) => m.includes('가득')));
+  });
+
+  it('recoil damage uses max(1, floor(actual damage * fraction))', () => {
+    const player = makeTestPokemon({
+      displayName: '반동러',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 120,
+      attack: 95,
+      moves: [{
+        data: makeMoveData({
+          name: 'take-down',
+          nameKo: '돌진',
+          power: 90,
+          moveEffect: { type: 'recoil', fraction: 0.25 },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Opp',
+      maxHp: 140,
+      currentHp: 140,
+      defense: 55,
+    });
+    const recoilState = createBattleState([player], [opp]);
+
+    resolveTurn(
+      recoilState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    const damageDealt = 140 - opp.currentHp;
+    const expectedRecoil = Math.max(1, Math.floor(damageDealt * 0.25));
+    assert.equal(player.currentHp, 120 - expectedRecoil);
+  });
+
+  it('recoil can faint the user', () => {
+    const player = makeTestPokemon({
+      displayName: '유리대포',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 1,
+      attack: 95,
+      moves: [{
+        data: makeMoveData({
+          name: 'double-edge',
+          nameKo: '몸통박치기',
+          power: 90,
+          moveEffect: { type: 'recoil', fraction: 0.25 },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', maxHp: 140, currentHp: 140 });
+    const recoilState = createBattleState([player], [opp]);
+
+    resolveTurn(
+      recoilState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    assert.equal(player.currentHp, 0);
+    assert.equal(player.fainted, true);
+  });
+
+  it('recoil still happens if the defender faints', () => {
+    const player = makeTestPokemon({
+      displayName: '반동러',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 120,
+      attack: 95,
+      moves: [{
+        data: makeMoveData({
+          name: 'take-down',
+          nameKo: '돌진',
+          power: 90,
+          moveEffect: { type: 'recoil', fraction: 0.25 },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', currentHp: 1, maxHp: 140 });
+    const recoilState = createBattleState([player], [opp]);
+
+    resolveTurn(
+      recoilState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    assert.equal(opp.fainted, true);
+    assert.equal(player.currentHp, 119);
+  });
+
+  it('drain heals max(1, floor(actual damage * fraction))', () => {
+    const player = makeTestPokemon({
+      displayName: '흡수러',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 40,
+      spAttack: 95,
+      moves: [{
+        data: makeMoveData({
+          name: 'mega-drain',
+          nameKo: '메가드레인',
+          type: 'grass',
+          category: 'special',
+          power: 75,
+          moveEffect: { type: 'drain', fraction: 0.5 },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Opp',
+      types: ['water'],
+      maxHp: 140,
+      currentHp: 140,
+      spDefense: 55,
+    });
+    const drainState = createBattleState([player], [opp]);
+
+    resolveTurn(
+      drainState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    const damageDealt = 140 - opp.currentHp;
+    const expectedHeal = Math.max(1, Math.floor(damageDealt * 0.5));
+    assert.equal(player.currentHp, Math.min(120, 40 + expectedHeal));
+  });
+
+  it('drain healing is capped at max HP', () => {
+    const player = makeTestPokemon({
+      displayName: '흡수러',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 110,
+      spAttack: 95,
+      moves: [{
+        data: makeMoveData({
+          name: 'mega-drain',
+          nameKo: '메가드레인',
+          type: 'grass',
+          category: 'special',
+          power: 75,
+          moveEffect: { type: 'drain', fraction: 0.5 },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Opp',
+      types: ['water'],
+      maxHp: 140,
+      currentHp: 140,
+      spDefense: 55,
+    });
+    const drainState = createBattleState([player], [opp]);
+
+    resolveTurn(
+      drainState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    assert.equal(player.currentHp, 120);
+  });
+
+  it('drain does not heal when the move deals 0 damage', () => {
+    const player = makeTestPokemon({
+      displayName: '흡수러',
+      speed: 999,
+      maxHp: 120,
+      currentHp: 60,
+      moves: [{
+        data: makeMoveData({
+          name: 'drain-punch',
+          nameKo: '드레인펀치',
+          type: 'normal',
+          power: 75,
+          moveEffect: { type: 'drain', fraction: 0.5 },
+        }),
+        currentPp: 10,
+      }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Opp',
+      types: ['ghost'],
+      maxHp: 140,
+      currentHp: 140,
+    });
+    const drainState = createBattleState([player], [opp]);
+
+    resolveTurn(
+      drainState,
+      { type: 'move', moveIndex: 0 },
+      { type: 'switch', pokemonIndex: 0 },
+    );
+
+    assert.equal(player.currentHp, 60);
+    assert.equal(opp.currentHp, 140);
+  });
+
   it('turn counter increments', () => {
     assert.equal(state.turn, 0);
     resolveTurn(

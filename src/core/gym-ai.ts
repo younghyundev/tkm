@@ -15,6 +15,47 @@ function averageStages(mon: BattlePokemon, stats: Array<keyof BattlePokemon['sta
   return stats.reduce((sum, stat) => sum + mon.statStages[stat], 0) / stats.length;
 }
 
+/**
+ * Sentinel score used when a heal/rest move is explicitly disabled for the
+ * current state (e.g., Rest above the HP cutoff). Below the standard 0 tier,
+ * so the all-zero fallback in selectAiMove prefers other zero-scored moves
+ * over self-sleeping into a bad matchup.
+ */
+const DISABLED_SCORE = -1;
+
+function scoreMoveEffectMove(
+  attacker: BattlePokemon,
+  move: BattlePokemon['moves'][number],
+): number | null {
+  const hpRatio = getHpRatio(attacker);
+  const moveEffect = move.data.moveEffect;
+
+  if (moveEffect?.type === 'heal') {
+    // Above threshold: mark as disabled rather than a 0-tier neutral move,
+    // so the all-zero fallback does not default to a full-heal on a
+    // full-HP attacker.
+    if (hpRatio > 0.8) return DISABLED_SCORE;
+    return (1 - hpRatio) * 60;
+  }
+
+  if (moveEffect?.type === 'rest') {
+    // Rest is a full-heal + 2-turn sleep AND clears any existing non-volatile
+    // status (executeMove sets statusCondition = null before re-sleeping).
+    // Score it by HP headroom, with a bonus when the attacker is already
+    // statused because Rest doubles as a cure in that state.
+    //
+    // Above the HP cutoff it must be fully disabled: the all-zero fallback
+    // in selectAiMove would otherwise let a 75% HP attacker self-sleep when
+    // the other moves happen to score 0 (e.g., type-immune target).
+    if (hpRatio > 0.6) return DISABLED_SCORE;
+    const hpHeadroom = (1 - hpRatio) * 80;
+    const cureBonus = attacker.statusCondition !== null ? 20 : 0;
+    return hpHeadroom + cureBonus;
+  }
+
+  return null;
+}
+
 function scoreStatChangeMove(
   attacker: BattlePokemon,
   defender: BattlePokemon,
@@ -75,6 +116,11 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
       typeEff *= getTypeEffectiveness(move.data.type, defType);
     }
 
+    const moveEffectScore = scoreMoveEffectMove(attacker, move);
+    if (moveEffectScore !== null) {
+      return { index, score: moveEffectScore };
+    }
+
     if (move.data.power === 0 && move.data.statChanges?.length) {
       return { index, score: scoreStatChangeMove(attacker, defender, move, typeEff) };
     }
@@ -117,12 +163,24 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
     // Damaging move scoring (unchanged)
     const stab = attacker.types.includes(move.data.type) ? 1.5 : 1.0;
     const power = move.data.power || 0;
-    return { index, score: power * stab * typeEff };
+    let score = power * stab * typeEff;
+    if (move.data.moveEffect?.type === 'drain') {
+      score += 20;
+    }
+    return { index, score };
   });
 
   // Filter out zero-scored moves so they are never selected
   const viable = scored.filter((s) => s.score > 0);
-  if (viable.length === 0) return scored[0].index;
+  if (viable.length === 0) {
+    // All-zero/all-disabled fallback: prefer moves that are neutral (score 0)
+    // over moves explicitly marked DISABLED_SCORE (e.g., full-HP Rest). This
+    // prevents the AI from self-sleeping above the HP cutoff just because all
+    // other moves happened to score 0 (e.g., Thunder Wave into a Ground-type).
+    const nonDisabled = scored.filter((s) => s.score >= 0);
+    if (nonDisabled.length > 0) return nonDisabled[0].index;
+    return scored[0].index;
+  }
 
   viable.sort((a, b) => b.score - a.score);
 

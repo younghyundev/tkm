@@ -375,6 +375,11 @@
   "battle.press_any_key": "Press any key to exit",
   "battle.fainted_label": "[Fainted]",
   "battle.other_session": "A battle from another session is in progress.",
+  "move.heal.success": "{name} restored its HP!",
+  "move.heal.fail": "But it failed! {name}'s HP is full.",
+  "move.rest.success": "{name} went to sleep and restored its HP!",
+  "move.recoil": "{name} is hit by recoil!",
+  "move.drain": "{name} drained HP!",
 
   "achievement.unlocked": "🏆 Achievement unlocked: {name}! ",
   "achievement.unlocked_pokemon": "🏆 Achievement unlocked: {name}! You got {pokemon}!",
