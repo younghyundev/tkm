@@ -26,6 +26,13 @@ import {
   applyEndOfTurnEffects,
   rollMoveEffect,
 } from './status-effects.js';
+import {
+  addVolatileStatus,
+  applyLeechSeedEndOfTurn,
+  clearVolatileStatuses,
+  checkConfusionSkip,
+  checkFlinchSkip,
+} from './volatile-status.js';
 
 // ── Stat Calculation ──
 
@@ -77,6 +84,7 @@ export function createBattlePokemon(
     statusCondition: null,
     toxicCounter: 0,
     sleepCounter: 0,
+    volatileStatuses: [],
     statStages: createStatStages(),
   };
 }
@@ -221,6 +229,7 @@ function executeSwitch(
     return;
   }
   const old = getActivePokemon(team);
+  clearVolatileStatuses(old);
   team.activeIndex = targetIndex;
   // Reset toxic counter when switching out
   if (old.statusCondition === 'badly_poisoned') {
@@ -252,6 +261,7 @@ function executeMove(
   state: BattleState,
   moveIndex: number,
   messages: string[],
+  attackerMovedFirst: boolean,
 ): { defenderFainted: boolean } {
   const attackerTeam = state[attackerSide];
   const defenderSide = attackerSide === 'player' ? 'opponent' : 'player';
@@ -294,6 +304,10 @@ function executeMove(
     }
   }
 
+  if (checkFlinchSkip(attacker, messages)) {
+    return { defenderFainted: false };
+  }
+
   // Sleep and freeze are full incapacitation in mainline — they stop the turn
   // even when Struggle would otherwise be forced. Paralysis is only a partial
   // skip, so it keeps the Struggle bypass to preserve the no-PP invariant.
@@ -306,6 +320,10 @@ function executeMove(
   }
 
   if (!isStruggle && checkParalysisSkip(attacker, messages)) {
+    return { defenderFainted: false };
+  }
+
+  if (checkConfusionSkip(attacker, messages)) {
     return { defenderFainted: false };
   }
 
@@ -391,6 +409,23 @@ function executeMove(
     applyMoveStatChanges(attacker, defender, move.data, messages, moveTypeImmune);
   }
 
+  if (!defender.fainted && move.data.volatileEffect && !moveTypeImmune) {
+    const { type, chance } = move.data.volatileEffect;
+    const shouldApply =
+      Math.random() * 100 < chance &&
+      (type !== 'flinch' || attackerMovedFirst);
+    if (shouldApply) {
+      addVolatileStatus(
+        defender,
+        {
+          type,
+          ...(type === 'leech_seed' ? { sourceSide: attackerSide } : {}),
+        },
+        messages,
+      );
+    }
+  }
+
   // Roll secondary effect — blocked if the move type has no effect on the defender
   // (e.g., Thunder Wave vs Ground-type should not paralyze).
   if (!defender.fainted && move.data.effect && !moveTypeImmune) {
@@ -453,11 +488,17 @@ export function resolveTurn(
   });
 
   // Execute actions in order
-  for (const entry of entries) {
+  for (const [actionIndex, entry] of entries.entries()) {
     if (entry.action.type === 'switch') {
       executeSwitch(state[entry.side], entry.action.pokemonIndex, messages);
     } else if (entry.action.type === 'move') {
-      const result = executeMove(entry.side, state, entry.action.moveIndex, messages);
+      const result = executeMove(
+        entry.side,
+        state,
+        entry.action.moveIndex,
+        messages,
+        actionIndex === 0,
+      );
       if (entry.side === 'player' && result.defenderFainted) {
         opponentFainted = true;
       } else if (entry.side === 'opponent' && result.defenderFainted) {
@@ -479,6 +520,16 @@ export function resolveTurn(
   const battleOverAfterActions = !hasAlivePokemon(state.player) || !hasAlivePokemon(state.opponent);
   if (!battleOverAfterActions) {
     const statusMessages: string[] = [];
+    if (!playerActive.fainted) {
+      if (applyLeechSeedEndOfTurn(playerActive, state, statusMessages)) {
+        playerFainted = true;
+      }
+    }
+    if (!opponentActive.fainted) {
+      if (applyLeechSeedEndOfTurn(opponentActive, state, statusMessages)) {
+        opponentFainted = true;
+      }
+    }
     if (!playerActive.fainted) {
       if (applyEndOfTurnEffects(playerActive, statusMessages)) {
         playerFainted = true;

@@ -126,6 +126,22 @@ describe('battle state migration', () => {
     assert.equal(mon.sleepCounter, 2);
   });
 
+  it('normalizeBattlePokemon backfills missing volatileStatuses to [] (v3c)', () => {
+    const mon = makeLegacyPokemon();
+    assert.equal((mon as any).volatileStatuses, undefined);
+    normalizeBattlePokemon(mon);
+    assert.deepEqual((mon as any).volatileStatuses, []);
+  });
+
+  it('normalizeBattlePokemon preserves existing volatileStatuses', () => {
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [{ type: 'confusion', turnsRemaining: 3 }],
+    } as Partial<BattlePokemon>);
+    normalizeBattlePokemon(mon);
+    assert.equal((mon as any).volatileStatuses.length, 1);
+    assert.equal((mon as any).volatileStatuses[0].type, 'confusion');
+  });
+
   it('normalizeBattlePokemon backfills missing statStages to zeroes (v3b)', () => {
     const mon = makeLegacyPokemon();
     assert.equal((mon as any).statStages, undefined);

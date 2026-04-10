@@ -210,7 +210,11 @@
     "category": "physical",
     "power": 65,
     "accuracy": 100,
-    "pp": 20
+    "pp": 20,
+    "volatileEffect": {
+      "type": "flinch",
+      "chance": 30
+    }
   },
   "24": {
     "id": 24,
@@ -429,7 +433,11 @@
     "category": "physical",
     "power": 60,
     "accuracy": 100,
-    "pp": 25
+    "pp": 25,
+    "volatileEffect": {
+      "type": "flinch",
+      "chance": 30
+    }
   },
   "45": {
     "id": 45,
@@ -457,6 +465,21 @@
     "pp": 15,
     "effect": {
       "type": "sleep",
+      "chance": 100
+    }
+  },
+  "48": {
+    "id": 48,
+    "name": "supersonic",
+    "nameKo": "초음파",
+    "nameEn": "Supersonic",
+    "type": "normal",
+    "category": "status",
+    "power": 0,
+    "accuracy": 55,
+    "pp": 20,
+    "volatileEffect": {
+      "type": "confusion",
       "chance": 100
     }
   },
@@ -690,16 +713,16 @@
   },
   "73": {
     "id": 73,
-    "name": "stun-spore",
-    "nameKo": "저리가루",
-    "nameEn": "Stun Spore",
+    "name": "leech-seed",
+    "nameKo": "씨뿌리기",
+    "nameEn": "Leech Seed",
     "type": "grass",
     "category": "status",
     "power": 0,
-    "accuracy": 75,
-    "pp": 30,
-    "effect": {
-      "type": "paralysis",
+    "accuracy": 90,
+    "pp": 10,
+    "volatileEffect": {
+      "type": "leech_seed",
       "chance": 100
     }
   },
@@ -737,6 +760,21 @@
     "pp": 35,
     "effect": {
       "type": "poison",
+      "chance": 100
+    }
+  },
+  "78": {
+    "id": 78,
+    "name": "stun-spore",
+    "nameKo": "저리가루",
+    "nameEn": "Stun Spore",
+    "type": "grass",
+    "category": "status",
+    "power": 0,
+    "accuracy": 75,
+    "pp": 30,
+    "effect": {
+      "type": "paralysis",
       "chance": 100
     }
   },
@@ -995,6 +1033,21 @@
     "power": 0,
     "accuracy": null,
     "pp": 30
+  },
+  "109": {
+    "id": 109,
+    "name": "confuse-ray",
+    "nameKo": "이상한빛",
+    "nameEn": "Confuse Ray",
+    "type": "ghost",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 10,
+    "volatileEffect": {
+      "type": "confusion",
+      "chance": 100
+    }
   },
   "120": {
     "id": 120,
@@ -1303,7 +1356,11 @@
     "category": "physical",
     "power": 75,
     "accuracy": 90,
-    "pp": 10
+    "pp": 10,
+    "volatileEffect": {
+      "type": "flinch",
+      "chance": 30
+    }
   },
   "158": {
     "id": 158,
@@ -1643,7 +1700,11 @@
     "category": "physical",
     "power": 100,
     "accuracy": 50,
-    "pp": 5
+    "pp": 5,
+    "volatileEffect": {
+      "type": "confusion",
+      "chance": 100
+    }
   },
   "224": {
     "id": 224,
@@ -2643,7 +2704,11 @@
     "category": "special",
     "power": 75,
     "accuracy": 95,
-    "pp": 15
+    "pp": 15,
+    "volatileEffect": {
+      "type": "flinch",
+      "chance": 30
+    }
   },
   "404": {
     "id": 404,
@@ -3027,7 +3092,11 @@
     "category": "physical",
     "power": 80,
     "accuracy": 100,
-    "pp": 15
+    "pp": 15,
+    "volatileEffect": {
+      "type": "flinch",
+      "chance": 30
+    }
   },
   "444": {
     "id": 444,

@@ -55,6 +55,9 @@ export function normalizeBattlePokemon(mon: BattlePokemon): void {
   if (mon.sleepCounter === undefined || !Number.isFinite(mon.sleepCounter)) {
     mon.sleepCounter = 0;
   }
+  if (!Array.isArray(mon.volatileStatuses)) {
+    mon.volatileStatuses = [];
+  }
   if (mon.statStages === undefined) {
     mon.statStages = createStatStages();
   } else {

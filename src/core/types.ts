@@ -475,6 +475,14 @@ export type StatusCondition =
   | 'sleep'
   | 'freeze';
 
+export type VolatileStatusType = 'confusion' | 'flinch' | 'leech_seed';
+
+export interface VolatileStatus {
+  type: VolatileStatusType;
+  turnsRemaining?: number;
+  sourceSide?: 'player' | 'opponent';
+}
+
 export interface StatStages {
   attack: number;
   defense: number;
@@ -504,6 +512,10 @@ export interface MoveData {
   pp: number;
   effect?: {
     type: StatusCondition;
+    chance: number;
+  };
+  volatileEffect?: {
+    type: VolatileStatusType;
     chance: number;
   };
   statChanges?: StatChange[];
@@ -536,6 +548,7 @@ export interface BattlePokemon {
   statusCondition: StatusCondition | null;
   toxicCounter: number;
   sleepCounter: number;
+  volatileStatuses: VolatileStatus[];
   statStages: StatStages;
 }
 
