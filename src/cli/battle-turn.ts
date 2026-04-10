@@ -18,7 +18,7 @@ import { getGymById, awardGymVictory, canChallengeGym } from '../core/gym.js';
 import { getPokemonDB, getPokemonName, speciesIdToGeneration } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale, t } from '../i18n/index.js';
-import { readGlobalConfig, readConfig } from '../core/config.js';
+import { readGlobalConfig, readConfig, writeConfig } from '../core/config.js';
 import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { withLockRetry } from '../core/lock.js';
 import { readState, writeState, readCommonState, writeCommonState } from '../core/state.js';
@@ -522,7 +522,7 @@ function handleVictory(bsf: BattleStateFile, messages: string[]): void {
   // Re-read state inside lock to avoid overwriting hook changes
   const lockResult = withLockRetry(() => {
     const freshState = readState(generation);
-    const config = readConfig();
+    const config = readConfig(generation);
     const commonState = readCommonState();
     const result = awardGymVictory(freshState, gym, playerPartyNames);
 
@@ -555,6 +555,7 @@ function handleVictory(bsf: BattleStateFile, messages: string[]): void {
 
     writeState(freshState, generation);
     writeCommonState(commonState);
+    writeConfig(config, generation);
     return { ...result, achEvents: [...achEvents, ...commonAchEvents], badgeCount: (freshState.gym_badges ?? []).length };
   });
 

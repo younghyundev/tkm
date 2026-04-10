@@ -8,7 +8,7 @@ import { getGymById, awardGymVictory, canChallengeGym, loadGymData } from '../co
 import { getPokemonName, getPokemonDB, speciesIdToGeneration } from '../core/pokemon-data.js';
 import { getActiveGeneration } from '../core/paths.js';
 import { initLocale, t } from '../i18n/index.js';
-import { readGlobalConfig } from '../core/config.js';
+import { readGlobalConfig, readConfig, writeConfig } from '../core/config.js';
 import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { readCommonState, readState, writeCommonState, writeState } from '../core/state.js';
 import { withLockRetry } from '../core/lock.js';
@@ -166,14 +166,15 @@ function main(): void {
       // Wrap state mutations in global lock to prevent concurrent clobbering
       // with CLI victory path (stop.ts also uses withLockRetry)
       const lockResult = withLockRetry(() => {
-        // Re-read state inside lock to avoid stale data (use readState for normalization)
+        // Re-read state and config inside lock to avoid stale data (use readState/readConfig for normalization)
         const freshState = readState(generation);
-        const participatingPokemon = config.party.filter((name) => freshState.pokemon[name]);
+        const freshConfig = readConfig(generation);
+        const participatingPokemon = freshConfig.party.filter((name) => freshState.pokemon[name]);
         const victoryResult = awardGymVictory(freshState, gym, participatingPokemon);
 
         // Check achievements immediately after badge (pass commonState for encounter_rate_bonus)
         const commonState = readCommonState();
-        const achEvents = victoryResult.badgeEarned ? checkAchievements(freshState, config, commonState, generation) : [];
+        const achEvents = victoryResult.badgeEarned ? checkAchievements(freshState, freshConfig, commonState, generation) : [];
 
         // Update common badge aggregates and check common achievements
         let commonAchEvents: ReturnType<typeof checkCommonAchievements> = [];
@@ -196,12 +197,13 @@ function main(): void {
             commonState.completed_gym_gens = completedCount;
           }
 
-          commonAchEvents = checkCommonAchievements(commonState, config, freshState);
+          commonAchEvents = checkCommonAchievements(commonState, freshConfig, freshState);
         }
 
-        // Save updated state (use writeState for consistency with readState)
+        // Save updated state and config (use writeState for consistency with readState)
         writeState(freshState, generation);
         writeCommonState(commonState);
+        writeConfig(freshConfig, generation);
 
         return {
           victoryResult,
