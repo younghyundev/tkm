@@ -378,7 +378,8 @@ function renderBattleMode(battleData: {
   const oppSprite = oppFainted ? [] : loadSprite(oppMon.id);
   let playerSprite = (playerFainted && collapseProgress == null) ? [] : loadSprite(playerMon.id);
 
-  if (collapseProgress != null && playerSprite.length > 0) {
+  // Collapse only on actual KO — surrender sets defeatTimestamp but playerFainted is false
+  if (collapseProgress != null && playerFainted && playerSprite.length > 0) {
     const emptyRows = Math.floor(playerSprite.length * collapseProgress);
     const blankLine = '\u2800'.repeat(SPRITE_WIDTH);
     playerSprite = playerSprite.map((line, i) => i < emptyRows ? blankLine : line);
@@ -496,11 +497,15 @@ function main(): void {
   if (existsSync(battleStatePath)) {
     try {
       const battleData = JSON.parse(readFileSync(battleStatePath, 'utf-8'));
-      // Skip expired defeated battles — fall through to normal rendering.
-      // CLI lifecycle (handleAction/handleInit/handleEnd) will clean up the file.
+      // Skip expired terminal battles — fall through to normal rendering.
+      // CLI lifecycle (handleAction/handleInit/handleEnd) should clean up the file,
+      // but this gate is defensive against stale or legacy terminal states.
       const isExpiredDefeat = battleData.defeatTimestamp
         && (Date.now() - battleData.defeatTimestamp) >= ANIM_COLLAPSE_MS + 500;
-      if (!isExpiredDefeat) {
+      const isEndedWithoutTimestamp = battleData.battleState?.phase === 'battle_end'
+        && !battleData.defeatTimestamp;
+
+      if (!isExpiredDefeat && !isEndedWithoutTimestamp) {
         renderBattleMode(battleData);
         process.exit(0);
       }

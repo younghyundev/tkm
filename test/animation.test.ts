@@ -167,3 +167,57 @@ describe('defeat state lifecycle', () => {
     assert.equal(isDefeated({ defeatTimestamp: Date.now(), battleState: { phase: 'select_action' } }), true);
   });
 });
+
+describe('battle-mode render gating', () => {
+  const ANIM_COLLAPSE_MS = 2000;
+
+  const shouldRenderBattleMode = (
+    battleData: { defeatTimestamp?: number; battleState: { phase: string } },
+    now: number,
+  ) => {
+    const isExpiredDefeat = !!(
+      battleData.defeatTimestamp
+      && (now - battleData.defeatTimestamp) >= ANIM_COLLAPSE_MS + 500
+    );
+    const isEndedWithoutTimestamp = battleData.battleState.phase === 'battle_end'
+      && !battleData.defeatTimestamp;
+
+    return !isExpiredDefeat && !isEndedWithoutTimestamp;
+  };
+
+  it('does not render legacy terminal states without timestamp', () => {
+    assert.equal(
+      shouldRenderBattleMode({ battleState: { phase: 'battle_end' } }, Date.now()),
+      false,
+    );
+  });
+
+  it('renders fresh terminal states with timestamp during the grace window', () => {
+    const now = Date.now();
+    assert.equal(
+      shouldRenderBattleMode(
+        { defeatTimestamp: now - 500, battleState: { phase: 'battle_end' } },
+        now,
+      ),
+      true,
+    );
+  });
+
+  it('skips expired terminal states with timestamp', () => {
+    const now = Date.now();
+    assert.equal(
+      shouldRenderBattleMode(
+        { defeatTimestamp: now - 3000, battleState: { phase: 'battle_end' } },
+        now,
+      ),
+      false,
+    );
+  });
+
+  it('renders active battles normally', () => {
+    assert.equal(
+      shouldRenderBattleMode({ battleState: { phase: 'select_action' } }, Date.now()),
+      true,
+    );
+  });
+});

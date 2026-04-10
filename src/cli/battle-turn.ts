@@ -262,9 +262,9 @@ function handleInit(): void {
     process.exit(1);
   }
 
-  // Clean up any stale defeated battle state before starting a new one
+  // Clean up any stale terminal battle state before starting a new one
   const existingBsf = readBattleState();
-  if (existingBsf?.defeatTimestamp) {
+  if (existingBsf?.defeatTimestamp || existingBsf?.battleState.phase === 'battle_end') {
     deleteBattleState();
   }
 
@@ -645,11 +645,10 @@ function handleDefeat(bsf: BattleStateFile, messages: string[]): void {
 
   messages.push(t('battle.defeat', { leader: gym.leaderKo }));
 
-  // Only set defeatTimestamp for actual KO — surrender doesn't get collapse animation
-  const playerActive = bsf.battleState.player.pokemon[bsf.battleState.player.activeIndex];
-  if (playerActive && (playerActive.fainted || playerActive.currentHp <= 0)) {
-    bsf.defeatTimestamp = Date.now();
-  }
+  // Record terminal-state time for both KO and surrender.
+  // Collapse animation still only shows for actual KO, because the renderer
+  // separately checks whether the player's active Pokémon actually fainted.
+  bsf.defeatTimestamp = Date.now();
   writeBattleState(bsf);
 
   output({
