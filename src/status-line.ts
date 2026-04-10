@@ -42,6 +42,22 @@ const SIGNATURE_MOVES: Record<string, SignatureMove> = loadSignatureMoves();
 // Actual remaining is approximate; PP serves as a relative pressure indicator, not exact count.
 const MAX_CONTEXT = 200000;
 
+// ── Battle Animation Constants ──
+const ANIM_HP_DRAIN_MS   = 1500;
+const ANIM_SHAKE_MS       = 800;
+const ANIM_HIT_FLASH_MS   = 600;
+const ANIM_COLOR_FLASH_MS = 1000;
+const ANIM_COLLAPSE_MS    = 2000;
+const DEFEAT_CLEANUP_MS   = ANIM_COLLAPSE_MS + 500;
+
+/** Returns animation progress 0..1, or null if animation window has expired. */
+function animProgress(timestamp: number | undefined, durationMs: number): number | null {
+  if (timestamp == null) return null;
+  const elapsed = Date.now() - timestamp;
+  if (elapsed < 0 || elapsed >= durationMs) return null;
+  return Math.min(1, elapsed / durationMs);
+}
+
 function calcPp(maxPp: number, contextTokensUsed: number): number {
   const ratio = Math.max(0, 1 - contextTokensUsed / MAX_CONTEXT);
   return Math.max(0, Math.floor(ratio * maxPp));
