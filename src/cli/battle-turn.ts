@@ -328,7 +328,7 @@ function handleAction(): void {
   if (bsf.defeatTimestamp || bsf.battleState.phase === 'battle_end') {
     deleteBattleState();
     output({ status: 'error', messages: ['Battle has already ended. State cleaned up.'] });
-    process.exit(0);
+    process.exit(1);
   }
 
   const { battleState, gym, generation, stateDir, playerPartyNames } = bsf;
@@ -645,8 +645,11 @@ function handleDefeat(bsf: BattleStateFile, messages: string[]): void {
 
   messages.push(t('battle.defeat', { leader: gym.leaderKo }));
 
-  // Keep battle state alive for collapse animation; status line reads defeatTimestamp
-  bsf.defeatTimestamp = Date.now();
+  // Only set defeatTimestamp for actual KO — surrender doesn't get collapse animation
+  const playerActive = bsf.battleState.player.pokemon[bsf.battleState.player.activeIndex];
+  if (playerActive && (playerActive.fainted || playerActive.currentHp <= 0)) {
+    bsf.defeatTimestamp = Date.now();
+  }
   writeBattleState(bsf);
 
   output({
