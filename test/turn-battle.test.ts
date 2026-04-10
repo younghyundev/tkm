@@ -557,6 +557,51 @@ describe('resolveTurn', () => {
     );
   });
 
+  it('type-immune debuff with <100 accuracy reports immunity, not miss', () => {
+    // Regression for v3b R4: Screech (85 acc, normal-type, opponent debuff)
+    // into Ghost should report immunity even when the accuracy roll would
+    // have failed. Previously the accuracy gate ran first and emitted "miss".
+    const screechMove: BattleMove = {
+      data: {
+        ...makeMoveData({ type: 'normal', category: 'physical', power: 0, accuracy: 85 }),
+        statChanges: [{ target: 'opponent', stat: 'defense', stages: -2, chance: 100 }],
+      } as any,
+      currentPp: 40,
+    };
+    const player = makeTestPokemon({
+      displayName: 'Screecher',
+      speed: 999,
+      moves: [screechMove],
+    });
+    const ghostDefender = makeTestPokemon({
+      displayName: 'Ghost',
+      types: ['ghost'],
+      speed: 1,
+    });
+    const screechState = createBattleState([player], [ghostDefender]);
+    const origRandom = Math.random;
+    try {
+      // Force a "miss" roll: 0.9 * 100 = 90, 90 < 85 is false → miss
+      Math.random = () => 0.9;
+      const result = resolveTurn(
+        screechState,
+        { type: 'move', moveIndex: 0 },
+        { type: 'move', moveIndex: 0 },
+      );
+      assert.equal(ghostDefender.statStages.defense, 0, 'No debuff applied');
+      assert.ok(
+        result.messages.some((m) => m.includes('효과가 없') || m.toLowerCase().includes('no effect')),
+        `Should report immunity, not miss. Messages: ${JSON.stringify(result.messages)}`,
+      );
+      assert.ok(
+        !result.messages.some((m) => m.includes('빗나갔') || m.toLowerCase().includes('miss')),
+        `Should NOT report miss when target is type-immune`,
+      );
+    } finally {
+      Math.random = origRandom;
+    }
+  });
+
   it('type-immune debuff still applies self-buff component if present', () => {
     // Defensive: a hypothetical move that buffs self AND debuffs opponent.
     // The opponent debuff should be blocked by type immunity, but the

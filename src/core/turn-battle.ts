@@ -316,15 +316,35 @@ function executeMove(
     messages.push(`${attacker.displayName}의 ${move.data.nameKo}!`);
   }
 
+  // Move-type effectiveness — computed BEFORE accuracy so type-immune debuff
+  // moves report immunity instead of missing (e.g., Screech vs Ghost). The
+  // mainline order resolves immunity before the accuracy roll.
+  const effMsg = getEffectivenessMessage(move.data.type, defender.types);
+  const moveTypeImmune = effMsg === 'effect_immune';
+
+  // Early-return: a type-immune zero-power stat-change move with NO self-buff
+  // component (e.g., growl/screech/tail-whip into Ghost) cannot land at all.
+  // Skip the accuracy gate so the user-visible log says "no effect" instead
+  // of "miss". Moves that also include self-buff changes still need to run
+  // through applyMoveStatChanges, which gates opponent changes per-target.
+  const allChanges = move.data.statChanges ?? [];
+  const hasOpponentChange = allChanges.some((c) => c.target === 'opponent');
+  const hasSelfChange = allChanges.some((c) => c.target === 'self');
+  if (
+    moveTypeImmune &&
+    move.data.power === 0 &&
+    hasOpponentChange &&
+    !hasSelfChange
+  ) {
+    messages.push('효과가 없는 듯하다...');
+    return { defenderFainted: false };
+  }
+
   // Accuracy check
   if (!checkAccuracy(attacker, defender, move.data)) {
     messages.push(t('battle.miss', { name: attacker.displayName }));
     return { defenderFainted: false };
   }
-
-  // Move-type effectiveness (shared by damage, messages, and effect gating)
-  const effMsg = getEffectivenessMessage(move.data.type, defender.types);
-  const moveTypeImmune = effMsg === 'effect_immune';
 
   // Fire-type thaw: only damaging fire hits thaw the defender. A non-damaging
   // fire status move (e.g. will-o-wisp) must not thaw a frozen target, or it
