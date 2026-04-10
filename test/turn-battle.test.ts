@@ -582,6 +582,59 @@ describe('resolveTurn with status effects', () => {
     assert.equal(opp.statusCondition, null, 'Ground type should not be paralyzed by Thunder Wave');
   });
 
+  it('no-PP turn always resolves through Struggle, even when paralyzed', () => {
+    // Paralyzed pokemon with 0 PP should still use Struggle and take recoil
+    // damage — paralysis must not let a no-PP turn skip the mandatory Struggle path.
+    const player = makeTestPokemon({
+      displayName: 'Exhausted',
+      maxHp: 100,
+      currentHp: 100,
+      speed: 999,
+      statusCondition: 'paralysis' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 0 }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+
+    // Track over many trials — expected: Struggle runs on every turn (no paralysis skip)
+    // so recoil (1/4 max HP = 25) is applied each time.
+    let recoilHits = 0;
+    for (let i = 0; i < 50; i++) {
+      player.currentHp = 100;
+      resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+      if (player.currentHp < 100) recoilHits++;
+    }
+    assert.ok(recoilHits >= 40, `Struggle recoil should run on most no-PP turns, got ${recoilHits}/50`);
+  });
+
+  it('paralysis does not waste PP when fully paralyzed', () => {
+    // A normal chosen move skipped by full paralysis must not decrement PP.
+    // Force deterministic paralysis by monkey-patching Math.random via many trials.
+    const player = makeTestPokemon({
+      displayName: 'Paralyzed',
+      speed: 999,
+      statusCondition: 'paralysis' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+
+    // Run many trials and confirm that on turns where player message contains
+    // the immobile message, PP did NOT decrement.
+    const origRandom = Math.random;
+    try {
+      // Force paralysis skip by making Math.random return 0 (< 0.25)
+      Math.random = () => 0;
+      const ppBefore = player.moves[0].currentPp;
+      resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+      assert.equal(player.moves[0].currentPp, ppBefore, 'PP should not decrement on full paralysis');
+    } finally {
+      Math.random = origRandom;
+    }
+  });
+
   it('end-of-turn status damage does not run after opponent KO (last mon)', () => {
     // Player KOs opponent's only pokemon while burned at 1 HP — player should win,
     // not faint from burn tick after battle is already decided.

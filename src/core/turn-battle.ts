@@ -208,12 +208,10 @@ function executeMove(
   // Skip if attacker already fainted
   if (attacker.fainted) return { defenderFainted: false };
 
-  // Paralysis skip check
-  if (checkParalysisSkip(attacker, messages)) {
-    return { defenderFainted: false };
-  }
-
-  // Determine move (struggle if no PP)
+  // Determine move (struggle if no PP) BEFORE paralysis check.
+  // Struggle is mandatory — if the attacker has no usable PP we must run its
+  // recoil path regardless of status. Only chosen (non-Struggle) moves can be
+  // skipped by full paralysis, so the PP-decrement invariant holds.
   let move: BattleMove;
   let isStruggle = false;
 
@@ -228,16 +226,31 @@ function executeMove(
     isStruggle = true;
     messages.push(`${attacker.displayName}은(는) 발버둥쳤다!`);
   } else {
-    move = attacker.moves[moveIndex];
-    if (move.currentPp <= 0) {
+    const chosen = attacker.moves[moveIndex];
+    if (chosen.currentPp <= 0) {
       // Requested move has 0 PP → struggle
       move = STRUGGLE_MOVE;
       isStruggle = true;
       messages.push(`${attacker.displayName}은(는) 발버둥쳤다!`);
     } else {
-      move.currentPp--;
-      messages.push(`${attacker.displayName}의 ${move.data.nameKo}!`);
+      move = chosen;
+      // Defer PP decrement + move announcement until after paralysis check so
+      // that a fully paralyzed turn does not waste PP on the chosen move.
     }
+  }
+
+  // Paralysis full-skip check — only applies to chosen moves, never to
+  // mandatory Struggle. This preserves the invariant that a no-PP turn always
+  // resolves through Struggle recoil.
+  if (!isStruggle && checkParalysisSkip(attacker, messages)) {
+    return { defenderFainted: false };
+  }
+
+  // Announce and consume PP for the chosen move (Struggle was already
+  // announced above and has no persistent PP).
+  if (!isStruggle) {
+    move.currentPp--;
+    messages.push(`${attacker.displayName}의 ${move.data.nameKo}!`);
   }
 
   // Accuracy check
