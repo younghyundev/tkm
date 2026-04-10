@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, readlinkSync } from 'fs';
+import { existsSync, readFileSync, readlinkSync, unlinkSync } from 'fs';
+import { BATTLE_STATE_PATH } from './core/battle-state-io.js';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
@@ -352,8 +353,9 @@ function renderBattleMode(battleData: {
   gym: { leader: string; leaderKo: string; type: string; badge: string; badgeKo: string };
   generation: string;
   lastHit?: { target: 'player' | 'opponent'; damage: number; effectiveness: string; timestamp: number; prevHp: number } | null;
+  defeatTimestamp?: number;
 }): void {
-  const { battleState, gym, lastHit } = battleData;
+  const { battleState, gym, lastHit, defeatTimestamp } = battleData;
   const oppMon = battleState.opponent.pokemon[battleState.opponent.activeIndex];
   const playerMon = battleState.player.pokemon[battleState.player.activeIndex];
 
@@ -368,8 +370,25 @@ function renderBattleMode(battleData: {
   // Load sprites (skip for fainted pokemon)
   const oppFainted = oppMon.fainted || oppMon.currentHp <= 0;
   const playerFainted = playerMon.fainted || playerMon.currentHp <= 0;
+
+  const collapseProgress = animProgress(defeatTimestamp, ANIM_COLLAPSE_MS);
+
   const oppSprite = oppFainted ? [] : loadSprite(oppMon.id);
-  const playerSprite = playerFainted ? [] : loadSprite(playerMon.id);
+  let playerSprite = (playerFainted && collapseProgress == null) ? [] : loadSprite(playerMon.id);
+
+  if (collapseProgress != null && playerSprite.length > 0) {
+    const emptyRows = Math.floor(playerSprite.length * collapseProgress);
+    const blankLine = '\u2800'.repeat(SPRITE_WIDTH);
+    playerSprite = playerSprite.map((line, i) => i < emptyRows ? blankLine : line);
+  }
+
+  // Defeat cleanup: after collapse animation + grace period, delete battle-state.json
+  if (defeatTimestamp != null && collapseProgress == null) {
+    const elapsed = Date.now() - defeatTimestamp;
+    if (elapsed >= DEFEAT_CLEANUP_MS) {
+      try { unlinkSync(BATTLE_STATE_PATH); } catch { /* ignore */ }
+    }
+  }
 
   // Render sprites side by side
   const maxRows = Math.max(oppSprite.length, playerSprite.length);
