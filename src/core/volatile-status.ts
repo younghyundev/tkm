@@ -132,6 +132,13 @@ export function applyLeechSeedEndOfTurn(
   const healer = sourceTeam.pokemon[sourceTeam.activeIndex];
   if (!healer) return false;
 
+  // Ownership guard: if the seeder's slot was recorded, verify it still
+  // matches the active slot. executeSwitch clears opposing leech-seed
+  // entries on switch-out, so a mismatched sourceSlot should not normally
+  // reach here. But if it does (e.g., a caller outside executeSwitch),
+  // drain the target but do not heal the replacement mon.
+  const healingAllowed = seeded.sourceSlot === undefined || seeded.sourceSlot === sourceTeam.activeIndex;
+
   const drain = Math.max(1, Math.floor(affected.maxHp / 8));
   const actualDrain = Math.min(drain, affected.currentHp);
   if (actualDrain <= 0) return false;
@@ -143,7 +150,7 @@ export function applyLeechSeedEndOfTurn(
     affected.fainted = true;
   }
 
-  if (!healer.fainted) {
+  if (healingAllowed && !healer.fainted) {
     healer.currentHp = Math.min(healer.maxHp, healer.currentHp + actualDrain);
   }
 

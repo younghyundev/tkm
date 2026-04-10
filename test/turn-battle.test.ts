@@ -1113,6 +1113,57 @@ describe('resolveTurn with status effects', () => {
     assert.deepEqual(p1.volatileStatuses, []);
   });
 
+  it('seeder switch-out clears leech_seed on opponent and stops healing replacement', () => {
+    // Regression for v3c R3 HIGH: leech-seed was bound to sourceSide only.
+    // After the seeder switched out, the target kept draining and the
+    // replacement mon on the seeder side would receive the healing instead.
+    const seeder = makeTestPokemon({
+      displayName: 'Seeder',
+      speed: 999,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const bench = makeTestPokemon({
+      displayName: 'Bench',
+      currentHp: 10,
+      maxHp: 160,
+    });
+    const target = makeTestPokemon({
+      displayName: 'Target',
+      speed: 1,
+      maxHp: 160,
+      currentHp: 160,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    addVolatileStatus(target, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, []);
+
+    const state = createBattleState([seeder, bench], [target]);
+    resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
+
+    assert.equal(
+      target.volatileStatuses.some((s) => s.type === 'leech_seed'),
+      false,
+      'Target should no longer be seeded after seeder switched out',
+    );
+    assert.equal(bench.currentHp, 10, 'Bench (replacement) must not be healed by stale leech-seed');
+  });
+
+  it('sourceSlot mismatch blocks healing even if leech_seed survives cleanup', () => {
+    // Defense in depth: if a stale entry with sourceSlot=0 reaches
+    // applyLeechSeedEndOfTurn while the active slot is 1 (bench), the
+    // target must still drain but no mon should be healed.
+    const seeder = makeTestPokemon({ displayName: 'Seeder' });
+    const bench = makeTestPokemon({ displayName: 'Bench', currentHp: 10, maxHp: 160, moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }] });
+    const target = makeTestPokemon({ displayName: 'Target', currentHp: 160, maxHp: 160, speed: 1, moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }] });
+    addVolatileStatus(target, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, []);
+    const state = createBattleState([seeder, bench], [target]);
+    state.player.activeIndex = 1;
+
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.ok(target.currentHp < 160, 'Target should still take drain damage');
+    assert.equal(bench.currentHp, 10, 'Bench (wrong slot) must not receive leech-seed heal');
+  });
+
   it('switching out also clears flinch if it was still present', () => {
     const p1 = makeTestPokemon({ displayName: 'Lead' });
     const p2 = makeTestPokemon({ displayName: 'Bench' });

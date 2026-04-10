@@ -216,6 +216,8 @@ function executeSwitch(
   team: BattleTeam,
   targetIndex: number,
   messages: string[],
+  opposingTeam?: BattleTeam,
+  ownSide?: 'player' | 'opponent',
 ): void {
   // Reject invalid switch targets — including no-op same-slot switches.
   // A same-slot switch must not reach the reset path below, otherwise it would
@@ -229,7 +231,24 @@ function executeSwitch(
     return;
   }
   const old = getActivePokemon(team);
+  const departingSlot = team.activeIndex;
   clearVolatileStatuses(old);
+
+  // Clear leech-seed markers on the opposing team that were seeded by the
+  // departing Pokemon so healing cannot redirect to the replacement.
+  if (opposingTeam && ownSide) {
+    for (const opp of opposingTeam.pokemon) {
+      opp.volatileStatuses = opp.volatileStatuses.filter(
+        (entry) =>
+          !(
+            entry.type === 'leech_seed' &&
+            entry.sourceSide === ownSide &&
+            entry.sourceSlot === departingSlot
+          ),
+      );
+    }
+  }
+
   team.activeIndex = targetIndex;
   // Reset toxic counter when switching out
   if (old.statusCondition === 'badly_poisoned') {
@@ -419,7 +438,9 @@ function executeMove(
         defender,
         {
           type,
-          ...(type === 'leech_seed' ? { sourceSide: attackerSide } : {}),
+          ...(type === 'leech_seed'
+            ? { sourceSide: attackerSide, sourceSlot: attackerTeam.activeIndex }
+            : {}),
         },
         messages,
       );
@@ -490,7 +511,14 @@ export function resolveTurn(
   // Execute actions in order
   for (const [actionIndex, entry] of entries.entries()) {
     if (entry.action.type === 'switch') {
-      executeSwitch(state[entry.side], entry.action.pokemonIndex, messages);
+      const opposingSide = entry.side === 'player' ? 'opponent' : 'player';
+      executeSwitch(
+        state[entry.side],
+        entry.action.pokemonIndex,
+        messages,
+        state[opposingSide],
+        entry.side,
+      );
     } else if (entry.action.type === 'move') {
       const result = executeMove(
         entry.side,

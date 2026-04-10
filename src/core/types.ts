@@ -481,6 +481,12 @@ export interface VolatileStatus {
   type: VolatileStatusType;
   turnsRemaining?: number;
   sourceSide?: 'player' | 'opponent';
+  /**
+   * Seeder slot (activeIndex at the time of application) for leech-seed
+   * ownership. When the seeder switches out, its leech-seed markers on the
+   * opposing team are cleared so healing cannot redirect to the replacement.
+   */
+  sourceSlot?: number;
 }
 
 export interface StatStages {
