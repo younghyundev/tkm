@@ -2,6 +2,10 @@
   "1": {
     "pool": [
       {
+        "moveId": 920,
+        "learnLevel": 7
+      },
+      {
         "moveId": 438,
         "learnLevel": 33
       },
@@ -21,6 +25,10 @@
   },
   "2": {
     "pool": [
+      {
+        "moveId": 920,
+        "learnLevel": 7
+      },
       {
         "moveId": 402,
         "learnLevel": 20

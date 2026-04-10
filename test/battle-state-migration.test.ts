@@ -203,14 +203,36 @@ describe('battle state migration', () => {
     assert.equal((mon.volatileStatuses[0] as any).sourceSide, 'player');
   });
 
-  it('normalizeBattlePokemon coerces confusion with non-finite turnsRemaining to 0', () => {
+  it('normalizeBattlePokemon drops confusion with non-finite/expired turnsRemaining', () => {
+    // Dropping (not coercing) is required because checkConfusionSkip runs the
+    // self-hit roll before decrementing below 0 — coercing to 0 would leave
+    // the entry live for one extra self-hit on resume.
     const mon = makeLegacyPokemon({
       volatileStatuses: [
         { type: 'confusion', turnsRemaining: NaN as any },
+        { type: 'confusion', turnsRemaining: 0 },
+        { type: 'confusion', turnsRemaining: -1 },
+        { type: 'confusion' }, // no turnsRemaining
+        { type: 'confusion', turnsRemaining: 2 },
       ],
     } as Partial<BattlePokemon>);
     normalizeBattlePokemon(mon);
     assert.equal(mon.volatileStatuses.length, 1);
-    assert.equal((mon.volatileStatuses[0] as any).turnsRemaining, 0);
+    assert.equal((mon.volatileStatuses[0] as any).turnsRemaining, 2);
+  });
+
+  it('resumed legacy confused mon with corrupted counter does not self-hit', async () => {
+    // Regression for v3c R2 MEDIUM: malformed confusion state used to survive
+    // normalization as a 0-turn active entry and trigger one self-hit roll.
+    const { checkConfusionSkip } = await import('../src/core/volatile-status.js');
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [{ type: 'confusion', turnsRemaining: NaN as any }],
+    } as Partial<BattlePokemon>);
+    const hpBefore = mon.currentHp;
+    normalizeBattlePokemon(mon);
+    const msgs: string[] = [];
+    const skipped = checkConfusionSkip(mon, msgs);
+    assert.equal(skipped, false, 'No confusion turn should be consumed');
+    assert.equal(mon.currentHp, hpBefore, 'No self-hit damage should be dealt');
   });
 });

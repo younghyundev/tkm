@@ -178,3 +178,27 @@ describe('applyLeechSeedEndOfTurn', () => {
     assert.equal(healer.currentHp, 160);
   });
 });
+
+describe('leech-seed data pipeline integration', () => {
+  // Regression for v3c R2 HIGH: leech-seed was added as move id 920 but no
+  // species movepool referenced it, so the move would never actually appear
+  // in real battle setup. This test asserts the move is reachable through
+  // the authoritative getMoveData/getPokemonMovePool chain.
+  it('leech-seed moveId 920 resolves via getMoveData', async () => {
+    const { getMoveData } = await import('../src/core/moves.js');
+    const move = getMoveData(920);
+    assert.ok(move, 'getMoveData(920) should return the leech-seed move');
+    assert.equal(move?.name, 'leech-seed');
+    assert.equal(move?.type, 'grass');
+    assert.equal((move as any)?.volatileEffect?.type, 'leech_seed');
+  });
+
+  it('Bulbasaur (species 1) movepool contains leech-seed', async () => {
+    const { getPokemonMovePool } = await import('../src/core/moves.js');
+    const pool = getPokemonMovePool(1);
+    assert.ok(
+      pool.some((m) => m.moveId === 920),
+      `Bulbasaur pool should contain leech-seed (920). Got: ${JSON.stringify(pool)}`,
+    );
+  });
+});

@@ -66,11 +66,14 @@ export function normalizeBattlePokemon(mon: BattlePokemon): void {
     mon.volatileStatuses = mon.volatileStatuses.filter((entry) => {
       if (!entry || typeof entry !== 'object') return false;
       if (!validTypes.has((entry as { type?: string }).type ?? '')) return false;
-      // confusion: require finite turnsRemaining or coerce to 0 (checkConfusionSkip clears at 0)
+      // confusion: drop entries with invalid or already-expired turn counters
+      // so the next turn cannot trigger an extra self-hit roll on a
+      // supposedly-cleaned save (checkConfusionSkip runs the self-hit roll
+      // before decrementing below 0).
       if ((entry as { type: string }).type === 'confusion') {
         const t = (entry as { turnsRemaining?: unknown }).turnsRemaining;
-        if (typeof t !== 'number' || !Number.isFinite(t)) {
-          (entry as { turnsRemaining: number }).turnsRemaining = 0;
+        if (typeof t !== 'number' || !Number.isFinite(t) || t <= 0) {
+          return false;
         }
       }
       // leech_seed: require valid sourceSide
