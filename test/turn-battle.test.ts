@@ -1100,6 +1100,31 @@ describe('resolveTurn with status effects', () => {
     assert.deepEqual(p2.statStages, createStatStages());
   });
 
+  it('switching out clears confusion and leech-seed from the departing pokemon', () => {
+    const p1 = makeTestPokemon({ displayName: 'Lead' });
+    const p2 = makeTestPokemon({ displayName: 'Bench' });
+    const opp = makeTestPokemon({ displayName: 'Opp' });
+    addVolatileStatus(p1, { type: 'confusion', turnsRemaining: 3 }, []);
+    addVolatileStatus(p1, { type: 'leech_seed', sourceSide: 'opponent' }, []);
+    const state = createBattleState([p1, p2], [opp]);
+
+    resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
+
+    assert.deepEqual(p1.volatileStatuses, []);
+  });
+
+  it('switching out also clears flinch if it was still present', () => {
+    const p1 = makeTestPokemon({ displayName: 'Lead' });
+    const p2 = makeTestPokemon({ displayName: 'Bench' });
+    const opp = makeTestPokemon({ displayName: 'Opp' });
+    addVolatileStatus(p1, { type: 'flinch' }, []);
+    const state = createBattleState([p1, p2], [opp]);
+
+    resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
+
+    assert.deepEqual(p1.volatileStatuses, []);
+  });
+
   it('move-type immune target does not receive status from secondary effect', () => {
     // Thunderbolt (electric) vs Ground-type — should not paralyze
     const effectMove = makeMoveData({ type: 'electric', category: 'special', power: 90 });
