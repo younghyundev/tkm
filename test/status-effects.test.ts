@@ -202,12 +202,14 @@ describe('checkFreezeSkip', () => {
   });
 
   it('exception moves can be used while frozen and thaw the user', () => {
-    const mon = makePokemon({ statusCondition: 'freeze' });
-    const move = { data: { name: 'scald' } } as BattleMove;
-    const messages: string[] = [];
-    assert.ok(FROZEN_EXCEPTION_MOVES.has('scald'));
-    assert.equal(checkFreezeSkip(mon, move, messages), false);
-    assert.equal(mon.statusCondition, null);
-    assert.ok(messages.some((m) => m.includes('녹았다')));
+    for (const moveName of ['scald', 'pyro-ball', 'matcha-gotcha']) {
+      const mon = makePokemon({ statusCondition: 'freeze' });
+      const move = { data: { name: moveName } } as BattleMove;
+      const messages: string[] = [];
+      assert.ok(FROZEN_EXCEPTION_MOVES.has(moveName));
+      assert.equal(checkFreezeSkip(mon, move, messages), false);
+      assert.equal(mon.statusCondition, null);
+      assert.ok(messages.some((m) => m.includes('녹았다')));
+    }
   });
 });

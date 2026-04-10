@@ -14,6 +14,8 @@ export const FROZEN_EXCEPTION_MOVES = new Set([
   'flame-wheel',
   'sacred-fire',
   'scald',
+  'pyro-ball',
+  'matcha-gotcha',
   'flare-blitz',
   'steam-eruption',
   'burn-up',

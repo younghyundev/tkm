@@ -734,30 +734,38 @@ describe('resolveTurn with status effects', () => {
   });
 
   it('freeze exception moves act normally and thaw the user', () => {
-    const player = makeTestPokemon({
-      displayName: 'Frozen',
-      speed: 999,
-      statusCondition: 'freeze' as StatusCondition,
-      moves: [{
-        data: makeMoveData({
-          name: 'scald',
-          nameKo: '열탕',
-          type: 'water',
-          category: 'special',
-          power: 80,
-          accuracy: 100,
-          pp: 15,
-        }),
-        currentPp: 15,
-      }],
-    });
-    const opp = makeTestPokemon({ displayName: 'Opp', sleepCounter: 0 });
-    const state = createBattleState([player], [opp]);
+    const thawMoves = [
+      { name: 'scald', nameKo: '열탕', type: 'water', category: 'special' as const, power: 80, pp: 15 },
+      { name: 'pyro-ball', nameKo: '화염볼', type: 'fire', category: 'physical' as const, power: 120, pp: 5 },
+      { name: 'matcha-gotcha', nameKo: '말차고차', type: 'grass', category: 'special' as const, power: 80, pp: 15 },
+    ];
 
-    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    for (const thawMove of thawMoves) {
+      const player = makeTestPokemon({
+        displayName: 'Frozen',
+        speed: 999,
+        statusCondition: 'freeze' as StatusCondition,
+        moves: [{
+          data: makeMoveData({
+            name: thawMove.name,
+            nameKo: thawMove.nameKo,
+            type: thawMove.type,
+            category: thawMove.category,
+            power: thawMove.power,
+            accuracy: 100,
+            pp: thawMove.pp,
+          }),
+          currentPp: thawMove.pp,
+        }],
+      });
+      const opp = makeTestPokemon({ displayName: 'Opp', sleepCounter: 0 });
+      const state = createBattleState([player], [opp]);
 
-    assert.equal(player.statusCondition, null);
-    assert.equal(player.moves[0].currentPp, 14);
+      resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+      assert.equal(player.statusCondition, null, `${thawMove.name} should thaw the user`);
+      assert.equal(player.moves[0].currentPp, thawMove.pp - 1, `${thawMove.name} should consume PP`);
+    }
   });
 
   it('fire-type attacks thaw frozen defenders before damage', () => {
