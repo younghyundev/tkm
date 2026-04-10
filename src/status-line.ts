@@ -310,6 +310,21 @@ function hpBar(current: number, max: number, width: number = 10): string {
   return `${color}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`;
 }
 
+/** HP bar with drain animation: interpolates from prevHp to currentHp over ANIM_HP_DRAIN_MS. */
+function animatedHpBar(
+  currentHp: number,
+  maxHp: number,
+  lastHit: { target: 'player' | 'opponent'; timestamp: number; prevHp: number } | null | undefined,
+  side: 'player' | 'opponent',
+  width: number = 10,
+): string {
+  if (!lastHit || lastHit.target !== side) return hpBar(currentHp, maxHp, width);
+  const progress = animProgress(lastHit.timestamp, ANIM_HP_DRAIN_MS);
+  if (progress == null) return hpBar(currentHp, maxHp, width);
+  const displayHp = Math.round(lastHit.prevHp - (lastHit.prevHp - currentHp) * progress);
+  return hpBar(displayHp, maxHp, width);
+}
+
 // === Battle Mode Renderer ===
 function renderBattleMode(battleData: {
   battleState: {
@@ -321,7 +336,7 @@ function renderBattleMode(battleData: {
   };
   gym: { leader: string; leaderKo: string; type: string; badge: string; badgeKo: string };
   generation: string;
-  lastHit?: { target: 'player' | 'opponent'; damage: number; effectiveness: string } | null;
+  lastHit?: { target: 'player' | 'opponent'; damage: number; effectiveness: string; timestamp: number; prevHp: number } | null;
 }): void {
   const { battleState, gym, lastHit } = battleData;
   const oppMon = battleState.opponent.pokemon[battleState.opponent.activeIndex];
@@ -386,13 +401,8 @@ function renderBattleMode(battleData: {
   const oppInfo = `${oppMon.displayName} Lv.${oppMon.level}${oppHitMark}${oppFaintedMark}`;
   const playerInfo = `${playerMon.displayName} Lv.${playerMon.level}${playerHitMark}${playerFaintedMark}`;
 
-  // HP bar: flash red for 1 turn after being hit
-  const oppHpBarStr = lastHit?.target === 'opponent'
-    ? `\x1b[31m${'█'.repeat(Math.round(Math.max(0, oppMon.currentHp / oppMon.maxHp) * 10))}\x1b[90m${'░'.repeat(10 - Math.round(Math.max(0, oppMon.currentHp / oppMon.maxHp) * 10))}\x1b[0m`
-    : hpBar(oppMon.currentHp, oppMon.maxHp);
-  const playerHpBarStr = lastHit?.target === 'player'
-    ? `\x1b[31m${'█'.repeat(Math.round(Math.max(0, playerMon.currentHp / playerMon.maxHp) * 10))}\x1b[90m${'░'.repeat(10 - Math.round(Math.max(0, playerMon.currentHp / playerMon.maxHp) * 10))}\x1b[0m`
-    : hpBar(playerMon.currentHp, playerMon.maxHp);
+  const oppHpBarStr = animatedHpBar(oppMon.currentHp, oppMon.maxHp, lastHit, 'opponent');
+  const playerHpBarStr = animatedHpBar(playerMon.currentHp, playerMon.maxHp, lastHit, 'player');
 
   const oppHp = `HP ${oppHpBarStr} ${oppMon.currentHp}/${oppMon.maxHp}`;
   const playerHp = `HP ${playerHpBarStr} ${playerMon.currentHp}/${playerMon.maxHp}`;
