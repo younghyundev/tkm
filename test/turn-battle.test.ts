@@ -635,6 +635,35 @@ describe('resolveTurn with status effects', () => {
     }
   });
 
+  it('simultaneous end-of-turn double KO results in opponent win (player loses)', () => {
+    // Both last mons are poisoned at 1 HP. End-of-turn poison damage faints
+    // both simultaneously. Mainline rule: player loses a double KO.
+    const player = makeTestPokemon({
+      displayName: 'P',
+      speed: 999,
+      maxHp: 160,
+      currentHp: 1,
+      statusCondition: 'poison' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'O',
+      speed: 1,
+      maxHp: 160,
+      currentHp: 1,
+      statusCondition: 'poison' as StatusCondition,
+      toxicCounter: 0,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(state.phase, 'battle_end');
+    assert.equal(state.winner, 'opponent', 'Double KO should award opponent (player loses)');
+    assert.equal(player.fainted, true);
+    assert.equal(opp.fainted, true);
+  });
+
   it('end-of-turn status damage does not run after opponent KO (last mon)', () => {
     // Player KOs opponent's only pokemon while burned at 1 HP — player should win,
     // not faint from burn tick after battle is already decided.

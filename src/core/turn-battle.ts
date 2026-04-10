@@ -385,7 +385,15 @@ export function resolveTurn(
   const playerAlive = hasAlivePokemon(state.player);
   const opponentAlive = hasAlivePokemon(state.opponent);
 
-  if (!opponentAlive) {
+  if (!playerAlive && !opponentAlive) {
+    // Simultaneous double KO (e.g., both last mons faint to end-of-turn
+    // burn/poison in the same turn). Mainline Pokemon gives this to the
+    // opponent — the player "loses" because their last Pokemon did not
+    // survive. We follow the same convention so post-turn trades cannot
+    // flip into a false player victory.
+    state.phase = 'battle_end';
+    state.winner = 'opponent';
+  } else if (!opponentAlive) {
     state.phase = 'battle_end';
     state.winner = 'player';
   } else if (!playerAlive) {
