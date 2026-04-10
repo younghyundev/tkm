@@ -375,16 +375,34 @@ function renderBattleMode(battleData: {
   // Gap between sprites (braille blanks)
   const gap = '\u2800'.repeat(Math.max(2, Math.floor((printWidth - SPRITE_WIDTH * 2) / 2)));
 
+  const shakeProgress = lastHit ? animProgress(lastHit.timestamp, ANIM_SHAKE_MS) : null;
+  const shakeTarget = lastHit?.target ?? null;
+
   if (firstRow <= lastRow) {
     for (let row = firstRow; row <= lastRow; row++) {
       const oppLine = oppSprite[row] ?? '';
       const playerLine = playerSprite[row] ?? '';
-      // Pad opponent sprite to SPRITE_WIDTH
-      const oppVisible = oppLine.replace(/\x1b\[[^m]*m/g, '').length;
-      const oppPadded = oppVisible < SPRITE_WIDTH ? oppLine + '\u2800'.repeat(SPRITE_WIDTH - oppVisible) : oppLine;
-      // Pad player sprite to SPRITE_WIDTH
-      const playerVisible = playerLine.replace(/\x1b\[[^m]*m/g, '').length;
-      const playerPadded = playerVisible < SPRITE_WIDTH ? playerLine + '\u2800'.repeat(SPRITE_WIDTH - playerVisible) : playerLine;
+
+      // Shake: offset by one braille blank every 100ms
+      let oppShake = '';
+      let playerShake = '';
+      if (shakeProgress != null && lastHit) {
+        const elapsed = Date.now() - lastHit.timestamp;
+        const shakeOn = Math.floor(elapsed / 100) % 2 === 1;
+        if (shakeOn) {
+          if (shakeTarget === 'opponent') oppShake = '\u2800';
+          else if (shakeTarget === 'player') playerShake = '\u2800';
+        }
+      }
+
+      // Pad opponent sprite to SPRITE_WIDTH (accounting for shake prefix)
+      const oppWithShake = oppShake + oppLine;
+      const oppVisible = oppWithShake.replace(/\x1b\[[^m]*m/g, '').length;
+      const oppPadded = oppVisible < SPRITE_WIDTH ? oppWithShake + '\u2800'.repeat(SPRITE_WIDTH - oppVisible) : oppWithShake;
+      // Pad player sprite to SPRITE_WIDTH (accounting for shake prefix)
+      const playerWithShake = playerShake + playerLine;
+      const playerVisible = playerWithShake.replace(/\x1b\[[^m]*m/g, '').length;
+      const playerPadded = playerVisible < SPRITE_WIDTH ? playerWithShake + '\u2800'.repeat(SPRITE_WIDTH - playerVisible) : playerWithShake;
       console.log(oppPadded + gap + playerPadded);
     }
   }
