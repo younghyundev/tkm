@@ -1,5 +1,4 @@
-import { existsSync, readFileSync, readlinkSync, unlinkSync } from 'fs';
-import { BATTLE_STATE_PATH } from './core/battle-state-io.js';
+import { existsSync, readFileSync, readlinkSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { readState, readSession } from './core/state.js';
@@ -49,7 +48,7 @@ const ANIM_SHAKE_MS       = 800;
 const ANIM_HIT_FLASH_MS   = 600;
 const ANIM_COLOR_FLASH_MS = 1000;
 const ANIM_COLLAPSE_MS    = 2000;
-const DEFEAT_CLEANUP_MS   = ANIM_COLLAPSE_MS + 500;
+
 
 /** Returns animation progress 0..1, or null if animation window has expired. */
 function animProgress(timestamp: number | undefined, durationMs: number, now: number = Date.now()): number | null {
@@ -385,16 +384,11 @@ function renderBattleMode(battleData: {
     playerSprite = playerSprite.map((line, i) => i < emptyRows ? blankLine : line);
   }
 
-  // Defeat cleanup: render function handles deletion because no background process
-  // exists to clean up. The handleEnd CLI path serves as a manual fallback.
-  // If status line is not called after defeat, battle-state.json lingers until
-  // the next session start or manual --end invocation.
-  if (defeatTimestamp != null && collapseProgress == null) {
-    const elapsed = now - defeatTimestamp;
-    if (elapsed >= DEFEAT_CLEANUP_MS) {
-      try { unlinkSync(BATTLE_STATE_PATH); } catch { /* ignore */ }
-    }
-  }
+  // Defeat cleanup is NOT done here — status-line is read-only.
+  // Cleanup is handled by CLI lifecycle owners:
+  //   handleAction: rejects + deletes defeated state
+  //   handleInit: deletes stale defeated state before creating new battle
+  //   handleEnd: explicit manual cleanup
 
   // Render sprites side by side
   const maxRows = Math.max(oppSprite.length, playerSprite.length);
