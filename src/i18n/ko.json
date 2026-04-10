@@ -584,5 +584,23 @@
   "title.champion_galar": "가라르 챔피언",
   "title.champion_paldea": "팔데아 챔피언",
   "title.multi_champion": "멀티 챔피언",
-  "title.pokemon_master": "포켓몬 마스터"
+  "title.pokemon_master": "포켓몬 마스터",
+
+  "status.paralysis.inflicted": "{name:은/는} 마비되었다!",
+  "status.paralysis.immobile": "{name:은/는} 몸이 저려 움직일 수 없다!",
+  "status.burn.inflicted": "{name:은/는} 화상을 입었다!",
+  "status.burn.damage": "{name:은/는} 화상 데미지를 입었다!",
+  "status.poison.inflicted": "{name:은/는} 독에 걸렸다!",
+  "status.poison.damage": "{name:은/는} 독 데미지를 입었다!",
+  "status.badly_poisoned.inflicted": "{name:은/는} 맹독에 걸렸다!",
+  "status.already": "{name:은/는} 이미 상태이상에 걸려 있다!",
+  "status.immune": "{name}에게는 효과가 없다...",
+  "status.fainted_by_status": "{name:은/는} 쓰러졌다!",
+  "status.name.burn": "화상",
+  "status.name.poison": "독",
+  "status.name.paralysis": "마비",
+  "status.label.burn": "화상",
+  "status.label.poison": "독",
+  "status.label.badly_poisoned": "맹독",
+  "status.label.paralysis": "마비"
 }
