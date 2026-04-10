@@ -571,6 +571,30 @@ describe('resolveTurn with status effects', () => {
     assert.equal(opp.statusCondition, null, 'Ground type should not be paralyzed by Electric move');
   });
 
+  it('steel type does not receive poison from a non-poison move secondary effect', () => {
+    // Hypothetical grass-type move (no type-immunity vs steel) with poison effect —
+    // steel status immunity should still block the poison application.
+    const effectMove = makeMoveData({ type: 'grass', category: 'special', power: 60 });
+    (effectMove as any).effect = { type: 'poison', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: effectMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['steel'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, null, 'Steel type should not be poisoned regardless of move type');
+  });
+
+  it('steel type does not receive badly_poisoned from a non-poison move', () => {
+    // Hypothetical grass-type status move with badly_poisoned effect — steel
+    // status immunity must still block it.
+    const toxicMove = makeMoveData({ type: 'grass', category: 'physical', power: 0, accuracy: 100 });
+    (toxicMove as any).effect = { type: 'badly_poisoned', chance: 100 };
+    const player = makeTestPokemon({ displayName: 'P', speed: 999, statusCondition: null, toxicCounter: 0, moves: [{ data: toxicMove, currentPp: 10 }] });
+    const opp = makeTestPokemon({ displayName: 'O', types: ['steel'], statusCondition: null, toxicCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+    assert.equal(opp.statusCondition, null, 'Steel type should not be badly poisoned regardless of move type');
+  });
+
   it('move-type immune target does not receive status from status move', () => {
     // Thunder Wave (electric status) vs Ground-type — should not paralyze
     const statusMove = makeMoveData({ type: 'electric', category: 'physical', power: 0, accuracy: 90 });

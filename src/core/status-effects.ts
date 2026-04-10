@@ -2,8 +2,8 @@ import { t } from '../i18n/index.js';
 import type { BattlePokemon, StatusCondition } from './types.js';
 
 const STATUS_IMMUNITIES: Record<StatusCondition, string[]> = {
-  poison: ['poison'],
-  badly_poisoned: ['poison'],
+  poison: ['poison', 'steel'],
+  badly_poisoned: ['poison', 'steel'],
   burn: ['fire'],
   paralysis: ['electric'],
 };
