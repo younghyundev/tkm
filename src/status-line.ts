@@ -407,9 +407,20 @@ function renderBattleMode(battleData: {
     }
   }
 
-  // Hit indicator: show 💥 next to the pokemon that was hit last turn
-  const oppHitMark = lastHit?.target === 'opponent' ? ' 💥' : '';
-  const playerHitMark = lastHit?.target === 'player' ? ' 💥' : '';
+  // Hit indicator: flash 💥 on 300ms cycle during hit flash window
+  let oppHitMark = '';
+  let playerHitMark = '';
+  if (lastHit) {
+    const flashProgress = animProgress(lastHit.timestamp, ANIM_HIT_FLASH_MS);
+    if (flashProgress != null) {
+      const elapsed = Date.now() - lastHit.timestamp;
+      const flashOn = Math.floor(elapsed / 300) % 2 === 0;
+      if (flashOn) {
+        if (lastHit.target === 'opponent') oppHitMark = ' 💥';
+        else playerHitMark = ' 💥';
+      }
+    }
+  }
 
   // Fainted indicator
   const oppFaintedMark = oppFainted ? ` ${t('battle.fainted_label')}` : '';
