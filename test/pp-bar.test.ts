@@ -3,6 +3,16 @@ import assert from 'node:assert/strict';
 import { ppBar } from '../src/core/pp.js';
 import type { StdinData } from '../src/core/types.js';
 
+function withMockedNow<T>(nowMs: number, run: () => T): T {
+  const realNow = Date.now;
+  Date.now = () => nowMs;
+  try {
+    return run();
+  } finally {
+    Date.now = realNow;
+  }
+}
+
 describe('ppBar', () => {
   it('70% remaining shows battery bar + percentage + time', () => {
     const futureTs = Math.floor(Date.now() / 1000) + 7200; // +2h
@@ -100,7 +110,7 @@ describe('ppBar', () => {
     assert.ok(result.includes('(~45m)'));
   });
 
-  it('shows floor hours for > 1h remaining', () => {
+  it('shows hours and minutes for > 1h remaining', () => {
     const futureTs = Math.floor(Date.now() / 1000) + 7260; // 2h01m
     const data: StdinData = {
       rate_limits: {
@@ -109,6 +119,53 @@ describe('ppBar', () => {
     };
     const result = ppBar(data);
     assert.ok(result);
+    assert.ok(result.includes('(~2h1m)'));
+  });
+
+  it('rounds 1h59m30s up to 2h instead of showing 1h60m', () => {
+    const result = withMockedNow(0, () => ppBar({
+      rate_limits: {
+        five_hour: { used_percentage: 30, resets_at: 7170 },
+      },
+    }));
+    assert.ok(result);
     assert.ok(result.includes('(~2h)'));
+    assert.ok(!result.includes('1h60m'));
+  });
+
+  it('keeps exact 2h remaining formatted without minutes', () => {
+    const result = withMockedNow(0, () => ppBar({
+      rate_limits: {
+        five_hour: { used_percentage: 30, resets_at: 7200 },
+      },
+    }));
+    assert.ok(result);
+    assert.ok(result.includes('(~2h)'));
+    assert.ok(!result.includes('2h0m'));
+  });
+
+  it('rounds displayed percentage to a whole number for fractional remaining values', () => {
+    const data: StdinData = {
+      rate_limits: {
+        five_hour: { used_percentage: 12.34567, resets_at: 0 },
+      },
+    };
+    const result = ppBar(data);
+    assert.ok(result);
+    assert.ok(result.includes('88%'));
+    assert.ok(!result.includes('87.65433%'));
+    assert.ok(!/\d+\.\d+%/.test(result));
+  });
+
+  it('never emits scientific notation for near-zero remaining percentages', () => {
+    const data: StdinData = {
+      rate_limits: {
+        five_hour: { used_percentage: 99.999999, resets_at: 0 },
+      },
+    };
+    const result = ppBar(data);
+    assert.ok(result);
+    assert.ok(result.includes('0%'));
+    assert.ok(!/[eE][+-]?\d+%/.test(result));
   });
 });

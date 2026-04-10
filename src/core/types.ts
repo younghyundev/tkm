@@ -139,6 +139,8 @@ export interface Stats {
   total_battles_lost: number;
   total_catches: number;
   total_encounters: number;
+  codex_tokens_consumed: number;
+  codex_xp_earned: number;
   last_reset_week: string;
 }
 
@@ -237,6 +239,7 @@ export interface State {
   context_tokens_used?: number;
   gym_badges?: string[];
   rare_weight_multiplier?: number;
+  last_codex_xp?: number | null;
 }
 
 export interface Config {
@@ -433,6 +436,7 @@ export interface CommonState {
   completed_gym_gens: number;
   titles: string[];
   rare_weight_multiplier: number;
+  last_codex_tokens_total: number;
   last_turn_ts?: number;
 }
 

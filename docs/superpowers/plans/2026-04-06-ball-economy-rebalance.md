@@ -551,7 +551,7 @@ try {
 In `hooks/hooks.json`, add `PostToolUse` entry. The updated hooks object should include:
 
 ```json
-"PostToolUse": [{"hooks": [{"type": "command", "command": "TOKENMON_HOOK_MODE=1 \"/home/minsiwon00/claude/bin/tsx-resolve.sh\" \"/home/minsiwon00/claude/src/hooks/post-tool-use.ts\""}]}]
+"PostToolUse": [{"hooks": [{"type": "command", "command": "TOKENMON_HOOK_MODE=1 \"${CLAUDE_PLUGIN_ROOT}/bin/tsx-resolve.sh\" \"${CLAUDE_PLUGIN_ROOT}/src/hooks/post-tool-use.ts\""}]}]
 ```
 
 **IMPORTANT**: The path in hooks.json uses the install path. Check the existing entries for the correct base path pattern and match it exactly.
