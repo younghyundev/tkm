@@ -19,8 +19,10 @@ export function ppBar(stdinData: StdinData, blocks: number = 6): string | null {
         const mins = Math.max(1, Math.round(remainingSec / 60));
         timeStr = ` (~${mins}m)`;
       } else {
-        const hours = Math.floor(remainingSec / 3600);
-        timeStr = ` (~${hours}h)`;
+        const totalMins = Math.max(1, Math.round(remainingSec / 60));
+        const hours = Math.floor(totalMins / 60);
+        const mins = totalMins % 60;
+        timeStr = mins > 0 ? ` (~${hours}h${mins}m)` : ` (~${hours}h)`;
       }
     }
   }
