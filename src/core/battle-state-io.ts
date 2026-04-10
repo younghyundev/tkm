@@ -55,6 +55,41 @@ export function normalizeBattlePokemon(mon: BattlePokemon): void {
   if (mon.sleepCounter === undefined || !Number.isFinite(mon.sleepCounter)) {
     mon.sleepCounter = 0;
   }
+  if (!Array.isArray(mon.volatileStatuses)) {
+    mon.volatileStatuses = [];
+  } else {
+    // Validate each entry and drop malformed ones so resumed state with
+    // schema drift cannot crash end-of-turn logic (e.g., leech-seed with
+    // an unknown sourceSide dereferencing allPokemon[undefined]).
+    const validTypes = new Set(['confusion', 'flinch', 'leech_seed']);
+    const validSides = new Set(['player', 'opponent']);
+    mon.volatileStatuses = mon.volatileStatuses.filter((entry) => {
+      if (!entry || typeof entry !== 'object') return false;
+      if (!validTypes.has((entry as { type?: string }).type ?? '')) return false;
+      // confusion: drop entries with invalid or already-expired turn counters
+      // so the next turn cannot trigger an extra self-hit roll on a
+      // supposedly-cleaned save (checkConfusionSkip runs the self-hit roll
+      // before decrementing below 0).
+      if ((entry as { type: string }).type === 'confusion') {
+        const t = (entry as { turnsRemaining?: unknown }).turnsRemaining;
+        if (typeof t !== 'number' || !Number.isFinite(t) || t <= 0) {
+          return false;
+        }
+      }
+      // leech_seed: require valid sourceSide AND numeric sourceSlot.
+      // Legacy saves from before the ownership fix have no sourceSlot,
+      // which would let them drain the target forever without the
+      // ownership guard ever matching. Drop them entirely so resume
+      // cannot silently revive the pre-R3 ownership bug.
+      if ((entry as { type: string }).type === 'leech_seed') {
+        const s = (entry as { sourceSide?: unknown }).sourceSide;
+        if (typeof s !== 'string' || !validSides.has(s)) return false;
+        const slot = (entry as { sourceSlot?: unknown }).sourceSlot;
+        if (typeof slot !== 'number' || !Number.isFinite(slot) || slot < 0) return false;
+      }
+      return true;
+    });
+  }
   if (mon.statStages === undefined) {
     mon.statStages = createStatStages();
   } else {

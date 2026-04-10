@@ -1,9 +1,11 @@
 import { getTypeEffectiveness } from './type-chart.js';
 import { isStatusImmune } from './status-effects.js';
+import { hasVolatileStatus } from './volatile-status.js';
 import type { BattlePokemon, TurnAction } from './types.js';
 
 /** Base score for a status move (equivalent to a ~60-power move with neutral typing). */
 const STATUS_MOVE_BASE_SCORE = 60;
+const LEECH_SEED_BASE_SCORE = 50;
 
 function getHpRatio(pokemon: BattlePokemon): number {
   return pokemon.maxHp > 0 ? pokemon.currentHp / pokemon.maxHp : 0;
@@ -75,6 +77,26 @@ export function selectAiMove(attacker: BattlePokemon, defender: BattlePokemon): 
 
     if (move.data.power === 0 && move.data.statChanges?.length) {
       return { index, score: scoreStatChangeMove(attacker, defender, move, typeEff) };
+    }
+
+    if (move.data.volatileEffect && move.data.power === 0) {
+      if (typeEff === 0) {
+        return { index, score: 0 };
+      }
+
+      if (move.data.volatileEffect.type === 'confusion') {
+        if (hasVolatileStatus(defender, 'confusion')) {
+          return { index, score: 0 };
+        }
+        return { index, score: STATUS_MOVE_BASE_SCORE };
+      }
+
+      if (move.data.volatileEffect.type === 'leech_seed') {
+        if (defender.types.includes('grass') || hasVolatileStatus(defender, 'leech_seed')) {
+          return { index, score: 0 };
+        }
+        return { index, score: LEECH_SEED_BASE_SCORE };
+      }
     }
 
     // Status move scoring

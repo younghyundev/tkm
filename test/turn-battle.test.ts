@@ -13,6 +13,7 @@ import {
   hasAlivePokemon,
   resolveTurn,
 } from '../src/core/turn-battle.js';
+import { addVolatileStatus } from '../src/core/volatile-status.js';
 import { selectAiMove } from '../src/core/gym-ai.js';
 import { createStatStages } from '../src/core/stat-stages.js';
 import type { BattlePokemon, BattleMove, MoveData, BattleState, StatusCondition } from '../src/core/types.js';
@@ -85,6 +86,7 @@ function makeTestPokemon(overrides: Partial<BattlePokemon> = {}): BattlePokemon 
     statusCondition: null,
     toxicCounter: 0,
     sleepCounter: 0,
+    volatileStatuses: [],
     statStages: createStatStages(),
     ...overrides,
   };
@@ -170,6 +172,7 @@ describe('createBattlePokemon', () => {
     assert.equal(bp.statusCondition, null);
     assert.equal(bp.toxicCounter, 0);
     assert.equal(bp.sleepCounter, 0);
+    assert.deepEqual((bp as any).volatileStatuses, []);
     assert.deepEqual(bp.statStages, createStatStages());
   });
 });
@@ -831,6 +834,250 @@ describe('resolveTurn with status effects', () => {
     assert.equal(opp.statStages.defense, -1);
   });
 
+  it('confusion self-hit happens before accuracy check', () => {
+    const haymaker = makeMoveData({
+      name: 'haymaker',
+      nameKo: '헤이메이커',
+      power: 120,
+      accuracy: 0,
+    });
+    const player = makeTestPokemon({
+      displayName: 'Confused',
+      speed: 999,
+      moves: [{ data: haymaker, currentPp: 5 }],
+      volatileStatuses: [{ type: 'confusion', turnsRemaining: 2 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Target',
+      speed: 1,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const state = createBattleState([player], [opp]);
+    const origRandom = Math.random;
+
+    try {
+      Math.random = () => 0;
+      const result = resolveTurn(
+        state,
+        { type: 'move', moveIndex: 0 },
+        { type: 'move', moveIndex: 0 },
+      );
+
+      assert.ok(player.currentHp < player.maxHp, 'Confused attacker should self-hit');
+      assert.equal(opp.currentHp, opp.maxHp, 'Defender should take no damage');
+      assert.equal(player.moves[0].currentPp, 5, 'Self-hit should not spend PP');
+      assert.ok(
+        !result.messages.some((message) => message.includes('빗나갔다')),
+        `Expected self-hit to stop the accuracy path, got ${JSON.stringify(result.messages)}`,
+      );
+    } finally {
+      Math.random = origRandom;
+    }
+  });
+
+  it('second mover loses its turn when flinched by the first mover', () => {
+    const airSlash = makeMoveData({
+      name: 'air-slash',
+      nameKo: '에어슬래시',
+      type: 'flying',
+      category: 'special',
+      power: 40,
+      volatileEffect: { type: 'flinch', chance: 100 },
+    });
+    const player = makeTestPokemon({
+      displayName: 'Fast',
+      speed: 999,
+      moves: [{ data: airSlash, currentPp: 15 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Slow',
+      speed: 1,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 10 }],
+    });
+    const state = createBattleState([player], [opp]);
+
+    const result = resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.equal(player.currentHp, player.maxHp, 'Flinched target should not attack back');
+    assert.equal(opp.moves[0].currentPp, 10, 'Flinched turn should not consume PP');
+    assert.deepEqual(opp.volatileStatuses, [], 'Flinch should be consumed on the skipped turn');
+    assert.ok(
+      result.messages.length >= 2,
+      `Expected both the hit and the skipped turn to be logged, got ${JSON.stringify(result.messages)}`,
+    );
+  });
+
+  it('slower flinch move does not stop a faster target that already acted', () => {
+    const bite = makeMoveData({
+      name: 'bite',
+      nameKo: '물기',
+      type: 'dark',
+      power: 60,
+      volatileEffect: { type: 'flinch', chance: 100 },
+    });
+    const player = makeTestPokemon({
+      displayName: 'Slow',
+      speed: 1,
+      moves: [{ data: bite, currentPp: 25 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Fast',
+      speed: 999,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 10 }],
+    });
+    const state = createBattleState([player], [opp]);
+
+    resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.ok(player.currentHp < player.maxHp, 'Faster target should already have acted');
+    assert.equal(opp.moves[0].currentPp, 9, 'Faster target should spend PP on its move');
+    assert.equal(
+      opp.volatileStatuses.some((status) => status.type === 'flinch'),
+      false,
+      'Late flinch should not persist on a target that already moved',
+    );
+  });
+
+  it('damaging moves can apply volatile secondary effects', () => {
+    const dynamicPunch = makeMoveData({
+      name: 'dynamic-punch',
+      nameKo: '폭발펀치',
+      type: 'fighting',
+      power: 80,
+      accuracy: 100,
+      volatileEffect: { type: 'confusion', chance: 100 },
+    });
+    const player = makeTestPokemon({
+      displayName: 'Slow',
+      speed: 1,
+      moves: [{ data: dynamicPunch, currentPp: 5 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Fast',
+      speed: 999,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const state = createBattleState([player], [opp]);
+
+    resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.equal(opp.volatileStatuses.length, 1);
+    assert.equal(opp.volatileStatuses[0].type, 'confusion');
+  });
+
+  it('a pokemon can hold confusion, flinch, and leech-seed at once', () => {
+    const target = makeTestPokemon({ displayName: 'Stacked' });
+    const messages: string[] = [];
+
+    addVolatileStatus(target, { type: 'confusion', turnsRemaining: 3 }, messages);
+    addVolatileStatus(target, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, messages);
+    addVolatileStatus(target, { type: 'flinch' }, messages);
+
+    assert.deepEqual(
+      target.volatileStatuses.map((status) => status.type).sort(),
+      ['confusion', 'flinch', 'leech_seed'],
+    );
+  });
+
+  it('leech-seed drains 1/8 maxHp at end of turn and heals the source side', () => {
+    const player = makeTestPokemon({
+      displayName: 'Seeder',
+      maxHp: 160,
+      currentHp: 100,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Drained',
+      maxHp: 160,
+      currentHp: 160,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    addVolatileStatus(opp, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, []);
+    const state = createBattleState([player], [opp]);
+
+    resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.equal(opp.currentHp, 140);
+    assert.equal(player.currentHp, 120);
+  });
+
+  it('leech-seed healing is capped at maxHp', () => {
+    const player = makeTestPokemon({
+      displayName: 'Seeder',
+      maxHp: 160,
+      currentHp: 155,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Drained',
+      maxHp: 160,
+      currentHp: 160,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    addVolatileStatus(opp, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, []);
+    const state = createBattleState([player], [opp]);
+
+    resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.equal(player.currentHp, player.maxHp);
+    assert.equal(opp.currentHp, 140);
+  });
+
+  it('grass types reject leech-seed', () => {
+    const leechSeed = makeMoveData({
+      name: 'leech-seed',
+      nameKo: '씨뿌리기',
+      type: 'grass',
+      power: 0,
+      accuracy: 100,
+      volatileEffect: { type: 'leech_seed', chance: 100 },
+    });
+    const player = makeTestPokemon({
+      displayName: 'Seeder',
+      speed: 999,
+      moves: [{ data: leechSeed, currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'GrassTarget',
+      types: ['grass'],
+      speed: 1,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const state = createBattleState([player], [opp]);
+
+    const result = resolveTurn(
+      state,
+      { type: 'move', moveIndex: 0 },
+      { type: 'move', moveIndex: 0 },
+    );
+
+    assert.equal(opp.volatileStatuses.some((status) => status.type === 'leech_seed'), false);
+    assert.ok(
+      result.messages.some((message) => message.includes('효과가 없다')),
+      `Expected grass immunity log, got ${JSON.stringify(result.messages)}`,
+    );
+  });
+
   it('toxic counter resets on switch', () => {
     const p1 = makeTestPokemon({ displayName: 'Toxic', statusCondition: 'badly_poisoned' as StatusCondition, toxicCounter: 5 });
     const p2 = makeTestPokemon({ displayName: 'Fresh', statusCondition: null, toxicCounter: 0 });
@@ -851,6 +1098,109 @@ describe('resolveTurn with status effects', () => {
     resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
 
     assert.deepEqual(p2.statStages, createStatStages());
+  });
+
+  it('switching out clears confusion and leech-seed from the departing pokemon', () => {
+    const p1 = makeTestPokemon({ displayName: 'Lead' });
+    const p2 = makeTestPokemon({ displayName: 'Bench' });
+    const opp = makeTestPokemon({ displayName: 'Opp' });
+    addVolatileStatus(p1, { type: 'confusion', turnsRemaining: 3 }, []);
+    addVolatileStatus(p1, { type: 'leech_seed', sourceSide: 'opponent', sourceSlot: 0 }, []);
+    const state = createBattleState([p1, p2], [opp]);
+
+    resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
+
+    assert.deepEqual(p1.volatileStatuses, []);
+  });
+
+  it('seeder switch-out clears leech_seed on opponent and stops healing replacement', () => {
+    // Regression for v3c R3 HIGH: leech-seed was bound to sourceSide only.
+    // After the seeder switched out, the target kept draining and the
+    // replacement mon on the seeder side would receive the healing instead.
+    const seeder = makeTestPokemon({
+      displayName: 'Seeder',
+      speed: 999,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const bench = makeTestPokemon({
+      displayName: 'Bench',
+      currentHp: 10,
+      maxHp: 160,
+    });
+    const target = makeTestPokemon({
+      displayName: 'Target',
+      speed: 1,
+      maxHp: 160,
+      currentHp: 160,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    addVolatileStatus(target, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, []);
+
+    const state = createBattleState([seeder, bench], [target]);
+    resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
+
+    assert.equal(
+      target.volatileStatuses.some((s) => s.type === 'leech_seed'),
+      false,
+      'Target should no longer be seeded after seeder switched out',
+    );
+    assert.equal(bench.currentHp, 10, 'Bench (replacement) must not be healed by stale leech-seed');
+  });
+
+  it('sourceSlot mismatch blocks healing even if leech_seed survives cleanup', () => {
+    // Defense in depth: if a stale entry with sourceSlot=0 reaches
+    // applyLeechSeedEndOfTurn while the active slot is 1 (bench), the
+    // target must still drain but no mon should be healed.
+    const seeder = makeTestPokemon({ displayName: 'Seeder' });
+    const bench = makeTestPokemon({ displayName: 'Bench', currentHp: 10, maxHp: 160, moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }] });
+    const target = makeTestPokemon({ displayName: 'Target', currentHp: 160, maxHp: 160, speed: 1, moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }] });
+    addVolatileStatus(target, { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, []);
+    const state = createBattleState([seeder, bench], [target]);
+    state.player.activeIndex = 1;
+
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.ok(target.currentHp < 160, 'Target should still take drain damage');
+    assert.equal(bench.currentHp, 10, 'Bench (wrong slot) must not receive leech-seed heal');
+  });
+
+  it('legacy leech_seed without sourceSlot cannot heal after resume', () => {
+    // Regression for v3c R4 HIGH: a legacy entry without sourceSlot must
+    // still drain the target but never heal any mon. The normalizer drops
+    // such entries during load, but this test bypasses that to validate
+    // the end-of-turn ownership guard as a second line of defense.
+    const seeder = makeTestPokemon({
+      displayName: 'Seeder',
+      currentHp: 10,
+      maxHp: 160,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    const target = makeTestPokemon({
+      displayName: 'Target',
+      currentHp: 160,
+      maxHp: 160,
+      speed: 1,
+      moves: [{ data: makeMoveData({ power: 0 }), currentPp: 10 }],
+    });
+    target.volatileStatuses.push({ type: 'leech_seed', sourceSide: 'player' } as any);
+    const state = createBattleState([seeder], [target]);
+
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.ok(target.currentHp < 160, 'Target should still take drain damage');
+    assert.equal(seeder.currentHp, 10, 'Seeder must not be healed from a legacy seed entry');
+  });
+
+  it('switching out also clears flinch if it was still present', () => {
+    const p1 = makeTestPokemon({ displayName: 'Lead' });
+    const p2 = makeTestPokemon({ displayName: 'Bench' });
+    const opp = makeTestPokemon({ displayName: 'Opp' });
+    addVolatileStatus(p1, { type: 'flinch' }, []);
+    const state = createBattleState([p1, p2], [opp]);
+
+    resolveTurn(state, { type: 'switch', pokemonIndex: 1 }, { type: 'move', moveIndex: 0 });
+
+    assert.deepEqual(p1.volatileStatuses, []);
   });
 
   it('move-type immune target does not receive status from secondary effect', () => {

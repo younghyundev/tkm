@@ -126,6 +126,22 @@ describe('battle state migration', () => {
     assert.equal(mon.sleepCounter, 2);
   });
 
+  it('normalizeBattlePokemon backfills missing volatileStatuses to [] (v3c)', () => {
+    const mon = makeLegacyPokemon();
+    assert.equal((mon as any).volatileStatuses, undefined);
+    normalizeBattlePokemon(mon);
+    assert.deepEqual((mon as any).volatileStatuses, []);
+  });
+
+  it('normalizeBattlePokemon preserves existing volatileStatuses', () => {
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [{ type: 'confusion', turnsRemaining: 3 }],
+    } as Partial<BattlePokemon>);
+    normalizeBattlePokemon(mon);
+    assert.equal((mon as any).volatileStatuses.length, 1);
+    assert.equal((mon as any).volatileStatuses[0].type, 'confusion');
+  });
+
   it('normalizeBattlePokemon backfills missing statStages to zeroes (v3b)', () => {
     const mon = makeLegacyPokemon();
     assert.equal((mon as any).statStages, undefined);
@@ -154,5 +170,74 @@ describe('battle state migration', () => {
     const skipped = checkSleepSkip(mon, msgs);
     assert.equal(skipped, true, 'Should skip this turn');
     assert.equal(mon.statusCondition, null, 'Should wake up (not stuck in permanent sleep)');
+  });
+
+  it('normalizeBattlePokemon drops volatile-status entries with unknown type', () => {
+    // Regression for v3c R1 MEDIUM: corrupted saves with unknown volatile
+    // status types should be dropped, not passed through to the battle loop.
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [
+        { type: 'confusion', turnsRemaining: 3 },
+        { type: 'not_a_real_status' as any },
+        { type: 'bound' as any, turnsRemaining: 2 },
+      ],
+    } as Partial<BattlePokemon>);
+    normalizeBattlePokemon(mon);
+    assert.equal(mon.volatileStatuses.length, 1);
+    assert.equal(mon.volatileStatuses[0].type, 'confusion');
+  });
+
+  it('normalizeBattlePokemon drops leech_seed entries with invalid sourceSide or missing sourceSlot', () => {
+    // Regression for v3c R1 MEDIUM: leech_seed with a bogus sourceSide
+    // ('foo') would crash applyLeechSeedEndOfTurn at allPokemon['foo'].
+    // Regression for v3c R4 HIGH: legacy leech_seed without sourceSlot
+    // must also be dropped; otherwise the ownership guard at end-of-turn
+    // would have no way to verify the original seeder's identity.
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [
+        { type: 'leech_seed', sourceSide: 'foo' as any, sourceSlot: 0 },
+        { type: 'leech_seed', sourceSide: 'player' }, // legacy, no sourceSlot
+        { type: 'leech_seed' }, // no sourceSide
+        { type: 'leech_seed', sourceSide: 'player', sourceSlot: 0 }, // valid
+      ],
+    } as Partial<BattlePokemon>);
+    normalizeBattlePokemon(mon);
+    assert.equal(mon.volatileStatuses.length, 1);
+    assert.equal(mon.volatileStatuses[0].type, 'leech_seed');
+    assert.equal((mon.volatileStatuses[0] as any).sourceSide, 'player');
+    assert.equal((mon.volatileStatuses[0] as any).sourceSlot, 0);
+  });
+
+  it('normalizeBattlePokemon drops confusion with non-finite/expired turnsRemaining', () => {
+    // Dropping (not coercing) is required because checkConfusionSkip runs the
+    // self-hit roll before decrementing below 0 — coercing to 0 would leave
+    // the entry live for one extra self-hit on resume.
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [
+        { type: 'confusion', turnsRemaining: NaN as any },
+        { type: 'confusion', turnsRemaining: 0 },
+        { type: 'confusion', turnsRemaining: -1 },
+        { type: 'confusion' }, // no turnsRemaining
+        { type: 'confusion', turnsRemaining: 2 },
+      ],
+    } as Partial<BattlePokemon>);
+    normalizeBattlePokemon(mon);
+    assert.equal(mon.volatileStatuses.length, 1);
+    assert.equal((mon.volatileStatuses[0] as any).turnsRemaining, 2);
+  });
+
+  it('resumed legacy confused mon with corrupted counter does not self-hit', async () => {
+    // Regression for v3c R2 MEDIUM: malformed confusion state used to survive
+    // normalization as a 0-turn active entry and trigger one self-hit roll.
+    const { checkConfusionSkip } = await import('../src/core/volatile-status.js');
+    const mon = makeLegacyPokemon({
+      volatileStatuses: [{ type: 'confusion', turnsRemaining: NaN as any }],
+    } as Partial<BattlePokemon>);
+    const hpBefore = mon.currentHp;
+    normalizeBattlePokemon(mon);
+    const msgs: string[] = [];
+    const skipped = checkConfusionSkip(mon, msgs);
+    assert.equal(skipped, false, 'No confusion turn should be consumed');
+    assert.equal(mon.currentHp, hpBefore, 'No self-hit damage should be dealt');
   });
 });
