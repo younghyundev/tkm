@@ -374,11 +374,10 @@ function executeMove(
     }
 
     attacker.currentHp = attacker.maxHp;
-    attacker.statusCondition = null;
     attacker.toxicCounter = 0;
-    attacker.sleepCounter = 0;
-    tryApplyStatus(attacker, 'sleep', messages);
+    attacker.statusCondition = 'sleep';
     attacker.sleepCounter = 2;
+    messages.push(t('status.sleep.inflicted', { name: attacker.displayName }));
     messages.push(t('move.rest.success', { name: attacker.displayName }));
     return { defenderFainted: false };
   }
