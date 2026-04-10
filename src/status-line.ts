@@ -52,9 +52,9 @@ const ANIM_COLLAPSE_MS    = 2000;
 const DEFEAT_CLEANUP_MS   = ANIM_COLLAPSE_MS + 500;
 
 /** Returns animation progress 0..1, or null if animation window has expired. */
-function animProgress(timestamp: number | undefined, durationMs: number): number | null {
+function animProgress(timestamp: number | undefined, durationMs: number, now: number = Date.now()): number | null {
   if (timestamp == null) return null;
-  const elapsed = Date.now() - timestamp;
+  const elapsed = now - timestamp;
   if (elapsed < 0 || elapsed >= durationMs) return null;
   return Math.min(1, elapsed / durationMs);
 }
@@ -319,26 +319,27 @@ function animatedHpBar(
   lastHit: { target: 'player' | 'opponent'; effectiveness: string; timestamp: number; prevHp: number } | null | undefined,
   side: 'player' | 'opponent',
   width: number = 10,
-): string {
-  if (!lastHit || lastHit.target !== side) return hpBar(currentHp, maxHp, width);
+  now: number = Date.now(),
+): { bar: string; displayHp: number } {
+  if (!lastHit || lastHit.target !== side) return { bar: hpBar(currentHp, maxHp, width), displayHp: currentHp };
 
-  const drainProgress = animProgress(lastHit.timestamp, ANIM_HP_DRAIN_MS);
-  const colorProgress = animProgress(lastHit.timestamp, ANIM_COLOR_FLASH_MS);
+  const drainProgress = animProgress(lastHit.timestamp, ANIM_HP_DRAIN_MS, now);
+  const colorProgress = animProgress(lastHit.timestamp, ANIM_COLOR_FLASH_MS, now);
 
   const displayHp = drainProgress != null
     ? Math.round(lastHit.prevHp - (lastHit.prevHp - currentHp) * drainProgress)
     : currentHp;
 
   if (colorProgress != null && lastHit.effectiveness === 'super') {
-    const elapsed = Date.now() - lastHit.timestamp;
+    const elapsed = now - lastHit.timestamp;
     const flashColor = Math.floor(elapsed / 200) % 2 === 0 ? '\x1b[31m' : '\x1b[33m';
     const ratio = Math.max(0, Math.min(1, displayHp / maxHp));
     const filled = Math.round(ratio * width);
     const empty = width - filled;
-    return `${flashColor}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`;
+    return { bar: `${flashColor}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`, displayHp };
   }
 
-  return hpBar(displayHp, maxHp, width);
+  return { bar: hpBar(displayHp, maxHp, width), displayHp };
 }
 
 // === Battle Mode Renderer ===
@@ -361,6 +362,8 @@ function renderBattleMode(battleData: {
 
   if (!oppMon || !playerMon) return;
 
+  const now = Date.now();
+
   const termWidth = process.stdout.columns
     || parseInt(process.env.COLUMNS || '', 10)
     || detectTermWidth()
@@ -371,7 +374,7 @@ function renderBattleMode(battleData: {
   const oppFainted = oppMon.fainted || oppMon.currentHp <= 0;
   const playerFainted = playerMon.fainted || playerMon.currentHp <= 0;
 
-  const collapseProgress = animProgress(defeatTimestamp, ANIM_COLLAPSE_MS);
+  const collapseProgress = animProgress(defeatTimestamp, ANIM_COLLAPSE_MS, now);
 
   const oppSprite = oppFainted ? [] : loadSprite(oppMon.id);
   let playerSprite = (playerFainted && collapseProgress == null) ? [] : loadSprite(playerMon.id);
@@ -382,9 +385,12 @@ function renderBattleMode(battleData: {
     playerSprite = playerSprite.map((line, i) => i < emptyRows ? blankLine : line);
   }
 
-  // Defeat cleanup: after collapse animation + grace period, delete battle-state.json
+  // Defeat cleanup: render function handles deletion because no background process
+  // exists to clean up. The handleEnd CLI path serves as a manual fallback.
+  // If status line is not called after defeat, battle-state.json lingers until
+  // the next session start or manual --end invocation.
   if (defeatTimestamp != null && collapseProgress == null) {
-    const elapsed = Date.now() - defeatTimestamp;
+    const elapsed = now - defeatTimestamp;
     if (elapsed >= DEFEAT_CLEANUP_MS) {
       try { unlinkSync(BATTLE_STATE_PATH); } catch { /* ignore */ }
     }
@@ -406,38 +412,37 @@ function renderBattleMode(battleData: {
     }
   }
 
-  // Gap between sprites (braille blanks)
-  const gap = '\u2800'.repeat(Math.max(2, Math.floor((printWidth - SPRITE_WIDTH * 2) / 2)));
-
-  const shakeProgress = lastHit ? animProgress(lastHit.timestamp, ANIM_SHAKE_MS) : null;
+  const shakeProgress = lastHit ? animProgress(lastHit.timestamp, ANIM_SHAKE_MS, now) : null;
   const shakeTarget = lastHit?.target ?? null;
+  const baseGapChars = Math.max(2, Math.floor((printWidth - SPRITE_WIDTH * 2) / 2));
 
   if (firstRow <= lastRow) {
     for (let row = firstRow; row <= lastRow; row++) {
       const oppLine = oppSprite[row] ?? '';
       const playerLine = playerSprite[row] ?? '';
 
-      // Shake: offset by one braille blank every 100ms
-      let oppShake = '';
-      let playerShake = '';
+      // Shake: compute whether this frame has offset
+      let shakeOffset = 0;
       if (shakeProgress != null && lastHit) {
-        const elapsed = Date.now() - lastHit.timestamp;
-        const shakeOn = Math.floor(elapsed / 100) % 2 === 1;
-        if (shakeOn) {
-          if (shakeTarget === 'opponent') oppShake = '\u2800';
-          else if (shakeTarget === 'player') playerShake = '\u2800';
-        }
+        const shakeOn = Math.floor((now - lastHit.timestamp) / 100) % 2 === 1;
+        if (shakeOn) shakeOffset = 1;
       }
 
-      // Pad opponent sprite to SPRITE_WIDTH (accounting for shake prefix)
-      const oppWithShake = oppShake + oppLine;
-      const oppVisible = oppWithShake.replace(/\x1b\[[^m]*m/g, '').length;
-      const oppPadded = oppVisible < SPRITE_WIDTH ? oppWithShake + '\u2800'.repeat(SPRITE_WIDTH - oppVisible) : oppWithShake;
-      // Pad player sprite to SPRITE_WIDTH (accounting for shake prefix)
-      const playerWithShake = playerShake + playerLine;
-      const playerVisible = playerWithShake.replace(/\x1b\[[^m]*m/g, '').length;
-      const playerPadded = playerVisible < SPRITE_WIDTH ? playerWithShake + '\u2800'.repeat(SPRITE_WIDTH - playerVisible) : playerWithShake;
-      console.log(oppPadded + gap + playerPadded);
+      // Pad sprites to SPRITE_WIDTH (no shake prefix)
+      const oppVisible = oppLine.replace(/\x1b\[[^m]*m/g, '').length;
+      const oppPadded = oppVisible < SPRITE_WIDTH ? oppLine + '\u2800'.repeat(SPRITE_WIDTH - oppVisible) : oppLine;
+      const playerVisible = playerLine.replace(/\x1b\[[^m]*m/g, '').length;
+      const playerPadded = playerVisible < SPRITE_WIDTH ? playerLine + '\u2800'.repeat(SPRITE_WIDTH - playerVisible) : playerLine;
+
+      // Shake shifts target right by 1, gap absorbs the offset to keep total width constant
+      const rowGap = '\u2800'.repeat(Math.max(1, baseGapChars - shakeOffset));
+      if (shakeOffset && shakeTarget === 'opponent') {
+        console.log('\u2800' + oppPadded + rowGap + playerPadded);
+      } else if (shakeOffset && shakeTarget === 'player') {
+        console.log(oppPadded + rowGap + '\u2800' + playerPadded);
+      } else {
+        console.log(oppPadded + '\u2800'.repeat(baseGapChars) + playerPadded);
+      }
     }
   }
 
@@ -445,9 +450,9 @@ function renderBattleMode(battleData: {
   let oppHitMark = '';
   let playerHitMark = '';
   if (lastHit) {
-    const flashProgress = animProgress(lastHit.timestamp, ANIM_HIT_FLASH_MS);
+    const flashProgress = animProgress(lastHit.timestamp, ANIM_HIT_FLASH_MS, now);
     if (flashProgress != null) {
-      const elapsed = Date.now() - lastHit.timestamp;
+      const elapsed = now - lastHit.timestamp;
       const flashOn = Math.floor(elapsed / 300) % 2 === 0;
       if (flashOn) {
         if (lastHit.target === 'opponent') oppHitMark = ' 💥';
@@ -464,11 +469,11 @@ function renderBattleMode(battleData: {
   const oppInfo = `${oppMon.displayName} Lv.${oppMon.level}${oppHitMark}${oppFaintedMark}`;
   const playerInfo = `${playerMon.displayName} Lv.${playerMon.level}${playerHitMark}${playerFaintedMark}`;
 
-  const oppHpBarStr = animatedHpBar(oppMon.currentHp, oppMon.maxHp, lastHit, 'opponent');
-  const playerHpBarStr = animatedHpBar(playerMon.currentHp, playerMon.maxHp, lastHit, 'player');
+  const oppHpResult = animatedHpBar(oppMon.currentHp, oppMon.maxHp, lastHit, 'opponent', 10, now);
+  const playerHpResult = animatedHpBar(playerMon.currentHp, playerMon.maxHp, lastHit, 'player', 10, now);
 
-  const oppHp = `HP ${oppHpBarStr} ${oppMon.currentHp}/${oppMon.maxHp}`;
-  const playerHp = `HP ${playerHpBarStr} ${playerMon.currentHp}/${playerMon.maxHp}`;
+  const oppHp = `HP ${oppHpResult.bar} ${oppHpResult.displayHp}/${oppMon.maxHp}`;
+  const playerHp = `HP ${playerHpResult.bar} ${playerHpResult.displayHp}/${playerMon.maxHp}`;
 
   // Pad info lines to align with sprites
   const padTo = (s: string, targetWidth: number): string => {

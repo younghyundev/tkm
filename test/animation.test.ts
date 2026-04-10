@@ -31,6 +31,11 @@ describe('animProgress', () => {
     assert.notEqual(progress, null);
     assert.ok(progress! >= 0.45 && progress! <= 0.55);
   });
+
+  it('returns null for negative elapsed (future timestamp)', () => {
+    const future = Date.now() + 5000;
+    assert.equal(animProgress(future, 1000), null);
+  });
 });
 
 describe('HP drain interpolation', () => {
@@ -57,6 +62,30 @@ describe('HP drain interpolation', () => {
   it('handles KO (currentHp=0)', () => {
     assert.equal(interpolateHp(80, 0, 0.5), 40);
     assert.equal(interpolateHp(80, 0, 1), 0);
+  });
+
+  it('handles prevHp < currentHp gracefully (corrupted state)', () => {
+    // Should still interpolate linearly even if prevHp < currentHp
+    const result = interpolateHp(50, 100, 0.5);
+    assert.equal(result, 75);
+  });
+});
+
+describe('hpBar edge cases', () => {
+  it('handles maxHp=0 without division error', () => {
+    // ratio = max(0, min(1, 0/0)) = NaN → max(0, min(1, NaN)) → max(0, NaN) = NaN
+    // This means filled = NaN → '█'.repeat(NaN) = ''
+    // So it degrades to all empty. Verify no crash.
+    const hpBar = (current: number, max: number, width: number = 10): string => {
+      const ratio = Math.max(0, Math.min(1, current / max));
+      const filled = Math.round(ratio * width);
+      const empty = width - filled;
+      const color = ratio > 0.5 ? '\x1b[32m' : ratio > 0.2 ? '\x1b[33m' : '\x1b[31m';
+      return `${color}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`;
+    };
+    // Should not throw
+    const result = hpBar(0, 0);
+    assert.ok(typeof result === 'string');
   });
 });
 

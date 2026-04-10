@@ -100,7 +100,10 @@ function detectLastHit(
   const opponentDamage = opponentHpBefore - opponentHpAfter;
   const playerDamage = playerHpBefore - playerHpAfter;
 
-  // Return the most recent significant hit (prefer opponent taking damage = player attacked)
+  // When both sides deal damage in the same turn, we record only one hit
+  // for animation purposes. We favor the opponent (player's attack landed)
+  // since the player initiated the action and expects visual feedback for it.
+  // The opponent's counterattack animation is sacrificed in this case.
   if (opponentDamage > 0) {
     return { target: 'opponent', damage: opponentDamage, effectiveness, timestamp: Date.now(), prevHp: opponentHpBefore };
   }
