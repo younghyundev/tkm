@@ -588,6 +588,12 @@
 
   "status.paralysis.inflicted": "{name} is paralyzed! It may be unable to move!",
   "status.paralysis.immobile": "{name} is paralyzed! It can't move!",
+  "status.sleep.inflicted": "{name} fell asleep!",
+  "status.sleep.wake": "{name} woke up!",
+  "status.sleep.still_asleep": "{name} is fast asleep!",
+  "status.freeze.inflicted": "{name} was frozen solid!",
+  "status.freeze.thawed": "{name} thawed out!",
+  "status.freeze.still_frozen": "{name} is frozen solid!",
   "status.burn.inflicted": "{name} was burned!",
   "status.burn.damage": "{name} is hurt by its burn!",
   "status.poison.inflicted": "{name} was poisoned!",
@@ -599,8 +605,12 @@
   "status.name.burn": "burn",
   "status.name.poison": "poison",
   "status.name.paralysis": "paralysis",
+  "status.name.sleep": "sleep",
+  "status.name.freeze": "freeze",
   "status.label.burn": "BRN",
   "status.label.poison": "PSN",
   "status.label.badly_poisoned": "TOX",
-  "status.label.paralysis": "PRZ"
+  "status.label.paralysis": "PRZ",
+  "status.label.sleep": "SLP",
+  "status.label.freeze": "FRZ"
 }

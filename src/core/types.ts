@@ -467,7 +467,13 @@ export interface StdinData {
 
 export type MoveCategory = 'physical' | 'special' | 'status';
 
-export type StatusCondition = 'burn' | 'poison' | 'badly_poisoned' | 'paralysis';
+export type StatusCondition =
+  | 'burn'
+  | 'poison'
+  | 'badly_poisoned'
+  | 'paralysis'
+  | 'sleep'
+  | 'freeze';
 
 export interface MoveData {
   id: number;
@@ -511,6 +517,7 @@ export interface BattlePokemon {
   fainted: boolean;
   statusCondition: StatusCondition | null;
   toxicCounter: number;
+  sleepCounter: number;
 }
 
 export interface BattleTeam {

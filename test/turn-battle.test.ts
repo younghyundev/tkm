@@ -82,6 +82,7 @@ function makeTestPokemon(overrides: Partial<BattlePokemon> = {}): BattlePokemon 
     fainted: false,
     statusCondition: null,
     toxicCounter: 0,
+    sleepCounter: 0,
     ...overrides,
   };
 }
@@ -149,6 +150,23 @@ describe('createBattlePokemon', () => {
     );
     assert.equal(bp.spAttack, calculateStat(80, 50));
     assert.equal(bp.spDefense, calculateStat(70, 50));
+  });
+
+  it('initializes status counters to zero', () => {
+    const bp = createBattlePokemon(
+      {
+        id: 4,
+        types: ['fire'],
+        level: 50,
+        baseStats: { hp: 39, attack: 52, defense: 43, speed: 65 },
+        displayName: 'Charmander',
+      },
+      [makeMoveData()],
+    );
+
+    assert.equal(bp.statusCondition, null);
+    assert.equal(bp.toxicCounter, 0);
+    assert.equal(bp.sleepCounter, 0);
   });
 });
 
@@ -657,6 +675,130 @@ describe('resolveTurn with status effects', () => {
     } finally {
       Math.random = origRandom;
     }
+  });
+
+  it('sleep skips the turn without consuming PP', () => {
+    const player = makeTestPokemon({
+      displayName: 'Sleeper',
+      speed: 999,
+      statusCondition: 'sleep' as StatusCondition,
+      sleepCounter: 2,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', sleepCounter: 0 });
+    const state = createBattleState([player], [opp]);
+
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.equal(player.moves[0].currentPp, 10);
+    assert.equal(player.sleepCounter, 1);
+  });
+
+  it('wake-up turn still skips the move', () => {
+    const player = makeTestPokemon({
+      displayName: 'Sleeper',
+      speed: 999,
+      statusCondition: 'sleep' as StatusCondition,
+      sleepCounter: 1,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', sleepCounter: 0 });
+    const state = createBattleState([player], [opp]);
+
+    const result = resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.equal(player.statusCondition, null);
+    assert.equal(player.moves[0].currentPp, 10);
+    assert.ok(result.messages.some((m) => m.includes('깨어났다')));
+  });
+
+  it('freeze skips the turn without consuming PP when thaw roll fails', () => {
+    const player = makeTestPokemon({
+      displayName: 'Frozen',
+      speed: 999,
+      statusCondition: 'freeze' as StatusCondition,
+      moves: [{ data: makeMoveData({ power: 40 }), currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', sleepCounter: 0 });
+    const state = createBattleState([player], [opp]);
+    const origRandom = Math.random;
+
+    try {
+      Math.random = () => 0.9;
+      resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+      assert.equal(player.moves[0].currentPp, 10);
+      assert.equal(player.statusCondition, 'freeze');
+    } finally {
+      Math.random = origRandom;
+    }
+  });
+
+  it('freeze exception moves act normally and thaw the user', () => {
+    const player = makeTestPokemon({
+      displayName: 'Frozen',
+      speed: 999,
+      statusCondition: 'freeze' as StatusCondition,
+      moves: [{
+        data: makeMoveData({
+          name: 'scald',
+          nameKo: '열탕',
+          type: 'water',
+          category: 'special',
+          power: 80,
+          accuracy: 100,
+          pp: 15,
+        }),
+        currentPp: 15,
+      }],
+    });
+    const opp = makeTestPokemon({ displayName: 'Opp', sleepCounter: 0 });
+    const state = createBattleState([player], [opp]);
+
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.equal(player.statusCondition, null);
+    assert.equal(player.moves[0].currentPp, 14);
+  });
+
+  it('fire-type attacks thaw frozen defenders before damage', () => {
+    const player = makeTestPokemon({
+      displayName: 'Fire',
+      speed: 999,
+      moves: [{ data: makeFireMove({ power: 60 }), currentPp: 25 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Frozen Target',
+      types: ['grass'],
+      statusCondition: 'freeze' as StatusCondition,
+      currentHp: 100,
+    });
+    const state = createBattleState([player], [opp]);
+
+    const result = resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.equal(opp.statusCondition, null);
+    assert.ok(opp.currentHp < 100, 'Damage should still apply after thaw');
+    assert.ok(result.messages.some((m) => m.includes('녹았다')));
+  });
+
+  it('ice-type targets remain immune to freeze secondary effects', () => {
+    const effectMove = makeMoveData({ type: 'ice', category: 'special', power: 90 });
+    (effectMove as any).effect = { type: 'freeze', chance: 100 };
+    const player = makeTestPokemon({
+      displayName: 'P',
+      speed: 999,
+      moves: [{ data: effectMove, currentPp: 10 }],
+    });
+    const opp = makeTestPokemon({
+      displayName: 'Ice Target',
+      types: ['ice'],
+      statusCondition: null,
+    });
+    const state = createBattleState([player], [opp]);
+
+    resolveTurn(state, { type: 'move', moveIndex: 0 }, { type: 'move', moveIndex: 0 });
+
+    assert.equal(opp.statusCondition, null);
   });
 
   it('simultaneous end-of-turn double KO results in opponent win (player loses)', () => {
