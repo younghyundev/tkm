@@ -63,13 +63,13 @@ To open the switch menu, run:
 
 Parse the returned JSON and read `partyOptions[]` first, or `switchOptions` only as a fallback. Then make a SECOND AskUserQuestion:
 - Show up to 4 party members.
-- Label each live option as `{index}. {nameKo} HP:{hp}/{maxHp}`.
+- Label each live option as `{index}. {name} HP:{hp}/{maxHp}`.
 - If a member is fainted, mark that slot unavailable or note `기절`; do not offer it as a valid switch target.
 - If more than 4 live members exist, mention `그 외는 이름으로 입력해줘` and rely on `Other`.
 
 Parse the second AskUserQuestion answer like this:
 - Button on a listed live member: run `"$P/bin/tsx-resolve.sh" "$P/src/cli/battle-turn.ts" --action switch:<index>`.
-- `Other` text: fuzzy match `nameKo` by lowercase exact match or substring match.
+- `Other` text: fuzzy match `name` by lowercase exact match or substring match.
 - No match: re-ask the same switch AskUserQuestion.
 
 **Step 5 — Surrender flow:**
@@ -129,7 +129,7 @@ The battle-turn flow cleans up automatically. Show the final result to the user.
     { "index": 1, "nameKo": "용의파동", "pp": 10, "maxPp": 10, "disabled": false }
   ],
   "partyOptions": [
-    { "index": 2, "nameKo": "디아루가", "hp": 169, "maxHp": 169, "fainted": false }
+    { "index": 2, "name": "디아루가", "hp": 169, "maxHp": 169, "fainted": false }
   ],
   "animationFrames": [
     { "kind": "hit", "durationMs": 150, "target": "opponent" },

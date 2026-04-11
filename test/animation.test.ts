@@ -459,6 +459,39 @@ describe('battle animation + refresh flow', { concurrency: false }, () => {
     }
   });
 
+  it('keeps pre-hit HP snapshots on the flash frame so HP bars do not jump backwards', async (t) => {
+    const { actionResult } = await setupAnimatingBattle(t);
+    const actionOutput = parseFirstJsonLine('battle-turn --action 1', actionResult);
+    const [hitFrame, flashFrame] = actionOutput.animationFrames as Array<Record<string, unknown>>;
+
+    assert.equal(hitFrame.kind, 'hit');
+    assert.equal(flashFrame.kind, 'flash');
+    assert.equal(flashFrame.playerHp, hitFrame.playerHp);
+    assert.equal(flashFrame.opponentHp, hitFrame.opponentHp);
+  });
+
+  it('rejects cross-session re-init while another live battle is in progress', async (t) => {
+    const fixture = makeBattleTestEnv(t);
+    const sessionAEnv = { ...fixture.env, CLAUDE_SESSION_ID: 'sess-a' };
+    const sessionBEnv = { ...fixture.env, CLAUDE_SESSION_ID: 'sess-b' };
+
+    const firstInit = await runBattleTurn(sessionAEnv, ['--init', '--gym', '1', '--gen', 'gen4']);
+    assert.equal(firstInit.status, 'ongoing');
+    assert.equal(firstInit.sessionId, 'sess-a');
+
+    const secondInit = await runBattleTurn(sessionBEnv, ['--init', '--gym', '1', '--gen', 'gen4']);
+
+    assert.equal(secondInit.status, 'rejected');
+    assert.match(
+      String((secondInit.messages as string[] | undefined)?.[0] ?? ''),
+      /battle\.other_session|another session|다른 세션/i,
+    );
+
+    const persistedState = readBattleState(fixture.battleStatePath);
+    assert.equal(persistedState.sessionId, 'sess-a');
+    assert.equal(persistedState.battleState.phase, 'select_action');
+  });
+
   it('rejects frame refreshes from the wrong session without mutating battle state', async (t) => {
     const { battleStatePath, env } = await setupAnimatingBattle(t, 'expected-session');
     const before = readFileSync(battleStatePath, 'utf8');

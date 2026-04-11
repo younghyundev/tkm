@@ -248,6 +248,8 @@ function buildAnimationFrames(
       durationMs: 200,
       target: lastHit.target,
       effectiveness: lastHit.effectiveness,
+      playerHp: playerHpBefore,
+      opponentHp: opponentHpBefore,
       flashColor: flashColorFor(lastHit.effectiveness),
     },
     {
@@ -494,7 +496,19 @@ function handleInit(): void {
 
   // Clean up any stale terminal battle state before starting a new one
   const existingBsf = readBattleState();
-  if (existingBsf?.defeatTimestamp || existingBsf?.battleState.phase === 'battle_end') {
+  const currentSessionId = process.env.CLAUDE_SESSION_ID;
+  const isExistingBattleLive = !!existingBsf
+    && !existingBsf.defeatTimestamp
+    && existingBsf.battleState.phase !== 'battle_end';
+  if (isExistingBattleLive) {
+    if (existingBsf.sessionId && currentSessionId && existingBsf.sessionId !== currentSessionId) {
+      output(withBattleMetadata(existingBsf, {
+        status: 'rejected',
+        messages: [t('battle.other_session')],
+      }));
+      process.exit(0);
+    }
+  } else if (existingBsf) {
     deleteBattleState();
   }
 
