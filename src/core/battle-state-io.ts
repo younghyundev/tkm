@@ -15,35 +15,13 @@ export const BATTLE_STATE_PATH = join(STATE_DIR, 'battle-state.json');
 
 // ── Types ──
 
-export interface LastHit {
-  target: 'player' | 'opponent';
-  damage: number;
-  effectiveness: 'super' | 'normal' | 'not_very' | 'immune';
-  timestamp: number;
-  prevHp: number;
-}
-
-export interface AnimationFrame {
-  kind: 'hit' | 'drain' | 'flash' | 'collapse';
-  durationMs: number;
-  playerHp?: number;
-  opponentHp?: number;
-  target?: 'player' | 'opponent';
-  effectiveness?: 'super' | 'normal' | 'not_very' | 'immune';
-  flashColor?: string;
-}
-
 export interface BattleStateFile {
   battleState: BattleState;
   gym: GymData;
   generation: string;
   stateDir: string;
   playerPartyNames: string[];
-  lastHit?: LastHit | null;
-  animationFrames?: AnimationFrame[];
-  currentFrameIndex?: number | null;
   sessionId?: string;
-  defeatTimestamp?: number;
 }
 
 // ── File Operations ──
@@ -129,10 +107,25 @@ export function readBattleState(): BattleStateFile | null {
     // Migrate pre-status saves so they can be resumed safely.
     if (parsed?.battleState?.player) normalizeBattleTeam(parsed.battleState.player);
     if (parsed?.battleState?.opponent) normalizeBattleTeam(parsed.battleState.opponent);
+    // Migrate animating phase: if battle was stuck in animation, reconcile to the
+    // correct legal phase based on winner/fainted state — not blindly select_action.
+    if ((parsed?.battleState?.phase as string) === 'animating') {
+      const bs = parsed.battleState;
+      if (bs.winner) {
+        // Battle already resolved (badges were awarded before animation started).
+        // Delete the stale state file and return null so caller treats it as no battle.
+        try { unlinkSync(BATTLE_STATE_PATH); } catch { /* ignore */ }
+        return null;
+      }
+      const active = bs.player.pokemon[bs.player.activeIndex];
+      if (active?.fainted && bs.player.pokemon.some((p, i) => i !== bs.player.activeIndex && !p.fainted)) {
+        bs.phase = 'fainted_switch';
+      } else {
+        bs.phase = 'select_action';
+      }
+    }
     return {
       ...parsed,
-      animationFrames: parsed.animationFrames ?? undefined,
-      currentFrameIndex: parsed.currentFrameIndex === null ? null : parsed.currentFrameIndex ?? undefined,
       sessionId: parsed.sessionId ?? undefined,
     };
   } catch {
