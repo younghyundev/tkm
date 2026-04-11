@@ -48,6 +48,7 @@ const ANIM_SHAKE_MS       = 800;
 const ANIM_HIT_FLASH_MS   = 600;
 const ANIM_COLOR_FLASH_MS = 1000;
 const ANIM_COLLAPSE_MS    = 2000;
+const LEGACY_LAST_HIT_MAX_AGE_MS = ANIM_HIT_FLASH_MS + ANIM_HP_DRAIN_MS;
 
 
 /** Returns animation progress 0..1, or null if animation window has expired. */
@@ -68,6 +69,25 @@ const TYPE_EMOJI: Record<string, string> = {
   'steel': '⚙️', 'ground': '🏔️', 'normal': '⭐', 'flying': '🕊️', 'poison': '☠️',
   'psychic': '🔮', 'bug': '🐛', 'rock': '🪨', 'ghost': '👻',
   'dragon': '🐉', 'dark': '🌑', 'ice': '❄️', 'fairy': '✨',
+};
+
+type BattleTarget = 'player' | 'opponent';
+type BattleEffectiveness = 'super' | 'normal' | 'not_very' | 'immune';
+type BattleLastHit = {
+  target: BattleTarget;
+  damage: number;
+  effectiveness: BattleEffectiveness;
+  timestamp: number;
+  prevHp: number;
+};
+type BattleAnimationFrame = {
+  kind: 'hit' | 'drain' | 'flash' | 'collapse';
+  durationMs: number;
+  playerHp?: number;
+  opponentHp?: number;
+  target?: BattleTarget;
+  effectiveness?: BattleEffectiveness;
+  flashColor?: string;
 };
 
 function xpBar(currentXp: number, level: number, group: ExpGroup, blocks: number = 6): { bar: string; pct: number } {
@@ -301,13 +321,39 @@ function detectTermWidth(): number {
 }
 
 // === Battle Mode HP Bar ===
-function hpBar(current: number, max: number, width: number = 10): string {
+function hpBarWithColor(current: number, max: number, width: number = 10, color?: string): string {
   const ratio = Math.max(0, Math.min(1, current / max));
   const filled = Math.round(ratio * width);
   const empty = width - filled;
   // Green > 50%, Yellow > 20%, Red <= 20%
-  const color = ratio > 0.5 ? '\x1b[32m' : ratio > 0.2 ? '\x1b[33m' : '\x1b[31m';
-  return `${color}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`;
+  const resolvedColor = color ?? (ratio > 0.5 ? '\x1b[32m' : ratio > 0.2 ? '\x1b[33m' : '\x1b[31m');
+  return `${resolvedColor}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`;
+}
+
+function hpBar(current: number, max: number, width: number = 10): string {
+  return hpBarWithColor(current, max, width);
+}
+
+function flashColorToAnsi(frame: BattleAnimationFrame): string | undefined {
+  switch (frame.flashColor ?? frame.effectiveness) {
+    case '#ef4444':
+    case 'super':
+      return '\x1b[31m';
+    case '#f59e0b':
+    case 'not_very':
+      return '\x1b[33m';
+    case '#9ca3af':
+    case 'immune':
+      return '\x1b[90m';
+    default:
+      return undefined;
+  }
+}
+
+function isActiveLegacyLastHit(lastHit: BattleLastHit | null | undefined, now: number): lastHit is BattleLastHit {
+  if (!lastHit || !Number.isFinite(lastHit.timestamp)) return false;
+  const elapsed = now - lastHit.timestamp;
+  return elapsed >= 0 && elapsed < LEGACY_LAST_HIT_MAX_AGE_MS;
 }
 
 /** HP bar with drain animation: interpolates from prevHp to currentHp over ANIM_HP_DRAIN_MS.
@@ -315,11 +361,20 @@ function hpBar(current: number, max: number, width: number = 10): string {
 function animatedHpBar(
   currentHp: number,
   maxHp: number,
-  lastHit: { target: 'player' | 'opponent'; effectiveness: string; timestamp: number; prevHp: number } | null | undefined,
-  side: 'player' | 'opponent',
+  lastHit: BattleLastHit | null | undefined,
+  frame: BattleAnimationFrame | null | undefined,
+  side: BattleTarget,
   width: number = 10,
   now: number = Date.now(),
 ): { bar: string; displayHp: number } {
+  if (frame) {
+    const frameHp = side === 'player' ? frame.playerHp : frame.opponentHp;
+    const displayHp = Math.max(0, Math.min(maxHp, frameHp ?? currentHp));
+    const flashColor = frame.kind === 'flash' && frame.target === side ? flashColorToAnsi(frame) : undefined;
+    const bar = flashColor ? hpBarWithColor(displayHp, maxHp, width, flashColor) : hpBar(displayHp, maxHp, width);
+    return { bar, displayHp };
+  }
+
   if (!lastHit || lastHit.target !== side) return { bar: hpBar(currentHp, maxHp, width), displayHp: currentHp };
 
   const drainProgress = animProgress(lastHit.timestamp, ANIM_HP_DRAIN_MS, now);
@@ -332,10 +387,7 @@ function animatedHpBar(
   if (colorProgress != null && lastHit.effectiveness === 'super') {
     const elapsed = now - lastHit.timestamp;
     const flashColor = Math.floor(elapsed / 200) % 2 === 0 ? '\x1b[31m' : '\x1b[33m';
-    const ratio = Math.max(0, Math.min(1, displayHp / maxHp));
-    const filled = Math.round(ratio * width);
-    const empty = width - filled;
-    return { bar: `${flashColor}${'█'.repeat(filled)}\x1b[90m${'░'.repeat(empty)}\x1b[0m`, displayHp };
+    return { bar: hpBarWithColor(displayHp, maxHp, width, flashColor), displayHp };
   }
 
   return { bar: hpBar(displayHp, maxHp, width), displayHp };
@@ -352,16 +404,29 @@ function renderBattleMode(battleData: {
   };
   gym: { leader: string; leaderKo: string; type: string; badge: string; badgeKo: string };
   generation: string;
-  lastHit?: { target: 'player' | 'opponent'; damage: number; effectiveness: string; timestamp: number; prevHp: number } | null;
+  lastHit?: BattleLastHit | null;
+  animationFrames?: BattleAnimationFrame[];
+  currentFrameIndex?: number | null;
+  sessionId?: string | null;
   defeatTimestamp?: number;
 }): void {
-  const { battleState, gym, lastHit, defeatTimestamp } = battleData;
+  const { battleState, gym, lastHit, animationFrames, currentFrameIndex, defeatTimestamp } = battleData;
   const oppMon = battleState.opponent.pokemon[battleState.opponent.activeIndex];
   const playerMon = battleState.player.pokemon[battleState.player.activeIndex];
 
   if (!oppMon || !playerMon) return;
 
   const now = Date.now();
+  const activeFrame = Array.isArray(animationFrames)
+    && animationFrames.length > 0
+    && currentFrameIndex != null
+    && Number.isInteger(currentFrameIndex)
+    && currentFrameIndex >= 0
+    && currentFrameIndex < animationFrames.length
+    ? animationFrames[currentFrameIndex]
+    : null;
+  const activeLastHit = activeFrame ? null : (isActiveLegacyLastHit(lastHit, now) ? lastHit : null);
+  const isAnimatingPhase = battleState.phase === 'animating';
 
   const termWidth = process.stdout.columns
     || parseInt(process.env.COLUMNS || '', 10)
@@ -372,17 +437,27 @@ function renderBattleMode(battleData: {
   // Load sprites (skip for fainted pokemon)
   const oppFainted = oppMon.fainted || oppMon.currentHp <= 0;
   const playerFainted = playerMon.fainted || playerMon.currentHp <= 0;
+  const legacyCollapseProgress = animProgress(defeatTimestamp, ANIM_COLLAPSE_MS, now);
+  const collapseTarget = activeFrame?.kind === 'collapse'
+    ? activeFrame.target ?? null
+    : (legacyCollapseProgress != null && playerFainted ? 'player' : null);
+  const collapseProgress = activeFrame?.kind === 'collapse' ? 1 : legacyCollapseProgress;
 
-  const collapseProgress = animProgress(defeatTimestamp, ANIM_COLLAPSE_MS, now);
+  let oppSprite = (oppFainted && collapseTarget !== 'opponent') ? [] : loadSprite(oppMon.id);
+  let playerSprite = (playerFainted && collapseTarget !== 'player' && collapseProgress == null) ? [] : loadSprite(playerMon.id);
 
-  const oppSprite = oppFainted ? [] : loadSprite(oppMon.id);
-  let playerSprite = (playerFainted && collapseProgress == null) ? [] : loadSprite(playerMon.id);
-
-  // Collapse only on actual KO — surrender sets defeatTimestamp but playerFainted is false
-  if (collapseProgress != null && playerFainted && playerSprite.length > 0) {
-    const emptyRows = Math.floor(playerSprite.length * collapseProgress);
+  const applyCollapse = (sprite: string[], progress: number | null): string[] => {
+    if (progress == null || sprite.length === 0) return sprite;
+    const emptyRows = Math.floor(sprite.length * progress);
     const blankLine = '\u2800'.repeat(SPRITE_WIDTH);
-    playerSprite = playerSprite.map((line, i) => i < emptyRows ? blankLine : line);
+    return sprite.map((line, i) => i < emptyRows ? blankLine : line);
+  };
+
+  if (collapseTarget === 'opponent') {
+    oppSprite = applyCollapse(oppSprite, collapseProgress);
+  }
+  if (collapseTarget === 'player') {
+    playerSprite = applyCollapse(playerSprite, collapseProgress);
   }
 
   // Defeat cleanup is NOT done here — status-line is read-only.
@@ -407,8 +482,10 @@ function renderBattleMode(battleData: {
     }
   }
 
-  const shakeProgress = lastHit ? animProgress(lastHit.timestamp, ANIM_SHAKE_MS, now) : null;
-  const shakeTarget = lastHit?.target ?? null;
+  const shakeProgress = activeFrame
+    ? null
+    : (activeLastHit ? animProgress(activeLastHit.timestamp, ANIM_SHAKE_MS, now) : null);
+  const shakeTarget = activeFrame?.kind === 'hit' ? (activeFrame.target ?? null) : (activeLastHit?.target ?? null);
   const baseGapChars = Math.max(2, Math.floor((printWidth - SPRITE_WIDTH * 2) / 2));
 
   if (firstRow <= lastRow) {
@@ -418,8 +495,10 @@ function renderBattleMode(battleData: {
 
       // Shake: compute whether this frame has offset
       let shakeOffset = 0;
-      if (shakeProgress != null && lastHit) {
-        const shakeOn = Math.floor((now - lastHit.timestamp) / 100) % 2 === 1;
+      if (activeFrame?.kind === 'hit' && shakeTarget) {
+        shakeOffset = 1;
+      } else if (shakeProgress != null && activeLastHit) {
+        const shakeOn = Math.floor((now - activeLastHit.timestamp) / 100) % 2 === 1;
         if (shakeOn) shakeOffset = 1;
       }
 
@@ -444,13 +523,13 @@ function renderBattleMode(battleData: {
   // Hit indicator: flash 💥 on 300ms cycle during hit flash window
   let oppHitMark = '';
   let playerHitMark = '';
-  if (lastHit) {
-    const flashProgress = animProgress(lastHit.timestamp, ANIM_HIT_FLASH_MS, now);
+  if (!activeFrame && activeLastHit && !isAnimatingPhase) {
+    const flashProgress = animProgress(activeLastHit.timestamp, ANIM_HIT_FLASH_MS, now);
     if (flashProgress != null) {
-      const elapsed = now - lastHit.timestamp;
+      const elapsed = now - activeLastHit.timestamp;
       const flashOn = Math.floor(elapsed / 300) % 2 === 0;
       if (flashOn) {
-        if (lastHit.target === 'opponent') oppHitMark = ' 💥';
+        if (activeLastHit.target === 'opponent') oppHitMark = ' 💥';
         else playerHitMark = ' 💥';
       }
     }
@@ -476,8 +555,8 @@ function renderBattleMode(battleData: {
   const oppInfo = `${oppMon.displayName} Lv.${oppMon.level}${oppStatusMark}${oppHitMark}${oppFaintedMark}`;
   const playerInfo = `${playerMon.displayName} Lv.${playerMon.level}${playerStatusMark}${playerHitMark}${playerFaintedMark}`;
 
-  const oppHpResult = animatedHpBar(oppMon.currentHp, oppMon.maxHp, lastHit, 'opponent', 10, now);
-  const playerHpResult = animatedHpBar(playerMon.currentHp, playerMon.maxHp, lastHit, 'player', 10, now);
+  const oppHpResult = animatedHpBar(oppMon.currentHp, oppMon.maxHp, activeLastHit, activeFrame, 'opponent', 10, now);
+  const playerHpResult = animatedHpBar(playerMon.currentHp, playerMon.maxHp, activeLastHit, activeFrame, 'player', 10, now);
 
   const oppHp = `HP ${oppHpResult.bar} ${oppHpResult.displayHp}/${oppMon.maxHp}`;
   const playerHp = `HP ${playerHpResult.bar} ${playerHpResult.displayHp}/${playerMon.maxHp}`;
@@ -509,6 +588,12 @@ function main(): void {
   if (existsSync(battleStatePath)) {
     try {
       const battleData = JSON.parse(readFileSync(battleStatePath, 'utf-8'));
+      const currentSessionId = process.env.CLAUDE_SESSION_ID || undefined;
+      const battleSessionId = typeof battleData.sessionId === 'string' && battleData.sessionId.length > 0
+        ? battleData.sessionId
+        : undefined;
+      const suppressBattleUi = currentSessionId !== undefined && battleSessionId !== currentSessionId;
+
       // Skip expired terminal battles — fall through to normal rendering.
       // CLI lifecycle (handleAction/handleInit/handleEnd) should clean up the file,
       // but this gate is defensive against stale or legacy terminal states.
@@ -517,7 +602,7 @@ function main(): void {
       const isEndedWithoutTimestamp = battleData.battleState?.phase === 'battle_end'
         && !battleData.defeatTimestamp;
 
-      if (!isExpiredDefeat && !isEndedWithoutTimestamp) {
+      if (!suppressBattleUi && !isExpiredDefeat && !isEndedWithoutTimestamp) {
         renderBattleMode(battleData);
         process.exit(0);
       }

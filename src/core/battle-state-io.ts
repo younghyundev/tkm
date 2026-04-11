@@ -23,6 +23,16 @@ export interface LastHit {
   prevHp: number;
 }
 
+export interface AnimationFrame {
+  kind: 'hit' | 'drain' | 'flash' | 'collapse';
+  durationMs: number;
+  playerHp?: number;
+  opponentHp?: number;
+  target?: 'player' | 'opponent';
+  effectiveness?: 'super' | 'normal' | 'not_very' | 'immune';
+  flashColor?: string;
+}
+
 export interface BattleStateFile {
   battleState: BattleState;
   gym: GymData;
@@ -30,6 +40,8 @@ export interface BattleStateFile {
   stateDir: string;
   playerPartyNames: string[];
   lastHit?: LastHit | null;
+  animationFrames?: AnimationFrame[];
+  currentFrameIndex?: number | null;
   sessionId?: string;
   defeatTimestamp?: number;
 }
@@ -117,7 +129,12 @@ export function readBattleState(): BattleStateFile | null {
     // Migrate pre-status saves so they can be resumed safely.
     if (parsed?.battleState?.player) normalizeBattleTeam(parsed.battleState.player);
     if (parsed?.battleState?.opponent) normalizeBattleTeam(parsed.battleState.opponent);
-    return parsed;
+    return {
+      ...parsed,
+      animationFrames: parsed.animationFrames ?? undefined,
+      currentFrameIndex: parsed.currentFrameIndex === null ? null : parsed.currentFrameIndex ?? undefined,
+      sessionId: parsed.sessionId ?? undefined,
+    };
   } catch {
     return null;
   }

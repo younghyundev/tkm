@@ -15,6 +15,7 @@ import { playCry } from '../audio/play-cry.js';
 import { initLocale, t } from '../i18n/index.js';
 import { withLockRetry } from '../core/lock.js';
 import { loadGymData } from '../core/gym.js';
+import { readBattleState, deleteBattleState } from '../core/battle-state-io.js';
 import type { HookInput, HookOutput } from '../core/types.js';
 
 function readStdin(): string {
@@ -29,6 +30,26 @@ function readStdin(): string {
 function main(): void {
   const input = JSON.parse(readStdin()) as HookInput;
   const sessionId = input.session_id ?? '';
+
+  try {
+    const battleStateFile = readBattleState();
+    if (battleStateFile) {
+      const battleSessionId = battleStateFile.sessionId;
+      const currentSessionId = sessionId || process.env.CLAUDE_SESSION_ID;
+      // Silent drop only when we know the current session and it differs from
+      // the battle's session. If we cannot determine the current session, leave
+      // the battle state alone to avoid wiping a live battle.
+      if (currentSessionId && battleSessionId && battleSessionId !== currentSessionId) {
+        deleteBattleState();
+      }
+    }
+  } catch (err) {
+    if (process.env.TOKENMON_DEBUG) {
+      console.error(
+        `[session-start] failed to cleanup orphaned battle state: ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
+  }
 
   if (!sessionId) {
     // No session_id — can't register binding or track session
