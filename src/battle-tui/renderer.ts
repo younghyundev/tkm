@@ -80,14 +80,14 @@ export function renderBattleScreen(
   lines.push(doubleLine());
   lines.push('');
 
-  // Opponent pokemon (top-left, minimal indent)
-  const opponent = getActivePokemon(state.opponent);
-  lines.push(pokemonLine(opponent, 2));
+  // Player pokemon (left, minimal indent)
+  const player = getActivePokemon(state.player);
+  lines.push(pokemonLine(player, 2));
   lines.push('');
 
-  // Player pokemon (bottom-right, larger indent)
-  const player = getActivePokemon(state.player);
-  lines.push(pokemonLine(player, 10));
+  // Opponent pokemon (right, larger indent)
+  const opponent = getActivePokemon(state.opponent);
+  lines.push(pokemonLine(opponent, 10));
   lines.push('');
 
   // Message area
