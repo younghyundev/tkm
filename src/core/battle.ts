@@ -214,6 +214,7 @@ export function resolveBattle(
   config: Config,
   wild: WildPokemon,
   restMult: number = 1.0,
+  dispatchMultipliers?: Map<string, number>,
 ): BattleResult | null {
   const db = getPokemonDB();
   const wildData = db.pokemon[wild.name];
@@ -274,10 +275,11 @@ export function resolveBattle(
     }
   }
 
-  // Apply battle XP to all party pokemon
+  // Apply battle XP to all party pokemon (with dispatch bonus)
   for (const name of config.party) {
     if (!state.pokemon[name]) continue;
-    state.pokemon[name].xp += xpPerPokemon;
+    const dispatchMult = dispatchMultipliers?.get(name) ?? 1.0;
+    state.pokemon[name].xp += Math.floor(xpPerPokemon * dispatchMult);
   }
 
   // Mark pokemon as seen

@@ -156,6 +156,7 @@ export function awardGymVictory(
   state: State,
   gym: GymData,
   participatingPokemon: string[],
+  dispatchMultipliers?: Map<string, number>,
 ): GymVictoryResult {
   if (gym.team.length === 0) {
     return { xpAwarded: 0, badgeEarned: false, badge: gym.badge };
@@ -173,11 +174,12 @@ export function awardGymVictory(
     xp = Math.floor(xp / 2);
   }
 
-  // Award XP to all participating pokemon
+  // Award XP to all participating pokemon (with dispatch bonus)
   for (const name of participatingPokemon) {
     const poke = state.pokemon[name];
     if (poke) {
-      poke.xp += xp;
+      const dispatchMult = dispatchMultipliers?.get(name) ?? 1.0;
+      poke.xp += Math.floor(xp * dispatchMult);
     }
   }
 
