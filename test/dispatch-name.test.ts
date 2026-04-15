@@ -1,6 +1,9 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { getPokemonDB, pokemonIdByName } from '../src/core/pokemon-data.js';
+import { setActiveGenerationCache } from '../src/core/paths.js';
+
+setActiveGenerationCache('gen4');
 
 // Replicates the resolvePokemonArg() logic from src/cli/tokenmon.ts
 // (not exported, so we replicate the logic here)

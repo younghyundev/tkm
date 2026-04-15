@@ -2,6 +2,9 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { resolveNameToId, getDisplayName, getPokemonName } from '../src/core/pokemon-data.js';
+import { setActiveGenerationCache } from '../src/core/paths.js';
+
+setActiveGenerationCache('gen4');
 
 describe('resolveNameToId', () => {
   it('resolves numeric ID string', () => {
