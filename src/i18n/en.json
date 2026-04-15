@@ -351,10 +351,12 @@
   "setup.statusline.registered": "  ✓ tokenmon statusLine registered",
 
   "battle.win": "⚔️ vs wild {defender} (Lv.{level}) → Win! (XP +{xp})",
+  "battle.win_dispatch": "⚔️ vs wild {defender} (Lv.{level}) → Win! (XP +{xp}, dispatch +{dispatch})",
   "battle.win_catch": "\n🎉 Caught {defender}! (tokenmon party add {defender})",
   "battle.win_catch_no_hint": "\n🎉 Caught {defender}!",
   "battle.need_balls": "— {defender} fled!",
   "battle.lose": "⚔️ vs wild {defender} (Lv.{level}) → Defeat... (XP +{xp})",
+  "battle.lose_dispatch": "⚔️ vs wild {defender} (Lv.{level}) → Defeat... (XP +{xp}, dispatch +{dispatch})",
   "battle.lose_balls": "Dropped {count} Poké Ball(s) while fleeing! (🔴-{count})",
   "battle.shiny_appeared": "✦ A shiny {pokemon} appeared!",
   "battle.shiny_catch": "\n★ Shiny caught!",

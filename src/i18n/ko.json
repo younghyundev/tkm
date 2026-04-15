@@ -351,10 +351,12 @@
   "setup.statusline.registered": "  ✓ tokenmon statusLine 등록 완료",
 
   "battle.win": "⚔️ vs 야생 {defender} (Lv.{level}) → 승리! (XP +{xp})",
+  "battle.win_dispatch": "⚔️ vs 야생 {defender} (Lv.{level}) → 승리! (XP +{xp}, 파견 +{dispatch})",
   "battle.win_catch": "\n🎉 {defender:을/를} 포획했습니다! (tokenmon party add {defender})",
   "battle.win_catch_no_hint": "\n🎉 {defender:을/를} 포획했습니다!",
   "battle.need_balls": "— {defender}(은/는) 도망쳤다!",
   "battle.lose": "⚔️ vs 야생 {defender} (Lv.{level}) → 패배... (XP +{xp})",
+  "battle.lose_dispatch": "⚔️ vs 야생 {defender} (Lv.{level}) → 패배... (XP +{xp}, 파견 +{dispatch})",
   "battle.lose_balls": "허둥대다 몬스터볼 {count}개를 흘렸다! (🔴-{count})",
   "battle.shiny_appeared": "✦ 색이 다른 {pokemon:이/가} 나타났다!",
   "battle.shiny_catch": "\n★ 색이 다른 포켓몬 포획 성공!",

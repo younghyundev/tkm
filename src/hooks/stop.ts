@@ -430,7 +430,7 @@ async function main(): Promise<void> {
         // Record battle stats
         recordEncounter(state);
         recordBattle(state, battleResult.won);
-        recordXp(state, battleResult.xpReward);
+        recordXp(state, battleResult.totalXpApplied ?? battleResult.xpReward);
         if (battleResult.caught) recordCatch(state);
 
         // Record shiny stats
