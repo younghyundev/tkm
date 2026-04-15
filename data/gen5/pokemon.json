@@ -1452,7 +1452,8 @@
         "speed": 98
       },
       "catch_rate": 25,
-      "evolves_condition": "special"
+      "evolves_condition": "special",
+      "evolves_to": "gen8:902"
     },
     "551": {
       "id": 551,
@@ -3352,7 +3353,8 @@
         "speed": 70
       },
       "catch_rate": 45,
-      "evolves_condition": "special"
+      "evolves_condition": "special",
+      "evolves_to": "gen9:983"
     },
     "626": {
       "id": 626,

@@ -331,7 +331,8 @@
         "defense": 61,
         "speed": 100
       },
-      "catch_rate": 90
+      "catch_rate": 90,
+      "evolves_to": "gen8:862"
     },
     "265": {
       "id": 265,
@@ -1240,7 +1241,8 @@
         "speed": 20
       },
       "catch_rate": 150,
-      "evolves_condition": "friendship"
+      "evolves_condition": "friendship",
+      "evolves_to": "gen2:183"
     },
     "299": {
       "id": 299,
@@ -1264,7 +1266,8 @@
         "speed": 30
       },
       "catch_rate": 255,
-      "evolves_condition": "special"
+      "evolves_condition": "special",
+      "evolves_to": "gen4:476"
     },
     "300": {
       "id": 300,
@@ -1659,7 +1662,8 @@
         "speed": 65
       },
       "catch_rate": 150,
-      "evolves_condition": "item:shiny-stone"
+      "evolves_condition": "item:shiny-stone",
+      "evolves_to": "gen4:407"
     },
     "316": {
       "id": 316,
@@ -2677,7 +2681,8 @@
         "speed": 25
       },
       "catch_rate": 90,
-      "evolves_condition": "held_item:reaper-cloth"
+      "evolves_condition": "held_item:reaper-cloth",
+      "evolves_to": "gen4:477"
     },
     "357": {
       "id": 357,
@@ -2770,7 +2775,8 @@
         "defense": 48,
         "speed": 23
       },
-      "catch_rate": 125
+      "catch_rate": 125,
+      "evolves_to": "gen2:202"
     },
     "361": {
       "id": 361,

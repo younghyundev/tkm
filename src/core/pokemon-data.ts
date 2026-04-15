@@ -10,7 +10,7 @@ import {
   POKEMON_JSON_PATH, ACHIEVEMENTS_JSON_PATH, REGIONS_JSON_PATH,
   POKEDEX_REWARDS_JSON_PATH, I18N_DATA_DIR,
 } from './paths.js';
-import type { PokemonDB, AchievementsDB, RegionsDB, EventsDB, PokedexRewardsDB, GenerationsDB, SharedDB } from './types.js';
+import type { PokemonDB, PokemonData, AchievementsDB, RegionsDB, EventsDB, PokedexRewardsDB, GenerationsDB, SharedDB } from './types.js';
 import { getLocale } from '../i18n/index.js';
 
 // ── Gen-keyed caches ──
@@ -296,6 +296,49 @@ export function regionIdByName(name: string, gen?: string): string | undefined {
     }
   }
   return undefined;
+}
+
+// ── Cross-generation resolution ──
+
+/**
+ * Parse a cross-gen reference like "gen1:25" into { gen, id }.
+ * Returns null for plain IDs without a colon.
+ */
+export function parseCrossGenRef(ref: string): { gen: string; id: string } | null {
+  const match = ref.match(/^(gen\d+):(.+)$/);
+  return match ? { gen: match[1], id: match[2] } : null;
+}
+
+/**
+ * Ensure a Pokemon ID is available in the current gen's DB cache.
+ * If not found locally, searches all generations and injects the
+ * data + i18n into the current gen's caches.
+ * Used for cross-gen evolutions (e.g., Pichu in gen2 → Pikachu in gen1).
+ */
+export function ensurePokemonInDB(id: string): PokemonData | null {
+  const db = getPokemonDB();
+  if (db.pokemon[id]) return db.pokemon[id];
+
+  const gensDB = getGenerationsDB();
+  for (const gen of Object.keys(gensDB.generations)) {
+    try {
+      const genDB = getPokemonDB(gen);
+      if (genDB.pokemon[id]) {
+        db.pokemon[id] = genDB.pokemon[id];
+        for (const locale of ['ko', 'en']) {
+          try {
+            const srcI18n = getGameI18n(locale, gen);
+            const dstI18n = getGameI18n(locale);
+            if (srcI18n.pokemon[id] && !dstI18n.pokemon[id]) {
+              dstI18n.pokemon[id] = srcI18n.pokemon[id];
+            }
+          } catch { /* locale may not exist */ }
+        }
+        return db.pokemon[id];
+      }
+    } catch { continue; }
+  }
+  return null;
 }
 
 // ── Cache management ──
