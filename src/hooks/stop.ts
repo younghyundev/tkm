@@ -1,7 +1,7 @@
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { readState, writeState, pruneSessionTokens, readSessionGenMap, writeSessionGenMap, readCommonState, writeCommonState } from '../core/state.js';
+import { readState, writeState, pruneSessionTokens, readSessionGenMap, writeSessionGenMap, readCommonState, writeCommonState, readSession } from '../core/state.js';
 import { readConfig, writeConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
 import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
@@ -249,6 +249,13 @@ async function main(): Promise<void> {
     const pokemonDB = getPokemonDB();
     let totalXpGranted = 0;
 
+    // Build dispatch multiplier map from session agent_assignments
+    const session = readSession(gen, sessionId || undefined);
+    const dispatchMultipliers = new Map<string, number>();
+    for (const a of session.agent_assignments) {
+      dispatchMultipliers.set(a.pokemon, a.xp_multiplier);
+    }
+
     // One-time config party migration: swap shiny pokemon to shiny keys
     for (let i = 0; i < config.party.length; i++) {
       const member = config.party[i];
@@ -282,7 +289,8 @@ async function main(): Promise<void> {
       const currentXp = state.pokemon[pokemonName].xp;
       const currentLevel = state.pokemon[pokemonName].level;
       const floor = getTurnFloor(currentLevel);
-      const finalXp = Math.floor(Math.max(floor, xpPerPokemon) * restMult);
+      const dispatchMult = dispatchMultipliers.get(pokemonName) ?? 1.0;
+      const finalXp = Math.floor(Math.max(floor, xpPerPokemon) * restMult * dispatchMult);
       totalXpGranted += finalXp;
       const newXp = currentXp + finalXp;
       const newLevel = xpToLevel(newXp, expGroup);
@@ -413,7 +421,7 @@ async function main(): Promise<void> {
 
     // Random encounter + battle (with volume tier and commonState)
     try {
-      const battleResult = processEncounter(state, config, appliedTier, commonState, restMult);
+      const battleResult = processEncounter(state, config, appliedTier, commonState, restMult, dispatchMultipliers);
       if (battleResult) {
         state.last_battle = battleResult;
         const battleMsg = formatEncounterMessage(battleResult);
@@ -422,7 +430,7 @@ async function main(): Promise<void> {
         // Record battle stats
         recordEncounter(state);
         recordBattle(state, battleResult.won);
-        recordXp(state, battleResult.xpReward);
+        recordXp(state, battleResult.totalXpApplied ?? battleResult.xpReward);
         if (battleResult.caught) recordCatch(state);
 
         // Record shiny stats

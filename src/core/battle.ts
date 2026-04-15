@@ -214,6 +214,7 @@ export function resolveBattle(
   config: Config,
   wild: WildPokemon,
   restMult: number = 1.0,
+  dispatchMultipliers?: Map<string, number>,
 ): BattleResult | null {
   const db = getPokemonDB();
   const wildData = db.pokemon[wild.name];
@@ -274,10 +275,16 @@ export function resolveBattle(
     }
   }
 
-  // Apply battle XP to all party pokemon
+  // Apply battle XP to all party pokemon (with dispatch bonus)
+  let totalXpApplied = 0;
+  let dispatchBonus = 0;
   for (const name of config.party) {
     if (!state.pokemon[name]) continue;
-    state.pokemon[name].xp += xpPerPokemon;
+    const dispatchMult = dispatchMultipliers?.get(name) ?? 1.0;
+    const applied = Math.floor(xpPerPokemon * dispatchMult);
+    state.pokemon[name].xp += applied;
+    totalXpApplied += applied;
+    dispatchBonus += (applied - xpPerPokemon);
   }
 
   // Mark pokemon as seen
@@ -332,6 +339,8 @@ export function resolveBattle(
     winRate,
     won,
     xpReward: xpPerPokemon,
+    totalXpApplied,
+    dispatchBonus,
     caught,
     typeMultiplier,
     ballCost,
@@ -349,8 +358,11 @@ export function formatBattleMessage(result: BattleResult): string {
   if (isShiny) {
     prefix = t('battle.shiny_appeared', { pokemon: defenderName }) + '\n';
   }
+  const dispatchBonus = result.dispatchBonus ?? 0;
   if (result.won) {
-    let msg = t('battle.win', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
+    let msg = dispatchBonus > 0
+      ? t('battle.win_dispatch', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward, dispatch: dispatchBonus })
+      : t('battle.win', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
     if (result.caught) {
       if (result.partyFull) {
         msg += t('battle.win_catch_no_hint', { defender: defenderName });
@@ -370,7 +382,9 @@ export function formatBattleMessage(result: BattleResult): string {
     return prefix + msg;
   }
 
-  let msg = t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
+  let msg = dispatchBonus > 0
+    ? t('battle.lose_dispatch', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward, dispatch: dispatchBonus })
+    : t('battle.lose', { defender: defenderName, level: result.defenderLevel, xp: result.xpReward });
   if (result.ballCost > 0) {
     msg += '\n' + t('battle.lose_balls', { count: result.ballCost });
   }

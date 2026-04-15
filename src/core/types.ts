@@ -341,6 +341,8 @@ export interface BattleResult {
   winRate: number;
   won: boolean;
   xpReward: number;
+  totalXpApplied?: number;
+  dispatchBonus?: number;
   caught: boolean;
   typeMultiplier: number;
   ballCost: number;
