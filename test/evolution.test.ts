@@ -1,6 +1,9 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { checkEvolution, applyEvolution, addFriendship } from '../src/core/evolution.js';
+import { getPokemonDB, getPokemonName, _resetForTesting as resetPokemonData } from '../src/core/pokemon-data.js';
+import { setActiveGenerationCache } from '../src/core/paths.js';
+import { _resetForTesting as resetI18n, initLocale } from '../src/i18n/index.js';
 import { makeState, makeConfig } from './helpers.js';
 import type { EvolutionContext } from '../src/core/types.js';
 
@@ -11,6 +14,21 @@ function makeCtx(overrides: Partial<EvolutionContext> = {}): EvolutionContext {
     unlockedAchievements: [], items: {},
     ...overrides,
   };
+}
+
+function withGen<T>(gen: string, run: () => T): T {
+  resetPokemonData();
+  resetI18n();
+  initLocale('en');
+  setActiveGenerationCache(gen);
+  try {
+    return run();
+  } finally {
+    resetPokemonData();
+    resetI18n();
+    initLocale('en');
+    setActiveGenerationCache('gen4');
+  }
 }
 
 describe('checkEvolution', () => {
@@ -63,6 +81,37 @@ describe('checkEvolution', () => {
     assert.equal(result!.oldPokemon, '406');
     assert.equal(result!.newPokemon, '407');
     assert.equal(result!.newId, 407);
+  });
+
+  it('loads cross-gen chains into the active generation cache deterministically', () => {
+    withGen('gen2', () => {
+      const db = getPokemonDB();
+
+      assert.ok(db.pokemon['25'], 'Pikachu should be injected into gen2');
+      assert.ok(db.pokemon['26'], 'Raichu should be injected into gen2');
+      assert.deepEqual(db.pokemon['25'].line, ['172', '25', '26']);
+      assert.equal(db.pokemon['25'].stage, 1);
+      assert.deepEqual(db.pokemon['26'].line, ['172', '25', '26']);
+      assert.equal(db.pokemon['26'].stage, 2);
+    });
+  });
+
+  it('supports chained evolution after a cross-gen target is loaded', () => {
+    withGen('gen2', () => {
+      const first = checkEvolution('172', makeCtx({ friendship: 220 }));
+      assert.notEqual(first, null);
+      assert.equal(first!.newPokemon, '25');
+
+      const second = checkEvolution('25', makeCtx({ items: { 'thunder-stone': 1 } }));
+      assert.notEqual(second, null);
+      assert.equal(second!.newPokemon, '26');
+    });
+  });
+
+  it('resolves imported cross-gen names in a fresh process', () => {
+    withGen('gen2', () => {
+      assert.equal(getPokemonName('25'), 'Pikachu');
+    });
   });
 });
 

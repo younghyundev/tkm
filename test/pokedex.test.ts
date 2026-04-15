@@ -1,6 +1,7 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeState } from './helpers.js';
+import { getPokemonDB } from '../src/core/pokemon-data.js';
 import { markSeen, markCaught, markShinyCaught, getCompletion, syncPokedexFromUnlocked } from '../src/core/pokedex.js';
 
 describe('pokedex', () => {
@@ -77,7 +78,7 @@ describe('pokedex', () => {
       assert.equal(c.caught, 0);
       assert.equal(c.seenPct, 0);
       assert.equal(c.caughtPct, 0);
-      assert.equal(c.total, 112);
+      assert.equal(c.total, Object.keys(getPokemonDB().pokemon).length);
     });
 
     it('returns correct percentage', () => {
@@ -90,7 +91,7 @@ describe('pokedex', () => {
       const c = getCompletion(state);
       assert.equal(c.seen, 2);
       assert.equal(c.caught, 1);
-      assert.equal(c.total, 112);
+      assert.equal(c.total, Object.keys(getPokemonDB().pokemon).length);
     });
   });
 
