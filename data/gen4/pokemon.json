@@ -1423,7 +1423,8 @@
         "sp_defense": 50
       },
       "catch_rate": 120,
-      "evolves_condition": "friendship"
+      "evolves_condition": "friendship",
+      "evolves_to": "gen3:358"
     },
     "434": {
       "id": 434,
@@ -1557,7 +1558,8 @@
         "sp_defense": 45
       },
       "catch_rate": 255,
-      "evolves_condition": "move:mimic"
+      "evolves_condition": "move:mimic",
+      "evolves_to": "gen2:185"
     },
     "439": {
       "id": 439,
@@ -1584,7 +1586,8 @@
         "sp_defense": 90
       },
       "catch_rate": 145,
-      "evolves_condition": "move:mimic"
+      "evolves_condition": "move:mimic",
+      "evolves_to": "gen1:122"
     },
     "440": {
       "id": 440,
@@ -1610,7 +1613,8 @@
         "sp_defense": 65
       },
       "catch_rate": 130,
-      "evolves_condition": "held_item:oval-stone"
+      "evolves_condition": "held_item:oval-stone",
+      "evolves_to": "gen1:113"
     },
     "441": {
       "id": 441,
@@ -1772,7 +1776,8 @@
         "sp_defense": 85
       },
       "catch_rate": 50,
-      "evolves_condition": "friendship"
+      "evolves_condition": "friendship",
+      "evolves_to": "gen1:143"
     },
     "447": {
       "id": 447,
@@ -2090,7 +2095,8 @@
         "sp_defense": 120
       },
       "catch_rate": 25,
-      "evolves_condition": "special"
+      "evolves_condition": "special",
+      "evolves_to": "gen2:226"
     },
     "459": {
       "id": 459,
