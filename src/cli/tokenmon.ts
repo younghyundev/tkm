@@ -4,7 +4,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { readState, writeState } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName, resolveNameToId, getDisplayName } from '../core/pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName, resolveNameToId, getDisplayName, formatMetInfo } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked, getRegionSummary } from '../core/pokedex.js';
@@ -222,7 +222,15 @@ function cmdStarter(choiceArg?: string): void {
     if (!freshState.pokemon[chosen]) {
       const starterLevel = 5;
       const expGroup: ExpGroup = pData?.exp_group ?? 'medium_fast';
-      freshState.pokemon[chosen] = { id: pData?.id ?? 0, xp: levelToXp(starterLevel, expGroup), level: starterLevel, friendship: 0, ev: 0 };
+      freshState.pokemon[chosen] = {
+        id: pData?.id ?? 0,
+        xp: levelToXp(starterLevel, expGroup),
+        level: starterLevel,
+        friendship: 0,
+        ev: 0,
+        met: 'starter',
+        met_detail: { region: freshConfig.current_region, met_level: starterLevel, met_date: new Date().toISOString().split('T')[0] },
+      };
     }
     if (!freshState.unlocked.includes(chosen)) {
       freshState.unlocked.push(chosen);
@@ -550,6 +558,16 @@ function cmdPokedex(): void {
         if (state.pokemon[pokemonName]) {
           const ps = state.pokemon[pokemonName];
           console.log(`  ${t('cli.pokedex.detail_current_level', { level: ps.level, xp: formatNumber(ps.xp) })}`);
+          if (ps.met) {
+            const metText = formatMetInfo(ps.met, ps.met_detail);
+            if (metText) {
+              console.log('');
+              console.log(`    ${t('cli.pokedex.trainer_memo')}`);
+              for (const line of metText.split('\n')) {
+                console.log(`    ${line}`);
+              }
+            }
+          }
         }
         return;
       }
@@ -879,7 +897,13 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
       case 'unlock': {
         const pData = pokemonDB.pokemon[arg1!];
         if (!state.unlocked.includes(arg1!)) state.unlocked.push(arg1!);
-        if (!state.pokemon[arg1!]) state.pokemon[arg1!] = { id: pData.id, xp: 0, level: 1, friendship: 0, ev: 0 };
+        if (!state.pokemon[arg1!]) {
+          state.pokemon[arg1!] = {
+            id: pData.id, xp: 0, level: 1, friendship: 0, ev: 0,
+            met: 'unknown',
+            met_detail: { met_level: 1, met_date: new Date().toISOString().split('T')[0] },
+          };
+        }
         if (!state.pokedex[arg1!]) state.pokedex[arg1!] = { seen: true, caught: true, first_seen: new Date().toISOString().split('T')[0] };
         else { state.pokedex[arg1!].seen = true; state.pokedex[arg1!].caught = true; }
         logCheat(`unlock ${arg1}`);
@@ -1291,7 +1315,11 @@ function cmdLegendary(action?: string): void {
     const pokemonDB = getPokemonDB();
     const pData = pokemonDB.pokemon[chosen];
     if (pData && !s.pokemon[chosen]) {
-      s.pokemon[chosen] = { id: pData.id, xp: 0, level: 50, friendship: 0, ev: 0 };
+      s.pokemon[chosen] = {
+        id: pData.id, xp: 0, level: 50, friendship: 0, ev: 0,
+        met: 'fateful_encounter',
+        met_detail: { met_level: 50, met_date: new Date().toISOString().split('T')[0], from: pending.group },
+      };
     }
     if (!s.pokedex[chosen]) {
       s.pokedex[chosen] = { seen: true, caught: true, first_seen: new Date().toISOString().split('T')[0] };
@@ -1676,6 +1704,8 @@ function cmdSetup(args: string[]): void {
           level: starterLevel,
           friendship: 0,
           ev: 0,
+          met: 'starter',
+          met_detail: { region: freshConfig.current_region, met_level: starterLevel, met_date: new Date().toISOString().split('T')[0] },
         };
       }
       if (!freshState.unlocked.includes(starterKey)) {

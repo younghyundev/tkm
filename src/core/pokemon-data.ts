@@ -11,8 +11,8 @@ import {
   POKEMON_JSON_PATH, ACHIEVEMENTS_JSON_PATH, REGIONS_JSON_PATH,
   POKEDEX_REWARDS_JSON_PATH, I18N_DATA_DIR,
 } from './paths.js';
-import type { PokemonDB, AchievementsDB, RegionsDB, EventsDB, PokedexRewardsDB, GenerationsDB, SharedDB } from './types.js';
-import { getLocale } from '../i18n/index.js';
+import type { PokemonDB, AchievementsDB, RegionsDB, EventsDB, PokedexRewardsDB, GenerationsDB, SharedDB, MetType, MetDetail } from './types.js';
+import { getLocale, t } from '../i18n/index.js';
 
 // ── Gen-keyed caches ──
 const _pokemonDBCache: Record<string, PokemonDB> = {};
@@ -301,6 +301,34 @@ export function getAchievementDescription(id: string, gen?: string): string {
 export function getAchievementRarityLabel(id: string, gen?: string): string {
   const i18n = getGameI18n(undefined, gen);
   return i18n.achievements[id]?.rarity_label || '';
+}
+
+/**
+ * Format MetDetail into a display string like the original Pokémon games.
+ * Uses i18n keys: cli.pokedex.met_date, cli.pokedex.met_<type>
+ */
+export function formatMetInfo(met: MetType, detail?: MetDetail, gen?: string): string {
+  if (!detail) return '';
+
+  const region = detail.region ? getRegionName(detail.region, gen) : '???';
+  const level = detail.met_level ?? 0;
+  const from = detail.from
+    ? (met === 'evolution' ? getPokemonName(detail.from) : getAchievementName(detail.from, gen))
+    : '???';
+
+  const lines: string[] = [];
+
+  if (detail.met_date) {
+    const [y, m, d] = detail.met_date.split('-').map(Number);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    lines.push(t('cli.pokedex.met_date', { year: y, month: getLocale() === 'ko' ? m : months[m - 1], day: d }));
+  }
+
+  const key = `cli.pokedex.met_${met}` as const;
+  const body = t(key, { region, level, from });
+  lines.push(body);
+
+  return lines.join('\n');
 }
 
 // Reverse lookup: name (any locale) → pokemon ID string

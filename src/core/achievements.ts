@@ -91,7 +91,11 @@ export function checkAchievements(state: State, config: Config, commonState?: Co
             level = partyLevels.length > 0 ? Math.round(partyLevels.reduce((a, b) => a + b, 0) / partyLevels.length) : 1;
           }
           const xp = levelToXp(level, pData.exp_group);
-          state.pokemon[rewardName] = { id: pData.id, xp, level, friendship: 0, ev: 0 };
+          state.pokemon[rewardName] = {
+            id: pData.id, xp, level, friendship: 0, ev: 0,
+            met: 'achievement',
+            met_detail: { met_level: level, met_date: new Date().toISOString().split('T')[0], from: ach.id },
+          };
         }
         markCaught(state, rewardName);
         event.rewardPokemon = rewardName;

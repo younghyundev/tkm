@@ -282,6 +282,8 @@ async function main(): Promise<void> {
           level: 1,
           friendship: 0,
           ev: 0,
+          met: 'wild',
+          met_detail: { region: config.current_region, met_level: 1, met_date: new Date().toISOString().split('T')[0] },
         };
       }
 

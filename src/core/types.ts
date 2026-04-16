@@ -66,6 +66,21 @@ export interface PokedexEntry {
   shiny_caught?: boolean;
 }
 
+export type MetType =
+  | 'starter'
+  | 'wild'
+  | 'evolution'
+  | 'achievement'
+  | 'fateful_encounter'
+  | 'unknown';
+
+export interface MetDetail {
+  region?: string;       // 지역 ID (예: "1" = 떡잎마을)
+  met_level?: number;    // 만난 레벨
+  met_date?: string;     // 만난 날짜 (YYYY-MM-DD)
+  from?: string;         // 출처 상세 (업적 ID, 전설 그룹, 진화 전 포켓몬 등)
+}
+
 export interface PokemonState {
   id: number;
   xp: number;
@@ -78,6 +93,8 @@ export interface PokemonState {
   evolution_ready?: boolean;
   evolution_options?: string[];
   moves?: number[];
+  met?: MetType;
+  met_detail?: MetDetail;
 }
 
 export type NotificationType = 'evolution_ready' | 'region_unlocked' | 'achievement_near' | 'legendary_unlocked';

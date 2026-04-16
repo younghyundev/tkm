@@ -233,6 +233,8 @@ export function applyEvolution(
     id: evolution.newId,
     xp: currentXp,
     level: evolution.level,
+    met: 'evolution',
+    met_detail: { met_level: evolution.level, met_date: new Date().toISOString().split('T')[0], from: evolution.oldPokemon },
   };
 
   // Add to unlocked if not already there
