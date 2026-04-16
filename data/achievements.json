@@ -55,10 +55,6 @@
         {
           "type": "xp_bonus",
           "value": 0.1
-        },
-        {
-          "type": "party_slot",
-          "count": 1
         }
       ]
     },
@@ -80,13 +76,7 @@
       "id": "permission_master",
       "trigger_type": "permission_count",
       "trigger_value": 50,
-      "rarity": 3,
-      "reward_effects": [
-        {
-          "type": "party_slot",
-          "count": 1
-        }
-      ]
+      "rarity": 3
     },
     {
       "id": "pokedex_25",
