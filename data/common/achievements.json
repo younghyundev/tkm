@@ -57,7 +57,8 @@
       "trigger_value": 25,
       "rarity": 2,
       "reward_effects": [
-        { "type": "add_item", "item": "pokeball", "count": 10 }
+        { "type": "add_item", "item": "pokeball", "count": 10 },
+        { "type": "party_slot", "count": 1 }
       ]
     },
     {

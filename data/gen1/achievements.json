@@ -19,13 +19,7 @@
       "trigger_type": "catch_count",
       "trigger_value": 100,
       "reward_pokemon": null,
-      "rarity": 3,
-      "reward_effects": [
-        {
-          "type": "party_slot",
-          "count": 1
-        }
-      ]
+      "rarity": 3
     },
     {
       "id": "catch_120",

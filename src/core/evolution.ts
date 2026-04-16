@@ -33,13 +33,21 @@ export function checkEvolution(
   if (Array.isArray(data.evolves_to)) {
     if (state) {
       const eligible = getEligibleBranches(pokemonName, context);
-      if (eligible.some(b => b.conditionMet)) {
-        const pState = state.pokemon[pokemonName];
-        if (pState && !pState.evolution_ready) {
+      // Filter out branches whose evolved form is already in unlocked
+      const filtered = eligible.filter(b => {
+        const evolvedKey = isShinyKey(pokemonName) ? toShinyKey(b.name) : b.name;
+        return !state.unlocked.includes(evolvedKey);
+      });
+      const conditionMet = filtered.filter(b => b.conditionMet);
+      const pState = state.pokemon[pokemonName];
+      if (pState) {
+        if (conditionMet.length > 0 && !pState.evolution_ready) {
           pState.evolution_ready = true;
-          pState.evolution_options = eligible
-            .filter(b => b.conditionMet)
-            .map(b => b.name);
+          pState.evolution_options = conditionMet.map(b => b.name);
+        } else if (conditionMet.length === 0 && pState.evolution_ready) {
+          // Clear stale flag when all branches are now blocked
+          pState.evolution_ready = undefined;
+          pState.evolution_options = undefined;
         }
       }
     }
@@ -59,6 +67,13 @@ export function checkEvolution(
     }
 
     if (!targetData) return null;
+
+    // Block re-evolution if direct evolved form already in unlocked
+    if (state) {
+      const evolvedKey = isShinyKey(pokemonName) ? toShinyKey(targetName) : targetName;
+      if (state.unlocked.includes(evolvedKey)) return null;
+    }
+
     const condition = data.evolves_condition;
     if (condition) {
       if (!checkCondition(condition, context)) return null;
@@ -76,6 +91,12 @@ export function checkEvolution(
   const nextPokemon = data.line[nextStage];
   const nextData = db.pokemon[nextPokemon];
   if (!nextData) return null;
+
+  // Block re-evolution if direct evolved form already in unlocked
+  if (state) {
+    const evolvedKey = isShinyKey(pokemonName) ? toShinyKey(nextPokemon) : nextPokemon;
+    if (state.unlocked.includes(evolvedKey)) return null;
+  }
 
   const condition = data.evolves_condition;
 
@@ -142,6 +163,10 @@ export function applyBranchEvolution(
 
   const targetData = db.pokemon[targetName];
   if (!targetData) return null;
+
+  // Block re-evolution if direct evolved form already in unlocked (defense-in-depth)
+  const evolvedKey = isShinyKey(pokemonName) ? toShinyKey(targetName) : targetName;
+  if (state.unlocked.includes(evolvedKey)) return null;
 
   const pState = state.pokemon[pokemonName];
   if (!pState) return null;
@@ -248,6 +273,13 @@ export function applyEvolution(
   // Add to unlocked if not already there
   if (!state.unlocked.includes(newKey)) {
     state.unlocked.push(newKey);
+  }
+
+  // Remove pre-evolution from unlocked (it stays in state.pokemon for pokedex tracking)
+  const oldKey = evolution.oldPokemon;
+  const oldIdx = state.unlocked.indexOf(oldKey);
+  if (oldIdx !== -1) {
+    state.unlocked.splice(oldIdx, 1);
   }
 
   // Increment evolution count
