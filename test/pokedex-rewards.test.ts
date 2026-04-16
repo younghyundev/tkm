@@ -5,6 +5,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { makeState, makeConfig } from './helpers.js';
 import { initLocale } from '../src/i18n/index.js';
+import { getPokemonDB } from '../src/core/pokemon-data.js';
 import {
   checkMilestoneRewards,
   checkTypeMasters,
@@ -171,12 +172,12 @@ describe('pokedex-rewards', () => {
 
   describe('checkTypeMasters', () => {
     it('detects type master when all pokemon of a type are caught', () => {
-      const pokemonDB = JSON.parse(readFileSync(join(PROJECT_ROOT, 'data', 'pokemon.json'), 'utf-8'));
-      // Find all non-legendary fairy-type pokemon
+      const pokemonDB = getPokemonDB();
+      // Find all non-legendary fairy-type pokemon in the normalized active-gen DB.
       const fairyPokemon = Object.entries(pokemonDB.pokemon)
-        .filter(([, p]: [string, any]) =>
+        .filter(([, p]) =>
           p.types.includes('fairy') && p.rarity !== 'legendary' && p.rarity !== 'mythical')
-        .map(([id]: [string, any]) => id);
+        .map(([id]) => id);
 
       const pokedex: Record<string, any> = {};
       for (const id of fairyPokemon) {

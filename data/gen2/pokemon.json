@@ -572,7 +572,8 @@
         "sp_defense": 35
       },
       "catch_rate": 190,
-      "evolves_condition": "friendship"
+      "evolves_condition": "friendship",
+      "evolves_to": "gen1:25"
     },
     "173": {
       "id": 173,
@@ -598,7 +599,8 @@
         "sp_defense": 55
       },
       "catch_rate": 150,
-      "evolves_condition": "friendship"
+      "evolves_condition": "friendship",
+      "evolves_to": "gen1:35"
     },
     "174": {
       "id": 174,
@@ -625,7 +627,8 @@
         "sp_defense": 20
       },
       "catch_rate": 170,
-      "evolves_condition": "friendship"
+      "evolves_condition": "friendship",
+      "evolves_to": "gen1:39"
     },
     "175": {
       "id": 175,
@@ -681,7 +684,8 @@
         "sp_defense": 105
       },
       "catch_rate": 75,
-      "evolves_condition": "item:shiny-stone"
+      "evolves_condition": "item:shiny-stone",
+      "evolves_to": "gen4:468"
     },
     "177": {
       "id": 177,
@@ -1061,7 +1065,8 @@
         "sp_defense": 55
       },
       "catch_rate": 45,
-      "evolves_condition": "move:double-hit"
+      "evolves_condition": "move:double-hit",
+      "evolves_to": "gen4:424"
     },
     "191": {
       "id": 191,
@@ -1142,7 +1147,8 @@
         "sp_defense": 45
       },
       "catch_rate": 75,
-      "evolves_condition": "move:ancient-power"
+      "evolves_condition": "move:ancient-power",
+      "evolves_to": "gen4:469"
     },
     "194": {
       "id": 194,
@@ -1281,7 +1287,8 @@
         "sp_defense": 42
       },
       "catch_rate": 30,
-      "evolves_condition": "item:dusk-stone"
+      "evolves_condition": "item:dusk-stone",
+      "evolves_to": "gen4:430"
     },
     "199": {
       "id": 199,
@@ -1333,7 +1340,8 @@
         "sp_defense": 85
       },
       "catch_rate": 45,
-      "evolves_condition": "item:dusk-stone"
+      "evolves_condition": "item:dusk-stone",
+      "evolves_to": "gen4:429"
     },
     "201": {
       "id": 201,
@@ -1410,7 +1418,8 @@
         "sp_defense": 65
       },
       "catch_rate": 60,
-      "evolves_condition": "move:twin-beam"
+      "evolves_condition": "move:twin-beam",
+      "evolves_to": "gen9:981"
     },
     "204": {
       "id": 204,
@@ -1490,7 +1499,8 @@
         "sp_defense": 65
       },
       "catch_rate": 190,
-      "evolves_condition": "move:hyper-drill"
+      "evolves_condition": "move:hyper-drill",
+      "evolves_to": "gen9:982"
     },
     "207": {
       "id": 207,
@@ -1517,7 +1527,8 @@
         "sp_defense": 65
       },
       "catch_rate": 60,
-      "evolves_condition": "held_item:razor-fang"
+      "evolves_condition": "held_item:razor-fang",
+      "evolves_to": "gen4:472"
     },
     "208": {
       "id": 208,
@@ -1623,7 +1634,8 @@
         "sp_defense": 55
       },
       "catch_rate": 45,
-      "evolves_condition": "special"
+      "evolves_condition": "special",
+      "evolves_to": "gen8:904"
     },
     "212": {
       "id": 212,
@@ -1728,7 +1740,8 @@
         "sp_defense": 75
       },
       "catch_rate": 60,
-      "evolves_condition": "held_item:razor-claw"
+      "evolves_condition": "held_item:razor-claw",
+      "evolves_to": "gen4:461"
     },
     "216": {
       "id": 216,
@@ -1782,7 +1795,8 @@
         "sp_defense": 75
       },
       "catch_rate": 60,
-      "evolves_condition": "item:peat-block"
+      "evolves_condition": "item:peat-block",
+      "evolves_to": "gen8:901"
     },
     "218": {
       "id": 218,
@@ -1892,7 +1906,8 @@
         "sp_defense": 60
       },
       "catch_rate": 75,
-      "evolves_condition": "move:ancient-power"
+      "evolves_condition": "move:ancient-power",
+      "evolves_to": "gen4:473"
     },
     "222": {
       "id": 222,
@@ -1918,7 +1933,8 @@
         "sp_attack": 65,
         "sp_defense": 95
       },
-      "catch_rate": 60
+      "catch_rate": 60,
+      "evolves_to": "gen8:864"
     },
     "223": {
       "id": 223,
@@ -2209,7 +2225,8 @@
         "sp_defense": 95
       },
       "catch_rate": 45,
-      "evolves_condition": "held_item:dubious-disc"
+      "evolves_condition": "held_item:dubious-disc",
+      "evolves_to": "gen4:474"
     },
     "234": {
       "id": 234,
@@ -2235,7 +2252,8 @@
         "sp_defense": 65
       },
       "catch_rate": 45,
-      "evolves_condition": "special"
+      "evolves_condition": "special",
+      "evolves_to": "gen8:899"
     },
     "235": {
       "id": 235,
@@ -2344,7 +2362,8 @@
         "sp_attack": 85,
         "sp_defense": 65
       },
-      "catch_rate": 45
+      "catch_rate": 45,
+      "evolves_to": "gen1:124"
     },
     "239": {
       "id": 239,
@@ -2369,7 +2388,8 @@
         "sp_attack": 65,
         "sp_defense": 55
       },
-      "catch_rate": 45
+      "catch_rate": 45,
+      "evolves_to": "gen1:125"
     },
     "240": {
       "id": 240,
@@ -2394,7 +2414,8 @@
         "sp_attack": 70,
         "sp_defense": 55
       },
-      "catch_rate": 45
+      "catch_rate": 45,
+      "evolves_to": "gen1:126"
     },
     "241": {
       "id": 241,

@@ -1165,7 +1165,8 @@
         "sp_defense": 75
       },
       "catch_rate": 90,
-      "evolves_condition": "friendship"
+      "evolves_condition": "friendship",
+      "evolves_to": "gen2:169"
     },
     "43": {
       "id": 43,
@@ -1585,7 +1586,8 @@
         "sp_defense": 70
       },
       "catch_rate": 75,
-      "evolves_condition": "special"
+      "evolves_condition": "special",
+      "evolves_to": "gen9:979"
     },
     "58": {
       "id": 58,
@@ -2295,7 +2297,8 @@
         "sp_defense": 70
       },
       "catch_rate": 60,
-      "evolves_condition": "special"
+      "evolves_condition": "special",
+      "evolves_to": "gen4:462"
     },
     "83": {
       "id": 83,
@@ -2322,7 +2325,8 @@
         "sp_defense": 62
       },
       "catch_rate": 45,
-      "evolves_condition": "special"
+      "evolves_condition": "special",
+      "evolves_to": "gen8:865"
     },
     "84": {
       "id": 84,
@@ -2653,7 +2657,8 @@
         "sp_defense": 45
       },
       "catch_rate": 45,
-      "evolves_condition": "held_item:metal-coat"
+      "evolves_condition": "held_item:metal-coat",
+      "evolves_to": "gen2:208"
     },
     "96": {
       "id": 96,
@@ -2999,7 +3004,8 @@
         "sp_defense": 75
       },
       "catch_rate": 45,
-      "evolves_condition": "move:rollout"
+      "evolves_condition": "move:rollout",
+      "evolves_to": "gen4:463"
     },
     "109": {
       "id": 109,
@@ -3108,7 +3114,8 @@
         "sp_defense": 45
       },
       "catch_rate": 60,
-      "evolves_condition": "held_item:protector"
+      "evolves_condition": "held_item:protector",
+      "evolves_to": "gen4:464"
     },
     "113": {
       "id": 113,
@@ -3134,7 +3141,8 @@
         "sp_defense": 105
       },
       "catch_rate": 30,
-      "evolves_condition": "friendship"
+      "evolves_condition": "friendship",
+      "evolves_to": "gen2:242"
     },
     "114": {
       "id": 114,
@@ -3160,7 +3168,8 @@
         "sp_defense": 40
       },
       "catch_rate": 45,
-      "evolves_condition": "move:ancient-power"
+      "evolves_condition": "move:ancient-power",
+      "evolves_to": "gen4:465"
     },
     "115": {
       "id": 115,
@@ -3239,7 +3248,8 @@
         "sp_defense": 45
       },
       "catch_rate": 75,
-      "evolves_condition": "held_item:dragon-scale"
+      "evolves_condition": "held_item:dragon-scale",
+      "evolves_to": "gen2:230"
     },
     "118": {
       "id": 118,
@@ -3373,7 +3383,8 @@
         "sp_attack": 100,
         "sp_defense": 120
       },
-      "catch_rate": 45
+      "catch_rate": 45,
+      "evolves_to": "gen8:866"
     },
     "123": {
       "id": 123,
@@ -3400,7 +3411,8 @@
         "sp_defense": 80
       },
       "catch_rate": 45,
-      "evolves_condition": "held_item:metal-coat"
+      "evolves_condition": "held_item:metal-coat",
+      "evolves_to": "gen2:212"
     },
     "124": {
       "id": 124,
@@ -3452,7 +3464,8 @@
         "sp_defense": 85
       },
       "catch_rate": 45,
-      "evolves_condition": "held_item:electirizer"
+      "evolves_condition": "held_item:electirizer",
+      "evolves_to": "gen4:466"
     },
     "126": {
       "id": 126,
@@ -3478,7 +3491,8 @@
         "sp_defense": 85
       },
       "catch_rate": 45,
-      "evolves_condition": "held_item:magmarizer"
+      "evolves_condition": "held_item:magmarizer",
+      "evolves_to": "gen4:467"
     },
     "127": {
       "id": 127,
@@ -3786,7 +3800,8 @@
         "sp_defense": 75
       },
       "catch_rate": 45,
-      "evolves_condition": "held_item:up-grade"
+      "evolves_condition": "held_item:up-grade",
+      "evolves_to": "gen2:233"
     },
     "138": {
       "id": 138,

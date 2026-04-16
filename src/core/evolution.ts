@@ -1,4 +1,4 @@
-import { getPokemonDB } from './pokemon-data.js';
+import { getPokemonDB, parseCrossGenRef, ensurePokemonInDB } from './pokemon-data.js';
 import { isShinyKey, toBaseId, toShinyKey } from './shiny-utils.js';
 import type { State, Config, EvolutionResult, EvolutionContext, BranchEvolution } from './types.js';
 
@@ -48,8 +48,16 @@ export function checkEvolution(
 
   // Single-path evolution via evolves_to string
   if (typeof data.evolves_to === 'string') {
-    const targetName = data.evolves_to;
-    const targetData = db.pokemon[targetName];
+    let targetName = data.evolves_to;
+    let targetData = db.pokemon[targetName] as typeof db.pokemon[string] | undefined;
+
+    // Handle cross-gen reference (e.g., "gen1:25")
+    const crossRef = parseCrossGenRef(targetName);
+    if (crossRef) {
+      targetName = crossRef.id;
+      targetData = ensurePokemonInDB(targetName) ?? undefined;
+    }
+
     if (!targetData) return null;
     const condition = data.evolves_condition;
     if (condition) {

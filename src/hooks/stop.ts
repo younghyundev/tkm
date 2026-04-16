@@ -3,7 +3,7 @@ import { join } from 'path';
 import { homedir } from 'os';
 import { readState, writeState, pruneSessionTokens, readSessionGenMap, writeSessionGenMap, readCommonState, writeCommonState, readSession } from '../core/state.js';
 import { readConfig, writeConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
-import { getPokemonDB, getPokemonName } from '../core/pokemon-data.js';
+import { getPokemonDB, getPokemonName, ensurePokemonInDB } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
 import { checkEvolution, applyEvolution, addFriendship, FRIENDSHIP_PER_LEVELUP, FRIENDSHIP_PER_SESSION } from '../core/evolution.js';
 import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../core/achievements.js';
@@ -254,6 +254,11 @@ async function main(): Promise<void> {
     const dispatchMultipliers = new Map<string, number>();
     for (const a of session.agent_assignments) {
       dispatchMultipliers.set(a.pokemon, a.xp_multiplier);
+    }
+
+    // Ensure cross-gen evolved Pokemon are in the DB (e.g., Pikachu in gen2)
+    for (const name of config.party) {
+      if (name && !pokemonDB.pokemon[name]) ensurePokemonInDB(name);
     }
 
     // One-time config party migration: swap shiny pokemon to shiny keys

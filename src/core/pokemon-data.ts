@@ -11,7 +11,7 @@ import {
   POKEMON_JSON_PATH, ACHIEVEMENTS_JSON_PATH, REGIONS_JSON_PATH,
   POKEDEX_REWARDS_JSON_PATH, I18N_DATA_DIR,
 } from './paths.js';
-import type { PokemonDB, AchievementsDB, RegionsDB, EventsDB, PokedexRewardsDB, GenerationsDB, SharedDB } from './types.js';
+import type { PokemonDB, PokemonData, AchievementsDB, RegionsDB, EventsDB, PokedexRewardsDB, GenerationsDB, SharedDB } from './types.js';
 import { getLocale } from '../i18n/index.js';
 
 // ── Gen-keyed caches ──
@@ -89,12 +89,13 @@ export function getPokemonDB(gen?: string): PokemonDB {
       const shared = getSharedDB();
       // Merge: per-gen pokemon data + shared type data
       _pokemonDBCache[g] = {
-        pokemon: raw.pokemon,
+        pokemon: { ...raw.pokemon },
         starters: raw.starters ?? getGenerationsDB().generations[g]?.starters ?? [],
         type_colors: raw.type_colors ?? shared.type_colors,
         type_chart: raw.type_chart ?? shared.type_chart,
         rarity_weights: raw.rarity_weights ?? shared.rarity_weights,
       };
+      augmentCrossGenPokemonDB(g);
     } catch (err: any) {
       throw new Error(`Failed to load pokemon data for ${g}: ${err.message}`);
     }
@@ -222,9 +223,11 @@ export function getGameI18n(locale?: string, gen?: string): GameI18nData {
 }
 
 export function getPokemonName(id: string | number, gen?: string, shiny?: boolean): string {
+  const g = gen ?? getActiveGeneration();
+  getPokemonDB(g);
   const strId = String(id);
   const baseId = toBaseId(strId);
-  const i18n = getGameI18n(undefined, gen);
+  const i18n = getGameI18n(undefined, g);
   const name = i18n.pokemon[baseId] || baseId;
   if (shiny || isShinyKey(strId)) return '★' + name;
   return name;
@@ -333,6 +336,136 @@ export function regionIdByName(name: string, gen?: string): string | undefined {
     }
   }
   return undefined;
+}
+
+// ── Cross-generation resolution ──
+
+type CrossGenRef = { gen: string; id: string };
+
+/**
+ * Parse a cross-gen reference like "gen1:25" into { gen, id }.
+ * Returns null for plain IDs without a colon.
+ */
+export function parseCrossGenRef(ref: string): CrossGenRef | null {
+  const match = ref.match(/^(gen\d+):(.+)$/);
+  return match ? { gen: match[1], id: match[2] } : null;
+}
+
+function copyPokemonI18n(id: string, sourceGen: string, targetGen: string): void {
+  for (const locale of ['ko', 'en'] as const) {
+    try {
+      const srcI18n = getGameI18n(locale, sourceGen);
+      const dstI18n = getGameI18n(locale, targetGen);
+      if (srcI18n.pokemon[id]) {
+        dstI18n.pokemon[id] = srcI18n.pokemon[id];
+      }
+    } catch {
+      // Locale file may not exist for this generation.
+    }
+  }
+}
+
+function findPokemonSource(id: string, preferredGen?: string): { gen: string; data: PokemonData } | null {
+  if (preferredGen) {
+    try {
+      const preferredDB = getPokemonDB(preferredGen);
+      const preferred = preferredDB.pokemon[id];
+      if (preferred) return { gen: preferredGen, data: preferred };
+    } catch {
+      // Fall through to all-generation search.
+    }
+  }
+
+  const gensDB = getGenerationsDB();
+  for (const gen of Object.keys(gensDB.generations)) {
+    if (gen === preferredGen) continue;
+    try {
+      const genDB = getPokemonDB(gen);
+      const candidate = genDB.pokemon[id];
+      if (candidate) return { gen, data: candidate };
+    } catch {
+      // Ignore missing generation data and continue searching.
+    }
+  }
+
+  return null;
+}
+
+function injectPokemonIntoGen(
+  targetGen: string,
+  id: string,
+  sourceGen: string,
+  sourceData: PokemonData,
+  overrides: Partial<PokemonData> = {},
+): PokemonData {
+  const db = getPokemonDB(targetGen);
+  const merged: PokemonData = { ...sourceData, ...overrides };
+  db.pokemon[id] = merged;
+  copyPokemonI18n(id, sourceGen, targetGen);
+  return merged;
+}
+
+function mergeEvolutionLine(sourceLine: string[], sourceStage: number, targetData: PokemonData): { line: string[]; stage: number } {
+  const prefix = sourceLine.slice(0, sourceStage + 1);
+  const suffix = targetData.line[0] === prefix[prefix.length - 1]
+    ? targetData.line.slice(1)
+    : targetData.line;
+  return {
+    line: [...prefix, ...suffix],
+    stage: prefix.length,
+  };
+}
+
+function ensureEvolutionTargetInGen(
+  activeGen: string,
+  sourcePokemonId: string,
+  targetRef: CrossGenRef,
+): PokemonData | null {
+  const db = getPokemonDB(activeGen);
+  const sourcePokemon = db.pokemon[sourcePokemonId];
+  if (!sourcePokemon) return null;
+
+  const targetSource = findPokemonSource(targetRef.id, targetRef.gen);
+  if (!targetSource) return null;
+
+  const mergedLine = mergeEvolutionLine(sourcePokemon.line, sourcePokemon.stage, targetSource.data);
+  const targetPokemon = injectPokemonIntoGen(activeGen, targetRef.id, targetSource.gen, targetSource.data, mergedLine);
+
+  if (typeof targetSource.data.evolves_to === 'string') {
+    const nextRef = parseCrossGenRef(targetSource.data.evolves_to);
+    const nextTarget = nextRef ?? { gen: targetSource.gen, id: targetSource.data.evolves_to };
+    ensureEvolutionTargetInGen(activeGen, targetRef.id, nextTarget);
+  }
+
+  return targetPokemon;
+}
+
+function augmentCrossGenPokemonDB(gen: string): void {
+  const db = _pokemonDBCache[gen];
+  if (!db) return;
+
+  for (const [id, pokemon] of Object.entries({ ...db.pokemon })) {
+    if (typeof pokemon.evolves_to !== 'string') continue;
+    const crossRef = parseCrossGenRef(pokemon.evolves_to);
+    if (!crossRef) continue;
+    ensureEvolutionTargetInGen(gen, id, crossRef);
+  }
+}
+
+/**
+ * Ensure a Pokemon ID is available in the current gen's DB cache.
+ * If not found locally, searches all generations and injects the
+ * data + i18n into the current gen's caches.
+ */
+export function ensurePokemonInDB(id: string, preferredGen?: string, gen?: string): PokemonData | null {
+  const targetGen = gen ?? getActiveGeneration();
+  const db = getPokemonDB(targetGen);
+  if (db.pokemon[id]) return db.pokemon[id];
+
+  const source = findPokemonSource(id, preferredGen);
+  if (!source) return null;
+
+  return injectPokemonIntoGen(targetGen, id, source.gen, source.data);
 }
 
 // ── Cache management ──
