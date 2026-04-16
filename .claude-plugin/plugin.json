@@ -1,7 +1,7 @@
 {
   "name": "tkm",
   "description": "Claude Code Pokémon gamification plugin with token-to-XP progression, party growth, and a Braille-first status line",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "author": {
     "name": "Sangwon Lee"
   },

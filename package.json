@@ -1,6 +1,6 @@
 {
   "name": "tkm",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Claude Code Pokémon gamification plugin with token-to-XP progression and a Braille-first status line",
   "type": "module",
   "bin": {
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "pngjs": "^7.0.0",
+    "pokemon-showdown": "^0.11.10",
     "tsx": "^4.0.0"
   },
   "devDependencies": {
