@@ -21,7 +21,7 @@ import { withLock, withLockRetry } from '../core/lock.js';
 import { getActiveGeneration, setActiveGenerationCache, clearActiveGenerationCache, PLUGIN_ROOT, GLOBAL_CONFIG_PATH, DATA_DIR } from '../core/paths.js';
 import { execSync } from 'node:child_process';
 import { detectRenderer } from '../core/detect-renderer.js';
-import { isShinyKey, toBaseId } from '../core/shiny-utils.js';
+import { isShinyKey, toBaseId, toShinyKey } from '../core/shiny-utils.js';
 import { readWeatherCache, WEATHER_LABELS, refreshWeatherIfStale, type WeatherCondition } from '../core/weather.js';
 import type { ExpGroup, EvolutionContext } from '../core/types.js';
 
@@ -986,7 +986,11 @@ function cmdEvolve(pokemonArg?: string, targetArg?: string): void {
     items: state.items ?? {},
   };
   const branches = getEligibleBranches(pokemonArg, ctx);
-  const eligible = branches.filter(b => b.conditionMet);
+  // UX-only: hide branches whose evolved form is already in unlocked (safety guards are in checkEvolution/applyBranchEvolution)
+  const eligible = branches.filter(b => {
+    const evolvedKey = isShinyKey(pokemonArg) ? toShinyKey(b.name) : b.name;
+    return b.conditionMet && !state.unlocked.includes(evolvedKey);
+  });
 
   if (eligible.length === 0) {
     warn(t('cli.evolve.no_eligible', { pokemon: getPokemonName(pokemonArg) }));

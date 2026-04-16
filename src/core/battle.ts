@@ -305,10 +305,10 @@ export function resolveBattle(
   // Catch on victory (requires pokeballs based on catch_rate)
   let caught = false;
   if (won) {
-    const alreadyCaught = state.pokedex[wild.name]?.caught ?? false;
-    const alreadyShinyCaught = state.pokedex[wild.name]?.shiny_caught ?? false;
-    // Allow catch if: never caught, OR shiny variant not yet caught
-    const shouldAttemptCatch = !alreadyCaught || (wild.shiny && !alreadyShinyCaught);
+    // Allow catch if: not currently in unlocked (covers first catch + re-catch after evolution)
+    const stateKey = wild.shiny ? toShinyKey(wild.name) : wild.name;
+    const inUnlocked = state.unlocked.includes(stateKey);
+    const shouldAttemptCatch = !inUnlocked;
     if (shouldAttemptCatch) {
       ballCost = getBallCost(wildData.catch_rate);
       const hasBalls = getItemCount(state, 'pokeball') >= ballCost;
@@ -317,8 +317,7 @@ export function resolveBattle(
         caught = true;
         markCaught(state, wild.name);
         state.catch_count++;
-        // Use shiny key for separate storage
-        const stateKey = wild.shiny ? toShinyKey(wild.name) : wild.name;
+        // Reuse stateKey from outer scope (same value, avoids shadowing)
         if (!state.unlocked.includes(stateKey)) {
           state.unlocked.push(stateKey);
         }

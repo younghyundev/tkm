@@ -145,6 +145,15 @@ async function main(): Promise<void> {
       writeSessionGenMap(genMap);
     }
 
+    // Self-healing: remove party entries not in state.unlocked (fix #49 migration edge case)
+    if (state.unlocked.length > 0) {
+      const partyBefore = config.party.length;
+      config.party = config.party.filter(p => state.unlocked.includes(p));
+      if (config.party.length !== partyBefore) {
+        writeConfig(config, gen);
+      }
+    }
+
     // Read common state early (needed for last_turn_ts on all paths)
     const commonState = readCommonState();
 

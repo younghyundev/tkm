@@ -3,10 +3,10 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { DATA_DIR, commonAchievementsJsonPath } from './paths.js';
 import { readCommonState, writeCommonState, readState, writeState } from './state.js';
-import { getPokemonDB, getAchievementsDB } from './pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, parseCrossGenRef } from './pokemon-data.js';
 import { levelToXp } from './xp.js';
-import { isShinyKey, toShinyKey } from './shiny-utils.js';
-import type { State, CommonState, AchievementsDB, Achievement } from './types.js';
+import { isShinyKey, toBaseId, toShinyKey } from './shiny-utils.js';
+import type { State, CommonState, AchievementsDB, Achievement, BranchEvolution } from './types.js';
 
 // ---------- Version-based migration runner ----------
 
@@ -110,11 +110,60 @@ function migrateShinyToSeparateEntries(state: State): void {
   }
 }
 
+/**
+ * Remove pre-evolution forms from state.unlocked when their direct
+ * evolved form is also in unlocked (fix for #49).
+ */
+function migrateRemoveEvolvedPreForms(state: State): void {
+  const db = getPokemonDB();
+  const unlockedSet = new Set(state.unlocked);
+  const toRemove: string[] = [];
+
+  for (const key of state.unlocked) {
+    const baseId = isShinyKey(key) ? toBaseId(key) : key;
+    const data = db.pokemon[baseId];
+    if (!data) continue;
+
+    // Branching evolution: remove pre-evo if ANY branch target is in unlocked
+    if (Array.isArray(data.evolves_to)) {
+      for (const branch of data.evolves_to as BranchEvolution[]) {
+        const evoKey = isShinyKey(key) ? toShinyKey(branch.name) : branch.name;
+        if (unlockedSet.has(evoKey)) {
+          toRemove.push(key);
+          break;
+        }
+      }
+      continue;
+    }
+
+    // Single-path evolution via evolves_to string
+    let evolvedName: string | null = null;
+    if (typeof data.evolves_to === 'string') {
+      // Handle cross-gen reference (e.g., "gen1:25")
+      const crossRef = parseCrossGenRef(data.evolves_to);
+      evolvedName = crossRef ? crossRef.id : data.evolves_to;
+    } else if (data.stage + 1 < data.line.length) {
+      // Legacy path: line[stage+1]
+      evolvedName = data.line[data.stage + 1];
+    }
+
+    if (!evolvedName) continue;
+    const evoKey = isShinyKey(key) ? toShinyKey(evolvedName) : evolvedName;
+    if (unlockedSet.has(evoKey)) {
+      toRemove.push(key);
+    }
+  }
+
+  const removeSet = new Set(toRemove);
+  state.unlocked = state.unlocked.filter(k => !removeSet.has(k));
+}
+
 /** Ordered list of version-gated migrations. Append new entries at the end. */
 const MIGRATIONS: Migration[] = [
   { version: '0.5.2', fn: migrateLegendaryRewardLevels },
   { version: '0.5.3', fn: migrateLegendaryRewardXpSync },
   { version: '0.5.8', fn: migrateShinyToSeparateEntries },
+  { version: '0.6.3', fn: migrateRemoveEvolvedPreForms },
 ];
 
 /**
