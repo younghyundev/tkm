@@ -10,7 +10,7 @@ import { getActiveEvents } from '../core/encounter.js';
 import { checkMilestoneRewards, checkTypeMasters, checkChainCompletion } from '../core/pokedex-rewards.js';
 import { syncPokedexFromUnlocked } from '../core/pokedex.js';
 import { addItem, randInt } from '../core/items.js';
-import { getPokemonName, getAchievementsDB } from '../core/pokemon-data.js';
+import { getPokemonName, getAchievementsDB, getPokedexRewardsDB } from '../core/pokemon-data.js';
 import { playCry } from '../audio/play-cry.js';
 import { initLocale, t } from '../i18n/index.js';
 import { withLockRetry } from '../core/lock.js';
@@ -119,18 +119,42 @@ function main(): void {
 
     const config = readConfig(gen);
 
-    // Materialize common rewards into gen config/state on first session of a gen only.
-    // Subsequent sessions already have these persisted. This handles new gen onboarding
-    // where config/state start at defaults and need common party_slot + items applied once.
+    // Materialize common item rewards on first session of a gen only.
+    // Items are additive and already persisted after first grant.
     if (!existingBinding && state.session_count === 0) {
-      if (commonState.max_party_size_bonus > 0) {
-        config.max_party_size = Math.min(6, config.max_party_size + commonState.max_party_size_bonus);
-      }
       for (const [item, count] of Object.entries(commonState.items)) {
         if (count > 0) {
           state.items[item] = (state.items[item] ?? 0) + count;
         }
       }
+    }
+    // Rebuild max_party_size every session from base + per-gen achievements +
+    // pokedex milestones + common bonus, so common party_slot effects always
+    // propagate to all gens (not just the gen that was active when earned).
+    {
+      let perGenPartySlots = 0;
+      try {
+        const genAchDB = getAchievementsDB(gen);
+        for (const ach of genAchDB.achievements) {
+          if (!state.achievements[ach.id]) continue;
+          for (const effect of (ach.reward_effects ?? []) as Array<{ type: string; count?: number }>) {
+            if (effect.type === 'party_slot') {
+              perGenPartySlots += (effect.count ?? 1);
+            }
+          }
+        }
+      } catch { /* ignore */ }
+      let pokedexPartySlots = 0;
+      try {
+        const rewardsDB = getPokedexRewardsDB();
+        for (const milestone of rewardsDB.milestones) {
+          if (!state.pokedex_milestones_claimed.includes(milestone.id)) continue;
+          if (milestone.reward_type === 'party_slot') {
+            pokedexPartySlots += (milestone.reward_value as number) ?? 1;
+          }
+        }
+      } catch { /* ignore */ }
+      config.max_party_size = Math.min(6, 3 + perGenPartySlots + pokedexPartySlots + commonState.max_party_size_bonus);
     }
 
     // Materialize cross-gen title and rare_weight_multiplier on every session start
