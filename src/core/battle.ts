@@ -324,7 +324,11 @@ export function resolveBattle(
         }
         if (!state.pokemon[stateKey]) {
           const catchXp = levelToXp(wild.level, wildData.exp_group);
-          state.pokemon[stateKey] = { id: wildData.id, xp: catchXp, level: wild.level, friendship: 0, ev: 0 };
+          state.pokemon[stateKey] = {
+            id: wildData.id, xp: catchXp, level: wild.level, friendship: 0, ev: 0,
+            met: 'wild',
+            met_detail: { region: config.current_region, met_level: wild.level, met_date: new Date().toISOString().split('T')[0] },
+          };
         }
       }
       // Not enough balls: markSeen already called above, XP already awarded. No catch.
