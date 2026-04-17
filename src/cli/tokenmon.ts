@@ -2,9 +2,9 @@
 import * as readline from 'readline';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import { readState, writeState } from '../core/state.js';
+import { readState, readCommonState, writeState } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName, resolveNameToId, getDisplayName, formatMetInfo } from '../core/pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getCommonAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName, resolveNameToId, getDisplayName, formatMetInfo } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked, getRegionSummary } from '../core/pokedex.js';
@@ -372,13 +372,25 @@ function cmdUnlockList(): void {
 
 function cmdAchievements(): void {
   const state = readState();
+  const commonState = readCommonState();
   const achDB = getAchievementsDB();
+  const commonAchDB = getCommonAchievementsDB();
+
+  // Merge per-gen and common achievements, deduplicate by id
+  const seen = new Set<string>();
+  const allAchievements: Array<{ id: string }> = [];
+  for (const ach of achDB.achievements) {
+    if (!seen.has(ach.id)) { seen.add(ach.id); allAchievements.push(ach); }
+  }
+  for (const ach of commonAchDB.achievements) {
+    if (!seen.has(ach.id)) { seen.add(ach.id); allAchievements.push(ach); }
+  }
 
   bold(t('cli.achievements.header'));
   console.log('');
 
-  for (const ach of achDB.achievements) {
-    const achieved = !!state.achievements[ach.id];
+  for (const ach of allAchievements) {
+    const achieved = !!state.achievements[ach.id] || !!commonState.achievements[ach.id];
     if (achieved) {
       console.log(`  ${GREEN}✓${RESET} ${BOLD}${getAchievementName(ach.id)}${RESET} ${getAchievementRarityLabel(ach.id)}`);
     } else {
