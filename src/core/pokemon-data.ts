@@ -222,13 +222,29 @@ export function getGameI18n(locale?: string, gen?: string): GameI18nData {
   return _gameI18n[key];
 }
 
+const NAME_LOOKUP_GENS = ['gen1', 'gen2', 'gen3', 'gen4', 'gen5', 'gen6', 'gen7', 'gen8', 'gen9'];
+
 export function getPokemonName(id: string | number, gen?: string, shiny?: boolean): string {
   const g = gen ?? getActiveGeneration();
   getPokemonDB(g);
   const strId = String(id);
   const baseId = toBaseId(strId);
-  const i18n = getGameI18n(undefined, g);
-  const name = i18n.pokemon[baseId] || baseId;
+  let name = getGameI18n(undefined, g).pokemon[baseId];
+  if (!name) {
+    // Cross-gen fallback: a pokemon may be displayed in an active gen that
+    // does not natively index it (e.g. seed data, migration, cross-gen refs).
+    // Search other gens' i18n so we surface a real name instead of the ID.
+    for (const og of NAME_LOOKUP_GENS) {
+      if (og === g) continue;
+      try {
+        const hit = getGameI18n(undefined, og).pokemon[baseId];
+        if (hit) { name = hit; break; }
+      } catch {
+        // gen's data not installed — skip silently
+      }
+    }
+  }
+  if (!name) name = baseId;
   if (shiny || isShinyKey(strId)) return '★' + name;
   return name;
 }
@@ -346,10 +362,20 @@ export function pokemonIdByName(name: string, gen?: string): string | undefined 
     }
   }
 
-  for (const locale of ['ko', 'en']) {
-    const i18n = getGameI18n(locale, gen);
-    for (const [id, pokeName] of Object.entries(i18n.pokemon)) {
-      if (pokeName === name) return id;
+  // Active generation first, then cross-gen fallback so a localized name
+  // from another generation's dex (e.g. "이브이" in a gen4-active save)
+  // still resolves.
+  const gensToSearch = [gen ?? getActiveGeneration(), ...NAME_LOOKUP_GENS.filter(g => g !== (gen ?? getActiveGeneration()))];
+  for (const g of gensToSearch) {
+    for (const locale of ['ko', 'en']) {
+      try {
+        const i18n = getGameI18n(locale, g);
+        for (const [id, pokeName] of Object.entries(i18n.pokemon)) {
+          if (pokeName === name) return id;
+        }
+      } catch {
+        // Skip gens with no installed data
+      }
     }
   }
   return undefined;

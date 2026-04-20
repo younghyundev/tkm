@@ -4,14 +4,14 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { readState, readCommonState, writeState } from '../core/state.js';
 import { readConfig, writeConfig, getDefaultConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
-import { getPokemonDB, getAchievementsDB, getCommonAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName, resolveNameToId, getDisplayName, formatMetInfo } from '../core/pokemon-data.js';
+import { getPokemonDB, getAchievementsDB, getCommonAchievementsDB, getAchievementName, getAchievementDescription, getAchievementRarityLabel, getRegionName, getRegionDescription, getPokemonName, getGenerationsDB, invalidateGenCache, pokemonIdByName, resolveNameToId, getDisplayName, formatMetInfo, ensurePokemonInDB } from '../core/pokemon-data.js';
 import { levelToXp } from '../core/xp.js';
 import { playCry } from '../audio/play-cry.js';
 import { getCompletion, getPokedexList, syncPokedexFromUnlocked, getRegionSummary } from '../core/pokedex.js';
 import { getBoxList } from '../core/box.js';
 import { getCurrentRegion, getRegionList, moveToRegion } from '../core/regions.js';
 import { renderGuide, renderGuideIndex } from '../core/guide.js';
-import { getEligibleBranches, applyBranchEvolution } from '../core/evolution.js';
+import { getEligibleBranches, applyBranchEvolution, applySingleChainEvolution, checkEvolution } from '../core/evolution.js';
 import { getActiveNotifications, dismissAll } from '../core/notifications.js';
 import { getActiveEvents } from '../core/encounter.js';
 import { getEventsDB, getRegionsDB, getPokedexRewardsDB } from '../core/pokemon-data.js';
@@ -957,6 +957,10 @@ function cmdCheat(subcmd: string, arg1?: string, arg2?: string): void {
 
 function cmdEvolve(pokemonArg?: string, targetArg?: string): void {
   if (pokemonArg) pokemonArg = resolvePokemonArg(pokemonArg);
+  // Also resolve the target so the user (or Claude) may pass a localized name
+  // (e.g., "샤미드") instead of the numeric ID — branch.name values in the
+  // database are IDs, so the downstream string-equal comparison needs the ID.
+  if (targetArg) targetArg = resolvePokemonArg(targetArg);
   const config = readConfig();
   const state = readState();
   const pokemonDB = getPokemonDB();
@@ -997,6 +1001,29 @@ function cmdEvolve(pokemonArg?: string, targetArg?: string): void {
     unlockedAchievements: Object.keys(state.achievements).filter(k => state.achievements[k]),
     items: state.items ?? {},
   };
+
+  // Single-chain path: data.evolves_to is a string (or legacy line[stage+1]).
+  // cmdEvolve originally only handled branch evolutions, so single-chain
+  // pokemon reached the AskUserQuestion prompt from the Stop-hook block but
+  // could not actually complete the evolve. Route single-chain through
+  // checkEvolution (no state → returns an EvolutionResult with the resolved
+  // target) and then executeEvolve's dispatcher, which calls
+  // applySingleChainEvolution.
+  const baseData = pokemonDB.pokemon[toBaseId(pokemonArg)] ?? ensurePokemonInDB(toBaseId(pokemonArg));
+  if (baseData && !Array.isArray(baseData.evolves_to)) {
+    const result = checkEvolution(pokemonArg, ctx);
+    if (!result) {
+      warn(t('cli.evolve.no_eligible', { pokemon: getPokemonName(pokemonArg) }));
+      return;
+    }
+    if (targetArg && targetArg !== result.newPokemon) {
+      error(t('cli.evolve.invalid_target', { target: targetArg }));
+      return;
+    }
+    executeEvolve(pokemonArg, result.newPokemon, config);
+    return;
+  }
+
   const branches = getEligibleBranches(pokemonArg, ctx);
   // UX-only: hide branches whose evolved form is already in unlocked (safety guards are in checkEvolution/applyBranchEvolution)
   const eligible = branches.filter(b => {
@@ -1070,8 +1097,26 @@ function executeEvolve(pokemonName: string, targetName: string, _config: unknown
   const evolveResult = withLock(() => {
     const freshState = readState();
     const freshConfig = readConfig();
-    const result = applyBranchEvolution(freshState, freshConfig, pokemonName, targetName);
+    const db = getPokemonDB();
+    const data = db.pokemon[toBaseId(pokemonName)];
+
+    let result = null;
+    if (data && Array.isArray(data.evolves_to)) {
+      // Branch evolution (e.g., Kirlia -> Gardevoir/Gallade)
+      result = applyBranchEvolution(freshState, freshConfig, pokemonName, targetName);
+    } else {
+      // Single-chain evolution (e.g., Turtwig -> Grotle)
+      result = applySingleChainEvolution(freshState, freshConfig, pokemonName, targetName);
+    }
+
     if (!result) return { ok: false as const };
+
+    // Clear evolution_prompt_shown on the new pokemon key (if carried over)
+    const newKey = isShinyKey(pokemonName) ? toShinyKey(result.newPokemon) : result.newPokemon;
+    if (freshState.pokemon[newKey]) {
+      freshState.pokemon[newKey].evolution_prompt_shown = undefined;
+    }
+
     writeState(freshState);
     writeConfig(freshConfig);
     return { ok: true as const, result };

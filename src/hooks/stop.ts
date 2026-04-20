@@ -5,7 +5,7 @@ import { readState, writeState, pruneSessionTokens, readSessionGenMap, writeSess
 import { readConfig, writeConfig, readGlobalConfig, writeGlobalConfig } from '../core/config.js';
 import { getPokemonDB, getPokemonName, ensurePokemonInDB } from '../core/pokemon-data.js';
 import { levelToXp, xpToLevel } from '../core/xp.js';
-import { checkEvolution, applyEvolution, addFriendship, FRIENDSHIP_PER_LEVELUP, FRIENDSHIP_PER_SESSION } from '../core/evolution.js';
+import { checkEvolution, addFriendship, FRIENDSHIP_PER_LEVELUP, FRIENDSHIP_PER_SESSION } from '../core/evolution.js';
 import { checkAchievements, checkCommonAchievements, formatAchievementMessage } from '../core/achievements.js';
 import { t, initLocale } from '../i18n/index.js';
 import type { HookInput, HookOutput, ExpGroup } from '../core/types.js';
@@ -17,7 +17,7 @@ import { addItem, randInt, getDropRateMultiplier } from '../core/items.js';
 import { getRegionDropMessage } from '../core/region-messages.js';
 import { getVolumeTier, getVolumeTierByName } from '../core/volume-tier.js';
 import { withLock, withLockRetry } from '../core/lock.js';
-import { setActiveGenerationCache, getActiveGeneration } from '../core/paths.js';
+import { setActiveGenerationCache, getActiveGeneration, DATA_DIR, PLUGIN_ROOT } from '../core/paths.js';
 import { isShinyKey, toBaseId, toShinyKey } from '../core/shiny-utils.js';
 import { recordXp, recordBattle, recordCatch, recordEncounter, recordShinyEncounter, recordShinyCatch, recordShinyEscaped } from '../core/stats.js';
 import { loadGymData } from '../core/gym.js';
@@ -334,20 +334,10 @@ async function main(): Promise<void> {
         unlockedAchievements: Object.keys(state.achievements).filter(k => state.achievements[k]),
         items: state.items ?? {},
       };
-      const evolution = checkEvolution(pokemonName, evoContext, state);
-      if (evolution) {
-        applyEvolution(state, config, evolution, newXp);
-        messages.push(t('hook.evolution', { pokemon: getPokemonName(pokemonName), newPokemon: getPokemonName(evolution.newPokemon) }));
-        playSfx('gacha');
-
-        // Check first_evolution achievement immediately
-        const achEvents = checkAchievements(state, config, commonState, gen);
-        for (const achEvent of achEvents) {
-          const msg = formatAchievementMessage(achEvent);
-          messages.push(msg);
-          achievementMessages.push(msg);
-        }
-      }
+      // Flag-based evolution: checkEvolution sets evolution_ready on the state
+      // for both branch and single-chain evolutions. Auto-evolve no longer happens
+      // here — block emission in post-lock scan triggers AskUserQuestion flow.
+      checkEvolution(pokemonName, evoContext, state);
     }
 
     // ── Codex flat XP (no volume tier / rest bonus, normal turn) ──
@@ -587,6 +577,87 @@ async function main(): Promise<void> {
     playCry();
     console.log(JSON.stringify(output));
     return;
+  }
+
+  // ── Evolution block detection (post-lock, runs regardless of result type) ──
+  // Scan party for pokemon with evolution_ready && !evolution_prompt_shown.
+  // If found, emit decision:"block" with a reason instructing Claude to use
+  // AskUserQuestion. Runs BEFORE the first_stop/no_delta early return so the
+  // prompt fires on the very first turn of a session where evolution is
+  // already pending (e.g. after a cheat/test seed, or a resumed session
+  // where evolution conditions were met but the user had not yet been
+  // prompted). Flag is set AFTER block emission (Risk 6: duplication > loss).
+  {
+    const postConfig = readConfig(gen);
+    const postState = readState(gen);
+    const candidates: Array<{ name: string; options: string[] }> = [];
+    for (const name of postConfig.party) {
+      const ps = postState.pokemon[name];
+      if (ps?.evolution_ready && !ps.evolution_prompt_shown) {
+        candidates.push({ name, options: ps.evolution_options ?? [] });
+      }
+    }
+    if (candidates.length > 0) {
+      const batch = candidates.slice(0, 4);
+      const candidateList = batch
+        .map(c => t('hook.evolution_candidate_line', {
+          pokemon: getPokemonName(c.name),
+          targets: c.options.map(o => getPokemonName(o)).join(', '),
+        }))
+        .join('\n');
+      let reason = t('hook.evolution_block_reason', { candidateList });
+      // Test-harness awareness: when the dev /tkm:test-evolve harness has an
+      // active cycle (marker file at .tokenmon/test-backup/current.json),
+      // tack on the verify + restore instructions so Claude closes the
+      // cycle inside the same turn even if the skill-invocation context
+      // has fallen out of the current prompt window.
+      try {
+        const currentPtr = join(DATA_DIR, 'test-backup', 'current.json');
+        if (existsSync(currentPtr)) {
+          const tsxResolve = join(PLUGIN_ROOT, 'bin', 'tsx-resolve.sh');
+          const testCli = join(PLUGIN_ROOT, 'src', 'cli', 'test-evolve.ts');
+          reason += '\n\n[TEST HARNESS ACTIVE] '
+            + 'After you run tokenmon evolve (or after a Refuse), you MUST, in the same turn without stopping, run exactly:\n'
+            + `  "${tsxResolve}" "${testCli}" --verify\n`
+            + `  "${tsxResolve}" "${testCli}" --restore\n`
+            + 'Show both outputs to the user, then print a compact final report (scenario name, pick, verify verdict, restore confirmation).';
+        }
+      } catch {
+        // Harness check is best-effort; missing paths/stat errors must not
+        // suppress the core evolution block.
+      }
+      playCry();
+      // Preserve level-up/achievement messages from the parent lock; systemMessage is
+      // user-facing only, so merging it here does not interfere with the block reason
+      // that Claude consumes.
+      const blockOutput: { decision: 'block'; reason: string; system_message?: string } = {
+        decision: 'block',
+        reason,
+      };
+      if (messages.length > 0) {
+        blockOutput.system_message = messages.join('\n');
+      }
+      console.log(JSON.stringify(blockOutput));
+
+      // Set evolution_prompt_shown AFTER block emission to avoid silent loss on crash.
+      // If this write fails, the block will re-emit on next Stop — duplicate prompt
+      // (UX degradation) is strictly preferable to silent infinite-block loops.
+      try {
+        const lockResult = withLock(() => {
+          const s = readState(gen);
+          for (const c of batch) {
+            if (s.pokemon[c.name]) s.pokemon[c.name].evolution_prompt_shown = true;
+          }
+          writeState(s, gen);
+        });
+        if (!lockResult.acquired) {
+          process.stderr.write('tokenmon stop: lock busy during evolution_prompt_shown write; will re-prompt next stop\n');
+        }
+      } catch (err) {
+        process.stderr.write(`tokenmon stop: evolution_prompt_shown write failed: ${err}\n`);
+      }
+      return;
+    }
   }
 
   if (result.value === 'first_stop' || result.value === 'no_delta') {

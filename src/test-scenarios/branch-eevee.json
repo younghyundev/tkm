@@ -1,0 +1,36 @@
+{
+  "name": "branch-eevee",
+  "description": "Eevee (#133) branch evolution — 3 eligible branches in the data (Vaporeon/Jolteon/Flareon via stones). All 3 fit as buttons alongside Refuse (4 options total, no overflow). Cross-gen data path: Eevee is gen1-only, so this also exercises the cross-gen ensurePokemonInDB fallback when the save is on gen4+.",
+  "seed": {
+    "party": ["133"],
+    "pokemon": {
+      "133": {
+        "id": 133,
+        "level": 25,
+        "xp": 15625,
+        "friendship": 220,
+        "evolution_ready": true,
+        "evolution_options": ["134", "135", "136"],
+        "met": "starter"
+      }
+    },
+    "unlocked": ["133"],
+    "items": {
+      "water-stone": 1,
+      "thunder-stone": 1,
+      "fire-stone": 1
+    }
+  },
+  "expected_block": {
+    "decision": "block",
+    "reason_contains": ["이브이", "Eevee", "AskUserQuestion", "tokenmon evolve"]
+  },
+  "expected_choice": "134",
+  "expected_after": {
+    "pokemon.134.met": "evolution",
+    "unlocked.includes": ["134"],
+    "unlocked.excludes": [],
+    "party.includes": ["134"],
+    "pokemon.133.evolution_prompt_shown": null
+  }
+}
