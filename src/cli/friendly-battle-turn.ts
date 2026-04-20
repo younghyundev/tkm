@@ -9,6 +9,7 @@ import {
   type FriendlyBattleSessionRecord,
   writeFriendlyBattleSessionRecord,
   readFriendlyBattleSessionRecord,
+  listFriendlyBattleSessionRecords,
   isPidAlive,
 } from '../friendly-battle/session-store.js';
 import { formatFriendlyBattleTurnJson } from '../friendly-battle/turn-json.js';
@@ -31,6 +32,12 @@ const DAEMON_ENTRY: string = (() => {
   return tsEntry;
 })();
 const DAEMON_USES_TSX = DAEMON_ENTRY.endsWith('.ts');
+// Plugin root — used as spawn() cwd so the daemon child can resolve the
+// `tsx` package from the plugin's node_modules regardless of the parent's
+// cwd. Node ESM's `--import tsx` specifier resolution is cwd-relative, so
+// without this the daemon crashes with ERR_MODULE_NOT_FOUND whenever the
+// user's shell cwd is outside the plugin dir.
+const PLUGIN_ROOT = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 function daemonSpawnArgs(role: 'host' | 'guest'): string[] {
   return DAEMON_USES_TSX
     ? ['--import', 'tsx', DAEMON_ENTRY, '--role', role]
@@ -43,7 +50,8 @@ type Subcommand =
   | 'wait-next-event'
   | 'action'
   | 'status'
-  | 'leave';
+  | 'leave'
+  | 'list-active';
 
 interface ParsedCliArgs {
   subcommand: Subcommand;
@@ -54,11 +62,12 @@ const USAGE = [
   'Usage: friendly-battle-turn [subcommand] [flags]',
   '',
   'Subcommands:',
-  '  --init-host --session-code <code> [--listen-host 127.0.0.1] [--port 0] [--timeout-ms 4000] [--generation gen4] [--player-name Host]',
+  '  --init-host --session-code <code> [--listen-host 127.0.0.1] [--join-host <advertise-host>] [--port 0] [--timeout-ms 4000] [--generation gen4] [--player-name Host]',
   '  --init-join --session-code <code> --host <host> --port <port> [--timeout-ms 4000] [--generation gen4] [--player-name Guest]',
   '  --wait-next-event --session <id> --generation <gen> [--timeout-ms 60000]',
   '  --action <move:N|switch:N|surrender> --session <id> --generation <gen>',
   '  --status --session <id> --generation <gen>',
+  '  --list-active --generation <gen>',
   '',
 ].join('\n');
 
@@ -69,6 +78,7 @@ const SUBCOMMAND_FLAGS = new Set<string>([
   // '--action' is intentionally absent: it carries a value and is parsed by parseArgs directly
   '--status',
   '--leave',
+  '--list-active',
 ]);
 
 const CLI_FLAG_SCHEMA = {
@@ -76,6 +86,7 @@ const CLI_FLAG_SCHEMA = {
   'session': { type: 'string' as const },
   'host': { type: 'string' as const },
   'listen-host': { type: 'string' as const },
+  'join-host': { type: 'string' as const },
   'port': { type: 'string' as const },
   'timeout-ms': { type: 'string' as const },
   'generation': { type: 'string' as const },
@@ -146,6 +157,24 @@ function validateSafeId(value: string, name: string): string {
   return value;
 }
 
+// Host args (listen-host, join-host, --host) are shell-safety filtered only.
+// This is NOT semantic host validation: inputs like `::::`, `foo..bar`, or
+// `[::1` (unmatched bracket) will pass this check and fail later inside
+// Node's net layer with its own error. The purpose here is strictly to
+// reject shell metacharacters and control bytes so a malicious value can't
+// traverse into downstream command paths — semantic parsing (IPv4/IPv6
+// literal, hostname labels) is intentionally deferred to `net.listen` /
+// `net.connect`, which already has the right behavior and error messages.
+const SAFE_HOST = /^[A-Za-z0-9._:\-\[\]%]{1,253}$/;
+function sanitizeHostArg(value: string | undefined, name: string): string | undefined {
+  if (value === undefined || value === '') return undefined;
+  if (!SAFE_HOST.test(value)) {
+    process.stderr.write(`REASON: --${name} contains characters outside the shell-safe set [A-Za-z0-9._:\\-\\[\\]%], got ${JSON.stringify(value)}\n`);
+    process.exit(1);
+  }
+  return value;
+}
+
 // ---------------------------------------------------------------------------
 
 function printUsage(): void {
@@ -159,6 +188,7 @@ function resolveSubcommand(argv: string[]): Subcommand | null {
   if (argv.includes('--action')) return 'action';
   if (argv.includes('--status')) return 'status';
   if (argv.includes('--leave')) return 'leave';
+  if (argv.includes('--list-active')) return 'list-active';
   return null;
 }
 
@@ -247,7 +277,15 @@ function readLineUntil(
 async function runInitHost(flags: Record<string, string | boolean | undefined>): Promise<void> {
   // --- Input validation (must run before forking daemon) ---
   const sessionCode = validateSessionCode(requireFlag(flags, 'session-code'));
-  const listenHost = asStringFlag(flags, 'listen-host') ?? '127.0.0.1';
+  // Run every host-shaped flag through sanitizeHostArg so shell-unsafe
+  // input is rejected with a consistent `REASON:` line before we spawn a
+  // daemon or open a socket. Semantic validity of the host is left to
+  // Node's net layer. --listen-host defaults to 127.0.0.1 when omitted.
+  const listenHost = sanitizeHostArg(asStringFlag(flags, 'listen-host'), 'listen-host') ?? '127.0.0.1';
+  // --join-host is the address guests will actually connect to. Required
+  // whenever --listen-host is a wildcard (0.0.0.0, ::) because the daemon's
+  // TCP transport rejects wildcard-without-advertise combinations upfront.
+  const advertiseHost = sanitizeHostArg(asStringFlag(flags, 'join-host'), 'join-host');
   const port = requirePositiveInt(asStringFlag(flags, 'port'), 'port', 0);
   const timeoutMs = requirePositiveInt(asStringFlag(flags, 'timeout-ms'), 'timeout-ms', 4000);
   const generation = validateGeneration(asStringFlag(flags, 'generation'));
@@ -261,6 +299,7 @@ async function runInitHost(flags: Record<string, string | boolean | undefined>):
     sessionId,
     sessionCode,
     host: listenHost,
+    advertiseHost,
     port,
     generation,
     playerName,
@@ -268,7 +307,9 @@ async function runInitHost(flags: Record<string, string | boolean | undefined>):
   };
   const optionsB64 = Buffer.from(JSON.stringify(daemonOptions), 'utf8').toString('base64');
 
-  // Fork the daemon as a detached child
+  // Fork the daemon as a detached child. cwd is pinned to PLUGIN_ROOT so
+  // `--import tsx` can resolve tsx from the plugin's node_modules even when
+  // the parent Claude Code session runs in an unrelated project directory.
   const child = spawn(
     process.execPath,
     daemonSpawnArgs('host'),
@@ -276,6 +317,7 @@ async function runInitHost(flags: Record<string, string | boolean | undefined>):
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe'],
       env: { ...process.env, TKM_FB_OPTIONS_B64: optionsB64 },
+      cwd: PLUGIN_ROOT,
     },
   );
 
@@ -304,7 +346,7 @@ async function runInitHost(flags: Record<string, string | boolean | undefined>):
       sessionCode,
       phase: 'aborted',
       status: 'aborted',
-      transport: { host: listenHost, port },
+      transport: { host: advertiseHost ?? listenHost, port },
       opponent: null,
       pid: process.pid,
       daemonPid: 0,
@@ -349,7 +391,7 @@ async function runInitHost(flags: Record<string, string | boolean | undefined>):
     sessionCode,
     phase: 'waiting_for_guest',
     status: 'waiting_for_guest',
-    transport: { host: listenHost, port: boundPort },
+    transport: { host: advertiseHost ?? listenHost, port: boundPort },
     opponent: null,
     pid: process.pid,
     daemonPid,
@@ -377,7 +419,9 @@ async function runInitHost(flags: Record<string, string | boolean | undefined>):
 async function runInitJoin(flags: Record<string, string | boolean | undefined>): Promise<void> {
   // --- Input validation (must run before forking daemon) ---
   const sessionCode = validateSessionCode(requireFlag(flags, 'session-code'));
-  const hostAddr = requireFlag(flags, 'host');
+  // --host is required; sanitizeHostArg returns undefined only for empty input,
+  // which requireFlag already rejects, so the `!` assertion is safe.
+  const hostAddr = sanitizeHostArg(requireFlag(flags, 'host'), 'host')!;
   const portStr = asStringFlag(flags, 'port') ?? requireFlag(flags, 'port');
   const port = requirePositiveInt(portStr, 'port');
   const timeoutMs = requirePositiveInt(asStringFlag(flags, 'timeout-ms'), 'timeout-ms', 4000);
@@ -399,7 +443,8 @@ async function runInitJoin(flags: Record<string, string | boolean | undefined>):
   };
   const optionsB64 = Buffer.from(JSON.stringify(daemonOptions), 'utf8').toString('base64');
 
-  // Fork the daemon as a detached child
+  // Fork the daemon as a detached child. See init-host spawn for why cwd is
+  // pinned to PLUGIN_ROOT.
   const child = spawn(
     process.execPath,
     daemonSpawnArgs('guest'),
@@ -407,6 +452,7 @@ async function runInitJoin(flags: Record<string, string | boolean | undefined>):
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe'],
       env: { ...process.env, TKM_FB_OPTIONS_B64: optionsB64 },
+      cwd: PLUGIN_ROOT,
     },
   );
 
@@ -669,6 +715,39 @@ async function runLeave(flags: Record<string, string | boolean | undefined>): Pr
   }
 }
 
+/**
+ * List sessions whose daemon is still alive. Used by the skill's `resume`
+ * flow when the conversation has lost the in-memory `sessionId` (e.g. the
+ * conversation was compacted, restarted, or handed off mid-battle). The
+ * output is a single JSON array on stdout — one entry per live session,
+ * sorted by `updatedAt` descending so the caller can trivially pick the
+ * most recent one.
+ *
+ * Terminal phases (`finished` / `aborted`) and dead daemons are filtered
+ * out so a stale file never gets adopted as an "active" session.
+ */
+function runListActive(flags: Record<string, string | boolean | undefined>): void {
+  const generation = validateGeneration(asStringFlag(flags, 'generation'));
+  const all = listFriendlyBattleSessionRecords(generation);
+  const active = all
+    .filter((r) => r.phase !== 'finished' && r.phase !== 'aborted')
+    .filter((r) => typeof r.daemonPid === 'number' && r.daemonPid > 0 && isPidAlive(r.daemonPid))
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  // Keep the payload small and skill-friendly: only the fields the resume
+  // flow actually needs. Full records are still readable via --status.
+  const payload = active.map((r) => ({
+    sessionId: r.sessionId,
+    role: r.role,
+    generation: r.generation,
+    sessionCode: r.sessionCode,
+    phase: r.phase,
+    status: r.status,
+    transport: r.transport,
+    updatedAt: r.updatedAt,
+  }));
+  process.stdout.write(`${JSON.stringify(payload)}\n`);
+}
+
 function requireFlag(flags: Record<string, string | boolean | undefined>, name: string): string {
   const v = flags[name];
   if (typeof v === 'string') return v;
@@ -696,6 +775,9 @@ async function main(argv: string[]): Promise<void> {
       return;
     case 'leave':
       await runLeave(parsed.flags);
+      return;
+    case 'list-active':
+      runListActive(parsed.flags);
       return;
   }
 }
